@@ -1,0 +1,424 @@
+#
+#    Ophidia Primitives
+#    Copyright (C) 2012-2016 CMCC Foundation
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+SUBDIRS=.
+
+LZO_CFLAGS=
+LZO_LIBS=-llzo2
+
+XZ_CFLAGS=
+XZ_LIBS=-llzma
+
+CFLAGS+=${OPT}
+
+GSL_CFLAG=
+GSL_LIB=
+
+if GSL_SUPPORT
+GSL_CFLAG+=$(GSL_CFLAGS) -DGSL_SUPPORTED
+GSL_LIB+=$(GSL_LIBS)
+endif
+
+# Primitives operating on IDs
+
+lib_LTLIBRARIES = liboph_id_to_index.la
+liboph_id_to_index_la_SOURCES = oph_id_to_index.c oph_id_to_index.h oph_debug.c oph_debug.h
+liboph_id_to_index_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_id_to_index_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_id3.la
+liboph_id3_la_SOURCES = oph_id3.c oph_id3.h oph_debug.c oph_debug.h
+liboph_id3_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_id3_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_id_of_subset.la
+liboph_id_of_subset_la_SOURCES = oph_id_of_subset.c oph_id_of_subset.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_subset.c oph_core_subset.h
+liboph_id_of_subset_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_id_of_subset_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+# Primitives operating on measures
+
+lib_LTLIBRARIES += liboph_aggregate_stats.la
+liboph_aggregate_stats_la_SOURCES = oph_aggregate_stats.c oph_aggregate_stats.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_aggregate_stats_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_aggregate_stats_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_aggregate_stats_partial.la
+liboph_aggregate_stats_partial_la_SOURCES = oph_aggregate_stats_partial.c oph_aggregate_stats_partial.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_aggregate_stats_partial_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_aggregate_stats_partial_la_LDFLAGS = -avoid-version -shared $(LIBS) -lm
+
+lib_LTLIBRARIES += liboph_aggregate_stats_final.la
+liboph_aggregate_stats_final_la_SOURCES = oph_aggregate_stats_final.c oph_aggregate_stats_final.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_aggregate_stats_final_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_aggregate_stats_final_la_LDFLAGS = -avoid-version -shared $(LIBS) -lm
+
+lib_LTLIBRARIES += liboph_compress.la
+liboph_compress_la_SOURCES = oph_compress.c oph_compress.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_compress_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) 
+liboph_compress_la_LDFLAGS = -avoid-version -shared $(LIBS) -lm -lz
+
+lib_LTLIBRARIES += liboph_uncompress.la
+liboph_uncompress_la_SOURCES = oph_uncompress.c oph_uncompress.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_uncompress_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_uncompress_la_LDFLAGS = -avoid-version -shared $(LIBS) -lz
+
+lib_LTLIBRARIES += liboph_aggregate_operator.la
+liboph_aggregate_operator_la_SOURCES = oph_aggregate_operator.c oph_aggregate_operator.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_aggregate_operator_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_aggregate_operator_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_reduce.la
+liboph_reduce_la_SOURCES = oph_reduce.c oph_reduce.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_reduce_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_reduce_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIB)
+
+lib_LTLIBRARIES += liboph_reduce2.la
+liboph_reduce2_la_SOURCES = oph_reduce2.c oph_reduce2.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_reduce2_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_reduce2_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIB)
+
+lib_LTLIBRARIES += liboph_reduce3.la
+liboph_reduce3_la_SOURCES = oph_reduce3.c oph_reduce3.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_reduce3_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_reduce3_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIB)
+
+lib_LTLIBRARIES += liboph_debug.la
+liboph_debug_la_SOURCES = oph_debug.c oph_debug.h
+liboph_debug_la_CFLAGS = $(CFLAGS)
+liboph_debug_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_dump.la
+liboph_dump_la_SOURCES = oph_dump.c oph_dump.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_dump_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_dump_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_convert_d.la
+liboph_convert_d_la_SOURCES = oph_convert_d.c oph_convert_d.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_convert_d_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_convert_d_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_convert_l.la
+liboph_convert_l_la_SOURCES = oph_convert_l.c oph_convert_l.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_convert_l_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_convert_l_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_count_array.la
+liboph_count_array_la_SOURCES = oph_count_array.c oph_count_array.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_count_array_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_count_array_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_get_subarray.la
+liboph_get_subarray_la_SOURCES = oph_get_subarray.c oph_get_subarray.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_get_subarray_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_get_subarray_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_get_subarray2.la
+liboph_get_subarray2_la_SOURCES = oph_get_subarray2.c oph_get_subarray2.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_subset.c oph_core_subset.h
+liboph_get_subarray2_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_get_subarray2_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_get_subarray3.la
+liboph_get_subarray3_la_SOURCES = oph_get_subarray3.c oph_get_subarray3.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_subset.c oph_core_subset.h
+liboph_get_subarray3_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_get_subarray3_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_sum_scalar.la
+liboph_sum_scalar_la_SOURCES = oph_sum_scalar.c oph_sum_scalar.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_sum_scalar_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_sum_scalar_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_mul_scalar.la
+liboph_mul_scalar_la_SOURCES = oph_mul_scalar.c oph_mul_scalar.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_mul_scalar_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_mul_scalar_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_sum_scalar2.la
+liboph_sum_scalar2_la_SOURCES = oph_sum_scalar2.c oph_sum_scalar2.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_sum_scalar2_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_sum_scalar2_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_mul_scalar2.la
+liboph_mul_scalar2_la_SOURCES = oph_mul_scalar2.c oph_mul_scalar2.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_mul_scalar2_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_mul_scalar2_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_get_index_array.la
+liboph_get_index_array_la_SOURCES = oph_get_index_array.c oph_get_index_array.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_get_index_array_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_get_index_array_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_to_bin.la
+liboph_to_bin_la_SOURCES = oph_to_bin.c oph_to_bin.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_to_bin_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_to_bin_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_compare.la
+liboph_compare_la_SOURCES = oph_compare.c oph_compare.h
+liboph_compare_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_compare_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_extract.la
+liboph_extract_la_SOURCES = oph_extract.c oph_extract.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_extract_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_extract_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_find.la
+liboph_find_la_SOURCES = oph_find.c oph_find.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_find_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_find_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_interlace.la
+liboph_interlace_la_SOURCES = oph_interlace.c oph_interlace.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_interlace_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_interlace_la_LDFLAGS = -avoid-version -shared $(LIBS) -lm
+
+lib_LTLIBRARIES += liboph_math.la
+liboph_math_la_SOURCES = oph_math.c oph_math.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_math.c oph_core_math.h
+liboph_math_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_math_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIB)
+
+lib_LTLIBRARIES += liboph_permute.la
+liboph_permute_la_SOURCES = oph_permute.c oph_permute.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_permute_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_permute_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_reverse.la
+liboph_reverse_la_SOURCES = oph_reverse.c oph_reverse.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_reverse_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_reverse_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_roll_up.la
+liboph_roll_up_la_SOURCES = oph_roll_up.c oph_roll_up.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_roll_up_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_roll_up_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_rotate.la
+liboph_rotate_la_SOURCES = oph_rotate.c oph_rotate.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_rotate_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_rotate_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_size_array.la
+liboph_size_array_la_SOURCES = oph_size_array.c oph_size_array.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_size_array_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_size_array_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_shift.la
+liboph_shift_la_SOURCES = oph_shift.c oph_shift.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_shift_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_shift_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_value_to_bin.la
+liboph_value_to_bin_la_SOURCES = oph_value_to_bin.c oph_value_to_bin.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_value_to_bin_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_value_to_bin_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_sum_array.la
+liboph_sum_array_la_SOURCES = oph_sum_array.c oph_sum_array.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_sum_array_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_sum_array_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_mul_array.la
+liboph_mul_array_la_SOURCES = oph_mul_array.c oph_mul_array.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_mul_array_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_mul_array_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_mask_array.la
+liboph_mask_array_la_SOURCES = oph_mask_array.c oph_mask_array.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_mask_array_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_mask_array_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_sub_array.la
+liboph_sub_array_la_SOURCES = oph_sub_array.c oph_sub_array.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_sub_array_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_sub_array_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_div_array.la
+liboph_div_array_la_SOURCES = oph_div_array.c oph_div_array.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_div_array_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_div_array_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_abs_array.la
+liboph_abs_array_la_SOURCES = oph_abs_array.c oph_abs_array.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_abs_array_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_abs_array_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_arg_array.la
+liboph_arg_array_la_SOURCES = oph_arg_array.c oph_arg_array.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_arg_array_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_arg_array_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_max_array.la
+liboph_max_array_la_SOURCES = oph_max_array.c oph_max_array.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_max_array_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_max_array_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_min_array.la
+liboph_min_array_la_SOURCES = oph_min_array.c oph_min_array.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_min_array_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_min_array_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_operator.la
+liboph_operator_la_SOURCES = oph_operator.c oph_operator.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_operator_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_operator_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_operator_array.la
+liboph_operator_array_la_SOURCES = oph_operator_array.c oph_operator_array.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_operator_array_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_operator_array_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_cast.la
+liboph_cast_la_SOURCES = oph_cast.c oph_cast.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_cast_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_cast_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIB)
+
+lib_LTLIBRARIES += liboph_concat.la
+liboph_concat_la_SOURCES = oph_concat.c oph_concat.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_concat_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_concat_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_moving_avg.la
+liboph_moving_avg_la_SOURCES = oph_moving_avg.c oph_moving_avg.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_moving_avg_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_moving_avg_la_LDFLAGS = -avoid-version -shared $(LIBS) -lm
+
+lib_LTLIBRARIES += liboph_accumulate.la
+liboph_accumulate_la_SOURCES = oph_accumulate.c oph_accumulate.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_accumulate_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_accumulate_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_deaccumulate.la
+liboph_deaccumulate_la_SOURCES = oph_deaccumulate.c oph_deaccumulate.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_deaccumulate_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_deaccumulate_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_ccluster_kcluster.la
+liboph_ccluster_kcluster_la_SOURCES = oph_ccluster_kcluster.c oph_ccluster_kcluster.h cluster.c cluster.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_ccluster_kcluster_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_ccluster_kcluster_la_LDFLAGS = -avoid-version -shared $(LIBS) -lm
+
+lib_LTLIBRARIES += liboph_quantize.la
+liboph_quantize_la_SOURCES = oph_quantize.c oph_quantize.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_quantize_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_quantize_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+if MATHEVAL_SUPPORT
+lib_LTLIBRARIES += liboph_predicate.la
+liboph_predicate_la_SOURCES = oph_predicate.c oph_predicate.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_matheval.c oph_core_matheval.h
+liboph_predicate_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(MATHEVAL_CFLAGS)
+liboph_predicate_la_LDFLAGS = -avoid-version -shared $(LIBS) $(MATHEVAL_LIBS) -lpthread
+endif
+
+if GSL_SUPPORT
+lib_LTLIBRARIES += liboph_gsl_boxplot.la
+liboph_gsl_boxplot_la_SOURCES = oph_gsl_boxplot.c oph_gsl_boxplot.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_gsl.h
+liboph_gsl_boxplot_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_gsl_boxplot_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
+
+lib_LTLIBRARIES += liboph_gsl_sd.la
+liboph_gsl_sd_la_SOURCES = oph_gsl_sd.c oph_gsl_sd.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_gsl.h
+liboph_gsl_sd_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_gsl_sd_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
+
+lib_LTLIBRARIES += liboph_gsl_complex_get_real.la
+liboph_gsl_complex_get_real_la_SOURCES = oph_gsl_complex_get_real.c oph_gsl_complex_get_real.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_gsl.h
+liboph_gsl_complex_get_real_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_gsl_complex_get_real_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
+
+lib_LTLIBRARIES += liboph_gsl_complex_get_imag.la
+liboph_gsl_complex_get_imag_la_SOURCES = oph_gsl_complex_get_imag.c oph_gsl_complex_get_imag.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_gsl.h
+liboph_gsl_complex_get_imag_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_gsl_complex_get_imag_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
+
+lib_LTLIBRARIES += liboph_gsl_complex_get_arg.la
+liboph_gsl_complex_get_arg_la_SOURCES = oph_gsl_complex_get_arg.c oph_gsl_complex_get_arg.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_gsl.h
+liboph_gsl_complex_get_arg_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_gsl_complex_get_arg_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
+
+lib_LTLIBRARIES += liboph_gsl_complex_get_abs.la
+liboph_gsl_complex_get_abs_la_SOURCES = oph_gsl_complex_get_abs.c oph_gsl_complex_get_abs.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_gsl.h
+liboph_gsl_complex_get_abs_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_gsl_complex_get_abs_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
+
+lib_LTLIBRARIES += liboph_gsl_complex_to_polar.la
+liboph_gsl_complex_to_polar_la_SOURCES = oph_gsl_complex_to_polar.c oph_gsl_complex_to_polar.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_gsl.h
+liboph_gsl_complex_to_polar_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_gsl_complex_to_polar_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
+
+lib_LTLIBRARIES += liboph_gsl_complex_to_rect.la
+liboph_gsl_complex_to_rect_la_SOURCES = oph_gsl_complex_to_rect.c oph_gsl_complex_to_rect.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_gsl.h
+liboph_gsl_complex_to_rect_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_gsl_complex_to_rect_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
+
+lib_LTLIBRARIES += liboph_gsl_ifft.la
+liboph_gsl_ifft_la_SOURCES = oph_gsl_ifft.c oph_gsl_ifft.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_gsl.h
+liboph_gsl_ifft_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_gsl_ifft_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
+
+lib_LTLIBRARIES += liboph_gsl_idwt.la
+liboph_gsl_idwt_la_SOURCES = oph_gsl_idwt.c oph_gsl_idwt.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_gsl.h
+liboph_gsl_idwt_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_gsl_idwt_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
+
+lib_LTLIBRARIES += liboph_gsl_fft.la
+liboph_gsl_fft_la_SOURCES = oph_gsl_fft.c oph_gsl_fft.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_gsl.h
+liboph_gsl_fft_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_gsl_fft_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
+
+lib_LTLIBRARIES += liboph_gsl_dwt.la
+liboph_gsl_dwt_la_SOURCES = oph_gsl_dwt.c oph_gsl_dwt.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_gsl.h
+liboph_gsl_dwt_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_gsl_dwt_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
+
+lib_LTLIBRARIES += liboph_gsl_histogram.la
+liboph_gsl_histogram_la_SOURCES = oph_gsl_histogram.c oph_cast.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_gsl.h
+liboph_gsl_histogram_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_gsl_histogram_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
+
+lib_LTLIBRARIES += liboph_gsl_quantile.la
+liboph_gsl_quantile_la_SOURCES = oph_gsl_quantile.c oph_gsl_quantile.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_gsl.h
+liboph_gsl_quantile_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_gsl_quantile_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
+
+lib_LTLIBRARIES += liboph_gsl_stats.la
+liboph_gsl_stats_la_SOURCES = oph_gsl_stats.c oph_gsl_stats.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_gsl.h
+liboph_gsl_stats_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_gsl_stats_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
+
+lib_LTLIBRARIES += liboph_gsl_sort.la
+liboph_gsl_sort_la_SOURCES = oph_gsl_sort.c oph_gsl_sort.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_gsl.h
+liboph_gsl_sort_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_gsl_sort_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
+
+lib_LTLIBRARIES += liboph_gsl_spline.la
+liboph_gsl_spline_la_SOURCES = oph_gsl_spline.c oph_gsl_spline.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_gsl.h
+liboph_gsl_spline_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_gsl_spline_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
+
+lib_LTLIBRARIES += liboph_gsl_fit_linear.la
+liboph_gsl_fit_linear_la_SOURCES = oph_gsl_fit_linear.c oph_gsl_fit_linear.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_gsl.h
+liboph_gsl_fit_linear_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_gsl_fit_linear_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
+
+lib_LTLIBRARIES += liboph_gsl_fit_linear_coeff.la
+liboph_gsl_fit_linear_coeff_la_SOURCES = oph_gsl_fit_linear_coeff.c oph_gsl_fit_linear_coeff.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_gsl.h
+liboph_gsl_fit_linear_coeff_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_gsl_fit_linear_coeff_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
+endif
+
