@@ -146,9 +146,13 @@ char* oph_predicate(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lon
 			return NULL;
 		}
 
-		buffer = (char*)malloc(1+args->lengths[5]);
-		core_strncpy(buffer,args->args[5],&(args->lengths[5]));
-		if (!strcasecmp(buffer,"nan")) sprintf(buffer,"0/0");
+		if (args->args[5] && args->lengths[5])
+		{
+			buffer = (char*)malloc(1+args->lengths[5]);
+			core_strncpy(buffer,args->args[5],&(args->lengths[5]));
+			if (!strcasecmp(buffer,"nan")) sprintf(buffer,"0/0");
+		}
+		else buffer = strdup("0/0");
 		pthread_rwlock_wrlock(&lock);
 		param->f[2] = evaluator_create(buffer);
 		pthread_rwlock_unlock(&lock);
@@ -170,9 +174,13 @@ char* oph_predicate(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lon
 			return NULL;
 		}
 
-		buffer = (char*)malloc(1+args->lengths[6]);
-		core_strncpy(buffer,args->args[6],&(args->lengths[6]));
-		if (!strcasecmp(buffer,"nan")) sprintf(buffer,"0/0");
+		if (args->args[6] && args->lengths[6])
+		{
+			buffer = (char*)malloc(1+args->lengths[6]);
+			core_strncpy(buffer,args->args[6],&(args->lengths[6]));
+			if (!strcasecmp(buffer,"nan")) sprintf(buffer,"0/0");
+		}
+		else buffer = strdup("0/0");
 		pthread_rwlock_wrlock(&lock);
 		param->f[3] = evaluator_create(buffer);
 		pthread_rwlock_unlock(&lock);
