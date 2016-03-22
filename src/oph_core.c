@@ -487,7 +487,9 @@ oph_oper core_get_oper (char* oper, unsigned long *len){
                 return INVALID_OPER;
         }
         //Case insensitive comparison
-        if(!strcasecmp(oper_buff, "OPH_MAX"))
+	if(!strcasecmp(oper_buff, "OPH_COUNT"))
+                return OPH_COUNT;
+        else if(!strcasecmp(oper_buff, "OPH_MAX"))
                 return OPH_MAX;
         else if(!strcasecmp(oper_buff, "OPH_MIN"))
                 return OPH_MIN;
@@ -1062,8 +1064,8 @@ int core_oph_count (oph_stringPtr byte_array, char *result)
                         pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
                         return -1;
         }
-	memcpy(result, (void*)(&count), byte_array->elemsize);
 
+	memcpy(result, (void*)(&count), core_sizeof(OPH_LONG));
         return 0;
 }
 int core_oph_count_multi (oph_multistring* byte_array, oph_multistring *result)
