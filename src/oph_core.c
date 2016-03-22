@@ -1064,8 +1064,8 @@ int core_oph_count (oph_stringPtr byte_array, char *result)
                         pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
                         return -1;
         }
-
 	memcpy(result, (void*)(&count), core_sizeof(OPH_LONG));
+
         return 0;
 }
 int core_oph_count_multi (oph_multistring* byte_array, oph_multistring *result)
@@ -1140,7 +1140,7 @@ int core_oph_max (oph_stringPtr byte_array, char *result)
 			if (max) memcpy(result, max, byte_array->elemsize);
 			else
 			{
-				double value=NAN; // NaN
+				double value=NAN;
 				memcpy(result, &value, byte_array->elemsize);
 			}
                         break;
@@ -1161,7 +1161,7 @@ int core_oph_max (oph_stringPtr byte_array, char *result)
 			if (max) memcpy(result, max, byte_array->elemsize);
 			else
 			{
-				float value=NAN; // NaN
+				float value=NAN;
 				memcpy(result, &value, byte_array->elemsize);
 			}
                         break;
@@ -1274,7 +1274,7 @@ int core_oph_max_multi (oph_multistring* byte_array, oph_multistring *result)
 				}
 				else
 				{
-					double value=NAN; // NaN
+					double value=NAN;
 					if(core_oph_type_cast((void*)(&value), out_string, byte_array->type[j], result->type[j])) return -1;
 				}
                         	break;
@@ -1299,7 +1299,7 @@ int core_oph_max_multi (oph_multistring* byte_array, oph_multistring *result)
 				}
 				else
 				{
-					float value=NAN; // NaN
+					float value=NAN;
 					if(core_oph_type_cast((void*)(&value), out_string, byte_array->type[j], result->type[j])) return -1;
 				}
                         	break;
@@ -1407,7 +1407,7 @@ int core_oph_min (oph_stringPtr byte_array, char *result)
 			if (min) memcpy(result, min, byte_array->elemsize);
 			else
 			{
-				double value=NAN; // NaN
+				double value=NAN;
 				memcpy(result, &value, byte_array->elemsize);
 			}
                         break;
@@ -1428,7 +1428,7 @@ int core_oph_min (oph_stringPtr byte_array, char *result)
 			if (min) memcpy(result, min, byte_array->elemsize);
 			else
 			{
-				float value=NAN; // NaN
+				float value=NAN;
 				memcpy(result, &value, byte_array->elemsize);
 			}
                         break;
@@ -1553,7 +1553,7 @@ int core_oph_min_multi (oph_multistring* byte_array, oph_multistring *result)
 				}
 				else
 				{
-					double value=NAN; // NaN
+					double value=NAN;
 					if(core_oph_type_cast((void*)(&value), out_string, byte_array->type[j], result->type[j])) return -1;
 				}
                         	break;
@@ -1578,7 +1578,7 @@ int core_oph_min_multi (oph_multistring* byte_array, oph_multistring *result)
 				}
 				else
 				{
-					float value=NAN; // NaN
+					float value=NAN;
 					if(core_oph_type_cast((void*)(&value), out_string, byte_array->type[j], result->type[j])) return -1;
 				}
                         	break;
@@ -1671,14 +1671,18 @@ int core_oph_sum (oph_stringPtr byte_array, char *result)
         switch(byte_array->type)
 	{
                 case OPH_DOUBLE:{
+			char nan = 1;
                         double *d = (double*)byte_array->content, sum = 0.0;
-                        for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d)) sum = sum + *d;
+                        for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d)) { sum = sum + *d; nan = 0; }
+			if (nan) sum = NAN;
 			memcpy(result, (void*)(&sum), byte_array->elemsize);
                         break;
                 }
                 case OPH_FLOAT:{
+			char nan = 1;
                         float *d = (float*)byte_array->content, sum = 0.0;
-                        for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d)) sum = sum + *d;
+                        for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d)) { sum = sum + *d; nan = 0; }
+			if (nan) sum = NAN;
 			memcpy(result, (void*)(&sum), byte_array->elemsize);
                         break;
                 }
@@ -1723,14 +1727,19 @@ int core_oph_sum_multi (oph_multistring* byte_array, oph_multistring *result)
 		{
                 	case OPH_DOUBLE:
 			{
+				char nan = 1;
                         	double sum = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (!isnan(*(double*)current)) sum += *(double*)current;
+                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (!isnan(*(double*)current)) { sum += *(double*)current; nan = 0; }
+				if (nan) sum = NAN;
 				if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
                         	break;
                 	}
-                	case OPH_FLOAT:{
+                	case OPH_FLOAT:
+			{
+				char nan = 1;
                         	float sum = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (!isnan(*(float*)current)) sum += *(float*)current;
+                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (!isnan(*(float*)current)) { sum += *(float*)current; nan = 0; }
+				if (nan) sum = NAN;
 				if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
                         	break;
                 	}
@@ -1783,7 +1792,8 @@ int core_oph_avg (oph_stringPtr byte_array, char *result)
 					numelem++;
 				}
                         }
-			sum /= (double)numelem;
+			if (numelem) sum /= (double)numelem;
+			else sum = NAN;
 			memcpy(result, (void*)(&sum), byte_array->elemsize);
                         break;
                 }
@@ -1797,7 +1807,8 @@ int core_oph_avg (oph_stringPtr byte_array, char *result)
 					numelem++;
 				}
                         }
-			sum /= (float)numelem;
+			if (numelem) sum /= (float)numelem;
+			else sum = NAN;
 			memcpy(result, (void*)(&sum), byte_array->elemsize);
                         break;
                 }
@@ -1866,7 +1877,8 @@ int core_oph_avg_multi (oph_multistring* byte_array, oph_multistring *result)
 						numelem++;
 					}
                         	}
-				sum /= (double)numelem;
+				if (numelem) sum /= (double)numelem;
+				else sum = NAN;
 				if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
                         	break;
                 	}
@@ -1881,7 +1893,8 @@ int core_oph_avg_multi (oph_multistring* byte_array, oph_multistring *result)
 						numelem++;
 					}
                         	}
-				sum /= (float)numelem;
+				if (numelem) sum /= (float)numelem;
+				else sum = NAN;
 				if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
                         	break;
                 	}
