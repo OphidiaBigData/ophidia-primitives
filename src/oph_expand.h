@@ -34,6 +34,8 @@ typedef struct {
 	double start;
 	double step;
 	double max;
+	double filling;
+	char filling_type;
 } oph_expand_param;
 
 /*------------------------------------------------------------------|

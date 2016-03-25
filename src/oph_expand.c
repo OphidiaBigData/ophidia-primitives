@@ -26,14 +26,16 @@ int core_oph_expand_multi(oph_multistring* byte_array, oph_multistring* result, 
 	double current;
 	char nan[sizeof(double)];
 
+	oph_expand_param* param = byte_array->extend;
+
 	if (byte_array->type[j] == OPH_DOUBLE)
 	{
-		double d = NAN;
+		double d = param->filling;
 		memcpy(nan,&d,sizeof(double));
 	}
 	else if (byte_array->type[j] == OPH_FLOAT)
 	{
-		float d = NAN;
+		float d = (float)param->filling;
 		memcpy(nan,&d,sizeof(float));
 	}
 	else
@@ -44,9 +46,6 @@ int core_oph_expand_multi(oph_multistring* byte_array, oph_multistring* result, 
 
 	if (id<=0) { js=0; je=byte_array->num_measure; }
 	else { js=id-1; je=id; }
-
-	oph_expand_param* param = byte_array->extend;
-
 	for (j=js;j<je;++j)
 	{
 		if (!param)
@@ -71,7 +70,30 @@ int core_oph_expand_multi(oph_multistring* byte_array, oph_multistring* result, 
 					if(core_oph_type_cast(byte_array->content + k*byte_array->elemsize[j], result->content + i*result->elemsize[j], byte_array->type[j], result->type[j])) return -1;
 					k++;
 				}
-				else if(core_oph_type_cast(nan, result->content + i*result->elemsize[j], byte_array->type[j], result->type[j])) return -1;
+				else
+				{
+					if (param->filling_type)
+					{
+						switch (byte_array->type[j])
+						{
+							case OPH_DOUBLE:
+							{
+								if(core_oph_type_cast(&current, result->content + i*result->elemsize[j], byte_array->type[j], result->type[j])) return -1;
+								break;
+							}
+							case OPH_FLOAT:
+							{
+								float f = (float)current;
+								if(core_oph_type_cast(&f, result->content + i*result->elemsize[j], byte_array->type[j], result->type[j])) return -1;
+								break;
+							}
+							default:
+								pmesg(1, __FILE__, __LINE__, "Type not supported\n");
+								return -1;
+						}
+					}
+					else if(core_oph_type_cast(nan, result->content + i*result->elemsize[j], byte_array->type[j], result->type[j])) return -1;
+				}
 				current += param->step;
 			}
 		}
@@ -85,8 +107,8 @@ int core_oph_expand_multi(oph_multistring* byte_array, oph_multistring* result, 
 my_bool oph_expand_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
         int i = 0;
-        if(args->arg_count < 3 || args->arg_count > 7){
-                strcpy(message, "ERROR: Wrong arguments! oph_expand(input_OPH_TYPE, output_OPH_TYPE, measure, [index], [start], [step], [max])");
+        if(args->arg_count < 3 || args->arg_count > 8){
+                strcpy(message, "ERROR: Wrong arguments! oph_expand(input_OPH_TYPE, output_OPH_TYPE, measure, [index], [start], [step], [max], [filling])");
                 return 1;
         }
 
@@ -97,13 +119,17 @@ my_bool oph_expand_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 		}
 	}
 
-	if (args->arg_count>3)
+	if (args->arg_count > 3)
 	{
 		if(args->arg_type[i] != STRING_RESULT){
 			strcpy(message, "ERROR: Wrong arguments to oph_expand function");
 			return 1;
 		}
-		for(i++; i < args->arg_count; i++) args->arg_type[i] = REAL_RESULT;
+		for(i++; i < args->arg_count && i < 7; i++) args->arg_type[i] = REAL_RESULT;
+		if (args->arg_count == 8)
+		{
+			if(args->arg_type[i] != STRING_RESULT) args->arg_type[i] = REAL_RESULT;
+		}
 	}
 
 	initid->ptr = NULL;
@@ -228,12 +254,68 @@ char* oph_expand(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *
 						param->max = *((double*)args->args[6]);
 						if (isnan(param->max)) param->max = param->index[param->num-1];
 					}
+					if (args->arg_count>7)
+					{
+						if (!args->args[7])
+						{
+							param->filling = NAN;
+							param->filling_type = 0;
+						}
+						else if (args->arg_type[7] == STRING_RESULT)
+						{
+							char tmp[1+args->lengths[7]];
+							snprintf(tmp,1+args->lengths[7],"%s",args->args[7]);
+							if (!strcasecmp(tmp,"NAN"))
+							{
+								param->filling = NAN;
+								param->filling_type = 0;
+							}
+							else if (!strcasecmp(tmp,"INTERP"))
+							{
+								param->filling = 0.0;
+								param->filling_type = 1;
+							}
+							else
+							{
+								param->filling = *((double*)tmp);
+								param->filling_type = 0;
+							}
+						}
+						else
+						{
+							param->filling = *((double*)args->args[7]);
+							param->filling_type = 0;
+						}
+					}
+					else if (param->index && param->num)
+					{
+						param->filling = NAN;
+						param->filling_type = 0;
+					}
 				}
-				else if (param->index && param->num) param->max = param->index[param->num-1];
+				else if (param->index && param->num)
+				{
+					param->max = param->index[param->num-1];
+					param->filling = NAN;
+					param->filling_type = 0;
+				}
 			}
-			else param->step = 1;
+			else if (param->index && param->num)
+			{
+				param->step = 1;
+				param->max = param->index[param->num-1];
+				param->filling = NAN;
+				param->filling_type = 0;
+			}
 		}
-		else if (param->index && param->num) param->start = param->index[0];
+		else if (param->index && param->num)
+		{
+			param->start = param->index[0];
+			param->step = 1;
+			param->max = param->index[param->num-1];
+			param->filling = NAN;
+			param->filling_type = 0;
+		}
 	}
 	else param->index = NULL;
 
