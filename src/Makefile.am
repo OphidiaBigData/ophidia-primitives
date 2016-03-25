@@ -318,6 +318,11 @@ liboph_quantize_la_SOURCES = oph_quantize.c oph_quantize.h oph_debug.c oph_debug
 liboph_quantize_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
 liboph_quantize_la_LDFLAGS = -avoid-version -shared $(LIBS)
 
+lib_LTLIBRARIES += liboph_expand.la
+liboph_expand_la_SOURCES = oph_expand.c oph_expand.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_expand_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_expand_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
 if MATHEVAL_SUPPORT
 lib_LTLIBRARIES += liboph_predicate.la
 liboph_predicate_la_SOURCES = oph_predicate.c oph_predicate.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_matheval.c oph_core_matheval.h
