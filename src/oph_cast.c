@@ -49,25 +49,29 @@ void oph_cast_deinit(UDF_INIT *initid)
     //Free allocated space
     oph_stringPtr output = (oph_stringPtr) initid->ptr;
     oph_stringPtr input = (oph_stringPtr) initid->extension;
-    if (output->type!=input->type) {
-        if(output->content){
-            free(output->content);
-            output->content=NULL;
+    if (input && output){
+        if (output->type!=input->type) {
+            if(output->content){
+                free(output->content);
+                output->content=NULL;
+            }
         }
     }
-    if(output->length){
-        free(output->length);
-        output->length=NULL;
-    }
-    if(initid->ptr){
+    if(initid->ptr)
+    {
+        if(output->length){
+           free(output->length);
+           output->length=NULL;
+        }
         free(initid->ptr);
         initid->ptr=NULL;
     }
-    if(input->length){
-        free(input->length);
-        input->length=NULL;
-    }
-    if(initid->extension){
+    if(initid->extension)
+    {
+        if(input->length){
+            free(input->length);
+            input->length=NULL;
+        }
         free(initid->extension);
         initid->extension=NULL;
     }
@@ -97,21 +101,10 @@ char* oph_cast(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *le
             return NULL;
         }
 
-        oph_stringPtr output = (oph_stringPtr) initid->ptr;
         oph_stringPtr input = (oph_stringPtr) initid->extension;
-
-        core_set_type(output,args->args[1],&(args->lengths[1]));
+	input->content = NULL;
+	input->length = NULL;
         core_set_type(input,args->args[0],&(args->lengths[0]));
-
-        output->length = (unsigned long *)calloc(1,sizeof(unsigned long));
-        if (!output->length) {
-            pmesg(1,  __FILE__, __LINE__, "Error allocating length\n");
-            *length=0;
-            *is_null=1;
-            *error=1;
-            return NULL;
-        }
-
         input->length = (unsigned long *)calloc(1,sizeof(unsigned long));
         if (!input->length) {
             pmesg(1,  __FILE__, __LINE__, "Error allocating length\n");
@@ -120,8 +113,20 @@ char* oph_cast(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *le
             *error=1;
             return NULL;
         }
-
         *(input->length) = args->lengths[2];
+
+        oph_stringPtr output = (oph_stringPtr) initid->ptr;
+	output->content = NULL;
+	output->length = NULL;
+        core_set_type(output,args->args[1],&(args->lengths[1]));
+        output->length = (unsigned long *)calloc(1,sizeof(unsigned long));
+        if (!output->length) {
+            pmesg(1,  __FILE__, __LINE__, "Error allocating length\n");
+            *length=0;
+            *is_null=1;
+            *error=1;
+            return NULL;
+        }
 
         if (input->type == output->type) {
             //nothing to do
@@ -231,6 +236,13 @@ char* oph_cast(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *le
 
     oph_stringPtr output = (oph_stringPtr) initid->ptr;
     oph_stringPtr input = (oph_stringPtr) initid->extension;
+    if (!input && !output)
+    {
+        *length=0;
+        *is_null=0;
+        *error=1;
+        return NULL;
+    }
 
     input->content = args->args[2];
 
