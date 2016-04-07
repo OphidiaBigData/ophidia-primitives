@@ -103,6 +103,7 @@ DROP FUNCTION IF EXISTS oph_gsl_fit_linear;
 DROP FUNCTION IF EXISTS oph_gsl_fit_linear_coeff;
 DROP FUNCTION IF EXISTS oph_accumulate;
 DROP FUNCTION IF EXISTS oph_deaccumulate;
+DROP FUNCTION IF EXISTS oph_expand;
 DROP FUNCTION IF EXISTS oph_predicate;
 DROP FUNCTION IF EXISTS oph_predicate2;
 
@@ -227,6 +228,7 @@ CREATE FUNCTION oph_gsl_fit_linear RETURNS STRING SONAME 'liboph_gsl_fit_linear.
 CREATE FUNCTION oph_gsl_fit_linear_coeff RETURNS STRING SONAME 'liboph_gsl_fit_linear_coeff.so';
 CREATE FUNCTION oph_accumulate RETURNS STRING SONAME 'liboph_accumulate.so';
 CREATE FUNCTION oph_deaccumulate RETURNS STRING SONAME 'liboph_deaccumulate.so';
+CREATE FUNCTION oph_expand RETURNS STRING SONAME 'liboph_expand.so';
 CREATE FUNCTION oph_predicate RETURNS STRING SONAME 'liboph_predicate.so';
 CREATE FUNCTION oph_predicate2 RETURNS STRING SONAME 'liboph_predicate2.so';
 
