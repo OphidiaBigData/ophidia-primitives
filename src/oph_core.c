@@ -3928,6 +3928,90 @@ int core_oph_sum4_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, ch
     return 0;
 }
 
+int core_oph_count_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result){
+    int j;
+    switch (byte_arraya->type) {
+    case OPH_INT:
+    {
+        for (j = 0; j < byte_arraya->numelem; j++) {
+		if (byte_arrayb) ((int *)(result))[j] = 1 + ((int *)(byte_arrayb->content))[j];
+		else ((int *)(result))[j] = 1;
+        }
+        break;
+    }
+    case OPH_SHORT:
+    {
+        for (j = 0; j < byte_arraya->numelem; j++) {
+		if (byte_arrayb) ((short *)(result))[j] = 1 + ((short *)(byte_arrayb->content))[j];
+		else ((short *)(result))[j] = 1;
+        }
+        break;
+    }
+    case OPH_BYTE:
+    {
+        for (j = 0; j < byte_arraya->numelem; j++) {
+		if (byte_arrayb) ((char *)(result))[j] = 1 + ((char *)(byte_arrayb->content))[j];
+		else ((char *)(result))[j] = 1;
+        }
+        break;
+    }
+    case OPH_LONG:
+    {
+        for (j = 0; j < byte_arraya->numelem; j++) {
+		if (byte_arrayb) ((long long *)(result))[j] = 1 + ((long long *)(byte_arrayb->content))[j];
+		else ((long long *)(result))[j] = 1;
+        }
+        break;
+    }
+    case OPH_FLOAT:
+    {
+        for (j = 0; j < byte_arraya->numelem; j++) {
+            if (!isnan(((float *)(byte_arraya->content))[j]))
+	    {
+		if (byte_arrayb)
+		{
+			if (!isnan(((float *)(byte_arrayb->content))[j]))
+			    ((float *)(result))[j] = 1 + ((float *)(byte_arrayb->content))[j];
+			else ((float *)(result))[j] = 1;
+		}
+		else ((float *)(result))[j] = 1;
+	    }
+	    else
+	    {
+		if (byte_arrayb) ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+		else ((float *)(result))[j] = NAN;
+	    }
+        }
+        break;
+    }
+    case OPH_DOUBLE:
+    {
+        for (j = 0; j < byte_arraya->numelem; j++) {
+            if (!isnan(((double *)(byte_arraya->content))[j]))
+	    {
+		if (byte_arrayb)
+		{
+			if (!isnan(((double *)(byte_arrayb->content))[j]))
+			    ((double *)(result))[j] = 1 + ((double *)(byte_arrayb->content))[j];
+			else ((double *)(result))[j] = 1;
+		}
+		else ((double *)(result))[j] = 1;
+	    }
+	    else
+	    {
+		if (byte_arrayb) ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+		else ((double *)(result))[j] = NAN;
+	    }
+        }
+        break;
+    }
+    default:
+        pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+        return -1;
+    }
+    return 0;
+}
+
 int core_oph_max_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result){
     int j;
     switch (byte_arraya->type) {

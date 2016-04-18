@@ -166,6 +166,9 @@ void oph_aggregate_operator_add( UDF_INIT* initid, UDF_ARGS* args, char* is_null
         	}
 
 	        switch(res->oper){
+			case OPH_COUNT:
+				dat->core_oph_oper = core_oph_count_array;
+				break;
                 	case OPH_MAX:
                         	dat->core_oph_oper = core_oph_max_array;
                         	break;
@@ -211,7 +214,7 @@ void oph_aggregate_operator_add( UDF_INIT* initid, UDF_ARGS* args, char* is_null
         	}
 	}
 
-	if(!dat->count)
+	if(!dat->count && (res->oper != OPH_COUNT))
 	{
 		//It's the first row or the first row in the group of the GRUOP BY clause
 		//Only perform the copy of the tuple
@@ -225,7 +228,7 @@ void oph_aggregate_operator_add( UDF_INIT* initid, UDF_ARGS* args, char* is_null
 		measure.elemsize = res->measure.elemsize;
 		measure.numelem = res->measure.numelem;
 
-        	if(dat->core_oph_oper(&measure, &(res->measure), res->measure.content)){
+        	if(dat->core_oph_oper(&measure, dat->count ? &(res->measure) : NULL, res->measure.content)){
                 	pmesg(1,  __FILE__, __LINE__, "Unable to compute result\n");
                 	*is_null=0;
                 	*error=1;
@@ -264,6 +267,7 @@ char* oph_aggregate_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, uns
 
 	switch(dat->result.oper)
 	{
+		case OPH_COUNT:
         	case OPH_MAX:
                 case OPH_MIN:
                 case OPH_SUM:
