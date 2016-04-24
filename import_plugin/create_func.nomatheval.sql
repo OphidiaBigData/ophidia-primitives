@@ -83,7 +83,6 @@ DROP FUNCTION IF EXISTS oph_extract;
 DROP FUNCTION IF EXISTS oph_moving_avg;
 DROP FUNCTION IF EXISTS oph_value_to_bin;
 DROP FUNCTION IF EXISTS oph_convert_l;
-DROP FUNCTION IF EXISTS oph_convert_d_old;
 DROP FUNCTION IF EXISTS oph_mul_array;
 DROP FUNCTION IF EXISTS oph_sub_array;
 DROP FUNCTION IF EXISTS oph_div_array;
@@ -105,6 +104,7 @@ DROP FUNCTION IF EXISTS oph_gsl_correlation;
 DROP FUNCTION IF EXISTS oph_accumulate;
 DROP FUNCTION IF EXISTS oph_deaccumulate;
 DROP FUNCTION IF EXISTS oph_expand;
+DROP FUNCTION IF EXISTS oph_extend;
 
 DELIMITER //
 CREATE PROCEDURE mysql.oph_drill_down(IN table_in VARCHAR(100), IN outer_size INT, IN inner_size INT, IN oph_type VARCHAR(30), IN table_out VARCHAR(100), IN compressed INT)
@@ -229,4 +229,5 @@ CREATE FUNCTION oph_gsl_correlation RETURNS STRING SONAME 'liboph_gsl_correlatio
 CREATE FUNCTION oph_accumulate RETURNS STRING SONAME 'liboph_accumulate.so';
 CREATE FUNCTION oph_deaccumulate RETURNS STRING SONAME 'liboph_deaccumulate.so';
 CREATE FUNCTION oph_expand RETURNS STRING SONAME 'liboph_expand.so';
+CREATE FUNCTION oph_extend RETURNS STRING SONAME 'liboph_extend.so';
 

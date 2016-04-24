@@ -105,7 +105,7 @@ int core_oph_deaccumulate_multi(oph_multistring* byte_array, oph_multistring* re
 my_bool oph_deaccumulate_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
         int i = 0;
-        if(args->arg_count != 3){
+        if(args->arg_count < 3 || args->arg_count > 4){
                 strcpy(message, "ERROR: Wrong arguments! oph_deaccumulate(input_OPH_TYPE, output_OPH_TYPE, measure, [id_measure])");
                 return 1;
         }
@@ -120,7 +120,7 @@ my_bool oph_deaccumulate_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	if (args->arg_count>3)
 	{
 		if(args->arg_type[3] == STRING_RESULT){
-			strcpy(message, "ERROR: Wrong arguments to oph_sum_scalar function");
+			strcpy(message, "ERROR: Wrong arguments to oph_deaccumulate function");
 			return 1;
 		}
 		args->arg_type[3] = INT_RESULT;

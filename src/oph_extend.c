@@ -16,91 +16,34 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "oph_accumulate.h"
+#include "oph_extend.h"
 
 int msglevel = 1;
 
-int core_oph_accumulate_multi(oph_multistring* byte_array, oph_multistring* result, int id)
+int core_oph_extend_multi(oph_multistring* byte_array, oph_multistring* result, int number)
 {
-        int i,j,js,je;
+	if (core_oph_multistring_cast(byte_array, result)) return -1;
 
-	if (id<=0) { js=0; je=byte_array->num_measure; }
-	else { js=id-1; je=id; }
+        int i;
+	for (i=1;i<number;++i) memcpy(result->content + i*byte_array->length, result->content, byte_array->length);
 
-	for (j=js;j<je;++j)
-	{
-		switch(byte_array->type[j])
-		{
-		        case OPH_DOUBLE:{
-				double tmp = 0;
-		                for (i = 0; i < byte_array->numelem; i++){
-		                        tmp += *(double*)((byte_array->content)+(i*byte_array->elemsize[j]));
-					if(core_oph_type_cast((void*)(&tmp), (result->content)+(i*result->elemsize[j]), byte_array->type[j], result->type[j])) return -1;
-				}
-				break;
-			}
-		        case OPH_FLOAT:{
-				float tmp = 0;
-		                for (i = 0; i < byte_array->numelem; i++){
-		                        tmp += *(float*)((byte_array->content)+(i*byte_array->elemsize[j]));
-					if(core_oph_type_cast((void*)(&tmp), (result->content)+(i*result->elemsize[j]), byte_array->type[j], result->type[j])) return -1;
-				}
-				break;
-			}
-		        case OPH_INT:{
-				int tmp = 0;
-		                for (i = 0; i < byte_array->numelem; i++){
-		                        tmp += *(int*)((byte_array->content)+(i*byte_array->elemsize[j]));
-					if(core_oph_type_cast((void*)(&tmp), (result->content)+(i*result->elemsize[j]), byte_array->type[j], result->type[j])) return -1;
-				}
-				break;
-			}
-		        case OPH_LONG:{
-				long long tmp = 0;
-		                for (i = 0; i < byte_array->numelem; i++){
-		                        tmp += *(long long*)((byte_array->content)+(i*byte_array->elemsize[j]));
-					if(core_oph_type_cast((void*)(&tmp), (result->content)+(i*result->elemsize[j]), byte_array->type[j], result->type[j])) return -1;
-				}
-				break;
-			}
-			case OPH_SHORT:{
-				short tmp = 0;
-		                for (i = 0; i < byte_array->numelem; i++){
-		                        tmp += *(short*)((byte_array->content)+(i*byte_array->elemsize[j]));
-					if(core_oph_type_cast((void*)(&tmp), (result->content)+(i*result->elemsize[j]), byte_array->type[j], result->type[j])) return -1;
-				}
-				break;
-			}
-			case OPH_BYTE:{
-				char tmp = 0;
-		                for (i = 0; i < byte_array->numelem; i++){
-		                        tmp += *(char*)((byte_array->content)+(i*byte_array->elemsize[j]));
-					if(core_oph_type_cast((void*)(&tmp), (result->content)+(i*result->elemsize[j]), byte_array->type[j], result->type[j])) return -1;
-				}
-				break;
-			}
-		        default:
-		                pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-		                return -1;
-		}
-	}
         return 0;
 }
 
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_accumulate_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool oph_extend_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
         int i = 0;
         if(args->arg_count < 3 || args->arg_count > 4){
-                strcpy(message, "ERROR: Wrong arguments! oph_accumulate(input_OPH_TYPE, output_OPH_TYPE, measure, [id_measure])");
+                strcpy(message, "ERROR: Wrong arguments! oph_extend(input_OPH_TYPE, output_OPH_TYPE, measure, [number])");
                 return 1;
         }
 
 	for(i = 0; i < 3; i++){
 		if(args->arg_type[i] != STRING_RESULT){
-        		strcpy(message, "ERROR: Wrong arguments to oph_accumulate function");
+        		strcpy(message, "ERROR: Wrong arguments to oph_extend function");
         		return 1;
 		}
 	}
@@ -108,7 +51,7 @@ my_bool oph_accumulate_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	if (args->arg_count>3)
 	{
 		if(args->arg_type[3] == STRING_RESULT){
-			strcpy(message, "ERROR: Wrong arguments to oph_accumulate function");
+			strcpy(message, "ERROR: Wrong arguments to oph_extend function");
 			return 1;
 		}
 		args->arg_type[3] = INT_RESULT;
@@ -119,7 +62,7 @@ my_bool oph_accumulate_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 0;
 }
 
-void oph_accumulate_deinit(UDF_INIT *initid)
+void oph_extend_deinit(UDF_INIT *initid)
 {
         //Free allocated space
         oph_multistring* multimeasure;
@@ -139,12 +82,12 @@ void oph_accumulate_deinit(UDF_INIT *initid)
         }
 }
 
-char* oph_accumulate(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
+char* oph_extend(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	oph_multistring *multim;
         oph_multistring *output;
 
-	int id = 0;
+	int number = 1;
 
         if(!initid->extension){
                 if(core_set_oph_multistring( (oph_multistring**)(&(initid->extension)), args->args[0], &(args->lengths[0]))){
@@ -187,20 +130,21 @@ char* oph_accumulate(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lo
 	}
         multim->numelem = multim->length/multim->blocksize;
         output = (oph_multistring*)(initid->ptr);
-	output->numelem = multim->numelem;
 
 	if (args->arg_count>3)
 	{
-		id = *((long long*)args->args[3]);
-		if ((id < 0) || (id > ((oph_multistring*)(initid->ptr))->num_measure))
+		number = *((long long*)args->args[3]);
+		if (number < 1)
 		{
-			pmesg(1,  __FILE__, __LINE__, "Wrong measure identifier. Correct values are integers in [1, %d].\n",((oph_multistring*)(initid->ptr))->num_measure);
+			pmesg(1,  __FILE__, __LINE__, "Wrong number of replies.\n");
 		        *length=0;
 		        *is_null=0;
 		        *error=1;
 		        return NULL;
 		}
 	}
+
+	output->numelem = multim->numelem * number;
 
 	/* Allocate the right space for the result set */
         if(!output->content){
@@ -214,7 +158,7 @@ char* oph_accumulate(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lo
                 }
         }
 
-        if(core_oph_accumulate_multi(multim, output, id)){
+        if(core_oph_extend_multi(multim, output, number)){
         	pmesg(1,  __FILE__, __LINE__, "Unable to compute result\n");
                 *length=0;
                 *is_null=1;
