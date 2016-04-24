@@ -430,5 +430,10 @@ lib_LTLIBRARIES += liboph_gsl_fit_linear_coeff.la
 liboph_gsl_fit_linear_coeff_la_SOURCES = oph_gsl_fit_linear_coeff.c oph_gsl_fit_linear_coeff.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_gsl.h
 liboph_gsl_fit_linear_coeff_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
 liboph_gsl_fit_linear_coeff_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
+
+lib_LTLIBRARIES += liboph_gsl_correlation.la
+liboph_gsl_correlation_la_SOURCES = oph_gsl_correlation.c oph_gsl_correlation.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_gsl.h
+liboph_gsl_correlation_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_gsl_correlation_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
 endif
 
