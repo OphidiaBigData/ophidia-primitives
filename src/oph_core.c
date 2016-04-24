@@ -3274,61 +3274,90 @@ int core_oph_get_subarray(oph_stringPtr byte_array, char* result, long long star
 
 }
 
-int core_oph_sum_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result){
+int core_oph_sum_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result)
+{
+	return core_oph_sum_array2(byte_arraya, byte_arrayb, result, NULL);
+}
+int core_oph_sum_array2(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result, int* count)
+{
     int j;
     switch (byte_arraya->type) {
     case OPH_INT:
     {
         for (j = 0; j < byte_arraya->numelem; j++) {
-            ((int *)(result))[j] = ((int *)(byte_arraya->content))[j] + ((int *)(byte_arrayb->content))[j];
+            ((int *)(result))[j] = ((int *)(byte_arraya->content))[j] + (byte_arrayb ? ((int *)(byte_arrayb->content))[j] : 0);
         }
+	if (count) count[0]++; // Only count[0] is updated to improve performance
         break;
     }
     case OPH_SHORT:
     {
         for (j = 0; j < byte_arraya->numelem; j++) {
-            ((short *)(result))[j] = ((short *)(byte_arraya->content))[j] + ((short *)(byte_arrayb->content))[j];
+            ((short *)(result))[j] = ((short *)(byte_arraya->content))[j] + (byte_arrayb ? ((short *)(byte_arrayb->content))[j] : 0);
         }
+	if (count) count[0]++; // Only count[0] is updated to improve performance
         break;
     }
     case OPH_BYTE:
     {
         for (j = 0; j < byte_arraya->numelem; j++) {
-            ((char *)(result))[j] = ((char *)(byte_arraya->content))[j] + ((char *)(byte_arrayb->content))[j];
+            ((char *)(result))[j] = ((char *)(byte_arraya->content))[j] + (byte_arrayb ? ((char *)(byte_arrayb->content))[j] : 0);
         }
+	if (count) count[0]++; // Only count[0] is updated to improve performance
         break;
     }
     case OPH_LONG:
     {
         for (j = 0; j < byte_arraya->numelem; j++) {
-            ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j] + ((long long *)(byte_arrayb->content))[j];
+            ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j] + (byte_arrayb ? ((long long *)(byte_arrayb->content))[j] : 0);
         }
+	if (count) count[0]++; // Only count[0] is updated to improve performance
         break;
     }
     case OPH_FLOAT:
     {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (!isnan(((float *)(byte_arraya->content))[j]))
-	    {
-		if (!isnan(((float *)(byte_arrayb->content))[j]))
-	            ((float *)(result))[j] = ((float *)(byte_arraya->content))[j] + ((float *)(byte_arrayb->content))[j];
-		else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
-	    }
-	    else ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
-        }
+	for (j = 0; j < byte_arraya->numelem; j++)
+	{
+		if (!isnan(((float *)(byte_arraya->content))[j]))
+		{
+			if (byte_arrayb)
+			{
+				if (!isnan(((float *)(byte_arrayb->content))[j]))
+				    ((float *)(result))[j] = ((float *)(byte_arraya->content))[j] + ((float *)(byte_arrayb->content))[j];
+				else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+			}
+			else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+			if (count) count[j]++;
+		}
+		else
+		{
+			if (byte_arrayb) ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+			else ((float *)(result))[j] = NAN;
+		}
+	}
         break;
     }
     case OPH_DOUBLE:
     {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (!isnan(((double *)(byte_arraya->content))[j]))
-	    {
-		if (!isnan(((double *)(byte_arrayb->content))[j]))
-	            ((double *)(result))[j] = ((double *)(byte_arraya->content))[j] + ((double *)(byte_arrayb->content))[j];
-		else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
-	    }
-	    else ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
-        }
+        for (j = 0; j < byte_arraya->numelem; j++)
+	{
+		if (!isnan(((double *)(byte_arraya->content))[j]))
+		{
+			if (byte_arrayb)
+			{
+				if (!isnan(((double *)(byte_arrayb->content))[j]))
+				    ((double *)(result))[j] = ((double *)(byte_arraya->content))[j] + ((double *)(byte_arrayb->content))[j];
+				else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+			}
+			else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+			if (count) count[j]++;
+		}
+		else
+		{
+			if (byte_arrayb) ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+			else ((double *)(result))[j] = NAN;
+		}
+	}
         break;
     }
     default:
@@ -3979,7 +4008,7 @@ int core_oph_count_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, c
 	    else
 	    {
 		if (byte_arrayb) ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
-		else ((float *)(result))[j] = NAN;
+		else ((float *)(result))[j] = 0;
 	    }
         }
         break;
@@ -4000,7 +4029,7 @@ int core_oph_count_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, c
 	    else
 	    {
 		if (byte_arrayb) ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
-		else ((double *)(result))[j] = NAN;
+		else ((double *)(result))[j] = 0;
 	    }
         }
         break;

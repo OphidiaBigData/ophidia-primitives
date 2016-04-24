@@ -44,7 +44,8 @@ my_bool oph_aggregate_operator_init(UDF_INIT *initid, UDF_ARGS *args, char *mess
         	return 1;
 	}
 	dat->core_oph_oper = NULL;
-	dat->count = 0;
+	dat->count = NULL;
+	dat->first = 1;
 	dat->result.hier = INVALID_HIER;
 	dat->result.oper = INVALID_OPER;
 
@@ -70,6 +71,10 @@ void oph_aggregate_operator_deinit(UDF_INIT *initid)
         //Free allocated space 
         if(initid->ptr){
 		oph_agg_oper_data *dat = (oph_agg_oper_data*)initid->ptr;
+		if (dat->count){
+			free(dat->count);
+			dat->count = NULL;
+		}
 		oph_requestPtr res = (oph_requestPtr)&(dat->result);
 		if(res->measure.content){
 			free(res->measure.content);
@@ -99,7 +104,12 @@ void oph_aggregate_operator_clear( UDF_INIT* initid, char* is_null, char* error 
 {
 	if(initid->ptr){
 		oph_agg_oper_data *dat = (oph_agg_oper_data*)initid->ptr;
-		dat->count = 0;
+		if (dat->count)
+		{
+			size_t i;
+			for (i=0; i<dat->result_size; ++i) dat->count[i] = 0;
+		}
+		dat->first = 1;
 	}
 	*is_null = 0;
 	*error = 0;
@@ -107,11 +117,8 @@ void oph_aggregate_operator_clear( UDF_INIT* initid, char* is_null, char* error 
 
 void oph_aggregate_operator_add( UDF_INIT* initid, UDF_ARGS* args, char* is_null, char* error )
 {
-  if(*error != 0)
-	return;
-  if (args->args[2]!=NULL)
-  {
-        //int res = 0;
+	if (*error || !args->args[2]) return;
+
 	//Assume that:
 	//1. Type of each element is the same
 	//2. Length of each array is the same
@@ -179,7 +186,7 @@ void oph_aggregate_operator_add( UDF_INIT* initid, UDF_ARGS* args, char* is_null
                         	dat->core_oph_oper = core_oph_sum_array;
         	                break;
                 	case OPH_AVG:
-                        	dat->core_oph_oper = core_oph_sum_array;
+                        	dat->core_oph_oper = NULL;
 	                        break;
 			default:
                 		pmesg(1,  __FILE__, __LINE__, "Unable to recognize operator\n");
@@ -214,29 +221,50 @@ void oph_aggregate_operator_add( UDF_INIT* initid, UDF_ARGS* args, char* is_null
         	}
 	}
 
-	if(!dat->count && (res->oper != OPH_COUNT))
+	if (!dat->count && (res->oper == OPH_AVG))
+	{
+		dat->count = (int*)malloc(res->measure.numelem*sizeof(int));
+		if(!dat->count){
+			pmesg(1,  __FILE__, __LINE__, "Error allocating result string\n");
+        	        *is_null=0;
+                	*error=1;
+	                return;
+        	}
+		size_t i;
+		for (i=0; i<res->measure.numelem; ++i) dat->count[i] = 0;
+	}
+
+	measure.type = res->measure.type;
+	measure.content = args->args[2];
+	measure.length = res->measure.length;
+	measure.elemsize = res->measure.elemsize;
+	measure.numelem = res->measure.numelem;
+
+	if (res->oper == OPH_AVG)
+	{
+		if (core_oph_sum_array2(&measure, dat->first ? NULL : &(res->measure), res->measure.content, dat->count))
+		{
+			pmesg(1,  __FILE__, __LINE__, "Unable to compute result\n");
+			*is_null=0;
+			*error=1;
+			return;
+		}
+	}
+	else if (dat->first && (res->oper != OPH_COUNT))
 	{
 		//It's the first row or the first row in the group of the GRUOP BY clause
-		//Only perform the copy of the tuple
-		memcpy(res->measure.content, args->args[2], *(res->measure.length));
+	        //Only perform the copy of the tuple
+	        memcpy(res->measure.content, args->args[2], *(res->measure.length));
 	}
-	else
+	else if (dat->core_oph_oper(&measure, dat->first ? NULL : &(res->measure), res->measure.content))
 	{
-		measure.type = res->measure.type;
-        	measure.content = args->args[2];
-		measure.length = res->measure.length;
-		measure.elemsize = res->measure.elemsize;
-		measure.numelem = res->measure.numelem;
-
-        	if(dat->core_oph_oper(&measure, dat->count ? &(res->measure) : NULL, res->measure.content)){
-                	pmesg(1,  __FILE__, __LINE__, "Unable to compute result\n");
-                	*is_null=0;
-                	*error=1;
-                	return;
-        	}
+		pmesg(1,  __FILE__, __LINE__, "Unable to compute result\n");
+		*is_null=0;
+		*error=1;
+		return;
 	}
-	dat->count++;
-  }
+
+	dat->first = 0;
 }
 
 char* oph_aggregate_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
@@ -251,12 +279,6 @@ char* oph_aggregate_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, uns
                 return NULL;
 	}
 	oph_agg_oper_data *dat = (oph_agg_oper_data*)initid->ptr;
-	if(dat->count == 0){
-		*length = 0;
-		*error = 0;
-		*is_null = 1;
-		return NULL;
-	}
 	oph_stringPtr res = (oph_stringPtr)&(dat->result.measure);
 	if(!res->content)
 	{
@@ -280,7 +302,8 @@ char* oph_aggregate_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, uns
 					double* position = (double*)res->content;
 					for(i = 0; i < res->numelem; i++)
 					{
-						*position /= dat->count;
+						if (!dat->count[i]) *position = NAN;
+						else *position /= dat->count[i];
 						position++;
 					}
 					break;
@@ -289,7 +312,8 @@ char* oph_aggregate_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, uns
 					float* position = (float*)res->content;
 					for(i = 0; i < res->numelem; i++)
 					{
-						*position /= dat->count;
+						if (!dat->count[i]) *position = NAN;
+						else *position /= dat->count[i];
 						position++;
 					}
 					break;
@@ -299,7 +323,8 @@ char* oph_aggregate_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, uns
 					int* position = (int*)res->content;
 					for(i = 0; i < res->numelem; i++)
 					{
-						accumulator[i] = (float)(*position) / dat->count;
+						if (!dat->count[0]) accumulator[i] = 0;
+						else accumulator[i] = (float)(*position) / dat->count[0]; // Only count[0] is updated to improve performance
 						position++;
 					}
 					free(res->content);
@@ -313,7 +338,8 @@ char* oph_aggregate_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, uns
 					long long* position = (long long*)res->content;
 					for(i = 0; i < res->numelem; i++)
 					{
-						accumulator[i] = (double)(*position) / dat->count;
+						if (!dat->count[0]) accumulator[i] = 0;
+						else accumulator[i] = (double)(*position) / dat->count[0]; // Only count[0] is updated to improve performance
 						position++;
 					}
 					free(res->content);
@@ -327,7 +353,8 @@ char* oph_aggregate_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, uns
 					short* position = (short*)res->content;
 					for(i = 0; i < res->numelem; i++)
 					{
-						accumulator[i] = (float)(*position) / dat->count;
+						if (!dat->count[0]) accumulator[i] = 0;
+						else accumulator[i] = (float)(*position) / dat->count[0]; // Only count[0] is updated to improve performance
 						position++;
 					}
 					free(res->content);
@@ -341,7 +368,8 @@ char* oph_aggregate_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, uns
 					char* position = (char*)res->content;
 					for(i = 0; i < res->numelem; i++)
 					{
-						accumulator[i] = (float)(*position) / dat->count;
+						if (!dat->count[0]) accumulator[i] = 0;
+						else accumulator[i] = (float)(*position) / dat->count[0]; // Only count[0] is updated to improve performance
 						position++;
 					}
 					free(res->content);

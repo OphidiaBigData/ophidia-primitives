@@ -253,6 +253,7 @@ int core_oph_get_subarray(oph_stringPtr byte_array, char* result, long long star
 
 // Return a byte array resulting from adding byte_arraya with byte_arrayb: result[i] = byte_arraya[i] + byte_arrayb[i]
 int core_oph_sum_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result);
+int core_oph_sum_array2(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result, int* count);
 
 // Return a byte array resulting from increasing byte_arraya by 1 if byte_arrayb is a number: result[i] = byte_arraya[i] + (isnan(byte_arrayb[i]) ? 0 : 1)
 int core_oph_count_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result);
