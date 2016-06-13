@@ -1946,7 +1946,7 @@ int core_oph_std (oph_stringPtr byte_array, char *result)
                 case OPH_DOUBLE:
 		{
                         double *d = (double*)result;
-			double stdev = sqrt(*d);
+			double stdev = sqrt(fabs(*d));
 			memcpy(result, (void*)(&stdev), core_sizeof(OPH_DOUBLE));
                         break;
                 }
@@ -1956,7 +1956,7 @@ int core_oph_std (oph_stringPtr byte_array, char *result)
                 case OPH_FLOAT:
 		{
                         float *d = (float*)result;
-			float stdev = sqrtf(*d);
+			float stdev = sqrtf(fabsf(*d));
 			memcpy(result, (void*)(&stdev), core_sizeof(OPH_FLOAT));
                         break;
                 }
@@ -1998,7 +1998,7 @@ int core_oph_std_multi (oph_multistring* byte_array, oph_multistring *result)
 					sum2 /= numelem;
 					sum2 -= sum*sum;
 					if (numelem>1) sum2 *= numelem/(numelem-1.0);
-					sum2 = sqrt(sum2);
+					sum2 = sqrt(fabs(sum2));
 				}
 				if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
                         	break;
@@ -2022,7 +2022,7 @@ int core_oph_std_multi (oph_multistring* byte_array, oph_multistring *result)
 					sum2 /= numelem;
 					sum2 -= sum*sum;
 					if (numelem>1) sum2 *= numelem/(numelem-1.0);
-					sum2 = sqrtf(sum2);
+					sum2 = sqrtf(fabsf(sum2));
 				}
 				if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
                         	break;
@@ -2040,7 +2040,7 @@ int core_oph_std_multi (oph_multistring* byte_array, oph_multistring *result)
 				sum2 /= (float)byte_array->numelem;
 				sum2 -= sum*sum;
 				if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
-				sum2 = sqrtf(sum2);
+				sum2 = sqrtf(fabsf(sum2));
 				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
                         	break;
         	        }
@@ -2057,7 +2057,7 @@ int core_oph_std_multi (oph_multistring* byte_array, oph_multistring *result)
 				sum2 /= (float)byte_array->numelem;
 				sum2 -= sum*sum;
 				if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
-				sum2 = sqrtf(sum2);
+				sum2 = sqrtf(fabsf(sum2));
 				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
                         	break;
         	        }
@@ -2074,7 +2074,7 @@ int core_oph_std_multi (oph_multistring* byte_array, oph_multistring *result)
 				sum2 /= (float)byte_array->numelem;
 				sum2 -= sum*sum;
 				if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
-				sum2 = sqrtf(sum2);
+				sum2 = sqrtf(fabsf(sum2));
 				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
                         	break;
         	        }
@@ -2091,7 +2091,7 @@ int core_oph_std_multi (oph_multistring* byte_array, oph_multistring *result)
 				sum2 /= (double)byte_array->numelem;
 				sum2 -= sum*sum;
 				if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
-				sum2 = sqrt(sum2);
+				sum2 = sqrt(fabs(sum2));
 				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
                         	break;
 	                }
@@ -3529,14 +3529,14 @@ int core_oph_mask_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, ch
     case OPH_FLOAT:
     {
     	for (j = 0; j < byte_arraya->numelem; j++) {
-    		((float *)(result))[j] = (((float *)(byte_arrayb->content))[j] == 1.0)?((float *)(byte_arraya->content))[j]:nanf("");
+    		((float *)(result))[j] = (((float *)(byte_arrayb->content))[j] == 1.0)?((float *)(byte_arraya->content))[j]:NAN;
     	}
         break;
     }
     case OPH_DOUBLE:
     {
         for (j = 0; j < byte_arraya->numelem; j++) {
-        	((double *)(result))[j] = (((double *)(byte_arrayb->content))[j] == 1.0)?((double *)(byte_arraya->content))[j]:nan("");
+        	((double *)(result))[j] = (((double *)(byte_arrayb->content))[j] == 1.0)?((double *)(byte_arraya->content))[j]:NAN;
         }
         break;
     }
@@ -3617,44 +3617,44 @@ int core_oph_abs_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, cha
     case OPH_INT:
     {
         for (j = 0; j < byte_arraya->numelem; j++) {
-            ((int *)(result))[j] = (int) sqrt(((int *)(byte_arraya->content))[j] * ((int *)(byte_arraya->content))[j] + ((int *)(byte_arrayb->content))[j] * ((int *)(byte_arrayb->content))[j]);
+            ((int *)(result))[j] = (int) sqrt(fabs(((int *)(byte_arraya->content))[j] * ((int *)(byte_arraya->content))[j] + ((int *)(byte_arrayb->content))[j] * ((int *)(byte_arrayb->content))[j]));
         }
         break;
     }
     case OPH_SHORT:
     {
         for (j = 0; j < byte_arraya->numelem; j++) {
-            ((short *)(result))[j] = (short) sqrt(((short *)(byte_arraya->content))[j] * ((short *)(byte_arraya->content))[j] + ((short *)(byte_arrayb->content))[j] * ((short *)(byte_arrayb->content))[j]);
+            ((short *)(result))[j] = (short) sqrt(fabs(((short *)(byte_arraya->content))[j] * ((short *)(byte_arraya->content))[j] + ((short *)(byte_arrayb->content))[j] * ((short *)(byte_arrayb->content))[j]));
         }
         break;
     }
     case OPH_BYTE:
     {
         for (j = 0; j < byte_arraya->numelem; j++) {
-            ((char *)(result))[j] = (char) sqrt(((char *)(byte_arraya->content))[j] * ((char *)(byte_arraya->content))[j] + ((char *)(byte_arrayb->content))[j] * ((char *)(byte_arrayb->content))[j]);
+            ((char *)(result))[j] = (char) sqrt(fabs(((char *)(byte_arraya->content))[j] * ((char *)(byte_arraya->content))[j] + ((char *)(byte_arrayb->content))[j] * ((char *)(byte_arrayb->content))[j]));
         }
         break;
     }
     case OPH_LONG:
     {
         for (j = 0; j < byte_arraya->numelem; j++) {
-            ((long long *)(result))[j] = (long long) sqrt(((long long *)(byte_arraya->content))[j] * ((long long *)(byte_arraya->content))[j] + ((long long *)(byte_arrayb->content))[j] * ((long long *)(byte_arrayb->content))[j]);
+            ((long long *)(result))[j] = (long long) sqrt(fabs(((long long *)(byte_arraya->content))[j] * ((long long *)(byte_arraya->content))[j] + ((long long *)(byte_arrayb->content))[j] * ((long long *)(byte_arrayb->content))[j]));
         }
         break;
     }
     case OPH_FLOAT:
     {
         for (j = 0; j < byte_arraya->numelem; j++) {
-            if (isnan(((float *)(byte_arraya->content))[j]) || isnan(((float *)(byte_arrayb->content))[j])) ((float *)(result))[j] = nanf("");
-	    else ((float *)(result))[j] = (float) sqrt(((float *)(byte_arraya->content))[j] * ((float *)(byte_arraya->content))[j] + ((float *)(byte_arrayb->content))[j] * ((float *)(byte_arrayb->content))[j]);
+            if (isnan(((float *)(byte_arraya->content))[j]) || isnan(((float *)(byte_arrayb->content))[j])) ((float *)(result))[j] = NAN;
+	    else ((float *)(result))[j] = (float) sqrt(fabs(((float *)(byte_arraya->content))[j] * ((float *)(byte_arraya->content))[j] + ((float *)(byte_arrayb->content))[j] * ((float *)(byte_arrayb->content))[j]));
         }
         break;
     }
     case OPH_DOUBLE:
     {
         for (j = 0; j < byte_arraya->numelem; j++) {
-            if (isnan(((double *)(byte_arraya->content))[j]) || isnan(((double *)(byte_arrayb->content))[j])) ((double *)(result))[j] = nan("");
-	    else ((double *)(result))[j] = (double) sqrt(((double *)(byte_arraya->content))[j] * ((double *)(byte_arraya->content))[j] + ((double *)(byte_arrayb->content))[j] * ((double *)(byte_arrayb->content))[j]);
+            if (isnan(((double *)(byte_arraya->content))[j]) || isnan(((double *)(byte_arrayb->content))[j])) ((double *)(result))[j] = NAN;
+	    else ((double *)(result))[j] = (double) sqrt(fabs(((double *)(byte_arraya->content))[j] * ((double *)(byte_arraya->content))[j] + ((double *)(byte_arrayb->content))[j] * ((double *)(byte_arrayb->content))[j]));
         }
         break;
     }
@@ -5755,14 +5755,14 @@ int core_oph_mask_array_multi(char* valueA, char* valueB, char* result, oph_type
 		}
 		case OPH_FLOAT:
 		{
-			if (isnan(*((float *)(valueA))) || isnan(*((float *)(valueB)))) *((float *)(result)) = nanf("");
-			else *((float *)(result)) = *((float *)(valueB)) ? *((float *)(valueA)) : nanf("");
+			if (isnan(*((float *)(valueA))) || isnan(*((float *)(valueB)))) *((float *)(result)) = NAN;
+			else *((float *)(result)) = *((float *)(valueB)) ? *((float *)(valueA)) : NAN;
 			break;
 		}
 		case OPH_DOUBLE:
 		{
-			if (isnan(*((double *)(valueA))) || isnan(*((double *)(valueB)))) *((double *)(result)) = nan("");
-			else *((double *)(result)) = *((double *)(valueB)) ? *((double *)(valueA)) : nan("");
+			if (isnan(*((double *)(valueA))) || isnan(*((double *)(valueB)))) *((double *)(result)) = NAN;
+			else *((double *)(result)) = *((double *)(valueB)) ? *((double *)(valueA)) : NAN;
 			break;
 		}
 		default:
@@ -5877,34 +5877,34 @@ int core_oph_abs_array_multi(char* valueA, char* valueB, char* result, oph_type 
 	{
 		case OPH_INT:
 		{
-			*((int *)(result)) = (int)sqrt( *((int *)(valueA)) * *((int *)(valueA)) + *((int *)(valueB)) * *((int *)(valueB)));
+			*((int *)(result)) = (int)sqrt(fabs( *((int *)(valueA)) * *((int *)(valueA)) + *((int *)(valueB)) * *((int *)(valueB))) );
 			break;
 		}
 		case OPH_SHORT:
 		{
-			*((short *)(result)) = (short)sqrt( *((short *)(valueA)) * *((short *)(valueA)) + *((short *)(valueB)) * *((short *)(valueB)));
+			*((short *)(result)) = (short)sqrt(fabs( *((short *)(valueA)) * *((short *)(valueA)) + *((short *)(valueB)) * *((short *)(valueB))) );
 			break;
 		}
 		case OPH_BYTE:
 		{
-			*((char *)(result)) = (char)sqrt( *((char *)(valueA)) * *((char *)(valueA)) + *((char *)(valueB)) * *((char *)(valueB)));
+			*((char *)(result)) = (char)sqrt(fabs( *((char *)(valueA)) * *((char *)(valueA)) + *((char *)(valueB)) * *((char *)(valueB))) );
 			break;
 		}
 		case OPH_LONG:
 		{
-			*((long long *)(result)) = (long long)sqrt( *((long long *)(valueA)) * *((long long *)(valueA)) + *((long long *)(valueB)) * *((long long *)(valueB)) );
+			*((long long *)(result)) = (long long)sqrt(fabs( *((long long *)(valueA)) * *((long long *)(valueA)) + *((long long *)(valueB)) * *((long long *)(valueB))) );
 			break;
 		}
 		case OPH_FLOAT:
 		{
-			if (isnan(*((float *)(valueA))) || isnan(*((float *)(valueB)))) *((float *)(result)) = nanf("");
-			else *((float *)(result)) = (float)sqrt( *((float *)(valueA)) * *((float *)(valueA)) + *((float *)(valueB)) * *((float *)(valueB)));
+			if (isnan(*((float *)(valueA))) || isnan(*((float *)(valueB)))) *((float *)(result)) = NAN;
+			else *((float *)(result)) = (float)sqrt(fabs( *((float *)(valueA)) * *((float *)(valueA)) + *((float *)(valueB)) * *((float *)(valueB))) );
 			break;
 		}
 		case OPH_DOUBLE:
 		{
-			if (isnan(*((double *)(valueA))) || isnan(*((double *)(valueB)))) *((float *)(result)) = nan("");
-			else *((double *)(result)) = (double)sqrt( *((double *)(valueA)) * *((double *)(valueA)) + *((double *)(valueB)) * *((double *)(valueB)));
+			if (isnan(*((double *)(valueA))) || isnan(*((double *)(valueB)))) *((float *)(result)) = NAN;
+			else *((double *)(result)) = (double)sqrt(fabs( *((double *)(valueA)) * *((double *)(valueA)) + *((double *)(valueB)) * *((double *)(valueB))) );
 			break;
 		}
 		default:
@@ -5939,13 +5939,13 @@ int core_oph_arg_array_multi(char* valueA, char* valueB, char* result, oph_type 
 		}
 		case OPH_FLOAT:
 		{
-			if (isnan(*((float *)(valueA))) || isnan(*((float *)(valueB)))) *((float *)(result)) = nanf("");
+			if (isnan(*((float *)(valueA))) || isnan(*((float *)(valueB)))) *((float *)(result)) = NAN;
 			else *((float *)(result)) = (float)atan2( *((float *)(valueA)), *((float *)(valueB)));
 			break;
 		}
 		case OPH_DOUBLE:
 		{
-			if (isnan(*((double *)(valueA))) || isnan(*((double *)(valueB)))) *((float *)(result)) = nan("");
+			if (isnan(*((double *)(valueA))) || isnan(*((double *)(valueB)))) *((float *)(result)) = NAN;
 			else *((double *)(result)) = (double)atan2( *((double *)(valueA)), *((double *)(valueB)));
 			break;
 		}
