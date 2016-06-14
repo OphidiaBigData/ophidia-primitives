@@ -338,6 +338,11 @@ lib_LTLIBRARIES += liboph_predicate2.la
 liboph_predicate2_la_SOURCES = oph_predicate2.c oph_predicate2.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_matheval.c oph_core_matheval.h
 liboph_predicate2_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(MATHEVAL_CFLAGS)
 liboph_predicate2_la_LDFLAGS = -avoid-version -shared $(LIBS) $(MATHEVAL_LIBS) -lpthread
+
+lib_LTLIBRARIES += liboph_predicate3.la
+liboph_predicate3_la_SOURCES = oph_predicate3.c oph_predicate3.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_matheval.c oph_core_matheval.h
+liboph_predicate3_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(MATHEVAL_CFLAGS)
+liboph_predicate3_la_LDFLAGS = -avoid-version -shared $(LIBS) $(MATHEVAL_LIBS) -lpthread
 endif
 
 if GSL_SUPPORT

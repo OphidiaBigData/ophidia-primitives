@@ -107,6 +107,7 @@ DROP FUNCTION IF EXISTS oph_expand;
 DROP FUNCTION IF EXISTS oph_extend;
 DROP FUNCTION IF EXISTS oph_predicate;
 DROP FUNCTION IF EXISTS oph_predicate2;
+DROP FUNCTION IF EXISTS oph_predicate3;
 
 DELIMITER //
 CREATE PROCEDURE mysql.oph_drill_down(IN table_in VARCHAR(100), IN outer_size INT, IN inner_size INT, IN oph_type VARCHAR(30), IN table_out VARCHAR(100), IN compressed INT)
@@ -234,4 +235,5 @@ CREATE FUNCTION oph_expand RETURNS STRING SONAME 'liboph_expand.so';
 CREATE FUNCTION oph_extend RETURNS STRING SONAME 'liboph_extend.so';
 CREATE FUNCTION oph_predicate RETURNS STRING SONAME 'liboph_predicate.so';
 CREATE FUNCTION oph_predicate2 RETURNS STRING SONAME 'liboph_predicate2.so';
+CREATE FUNCTION oph_predicate3 RETURNS STRING SONAME 'liboph_predicate3.so';
 
