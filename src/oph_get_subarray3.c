@@ -126,7 +126,7 @@ void oph_get_subarray3_deinit(UDF_INIT *initid)
 
 char* oph_get_subarray3(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
-        int res = 0, number = 0, i;
+        int res = 0, i;
 	oph_get_subarray3_param* param;
 	oph_string* measure;
 	unsigned long total;

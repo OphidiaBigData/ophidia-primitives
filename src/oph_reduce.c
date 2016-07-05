@@ -18,6 +18,10 @@
 
 #include "oph_reduce.h"
 
+#ifdef GSL_SUPPORTED
+#include <gsl/gsl_sort.h>
+#endif
+
 int msglevel = 1;
 
 int core_oph_quantile_multi (oph_multistring* byte_array, oph_multistring *result)
@@ -73,7 +77,7 @@ int core_oph_quantile_multi (oph_multistring* byte_array, oph_multistring *resul
                 	case OPH_SHORT:{
 				short *d = byte_array->extend;
 				for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize, d++) memcpy(d, current, sizeof(int));
-				gsl_sort_int((short*)byte_array->extend,1,byte_array->numelem);
+				gsl_sort_short((short*)byte_array->extend,1,byte_array->numelem);
 				delta = (byte_array->numelem-1) * byte_array->param;
 				k = floor(delta);
 				delta = delta - k;

@@ -75,7 +75,7 @@ void oph_shift_deinit(UDF_INIT *initid)
 
 char* oph_shift(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
-        int res = 0, round = 0;
+        int res = 0;
 	long long offset = 0;
 	double filling = 0;
 	oph_generic_param* param;

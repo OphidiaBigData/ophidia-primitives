@@ -25,6 +25,11 @@ int core_oph_deaccumulate_multi(oph_multistring* byte_array, oph_multistring* re
         int i,j,js,je;
 
 	if (id<=0) { js=0; je=byte_array->num_measure; }
+	else if (id>byte_array->num_measure)
+	{
+		pmesg(1, __FILE__, __LINE__, "Index out of boundaries\n");
+		return -1;
+	}
 	else { js=id-1; je=id; }
 
 	for (j=js;j<je;++j)

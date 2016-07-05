@@ -65,6 +65,8 @@ size_t core_sizeof (oph_type type){
                         return 2*sizeof(float);
                 case OPH_COMPLEX_DOUBLE:
                         return 2*sizeof(double);
+		case INVALID_TYPE:
+			break;
         }
         pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
         return 0;
@@ -4336,7 +4338,6 @@ int core_oph_find(oph_stringPtr byte_array, double value, double distance, long 
 			break;
 		}
 		case OPH_FLOAT:{
-			float *d;
 			for (i = 0; i < byte_array->numelem; i++){
 				if( fabs(*(float*)((byte_array->content)+(i*byte_array->elemsize)) - value) <= distance ){
                                         (*count)++;
@@ -4345,7 +4346,6 @@ int core_oph_find(oph_stringPtr byte_array, double value, double distance, long 
 			break;
 		}
 		case OPH_INT:{
-			int *d;
 			for (i = 0; i < byte_array->numelem; i++){
 				if( fabs(*(int*)((byte_array->content)+(i*byte_array->elemsize)) - value) <= distance ){
                                         (*count)++;
@@ -4354,7 +4354,6 @@ int core_oph_find(oph_stringPtr byte_array, double value, double distance, long 
 			break;
 		}
 		case OPH_SHORT:{
-			short *d;
 			for (i = 0; i < byte_array->numelem; i++){
 				if( fabs(*(short*)((byte_array->content)+(i*byte_array->elemsize)) - value) <= distance ){
                                         (*count)++;
@@ -4363,7 +4362,6 @@ int core_oph_find(oph_stringPtr byte_array, double value, double distance, long 
 			break;
 		}
 		case OPH_BYTE:{
-			char *d;
 			for (i = 0; i < byte_array->numelem; i++){
 				if( fabs(*(char*)((byte_array->content)+(i*byte_array->elemsize)) - value) <= distance ){
                                         (*count)++;
@@ -4372,7 +4370,6 @@ int core_oph_find(oph_stringPtr byte_array, double value, double distance, long 
 			break;
 		}
 		case OPH_LONG:{
-			long long *d;
 			for (i = 0; i < byte_array->numelem; i++){
 				if( fabs(*(long long*)((byte_array->content)+(i*byte_array->elemsize)) - value) <= distance ){
                                         (*count)++;

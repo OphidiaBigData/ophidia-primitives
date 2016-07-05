@@ -190,6 +190,8 @@ char* oph_gsl_fft(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long 
             break;
         case OPH_COMPLEX_DOUBLE:
             extra->wt = gsl_fft_complex_wavetable_alloc(output->numelem);
+            break;
+	default:;
         }
         if (!extra->wt) {
             pmesg(1,  __FILE__, __LINE__, "Error allocating wavetable\n");
@@ -205,6 +207,8 @@ char* oph_gsl_fft(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long 
             break;
         case OPH_COMPLEX_DOUBLE:
             extra->ws = gsl_fft_complex_workspace_alloc(output->numelem);
+            break;
+	default:;
         }
         if (!extra->ws) {
             pmesg(1,  __FILE__, __LINE__, "Error allocating workspace\n");

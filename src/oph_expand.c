@@ -28,12 +28,20 @@ int core_oph_expand_multi(oph_multistring* byte_array, oph_multistring* result, 
 
 	oph_expand_param* param = byte_array->extend;
 
-	if (byte_array->type[j] == OPH_DOUBLE)
+	if (id<=0) { js=0; je=byte_array->num_measure; }
+	else if (id>byte_array->num_measure)
+	{
+		pmesg(1, __FILE__, __LINE__, "Index out of boundaries\n");
+		return -1;
+	}
+	else { js=id-1; je=id; }
+
+	if (byte_array->type[js] == OPH_DOUBLE)
 	{
 		double d = param->filling;
 		memcpy(nan,&d,sizeof(double));
 	}
-	else if (byte_array->type[j] == OPH_FLOAT)
+	else if (byte_array->type[js] == OPH_FLOAT)
 	{
 		float d = (float)param->filling;
 		memcpy(nan,&d,sizeof(float));
@@ -44,8 +52,6 @@ int core_oph_expand_multi(oph_multistring* byte_array, oph_multistring* result, 
 		return -1;
 	}
 
-	if (id<=0) { js=0; je=byte_array->num_measure; }
-	else { js=id-1; je=id; }
 	for (j=js;j<je;++j)
 	{
 		if (!param)

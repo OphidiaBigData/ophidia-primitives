@@ -221,7 +221,7 @@ int oph_subset_is_in_subset(unsigned long index, unsigned long start, unsigned l
 unsigned long oph_subset_id_to_index(unsigned long id, unsigned long *sizes, int n)
 {
 	int i;
-	unsigned long index;
+	unsigned long index = 0;
 	for(i=0; i<n; ++i)
 	{
 		index = id%sizes[i];

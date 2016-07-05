@@ -199,7 +199,7 @@ char* oph_to_bin(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *
 				}
 				if (INT_MIN <= tmp && tmp <= INT_MAX){
 					tmpint = (int) tmp;
-					memcpy( (initid->extension)+(res*measure->elemsize), (void*)(&tmp), measure->elemsize );
+					memcpy( (initid->extension)+(res*measure->elemsize), (void*)(&tmpint), measure->elemsize );
 					ptr=endptr+1*(sizeof(char));
 				}
 				else{
@@ -228,7 +228,7 @@ char* oph_to_bin(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *
 				}
 				if (INT_MIN <= tmp && tmp <= INT_MAX){
 					tmpint = (short) tmp;
-					memcpy( (initid->extension)+(res*measure->elemsize), (void*)(&tmp), measure->elemsize );
+					memcpy( (initid->extension)+(res*measure->elemsize), (void*)(&tmpint), measure->elemsize );
 					ptr=endptr+1*(sizeof(char));
 				}
 				else{
@@ -257,7 +257,7 @@ char* oph_to_bin(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *
 				}
 				if (INT_MIN <= tmp && tmp <= INT_MAX){
 					tmpint = (char) tmp;
-					memcpy( (initid->extension)+(res*measure->elemsize), (void*)(&tmp), measure->elemsize );
+					memcpy( (initid->extension)+(res*measure->elemsize), (void*)(&tmpint), measure->elemsize );
 					ptr=endptr+1*(sizeof(char));
 				}
 				else{

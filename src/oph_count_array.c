@@ -52,7 +52,6 @@ my_bool oph_count_array_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 
 void oph_count_array_deinit(UDF_INIT *initid __attribute__((unused)))
 {
-	int i=0;
 	if(initid->ptr){
 		oph_multistring* multimeasure=(oph_multistring*)(initid->ptr);
 		free_oph_multistring(multimeasure);

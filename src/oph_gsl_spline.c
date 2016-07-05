@@ -26,7 +26,7 @@ int msglevel = 1;
 
 int core_oph_gsl_spline_multi(oph_multistring* byte_array, oph_multistring* result, oph_gsl_spline_param* spline)
 {
-	int i,j,k;
+	int j,k;
 	double tmp, *pointer;
 	char *in_string = byte_array->content, *out_string = result->content;
 	char *in_pointer, *out_pointer;

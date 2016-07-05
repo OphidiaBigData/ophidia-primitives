@@ -69,7 +69,6 @@ long long oph_convert_l(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *e
 
 
         long long result;
-        int res = 0;
 
 	if(!initid->ptr){
 		initid->ptr = (void *)malloc(sizeof(oph_string));

@@ -18,6 +18,10 @@
 
 #include "oph_reduce2.h"
 
+#ifdef GSL_SUPPORTED
+#include <gsl/gsl_sort.h>
+#endif
+
 int msglevel = 1;
 
 int core_oph_quantile (oph_stringPtr byte_array, char *result)
@@ -28,7 +32,7 @@ int core_oph_quantile (oph_stringPtr byte_array, char *result)
 		pmesg(1, __FILE__, __LINE__, "Wrong parameter\n");
 		return -1;
 	}
-        int i,k;
+        int k;
         switch(byte_array->type)
 	{
                 case OPH_DOUBLE:{
@@ -392,6 +396,7 @@ char* oph_reduce2(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long 
 				result_size = core_sizeof(OPH_DOUBLE);
 			}
 			break;
+		default:;
 	}
 
 	oph_string output_array;

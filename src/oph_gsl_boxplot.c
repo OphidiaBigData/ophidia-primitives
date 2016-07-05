@@ -18,6 +18,8 @@
 
 #include "oph_gsl_boxplot.h"
 
+#include <gsl/gsl_sort.h>
+
 int msglevel = 1;
 
 /*------------------------------------------------------------------|

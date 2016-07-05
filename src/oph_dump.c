@@ -111,6 +111,7 @@ char* oph_dump(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *le
 			case OPH_COMPLEX_DOUBLE:
 				space = 2*space+6;
 			break;
+			default:;
 		}
 		initid->ptr=(char *)malloc(measure.numelem*space + 2*(measure.numelem - 1)); 
 		if(!initid->ptr){

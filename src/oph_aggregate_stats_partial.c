@@ -401,6 +401,12 @@ void oph_aggregate_stats_partial_add( UDF_INIT* initid, UDF_ARGS* args, char* is
                             ((double *)(dat->partials[i].content))[j] = val_d * val_d;
                         }
                     }
+                    case OPH_COMPLEX_INT:
+                    case OPH_COMPLEX_LONG:
+                    case OPH_COMPLEX_FLOAT:
+                    case OPH_COMPLEX_DOUBLE:
+                    case INVALID_TYPE:
+			break;
                 }
                 i++;
             }
@@ -460,6 +466,12 @@ void oph_aggregate_stats_partial_add( UDF_INIT* initid, UDF_ARGS* args, char* is
                             ((double *)(dat->partials[i].content))[j] = val_d * val_d * val_d;
                         }
                     }
+                    case OPH_COMPLEX_INT:
+                    case OPH_COMPLEX_LONG:
+                    case OPH_COMPLEX_FLOAT:
+                    case OPH_COMPLEX_DOUBLE:
+                    case INVALID_TYPE:
+			break;
                 }
                 i++;
             }
@@ -519,6 +531,12 @@ void oph_aggregate_stats_partial_add( UDF_INIT* initid, UDF_ARGS* args, char* is
                             ((double *)(dat->partials[i].content))[j] = val_d * val_d * val_d * val_d;
                         }
                     }
+                    case OPH_COMPLEX_INT:
+                    case OPH_COMPLEX_LONG:
+                    case OPH_COMPLEX_FLOAT:
+                    case OPH_COMPLEX_DOUBLE:
+                    case INVALID_TYPE:
+			break;
                 }
                 i++;
             }

@@ -26,7 +26,7 @@ int msglevel = 1;
 
 int core_oph_gsl_fit_linear_multi(oph_multistring* byte_array, oph_multistring* result, oph_gsl_fit_linear_param* fit)
 {
-	int i,j,k;
+	int j,k;
 	double tmp, *pointer;
 	double cov00, cov01, cov11, sumsq;
 	char *in_string = byte_array->content, *out_string = result->content;

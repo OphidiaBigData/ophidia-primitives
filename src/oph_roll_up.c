@@ -237,9 +237,7 @@ void oph_roll_up_add( UDF_INIT* initid, UDF_ARGS* args, char* is_null, char* err
 
 char* oph_roll_up(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
-        int res = 0;
 	oph_roll_up_param* param;
-	oph_string* measure;
 	
 	if(!initid->ptr)
 	{

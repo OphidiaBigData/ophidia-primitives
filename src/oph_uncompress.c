@@ -21,8 +21,8 @@
 
 int msglevel = 1;
 
-int core_oph_uncompress(const unsigned char *source, unsigned long source_length, unsigned long uncompressed_length, unsigned char **dest){
-    int rc;
+int core_oph_uncompress(const unsigned char *source, unsigned long source_length, unsigned long uncompressed_length, unsigned char **dest)
+{
     if (uncompress((Bytef *)(*dest), (uLongf*) &uncompressed_length, (const Bytef *) source, (uLong) source_length) != Z_OK){
         pmesg(1, __FILE__, __LINE__, "Error during uncompression phase\n");
         return -1;
@@ -35,7 +35,6 @@ int core_oph_uncompress(const unsigned char *source, unsigned long source_length
 |------------------------------------------------------------------*/
 my_bool oph_uncompress_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
-        int i = 0;
         if(args->arg_count != 3 ){
                 strcpy(message, "ERROR: Wrong arguments! oph_uncompress(input_OPH_TYPE, output_OPH_TYPE, measure)");
                 return 1;

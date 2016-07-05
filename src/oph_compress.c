@@ -42,7 +42,6 @@ int core_oph_compress(const unsigned char *src, const unsigned long src_length, 
 |------------------------------------------------------------------*/
 my_bool oph_compress_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
-        int i = 0;
         if(args->arg_count != 3 ){
                 strcpy(message, "ERROR: Wrong arguments! oph_compress(input_OPH_TYPE, output_OPH_TYPE, measure)");
                 return 1;

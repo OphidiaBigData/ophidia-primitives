@@ -50,7 +50,7 @@ void pmesg(int level, char* source, long int line_number, char* format, ...) {
 		  break;
 		}
 	
-	fprintf(stderr,"[%s][%s][%d] ",log_type, source,line_number);
+	fprintf(stderr,"[%s][%s][%ld] ",log_type, source,line_number);
 
         va_start(args, format);
         vfprintf(stderr, format, args);

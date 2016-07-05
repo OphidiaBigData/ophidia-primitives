@@ -458,6 +458,12 @@ void oph_aggregate_stats_final_add( UDF_INIT* initid, UDF_ARGS* args, char* is_n
 				k=0;
 			}
 		}
+                    case OPH_COMPLEX_INT:
+                    case OPH_COMPLEX_LONG:
+                    case OPH_COMPLEX_FLOAT:
+                    case OPH_COMPLEX_DOUBLE:
+                    case INVALID_TYPE:
+			break;
             }
         }
         else
@@ -902,6 +908,13 @@ void oph_aggregate_stats_final_add( UDF_INIT* initid, UDF_ARGS* args, char* is_n
 						i++;
 		            }
 				}
+
+                    case OPH_COMPLEX_INT:
+                    case OPH_COMPLEX_LONG:
+                    case OPH_COMPLEX_FLOAT:
+                    case OPH_COMPLEX_DOUBLE:
+                    case INVALID_TYPE:
+			break;
             }
         }
         dat->count++;

@@ -26,7 +26,7 @@ pthread_rwlock_t lock;
 
 int core_oph_predicate2(oph_stringPtr byte_array, char* result)
 {
-	unsigned long i, occurrence, occurrence_number = 0, j;
+	unsigned long i, occurrence, occurrence_number = 0;
 	unsigned short r;
 	double res, temporary;
 	oph_predicate2_param* _result = (oph_predicate2_param*)result;

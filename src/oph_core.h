@@ -175,6 +175,8 @@ int core_oph_sum3_array_multi(char* valueA, char* valueB, char* result, oph_type
 int core_oph_sum4_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result);
 int core_oph_sum4_array_multi(char* valueA, char* valueB, char* result, oph_type type);
 
+void free_oph_generic_param_multi(oph_generic_param_multi* param);
+
 /*------------------------------------------------------------------|
  |                  Internal functions (END)                        |
  |------------------------------------------------------------------*/

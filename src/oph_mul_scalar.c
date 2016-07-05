@@ -26,6 +26,11 @@ int core_oph_mul_scalar_multi(oph_multistring* byte_array, double scalar, oph_mu
 	double tmp;
 
 	if (id<=0) { js=0; je=byte_array->num_measure; }
+	else if (id>byte_array->num_measure)
+	{
+		pmesg(1, __FILE__, __LINE__, "Index out of boundaries\n");
+		return -1;
+	}
 	else { js=id-1; je=id; }
 
 	for (j=js;j<je;++j)
@@ -147,7 +152,7 @@ char* oph_mul_scalar(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lo
 	oph_multistring *multim;
         oph_multistring *output;
 
-        int res = 0, id = 0;
+        int id = 0;
 	double scalar = 0;
 	if(args->arg_count > 3) scalar = *((double*) args->args[3]);
 

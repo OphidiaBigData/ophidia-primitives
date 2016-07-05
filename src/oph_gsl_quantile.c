@@ -219,6 +219,8 @@ char* oph_gsl_quantile(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned 
                 break;
             case OPH_DOUBLE:
                 gsl_sort((double *) measure->content,1,measure->numelem);
+                break;
+            default:;
         }
     } else {
         measure->content = args->args[2];
@@ -299,6 +301,8 @@ int oph_gsl_quantile_produce(const void *sorted_data, const size_t data_len, oph
     				return 1;
     			}
             }
+            break;
+        default:;
     }
 
     return 0;

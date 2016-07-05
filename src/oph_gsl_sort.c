@@ -221,6 +221,8 @@ void oph_gsl_sort_produce(void *inout_data, const size_t data_len, oph_type data
             break;
         case OPH_DOUBLE:
             gsl_sort((double *)inout_data,1,data_len);
+            break;
+        default:;
     }
 }
 

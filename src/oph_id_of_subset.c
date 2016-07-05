@@ -117,7 +117,7 @@ void oph_id_of_subset_deinit(UDF_INIT *initid)
 
 long long oph_id_of_subset(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
 {
-        int res = 0, number = 0, i;
+        int i;
 	oph_id_of_subset_param* param;
 	unsigned long total;
 	oph_id_of_subset_block* blocks = 0;

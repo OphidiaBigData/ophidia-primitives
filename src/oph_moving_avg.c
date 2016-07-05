@@ -147,7 +147,7 @@ char* oph_moving_avg(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lo
 		}
 		measure->numelem = measure->length / measure->blocksize;
 
-		oph_ma_oper oper;
+		oph_ma_oper oper = INVALID_MA_OPER;
 		if(args->arg_count < 5) oper = OPH_SMA;
 		else
 		{
@@ -213,6 +213,7 @@ char* oph_moving_avg(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lo
 					}
 					break;
 				}
+				default:;
 			}
 		}
 

@@ -18,6 +18,8 @@
 
 #include "oph_gsl_stats.h"
 
+#include <gsl/gsl_sort.h>
+
 int msglevel = 1;
 
 /*------------------------------------------------------------------|
@@ -222,6 +224,8 @@ char* oph_gsl_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lon
 			break;
 		case OPH_DOUBLE:
 			gsl_sort((double *) measure->content,1,measure->numelem);
+                        break;
+                default:;
 		}
 	} else {
 		measure->content = args->args[2];

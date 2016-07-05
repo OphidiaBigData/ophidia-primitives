@@ -101,8 +101,7 @@ long long oph_find(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
         measure.content = args->args[2];
         measure.length = &(args->lengths[2]);
 			
-	double real_val = *((double*)args->args[3]);
-        if(core_set_numelem(&(measure))){
+	if(core_set_numelem(&(measure))){
 		pmesg(1,  __FILE__, __LINE__, "Error on counting elements\n");
                 *is_null=0;
               	*error=1;
