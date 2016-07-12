@@ -162,7 +162,7 @@ int core_oph_gsl_boxplot_multi(oph_multistring* byte_array, oph_multistring* res
 				d = (long long*)malloc(byte_array->numelem*byte_array->elemsize[j]);
 				for (i=0;i<byte_array->numelem;++i) d[i]=*(long long*)(in_string+i*byte_array->blocksize);
 
-				gsl_sort_long(d, 1, (size_t) byte_array->numelem);						
+				gsl_sort_long((long int *)d, 1, (size_t) byte_array->numelem);						
 
 				if(core_oph_type_cast(d, out_string, byte_array->type[j], result->type[j] )) return -1;
 

@@ -26,8 +26,8 @@ int msglevel = 1;
 my_bool oph_dump_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
         int i = 0;
-        if(args->arg_count != 3){
-                strcpy(message, "ERROR: Wrong arguments! oph_dump(input_OPH_TYPE, output_OPH_TYPE, measure)");
+        if((args->arg_count < 3) || (args->arg_count > 4)) {
+                strcpy(message, "ERROR: Wrong arguments! oph_dump(input_OPH_TYPE, output_OPH_TYPE, measure, [encoding])");
                 return 1;
         }
         
@@ -123,7 +123,22 @@ char* oph_dump(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *le
         	}
 	}
 
-        res = core_oph_dump(&measure, initid->ptr);
+	int encoding = 0;
+	if (args->arg_count > 3)
+	{
+		if ((args->lengths[3] == 7) && !strncasecmp(args->args[3],"decimal",args->lengths[3])) encoding = 0;
+		else if ((args->lengths[3] == 6) && !strncasecmp(args->args[3],"base64",args->lengths[3])) encoding = 1;
+		else
+		{
+			pmesg(1,  __FILE__, __LINE__, "Unknown encoding type\n");
+		        *length=0;
+		        *is_null=0;
+		        *error=1;
+		        return NULL;
+		}
+	}
+
+        res = core_oph_dump(&measure, initid->ptr, encoding);
         if(res){
                 pmesg(1,  __FILE__, __LINE__, "Unable to convert supplied measure\n");
                 *length=0;
