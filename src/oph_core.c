@@ -741,7 +741,7 @@ int core_oph_dump (oph_stringPtr byte_array, char *result, int encoding)
 	if (encoding)
 	{
 		memset(result, 0, (size_t)ceil(*byte_array->length * 1.5 + 1));
-		core_base64encode(byte_array->content, *byte_array->length, result, (size_t)ceil(*byte_array->length * 1.5)-1);
+		core_base64encode(byte_array->content, *byte_array->length, result, (size_t)ceil(*byte_array->length * 1.5));
 	}
         else switch(byte_array->type){
                 case OPH_DOUBLE:{
