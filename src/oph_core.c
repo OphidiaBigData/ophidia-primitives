@@ -738,6 +738,8 @@ int core_oph_dump (oph_stringPtr byte_array, char *result, int encoding)
 	int i = 0;
 	int res;
 
+	*result = 0;
+
 	if (encoding)
 	{
 		memset(result, 0, (size_t)ceil(*byte_array->length * 1.5 + 1));
