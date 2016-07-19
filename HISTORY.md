@@ -1,4 +1,22 @@
 
+
+## v0.10.2 - 2016-07-19
+
+### Fixed:
+
+- Bug in core function of oph_dump
+- Several warnings when building
+
+### Added:
+
+- Support for base64 encoding in oph_dump
+
+## v0.10.1 - 2016-06-27
+
+### Fixed:
+ 
+- Version number in files
+
 ## v0.10.0 - 2016-06-23
 
 ### Fixed:
