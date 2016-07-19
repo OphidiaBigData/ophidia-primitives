@@ -49,7 +49,7 @@ typedef enum oph_ma_oper {INVALID_MA_OPER, OPH_SMA, OPH_EWMA} oph_ma_oper;
 #define DEFAULT_COMPLEX_TYPE_LEN 18
 
 /* define number of integer digits (max value) and number of decimal digits (exact value) for string representation */
-#define INT_DIGIT 8 //TO DO: Portarlo a 64; in tal caso, nella visualizzazione, mostra anche i caratteri 'vuoti'
+#define INT_DIGIT 8 //TODO: set it to 64 and, then, show empty chars
 #define PRECISION 10
 
 #define COMPRESS_OFFSET 4
@@ -186,7 +186,7 @@ void free_oph_generic_param_multi(oph_generic_param_multi* param);
  |------------------------------------------------------------------*/
 
 // Return the values stored in byte_array converted in string format; numbers are separeted by ", " chars
-int core_oph_dump (oph_stringPtr byte_array, char *result);
+int core_oph_dump (oph_stringPtr byte_array, char *result, int encoding);
 
 // Return the 'single value' stored in byte_array converted in numerical format (int, long, float, double)
 int core_oph_convert (oph_stringPtr byte_array, void *result);
