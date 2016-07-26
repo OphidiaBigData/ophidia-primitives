@@ -17,7 +17,7 @@
 #
 
 AC_PREREQ([2.60])
-AC_INIT([ophidia-primitives], [0.10.2], [ophidia-info@lists.cmcc.it])
+AC_INIT([ophidia-primitives], [0.10.3], [ophidia-info@lists.cmcc.it])
 # AC_CONFIG_SRCDIR([src/mpiTest.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -44,7 +44,7 @@ AC_CHECK_LIB([m],[cos])
 # Automake conditionals
 # AM_CONDITIONAL([HAVE_SQLITE3], [test -n "$SQLITE3_CFLAGS"])
 
-AX_LIB_MYSQL([5.4])
+AX_LIB_MYSQL([5.6])
 if test -n $HAVE_MYSQL; then
   AC_MSG_NOTICE([MySQL libraries available])
 else

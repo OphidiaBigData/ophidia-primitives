@@ -1,4 +1,9 @@
 
+## v0.10.3 - 2016-07-26
+
+### Fixed:
+
+- Bug in processing oph_dump input parameter
 
 ## v0.10.2 - 2016-07-19
 
