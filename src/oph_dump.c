@@ -126,11 +126,11 @@ char* oph_dump(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *le
 	int encoding = 0;
 	if (args->arg_count > 3)
 	{
-		if ((args->lengths[3] == 7) && !strncasecmp(args->args[3],"decimal",args->lengths[3])) encoding = 0;
-		else if ((args->lengths[3] == 6) && !strncasecmp(args->args[3],"base64",args->lengths[3])) encoding = 1;
+		if (!strncasecmp(args->args[3],"decimal",args->lengths[3])) encoding = 0;
+		else if (!strncasecmp(args->args[3],"base64",args->lengths[3])) encoding = 1;
 		else
 		{
-			pmesg(1,  __FILE__, __LINE__, "Unknown encoding type\n");
+			pmesg(1,  __FILE__, __LINE__, "Unknown encoding typez\n");
 		        *length=0;
 		        *is_null=0;
 		        *error=1;
