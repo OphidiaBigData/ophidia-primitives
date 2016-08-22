@@ -126,10 +126,12 @@ AC_ARG_ENABLE(debug,
 	   )
 if test "x$debug" = "xyes"; then
 	AC_MSG_WARN("Debug activated")
-	OPT="-g3"
+	OPT="-g3 -O0"
 else
 	OPT="-O2"
 fi
+
+AC_SUBST(OPT)
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile])

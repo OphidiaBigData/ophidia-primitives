@@ -281,7 +281,7 @@ void free_oph_multistring(oph_multistring *str){
 	int i=0;
 	if(!str)
 		return;
-	for (i = 0; i > 0; i++){
+	while (1){
 		if(str[i].type){
 			free(str[i].type);
 			str[i].type=NULL;
@@ -295,7 +295,8 @@ void free_oph_multistring(oph_multistring *str){
 			str[i].extend=NULL;
 		}
 		if(str[i].islast)
-			i = -1;
+			break;
+		i++;
 	}
 	free(str);
 	str=NULL;
