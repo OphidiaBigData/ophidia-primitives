@@ -477,7 +477,6 @@ char* oph_reduce3(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long 
 			}
 		}
 		else tmp->temp=NULL;
-		tmp->temp2 = (char *)malloc(*inp_req.measure.length);
 		if (inp_req.oper == OPH_QUANTILE)
 		{
 			tmp->temp2 = (char *)malloc(*inp_req.measure.length);
