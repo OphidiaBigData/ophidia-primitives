@@ -1,20 +1,12 @@
 
-## v0.10.4 - 2016-08-22
+## v0.10.5 - 2016-08-24
 
 ### Fixed:
 
+- Bug in oph_reduce3 primitive
+- Bug in multistring free core function
 - Skip 'lib' in referring to libmatheval
-
-## v0.10.3 - 2016-07-26
-
-### Fixed:
-
 - Bug in processing oph_dump input parameter
-
-## v0.10.2 - 2016-07-19
-
-### Fixed:
-
 - Bug in core function of oph_dump
 - Several warnings when building
 

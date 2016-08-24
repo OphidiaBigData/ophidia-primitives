@@ -37,3 +37,10 @@ http://www.gnu.org/copyleft/gpl.html
 zlib License</br>
 http://www.zlib.net/zlib_license.html
 
+=====================================================================
+
+<b>Acknowledgement</b>:</br>
+This software has been also supported by:
+
+- the Horizon 2020 Framework Programme through the INDIGO-DataCloud Project, RIA-653549
+
