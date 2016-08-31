@@ -58,12 +58,12 @@ void oph_moving_avg_deinit(UDF_INIT *initid)
 	if(initid->ptr)
 	{
 		oph_generic_param_multi* param = (oph_generic_param_multi*)initid->ptr;
-		free_oph_generic_param_multi(param);
-		if (param->extend)
+		if (param && param->extend)
 		{
 			free(param->extend);
 			param->extend = NULL;
 		}
+		free_oph_generic_param_multi(param);
                 initid->ptr = NULL;
         }
 }
