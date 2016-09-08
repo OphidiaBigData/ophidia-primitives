@@ -200,7 +200,7 @@ char* oph_gsl_fit_linear_coeff(UDF_INIT *initid, UDF_ARGS *args, char *result, u
 			return NULL;
 		}
 		measure->numelem = measure->length / measure->blocksize;
-		if (!args->args[3] && (measure->numelem*sizeof(double) != args->lengths[3]))
+		if (args->args[3] && (measure->numelem*sizeof(double) != args->lengths[3]))
 		{
 			param->error = 1;
 			pmesg(1, __FILE__, __LINE__, "Wrong input type or data corrupted\n");

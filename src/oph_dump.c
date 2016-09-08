@@ -130,7 +130,7 @@ char* oph_dump(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *le
 		else if (!strncasecmp(args->args[3],"base64",args->lengths[3])) encoding = 1;
 		else
 		{
-			pmesg(1,  __FILE__, __LINE__, "Unknown encoding typez\n");
+			pmesg(1,  __FILE__, __LINE__, "Unknown encoding type\n");
 		        *length=0;
 		        *is_null=0;
 		        *error=1;
