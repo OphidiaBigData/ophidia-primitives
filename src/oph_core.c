@@ -304,6 +304,8 @@ void free_oph_multistring(oph_multistring *str){
 
 void free_oph_generic_param_multi(oph_generic_param_multi* param)
 {
+	if(!param) return;
+
 	oph_multistring* multimeasure = param->measure; // Inputs
 	if (multimeasure)
 	{
@@ -322,6 +324,9 @@ void free_oph_generic_param_multi(oph_generic_param_multi* param)
 		free_oph_multistring(multimeasure);
 	        param->result=NULL;
 	}
+
+	free(param);
+	
 }
 
 int core_set_elemsize(oph_stringPtr str){
