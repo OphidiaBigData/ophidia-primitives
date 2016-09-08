@@ -111,7 +111,10 @@ void oph_gsl_fit_linear_deinit(UDF_INIT *initid)
 		if (param->extend)
 		{
 			oph_gsl_fit_linear_param* fit = (oph_gsl_fit_linear_param*)param->extend;
-			if (fit && fit->tmp) { free(fit->tmp); fit->tmp = NULL; }
+			if (fit) {
+				if (fit->tmp) { free(fit->tmp); fit->tmp = NULL; }
+				free(fit);
+			}
 			param->extend = NULL;
 		}
 		free_oph_generic_param_multi(param);

@@ -114,6 +114,7 @@ void oph_gsl_fit_linear_coeff_deinit(UDF_INIT *initid)
 			{
 				if (fit->tmp) { free(fit->tmp); fit->tmp = NULL; }
 				if (fit->old_x) { free(fit->old_x); fit->old_x = NULL; }
+				free(fit);
 			}
 			param->extend = NULL;
 		}
