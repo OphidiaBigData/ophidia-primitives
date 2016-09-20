@@ -107,7 +107,7 @@ void oph_aggregate_operator_clear( UDF_INIT* initid, char* is_null, char* error 
 		if (dat->count)
 		{
 			size_t i;
-			for (i=0; i<dat->result_size; ++i) dat->count[i] = 0;
+			for (i=0; i<dat->result.measure.numelem; ++i) dat->count[i] = 0;
 		}
 		dat->first = 1;
 	}
