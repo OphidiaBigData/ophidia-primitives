@@ -1,4 +1,14 @@
 
+## v0.10.6 - 2016-10-20
+
+### Fixed:
+
+- Bug in oph_aggregate_operator primitive
+- Bug in oph_gsl_fit_linear primitive
+- Bug in oph_gsl_fit_linear_coeff primitive
+- Bug in oph_moving_avg primitive
+- Bug in multiparam free core function
+
 ## v0.10.5 - 2016-08-24
 
 ### Fixed:
