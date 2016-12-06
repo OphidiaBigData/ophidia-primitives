@@ -125,6 +125,16 @@ char* oph_to_bin(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *
 		}
 	}
 	oph_string *measure=(oph_string*)initid->ptr;
+
+    measure->content = args->args[2];
+    if (!measure->content){
+        *length=0;
+        *is_null=1;
+        *error=0;
+        return NULL;
+    }
+    measure->length = &(args->lengths[2]);
+
 	char *ptr = measure->content;
 	char *endptr;
 
