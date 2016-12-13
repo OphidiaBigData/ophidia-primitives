@@ -558,6 +558,10 @@ long core_count_array(oph_stringPtr str){
         return count;
 }
 
+/*
+	Base64 encoding & decoding code
+	Retrieved from: https://en.wikibooks.org/wiki/Algorithm_Implementation/Miscellaneous/Base64
+*/
 int core_base64encode(const void* data_buf, size_t dataLength, char* result, size_t resultSize)
 {
    const char base64chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -748,8 +752,9 @@ int core_oph_dump (oph_stringPtr byte_array, char *result, int encoding)
 
 	if (encoding)
 	{
-		memset(result, 0, (size_t)ceil(*byte_array->length * 1.5 + 1));
-		core_base64encode(byte_array->content, *byte_array->length, result, (size_t)ceil(*byte_array->length * 1.5));
+		size_t resultSize = (size_t)(4 * ceil(*byte_array->length / 3.0) + 1);
+		memset(result, 0, resultSize);
+		core_base64encode(byte_array->content, *byte_array->length, result, resultSize);
 	}
         else switch(byte_array->type){
                 case OPH_DOUBLE:{

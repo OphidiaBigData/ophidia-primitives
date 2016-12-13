@@ -17,6 +17,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+Source code is available on github at: 
+https://github.com/OphidiaBigData/ophidia-primitives
+
 =====================================================================
 
 The following libraries have been used:
@@ -36,6 +39,10 @@ http://www.gnu.org/copyleft/gpl.html
 - zlib</br>
 zlib License</br>
 http://www.zlib.net/zlib_license.html
+
+- Base64 encoding & decoding code (https://en.wikibooks.org/wiki/Algorithm_Implementation/Miscellaneous/Base64)
+Creative Commons CC BY-SA 3.0</br>
+https://creativecommons.org/licenses/by-sa/3.0/#
 
 =====================================================================
 
