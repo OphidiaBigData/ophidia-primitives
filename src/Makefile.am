@@ -442,3 +442,98 @@ liboph_gsl_correlation_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
 liboph_gsl_correlation_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
 endif
 
+lib_LTLIBRARIES += liboph_to_bit.la
+liboph_to_bit_la_SOURCES = oph_to_bit.c oph_to_bit.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_bit.c oph_core_bit.h
+liboph_to_bit_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_to_bit_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_bit_dump.la
+liboph_bit_dump_la_SOURCES = oph_bit_dump.c oph_bit_dump.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_bit.c oph_core_bit.h
+liboph_bit_dump_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_bit_dump_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_bit_aggregate.la
+liboph_bit_aggregate_la_SOURCES = oph_bit_aggregate.c oph_bit_aggregate.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_bit.c oph_core_bit.h
+liboph_bit_aggregate_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_bit_aggregate_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_bit_reduce.la
+liboph_bit_reduce_la_SOURCES = oph_bit_reduce.c oph_bit_reduce.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_bit.c oph_core_bit.h
+liboph_bit_reduce_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_bit_reduce_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_bit_find.la
+liboph_bit_find_la_SOURCES = oph_bit_find.c oph_bit_find.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_bit.c oph_core_bit.h
+liboph_bit_find_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_bit_find_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_bit_concat.la
+liboph_bit_concat_la_SOURCES = oph_bit_concat.c oph_bit_concat.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_bit.c oph_core_bit.h
+liboph_bit_concat_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_bit_concat_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_bit_subarray.la
+liboph_bit_subarray_la_SOURCES = oph_bit_subarray.c oph_bit_subarray.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_bit.c oph_core_bit.h
+liboph_bit_subarray_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_bit_subarray_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_bit_subarray2.la
+liboph_bit_subarray2_la_SOURCES = oph_bit_subarray2.c oph_bit_subarray2.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_bit.c oph_core_bit.h oph_core_subset.c oph_core_subset.h
+liboph_bit_subarray2_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_bit_subarray2_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_bit_count.la
+liboph_bit_count_la_SOURCES = oph_bit_count.c oph_bit_count.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_bit.c oph_core_bit.h
+liboph_bit_count_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_bit_count_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_bit_reverse.la
+liboph_bit_reverse_la_SOURCES = oph_bit_reverse.c oph_bit_reverse.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_bit.c oph_core_bit.h
+liboph_bit_reverse_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_bit_reverse_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_bit_rotate.la
+liboph_bit_rotate_la_SOURCES = oph_bit_rotate.c oph_bit_rotate.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_bit.c oph_core_bit.h
+liboph_bit_rotate_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_bit_rotate_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_bit_shift.la
+liboph_bit_shift_la_SOURCES = oph_bit_shift.c oph_bit_shift.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_bit.c oph_core_bit.h
+liboph_bit_shift_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_bit_shift_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_bit_not.la
+liboph_bit_not_la_SOURCES = oph_bit_not.c oph_bit_not.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_bit.c oph_core_bit.h
+liboph_bit_not_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_bit_not_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_bit_operator.la
+liboph_bit_operator_la_SOURCES = oph_bit_operator.c oph_bit_operator.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_bit.c oph_core_bit.h
+liboph_bit_operator_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_bit_operator_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_bit_sequence.la
+liboph_bit_sequence_la_SOURCES = oph_bit_sequence.c oph_bit_sequence.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_bit.c oph_core_bit.h
+liboph_bit_sequence_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_bit_sequence_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_bit_size.la
+liboph_bit_size_la_SOURCES = oph_bit_size.c oph_bit_size.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_bit.c oph_core_bit.h
+liboph_bit_size_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_bit_size_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_bit_export.la
+liboph_bit_export_la_SOURCES = oph_bit_export.c oph_bit_export.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_bit.c oph_core_bit.h
+liboph_bit_export_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_bit_export_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_bit_import.la
+liboph_bit_import_la_SOURCES = oph_bit_import.c oph_bit_import.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_bit.c oph_core_bit.h
+liboph_bit_import_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_bit_import_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_mask.la
+liboph_mask_la_SOURCES = oph_mask.c oph_mask.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_bit.c oph_core_bit.h
+liboph_mask_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_mask_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
