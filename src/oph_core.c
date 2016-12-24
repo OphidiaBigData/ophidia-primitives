@@ -1225,28 +1225,70 @@ int core_oph_count (oph_stringPtr byte_array, char *result)
 	long long count = 0;
 
         int i;
-        switch(byte_array->type)
+        if (byte_array->missingvalue)
 	{
-                case OPH_DOUBLE:{
-                        double *d = (double*)byte_array->content;
-                        for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d)) count++;
-                        break;
-                }
-                case OPH_FLOAT:{
-                        float *d = (float*)byte_array->content;
-                        for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d)) count++;
-                        break;
-                }
-		case OPH_BYTE:
-		case OPH_SHORT:
-                case OPH_INT:
-		case OPH_LONG:
-                        count = byte_array->numelem;
-                        break;
-                default:
-                        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-                        return -1;
-        }
+		switch(byte_array->type)
+		{
+		        case OPH_DOUBLE:{
+		                double *d = (double*)byte_array->content;
+		                for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d) && (*byte_array->missingvalue != *d)) count++;
+		                break;
+		        }
+		        case OPH_FLOAT:{
+		                float *d = (float*)byte_array->content, ms = (float)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d) && (ms != *d)) count++;
+		                break;
+		        }
+			case OPH_BYTE:{
+		                char *d = (char*)byte_array->content, ms = (char)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++) if (ms != *d) count++;
+		                break;
+		        }
+			case OPH_SHORT:{
+		                short *d = (short*)byte_array->content, ms = (short)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++) if (ms != *d) count++;
+		                break;
+		        }
+		        case OPH_INT:{
+		                int *d = (int*)byte_array->content, ms = (int)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++) if (ms != *d) count++;
+		                break;
+		        }
+			case OPH_LONG: {
+		                long long *d = (long long*)byte_array->content, ms = (long long)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++) if (ms != *d) count++;
+		                break;
+		        }
+		        default:
+		                pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                return -1;
+		}
+	}
+	else
+	{
+		switch(byte_array->type)
+		{
+		        case OPH_DOUBLE:{
+		                double *d = (double*)byte_array->content;
+		                for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d)) count++;
+		                break;
+		        }
+		        case OPH_FLOAT:{
+		                float *d = (float*)byte_array->content;
+		                for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d)) count++;
+		                break;
+		        }
+			case OPH_BYTE:
+			case OPH_SHORT:
+		        case OPH_INT:
+			case OPH_LONG:
+		                count = byte_array->numelem;
+		                break;
+		        default:
+		                pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                return -1;
+        	}
+	}
 	memcpy(result, (void*)(&count), core_sizeof(OPH_LONG));
 
         return 0;
@@ -1257,314 +1299,623 @@ int core_oph_count_multi (oph_multistring* byte_array, oph_multistring *result)
 
         int i,j;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
-	for(j = 0; j < byte_array->num_measure; j++)
-	{
-		count = 0;
-		current=in_string;
-        	switch(byte_array->type[j])
-		{
-                	case OPH_DOUBLE:
-			{
-                        	double *d;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (double*)current;
-					if (!isnan(*d)) count++;
-                        	}
-				if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j])) return -1;
-				break;
-                	}
-                	case OPH_FLOAT:{
-                        	float *d;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (float*)current;
-					if (!isnan(*d)) count++;
-                        	}
-				if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j])) return -1;
-				break;
-                	}
-			case OPH_BYTE:
-			case OPH_SHORT:
-		        case OPH_INT:
-			case OPH_LONG:
-				count = byte_array->numelem;
-                        	if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j])) return -1;
-                        	break;
-        	        default:
-                	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-                        	return -1;
-	        }
-		in_string+=byte_array->elemsize[j];
-		out_string+=result->elemsize[j];
-	}
 
+        if (byte_array->missingvalue)
+	{
+		for(j = 0; j < byte_array->num_measure; j++)
+		{
+			count = 0;
+			current=in_string;
+			switch(byte_array->type[j])
+			{
+		        	case OPH_DOUBLE:
+				{
+		                	double *d;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (double*)current;
+						if (!isnan(*d) && (*byte_array->missingvalue != *d)) count++;
+		                	}
+					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j])) return -1;
+					break;
+		        	}
+		        	case OPH_FLOAT:{
+		                	float *d, ms = (float)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (float*)current;
+						if (!isnan(*d) && (ms != *d)) count++;
+		                	}
+					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j])) return -1;
+					break;
+		        	}
+				case OPH_BYTE:{
+		                	char *d, ms = (char)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (char*)current;
+						if (ms != *d) count++;
+		                	}
+					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j])) return -1;
+					break;
+		        	}
+				case OPH_SHORT:{
+		                	short *d, ms = (short)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (short*)current;
+						if (ms != *d) count++;
+		                	}
+					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j])) return -1;
+					break;
+		        	}
+				case OPH_INT:{
+		                	int *d, ms = (int)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (int*)current;
+						if (ms != *d) count++;
+		                	}
+					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j])) return -1;
+					break;
+		        	}
+				case OPH_LONG:{
+		                	long long *d, ms = (long long)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (long long*)current;
+						if (ms != *d) count++;
+		                	}
+					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j])) return -1;
+					break;
+		        	}
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
+	}
+	else
+	{
+		for(j = 0; j < byte_array->num_measure; j++)
+		{
+			count = 0;
+			current=in_string;
+			switch(byte_array->type[j])
+			{
+		        	case OPH_DOUBLE:
+				{
+		                	double *d;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (double*)current;
+						if (!isnan(*d)) count++;
+		                	}
+					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j])) return -1;
+					break;
+		        	}
+		        	case OPH_FLOAT:{
+		                	float *d;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (float*)current;
+						if (!isnan(*d)) count++;
+		                	}
+					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j])) return -1;
+					break;
+		        	}
+				case OPH_BYTE:
+				case OPH_SHORT:
+				case OPH_INT:
+				case OPH_LONG:
+					count = byte_array->numelem;
+		                	if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j])) return -1;
+		                	break;
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
+	}
         return 0;
 }
 
 int core_oph_max (oph_stringPtr byte_array, char *result)
 {
         int i;
-        switch(byte_array->type)
+        if (byte_array->missingvalue)
 	{
-                case OPH_DOUBLE:{
-                        double *d = (double*)byte_array->content, *max = 0;
-                        for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				if (!isnan(*d))
+		switch(byte_array->type)
+		{
+		        case OPH_DOUBLE:{
+		                double *d = (double*)byte_array->content, *max = 0;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (!isnan(*d) && (*byte_array->missingvalue != *d))
+					{
+						if (max)
+						{
+							if (*d > *max) max = d;
+						}
+						else max = d;
+					}
+		                }
+				memcpy(result, max ? max : byte_array->missingvalue, byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_FLOAT:{
+		                float *d = (float*)byte_array->content, *max = 0, ms = (float)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (!isnan(*d) && (ms != *d))
+					{
+						if (max)
+						{
+							if (*d > *max) max = d;
+						}
+						else max = d;
+					}
+		                }
+				memcpy(result, max ? max : &ms, byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_INT:{
+		                int *d = (int*)byte_array->content, *max = 0, ms = (int)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (ms != *d)
+					{
+						if (max)
+						{
+							if (*d > *max) max = d;
+						}
+						else max = d;
+					}
+		                }
+				memcpy(result, max ? max : &ms, byte_array->elemsize);
+				break;
+		        }
+		        case OPH_SHORT:{
+		                short *d = (short*)byte_array->content, *max = 0, ms = (short)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (ms != *d)
+					{
+						if (max)
+						{
+							if (*d > *max) max = d;
+						}
+						else max = d;
+					}
+		                }
+				memcpy(result, max ? max : &ms, byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_BYTE:{
+		                char *d = (char*)byte_array->content, *max = 0, ms = (char)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (ms != *d)
+					{
+						if (max)
+						{
+							if (*d > *max) max = d;
+						}
+						else max = d;
+					}
+		                }
+				memcpy(result, max ? max : &ms, byte_array->elemsize);
+		                break;
+		        }
+			case OPH_LONG:{
+		                long long *d = (long long*)byte_array->content, *max = 0, ms = (long long)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (ms != *d)
+					{
+						if (max)
+						{
+							if (*d > *max) max = d;
+						}
+						else max = d;
+					}
+		                }
+				memcpy(result, max ? max : &ms, byte_array->elemsize);
+		                break;
+		        }
+		        default:
+		                pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                return -1;
+		}
+	}
+	else
+	{
+		switch(byte_array->type)
+		{
+		        case OPH_DOUBLE:{
+		                double *d = (double*)byte_array->content, *max = 0;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (!isnan(*d))
+					{
+						if (max)
+						{
+							if (*d > *max) max = d;
+						}
+						else max = d;
+					}
+		                }
+				if (max) memcpy(result, max, byte_array->elemsize);
+				else
+				{
+					double value=NAN;
+					memcpy(result, &value, byte_array->elemsize);
+				}
+		                break;
+		        }
+		        case OPH_FLOAT:{
+		                float *d = (float*)byte_array->content, *max = 0;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (!isnan(*d))
+					{
+						if (max)
+						{
+							if (*d > *max) max = d;
+						}
+						else max = d;
+					}
+		                }
+				if (max) memcpy(result, max, byte_array->elemsize);
+				else
+				{
+					float value=NAN;
+					memcpy(result, &value, byte_array->elemsize);
+				}
+		                break;
+		        }
+		        case OPH_INT:{
+		                int *d = (int*)byte_array->content, *max = 0;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
 				{
 					if (max)
 					{
 						if (*d > *max) max = d;
 					}
 					else max = d;
+		                }
+				if (max) memcpy(result, max, byte_array->elemsize);
+				else
+				{
+					pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
+					return -1;
 				}
-                        }
-			if (max) memcpy(result, max, byte_array->elemsize);
-			else
-			{
-				double value=NAN;
-				memcpy(result, &value, byte_array->elemsize);
-			}
-                        break;
-                }
-                case OPH_FLOAT:{
-                        float *d = (float*)byte_array->content, *max = 0;
-                        for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				if (!isnan(*d))
+		                break;
+		        }
+		        case OPH_SHORT:{
+		                short *d = (short*)byte_array->content, *max = 0;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
 				{
 					if (max)
 					{
 						if (*d > *max) max = d;
 					}
 					else max = d;
-				}
-                        }
-			if (max) memcpy(result, max, byte_array->elemsize);
-			else
-			{
-				float value=NAN;
-				memcpy(result, &value, byte_array->elemsize);
-			}
-                        break;
-                }
-                case OPH_INT:{
-                        int *d = (int*)byte_array->content, *max = 0;
-                        for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				if (max)
+		                }
+				if (max) memcpy(result, max, byte_array->elemsize);
+				else
 				{
-					if (*d > *max) max = d;
+					pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
+					return -1;
 				}
-				else max = d;
-                        }
-			if (max) memcpy(result, max, byte_array->elemsize);
-			else
-			{
-				pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
-				return -1;
-			}
-                        break;
-                }
-                case OPH_SHORT:{
-                        short *d = (short*)byte_array->content, *max = 0;
-                        for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				if (max)
+		                break;
+		        }
+		        case OPH_BYTE:{
+		                char *d = (char*)byte_array->content, *max = 0;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
 				{
-					if (*d > *max) max = d;
-				}
-				else max = d;
-                        }
-			if (max) memcpy(result, max, byte_array->elemsize);
-			else
-			{
-				pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
-				return -1;
-			}
-                        break;
-                }
-                case OPH_BYTE:{
-                        char *d = (char*)byte_array->content, *max = 0;
-                        for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				if (max)
+					if (max)
+					{
+						if (*d > *max) max = d;
+					}
+					else max = d;
+		                }
+				if (max) memcpy(result, max, byte_array->elemsize);
+				else
 				{
-					if (*d > *max) max = d;
+					pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
+					return -1;
 				}
-				else max = d;
-                        }
-			if (max) memcpy(result, max, byte_array->elemsize);
-			else
-			{
-				pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
-				return -1;
-			}
-                        break;
-                }
-		case OPH_LONG:{
-                        long long *d = (long long*)byte_array->content, *max = 0;
-                        for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				if (max)
+		                break;
+		        }
+			case OPH_LONG:{
+		                long long *d = (long long*)byte_array->content, *max = 0;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
 				{
-					if (*d > *max) max = d;
+					if (max)
+					{
+						if (*d > *max) max = d;
+					}
+					else max = d;
+		                }
+				if (max) memcpy(result, max, byte_array->elemsize);
+				else
+				{
+					pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
+					return -1;
 				}
-				else max = d;
-                        }
-			if (max) memcpy(result, max, byte_array->elemsize);
-			else
-			{
-				pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
-				return -1;
-			}
-                        break;
-                }
-                default:
-                        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-                        return -1;
-        }
+		                break;
+		        }
+		        default:
+		                pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                return -1;
+		}
+	}
         return 0;
 }
 int core_oph_max_multi (oph_multistring* byte_array, oph_multistring *result)
 {
         int i,j;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
-	for(j = 0; j < byte_array->num_measure; j++)
+	if (byte_array->missingvalue)
 	{
-		current=in_string;
-        	switch(byte_array->type[j])
+		for(j = 0; j < byte_array->num_measure; j++)
 		{
-                	case OPH_DOUBLE:
+			current=in_string;
+			switch(byte_array->type[j])
 			{
-                        	double *d, *max = NULL;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+		        	case OPH_DOUBLE:
 				{
-					d = (double*)current;
-					if (!isnan(*d))
+		                	double *d, *max = NULL;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
 					{
+						d = (double*)current;
+						if (!isnan(*d) && (*byte_array->missingvalue != *d))
+						{
+							if (max)
+							{
+								if (*d > *max) max = d;
+							}
+							else max = d;
+						}
+		                	}
+					if(core_oph_type_cast(max ? max : byte_array->missingvalue, out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_FLOAT:{
+		                	float *d, *max = NULL, ms = (float)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (float*)current;
+						if (!isnan(*d) && (ms != *d))
+						{
+							if (max)
+							{
+								if (*d > *max) max = d;
+							}
+							else max = d;
+						}
+		                	}
+					if(core_oph_type_cast(max ? max : &ms, out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_INT:{
+		                	int *d, *max = NULL, ms = (int)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (int*)current;
+						if (ms != *d)
+						{
+							if (max)
+							{
+								if (*d > *max) max = d;
+							}
+							else max = d;
+						}
+		                	}
+					if(core_oph_type_cast(max ? max : &ms, out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_SHORT:{
+		                	short *d, *max = NULL, ms = (short)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (short*)current;
+						if (ms != *d)
+						{
+							if (max)
+							{
+								if (*d > *max) max = d;
+							}
+							else max = d;
+						}
+		                	}
+					if(core_oph_type_cast(max ? max : &ms, out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_BYTE:{
+		                	char *d, *max = NULL, ms = (char)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (char*)current;
+						if (ms != *d)
+						{
+							if (max)
+							{
+								if (*d > *max) max = d;
+							}
+							else max = d;
+						}
+		                	}
+					if(core_oph_type_cast(max ? max : &ms, out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+			        }
+				case OPH_LONG:{
+		                	long long *d, *max = NULL, ms = (long long)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (long long*)current;
+						if (ms != *d)
+						{
+							if (max)
+							{
+								if (*d > *max) max = d;
+							}
+							else max = d;
+						}
+		                	}
+					if(core_oph_type_cast(max ? max : &ms, out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+			        }
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
+	}
+	else
+	{
+		for(j = 0; j < byte_array->num_measure; j++)
+		{
+			current=in_string;
+			switch(byte_array->type[j])
+			{
+		        	case OPH_DOUBLE:
+				{
+		                	double *d, *max = NULL;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (double*)current;
+						if (!isnan(*d))
+						{
+							if (max)
+							{
+								if (*d > *max) max = d;
+							}
+							else max = d;
+						}
+		                	}
+					if (max){
+						//Cast of the output
+						if(core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j])) return -1;
+					}
+					else
+					{
+						double value=NAN;
+						if(core_oph_type_cast((void*)(&value), out_string, byte_array->type[j], result->type[j])) return -1;
+					}
+		                	break;
+		        	}
+		        	case OPH_FLOAT:{
+		                	float *d, *max = NULL;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (float*)current;
+						if (!isnan(*d))
+						{
+							if (max)
+							{
+								if (*d > *max) max = d;
+							}
+							else max = d;
+						}
+		                	}
+					if (max){
+						//Cast of the output
+						if(core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j])) return -1;
+					}
+					else
+					{
+						float value=NAN;
+						if(core_oph_type_cast((void*)(&value), out_string, byte_array->type[j], result->type[j])) return -1;
+					}
+		                	break;
+		        	}
+		        	case OPH_INT:{
+		                	int *d, *max = NULL;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (int*)current;
 						if (max)
 						{
 							if (*d > *max) max = d;
 						}
 						else max = d;
-					}
-                        	}
-				if (max){
-					//Cast of the output
-					if(core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j])) return -1;
-				}
-				else
-				{
-					double value=NAN;
-					if(core_oph_type_cast((void*)(&value), out_string, byte_array->type[j], result->type[j])) return -1;
-				}
-                        	break;
-                	}
-                	case OPH_FLOAT:{
-                        	float *d, *max = NULL;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (float*)current;
-					if (!isnan(*d))
+		                	}
+					if (!max || core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j]))
 					{
+						pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
+						return -1;
+					}
+		                	break;
+			        }
+		        	case OPH_SHORT:{
+		                	short *d, *max = NULL;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (short*)current;
 						if (max)
 						{
 							if (*d > *max) max = d;
 						}
 						else max = d;
-					}
-                        	}
-				if (max){
-					//Cast of the output
-					if(core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j])) return -1;
-				}
-				else
-				{
-					float value=NAN;
-					if(core_oph_type_cast((void*)(&value), out_string, byte_array->type[j], result->type[j])) return -1;
-				}
-                        	break;
-                	}
-                	case OPH_INT:{
-                        	int *d, *max = NULL;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (int*)current;
-					if (max)
+		                	}
+					if (!max || core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j]))
 					{
-						if (*d > *max) max = d;
+						pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
+						return -1;
 					}
-					else max = d;
-                        	}
-				if (!max || core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j]))
-				{
-					pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
-					return -1;
-				}
-                        	break;
-        	        }
-                	case OPH_SHORT:{
-                        	short *d, *max = NULL;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (short*)current;
-					if (max)
+		                	break;
+			        }
+		        	case OPH_BYTE:{
+		                	char *d, *max = NULL;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
 					{
-						if (*d > *max) max = d;
-					}
-					else max = d;
-                        	}
-				if (!max || core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j]))
-				{
-					pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
-					return -1;
-				}
-                        	break;
-        	        }
-                	case OPH_BYTE:{
-                        	char *d, *max = NULL;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (char*)current;
-					if (max)
+						d = (char*)current;
+						if (max)
+						{
+							if (*d > *max) max = d;
+						}
+						else max = d;
+		                	}
+					if (!max || core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j]))
 					{
-						if (*d > *max) max = d;
+						pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
+						return -1;
 					}
-					else max = d;
-                        	}
-				if (!max || core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j]))
-				{
-					pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
-					return -1;
-				}
-                        	break;
-        	        }
-			case OPH_LONG:{
-                        	long long *d, *max = NULL;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (long long*)current;
-					if (max)
+		                	break;
+			        }
+				case OPH_LONG:{
+		                	long long *d, *max = NULL;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
 					{
-						if (*d > *max) max = d;
+						d = (long long*)current;
+						if (max)
+						{
+							if (*d > *max) max = d;
+						}
+						else max = d;
+		                	}
+					if (!max || core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j]))
+					{
+						pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
+						return -1;
 					}
-					else max = d;
-                        	}
-				if (!max || core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j]))
-				{
-					pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
-					return -1;
-				}
-                        	break;
-	                }
-        	        default:
-                	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-                        	return -1;
-	        }
-		in_string+=byte_array->elemsize[j];
-		out_string+=result->elemsize[j];
+		                	break;
+			        }
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
 	}
         return 0;
 }
@@ -1572,278 +1923,496 @@ int core_oph_max_multi (oph_multistring* byte_array, oph_multistring *result)
 int core_oph_min (oph_stringPtr byte_array, char *result)
 {
         int i;
-        switch(byte_array->type)
+        if (byte_array->missingvalue)
 	{
-                case OPH_DOUBLE:{
-                        double *d = (double*)byte_array->content, *min = 0;
-                        for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				if (!isnan(*d))
+		switch(byte_array->type)
+		{
+		        case OPH_DOUBLE:{
+		                double *d = (double*)byte_array->content, *min = 0;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (!isnan(*d) && (*byte_array->missingvalue != *d))
+					{
+						if (min)
+						{
+							if (*d < *min) min = d;
+						}
+						else min = d;
+					}
+		                }
+				memcpy(result, min ? min : byte_array->missingvalue, byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_FLOAT:{
+		                float *d = (float*)byte_array->content, *min = 0, ms = (float)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (!isnan(*d) && (ms != *d))
+					{
+						if (min)
+						{
+							if (*d < *min) min = d;
+						}
+						else min = d;
+					}
+		                }
+				memcpy(result, min ? min : &ms, byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_INT:{
+		                int *d = (int*)byte_array->content, *min = 0, ms = (int)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (ms != *d)
+					{
+						if (min)
+						{
+							if (*d < *min) min = d;
+						}
+						else min = d;
+					}
+		                }
+				memcpy(result, min ? min : &ms, byte_array->elemsize);
+		                break;
+		        }
+			case OPH_SHORT:{
+		                short *d = (short*)byte_array->content, *min = 0, ms = (short)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (ms != *d)
+					{
+						if (min)
+						{
+							if (*d < *min) min = d;
+						}
+						else min = d;
+					}
+		                }
+				memcpy(result, min ? min : &ms, byte_array->elemsize);
+		                break;
+		        }
+			case OPH_BYTE:{
+		                char *d = (char*)byte_array->content, *min = 0, ms = (char)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (ms != *d)
+					{
+						if (min)
+						{
+							if (*d < *min) min = d;
+						}
+						else min = d;
+					}
+		                }
+				memcpy(result, min ? min : &ms, byte_array->elemsize);
+		                break;
+		        }
+			case OPH_LONG:{
+		                long long *d = (long long*)byte_array->content, *min = 0, ms = (long long)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (ms != *d)
+					{
+						if (min)
+						{
+							if (*d < *min) min = d;
+						}
+						else min = d;
+					}
+		                }
+				memcpy(result, min ? min : &ms, byte_array->elemsize);
+		                break;
+		        }
+		        default:
+		                pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                return -1;
+		}
+	}
+	else
+	{
+		switch(byte_array->type)
+		{
+		        case OPH_DOUBLE:{
+		                double *d = (double*)byte_array->content, *min = 0;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (!isnan(*d))
+					{
+						if (min)
+						{
+							if (*d < *min) min = d;
+						}
+						else min = d;
+					}
+		                }
+				if (min) memcpy(result, min, byte_array->elemsize);
+				else
+				{
+					double value=NAN;
+					memcpy(result, &value, byte_array->elemsize);
+				}
+		                break;
+		        }
+		        case OPH_FLOAT:{
+		                float *d = (float*)byte_array->content, *min = 0;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (!isnan(*d))
+					{
+						if (min)
+						{
+							if (*d < *min) min = d;
+						}
+						else min = d;
+					}
+		                }
+				if (min) memcpy(result, min, byte_array->elemsize);
+				else
+				{
+					float value=NAN;
+					memcpy(result, &value, byte_array->elemsize);
+				}
+		                break;
+		        }
+		        case OPH_INT:{
+		                int *d = (int*)byte_array->content, *min = 0;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
 				{
 					if (min)
 					{
 						if (*d < *min) min = d;
 					}
 					else min = d;
+		                }
+				if (min) memcpy(result, min, byte_array->elemsize);
+				else
+				{
+					pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
+					return -1;
 				}
-                        }
-			if (min) memcpy(result, min, byte_array->elemsize);
-			else
-			{
-				double value=NAN;
-				memcpy(result, &value, byte_array->elemsize);
-			}
-                        break;
-                }
-                case OPH_FLOAT:{
-                        float *d = (float*)byte_array->content, *min = 0;
-                        for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				if (!isnan(*d))
+		                break;
+		        }
+			case OPH_SHORT:{
+		                short *d = (short*)byte_array->content, *min = 0;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
 				{
 					if (min)
 					{
 						if (*d < *min) min = d;
 					}
 					else min = d;
+		                }
+				if (min) memcpy(result, min, byte_array->elemsize);
+				else
+				{
+					pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
+					return -1;
 				}
-                        }
-			if (min) memcpy(result, min, byte_array->elemsize);
-			else
-			{
-				float value=NAN;
-				memcpy(result, &value, byte_array->elemsize);
-			}
-                        break;
-                }
-                case OPH_INT:{
-                        int *d = (int*)byte_array->content, *min = 0;
-                        for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				if (!isnan(*d))
+		                break;
+		        }
+			case OPH_BYTE:{
+		                char *d = (char*)byte_array->content, *min = 0;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
 				{
 					if (min)
 					{
 						if (*d < *min) min = d;
 					}
 					else min = d;
+		                }
+				if (min) memcpy(result, min, byte_array->elemsize);
+				else
+				{
+					pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
+					return -1;
 				}
-                        }
-			if (min) memcpy(result, min, byte_array->elemsize);
-			else
-			{
-				pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
-				return -1;
-			}
-                        break;
-                }
-		case OPH_SHORT:{
-                        short *d = (short*)byte_array->content, *min = 0;
-                        for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				if (!isnan(*d))
+		                break;
+		        }
+			case OPH_LONG:{
+		                long long *d = (long long*)byte_array->content, *min = 0;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
 				{
 					if (min)
 					{
 						if (*d < *min) min = d;
 					}
 					else min = d;
-				}
-                        }
-			if (min) memcpy(result, min, byte_array->elemsize);
-			else
-			{
-				pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
-				return -1;
-			}
-                        break;
-                }
-		case OPH_BYTE:{
-                        char *d = (char*)byte_array->content, *min = 0;
-                        for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				if (!isnan(*d))
+		                }
+				if (min) memcpy(result, min, byte_array->elemsize);
+				else
 				{
-					if (min)
-					{
-						if (*d < *min) min = d;
-					}
-					else min = d;
+					pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
+					return -1;
 				}
-                        }
-			if (min) memcpy(result, min, byte_array->elemsize);
-			else
-			{
-				pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
-				return -1;
-			}
-                        break;
-                }
-		case OPH_LONG:{
-                        long long *d = (long long*)byte_array->content, *min = 0;
-                        for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				if (!isnan(*d))
-				{
-					if (min)
-					{
-						if (*d < *min) min = d;
-					}
-					else min = d;
-				}
-                        }
-			if (min) memcpy(result, min, byte_array->elemsize);
-			else
-			{
-				pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
-				return -1;
-			}
-                        break;
-                }
-                default:
-                        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-                        return -1;
-        }
+		                break;
+		        }
+		        default:
+		                pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                return -1;
+		}
+	}
         return 0;
 }
 int core_oph_min_multi (oph_multistring* byte_array, oph_multistring *result)
 {
         int i,j;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
-	for(j = 0; j < byte_array->num_measure; j++)
+
+	if (byte_array->missingvalue)
 	{
-		current=in_string;
-        	switch(byte_array->type[j])
+		for(j = 0; j < byte_array->num_measure; j++)
 		{
-                	case OPH_DOUBLE:
+			current=in_string;
+			switch(byte_array->type[j])
 			{
-                        	double *d, *min = NULL;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+		        	case OPH_DOUBLE:
 				{
-					d = (double*)current;
-					if (!isnan(*d))
+		                	double *d, *min = NULL;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
 					{
+						d = (double*)current;
+						if (!isnan(*d) && (*byte_array->missingvalue != *d))
+						{
+							if (min)
+							{
+								if (*d < *min) min = d;
+							}
+							else min = d;
+						}
+		                	}
+					if(core_oph_type_cast(min ? min : byte_array->missingvalue, out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_FLOAT:{
+		                	float *d, *min = NULL, ms = (float)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (float*)current;
+						if (!isnan(*d) && (ms != *d))
+						{
+							if (min)
+							{
+								if (*d < *min) min = d;
+							}
+							else min = d;
+						}
+		                	}
+					if(core_oph_type_cast(min ? min : &ms, out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_INT:{
+		                	int *d, *min = NULL, ms = (int)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (int*)current;
+						if (ms != *d)
+						{
+							if (min)
+							{
+								if (*d < *min) min = d;
+							}
+							else min = d;
+						}
+		                	}
+					if(core_oph_type_cast(min ? min : &ms, out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_SHORT:{
+		                	short *d, *min = NULL, ms = (short)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (short*)current;
+						if (ms != *d)
+						{
+							if (min)
+							{
+								if (*d < *min) min = d;
+							}
+							else min = d;
+						}
+		                	}
+					if(core_oph_type_cast(min ? min : &ms, out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_BYTE:{
+		                	char *d, *min = NULL, ms = (char)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (char*)current;
+						if (ms != *d)
+						{
+							if (min)
+							{
+								if (*d < *min) min = d;
+							}
+							else min = d;
+						}
+		                	}
+					if(core_oph_type_cast(min ? min : &ms, out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+			        }
+				case OPH_LONG:{
+		                	long long *d, *min = NULL, ms = (long long)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (long long*)current;
+						if (ms != *d)
+						{
+							if (min)
+							{
+								if (*d < *min) min = d;
+							}
+							else min = d;
+						}
+		                	}
+					if(core_oph_type_cast(min ? min : &ms, out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+			        }
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
+	}
+	else
+	{
+		for(j = 0; j < byte_array->num_measure; j++)
+		{
+			current=in_string;
+			switch(byte_array->type[j])
+			{
+		        	case OPH_DOUBLE:
+				{
+		                	double *d, *min = NULL;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (double*)current;
+						if (!isnan(*d))
+						{
+							if (min)
+							{
+								if (*d < *min) min = d;
+							}
+							else min = d;
+						}
+		                	}
+					if (min){
+						//Cast of the output
+						if(core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j])) return -1;
+					}
+					else
+					{
+						double value=NAN;
+						if(core_oph_type_cast((void*)(&value), out_string, byte_array->type[j], result->type[j])) return -1;
+					}
+		                	break;
+		        	}
+		        	case OPH_FLOAT:{
+		                	float *d, *min = NULL;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (float*)current;
+						if (!isnan(*d))
+						{
+							if (min)
+							{
+								if (*d < *min) min = d;
+							}
+							else min = d;
+						}
+		                	}
+					if (min){
+						//Cast of the output
+						if(core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j])) return -1;
+					}
+					else
+					{
+						float value=NAN;
+						if(core_oph_type_cast((void*)(&value), out_string, byte_array->type[j], result->type[j])) return -1;
+					}
+		                	break;
+		        	}
+		        	case OPH_INT:{
+		                	int *d, *min = NULL;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (int*)current;
 						if (min)
 						{
 							if (*d < *min) min = d;
 						}
 						else min = d;
-					}
-                        	}
-				if (min){
-					//Cast of the output
-					if(core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j])) return -1;
-				}
-				else
-				{
-					double value=NAN;
-					if(core_oph_type_cast((void*)(&value), out_string, byte_array->type[j], result->type[j])) return -1;
-				}
-                        	break;
-                	}
-                	case OPH_FLOAT:{
-                        	float *d, *min = NULL;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (float*)current;
-					if (!isnan(*d))
+		                	}
+					if (!min || core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j]))
 					{
+						pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
+						return -1;
+					}
+		                	break;
+			        }
+		        	case OPH_SHORT:{
+		                	short *d, *min = NULL;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (short*)current;
 						if (min)
 						{
 							if (*d < *min) min = d;
 						}
 						else min = d;
-					}
-                        	}
-				if (min){
-					//Cast of the output
-					if(core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j])) return -1;
-				}
-				else
-				{
-					float value=NAN;
-					if(core_oph_type_cast((void*)(&value), out_string, byte_array->type[j], result->type[j])) return -1;
-				}
-                        	break;
-                	}
-                	case OPH_INT:{
-                        	int *d, *min = NULL;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (int*)current;
-					if (min)
+		                	}
+					if (!min || core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j]))
 					{
-						if (*d < *min) min = d;
+						pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
+						return -1;
 					}
-					else min = d;
-                        	}
-				if (!min || core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j]))
-				{
-					pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
-					return -1;
-				}
-                        	break;
-        	        }
-                	case OPH_SHORT:{
-                        	short *d, *min = NULL;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (short*)current;
-					if (min)
+		                	break;
+			        }
+		        	case OPH_BYTE:{
+		                	char *d, *min = NULL;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
 					{
-						if (*d < *min) min = d;
-					}
-					else min = d;
-                        	}
-				if (!min || core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j]))
-				{
-					pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
-					return -1;
-				}
-                        	break;
-        	        }
-                	case OPH_BYTE:{
-                        	char *d, *min = NULL;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (char*)current;
-					if (min)
+						d = (char*)current;
+						if (min)
+						{
+							if (*d < *min) min = d;
+						}
+						else min = d;
+		                	}
+					if (!min || core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j]))
 					{
-						if (*d < *min) min = d;
+						pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
+						return -1;
 					}
-					else min = d;
-                        	}
-				if (!min || core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j]))
-				{
-					pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
-					return -1;
-				}
-                        	break;
-        	        }
-			case OPH_LONG:{
-                        	long long *d, *min = NULL;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (long long*)current;
-					if (min)
+		                	break;
+			        }
+				case OPH_LONG:{
+		                	long long *d, *min = NULL;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
 					{
-						if (*d < *min) min = d;
+						d = (long long*)current;
+						if (min)
+						{
+							if (*d < *min) min = d;
+						}
+						else min = d;
+		                	}
+					if (!min || core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j]))
+					{
+						pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
+						return -1;
 					}
-					else min = d;
-                        	}
-				if (!min || core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j]))
-				{
-					pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
-					return -1;
-				}
-                        	break;
-	                }
-        	        default:
-                	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-                        	return -1;
-	        }
-		in_string+=byte_array->elemsize[j];
-		out_string+=result->elemsize[j];
+		                	break;
+			        }
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
 	}
         return 0;
 }
@@ -1851,111 +2420,224 @@ int core_oph_min_multi (oph_multistring* byte_array, oph_multistring *result)
 int core_oph_sum (oph_stringPtr byte_array, char *result)
 {
 	int i;
-        switch(byte_array->type)
+	if (byte_array->missingvalue)
 	{
-                case OPH_DOUBLE:{
-			char nan = 1;
-                        double *d = (double*)byte_array->content, sum = 0.0;
-                        for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d)) { sum = sum + *d; nan = 0; }
-			if (nan) sum = NAN;
-			memcpy(result, (void*)(&sum), byte_array->elemsize);
-                        break;
-                }
-                case OPH_FLOAT:{
-			char nan = 1;
-                        float *d = (float*)byte_array->content, sum = 0.0;
-                        for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d)) { sum = sum + *d; nan = 0; }
-			if (nan) sum = NAN;
-			memcpy(result, (void*)(&sum), byte_array->elemsize);
-                        break;
-                }
-                case OPH_INT:{
-                        int *d = (int*)byte_array->content, sum = 0;
-                        for (i = 0; i < byte_array->numelem; i++, d++) sum = sum + *d;
-			memcpy(result, (void*)(&sum), byte_array->elemsize);
-                        break;
-                }
-                case OPH_SHORT:{
-                        short *d = (short*)byte_array->content, sum = 0;
-                        for (i = 0; i < byte_array->numelem; i++, d++) sum = sum + *d;
-			memcpy(result, (void*)(&sum), byte_array->elemsize);
-                        break;
-                }
-                case OPH_BYTE:{
-                        char *d = (char*)byte_array->content, sum = 0;
-                        for (i = 0; i < byte_array->numelem; i++, d++) sum = sum + *d;
-			memcpy(result, (void*)(&sum), byte_array->elemsize);
-                        break;
-                }
-		case OPH_LONG:{
-                        long long *d = (long long*)byte_array->content, sum = 0;
-                        for (i = 0; i < byte_array->numelem; i++, d++) sum = sum + *d;
-			memcpy(result, (void*)(&sum), byte_array->elemsize);
-                        break;
-                }
-                default:
-                        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-                        return -1;
-        }
+		char nan = 1;
+		switch(byte_array->type)
+		{
+		        case OPH_DOUBLE:{
+				double *d = (double*)byte_array->content, sum = 0.0;
+		                for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d) && (*byte_array->missingvalue != *d)) { sum = sum + *d; nan = 0; }
+				memcpy(result, nan ? byte_array->missingvalue : &sum, byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_FLOAT:{
+				float *d = (float*)byte_array->content, sum = 0.0, ms = (float)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d) && (ms != *d)) { sum = sum + *d; nan = 0; }
+				memcpy(result, nan ? &ms : &sum, byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_INT:{
+		                int *d = (int*)byte_array->content, sum = 0, ms = (int)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++) if (ms != *d) { sum = sum + *d; nan = 0; }
+				memcpy(result, nan ? &ms : &sum, byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_SHORT:{
+		                short *d = (short*)byte_array->content, sum = 0, ms = (short)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++) if (ms != *d) { sum = sum + *d; nan = 0; }
+				memcpy(result, nan ? &ms : &sum, byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_BYTE:{
+		                char *d = (char*)byte_array->content, sum = 0, ms = (char)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++) if (ms != *d) { sum = sum + *d; nan = 0; }
+				memcpy(result, nan ? &ms : &sum, byte_array->elemsize);
+		                break;
+		        }
+			case OPH_LONG:{
+		                long long *d = (long long*)byte_array->content, sum = 0, ms = (long long)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++) if (ms != *d) { sum = sum + *d; nan = 0; }
+				memcpy(result, nan ? &ms : &sum, byte_array->elemsize);
+		                break;
+		        }
+		        default:
+		                pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                return -1;
+		}
+	}
+	else
+	{
+		switch(byte_array->type)
+		{
+		        case OPH_DOUBLE:{
+				char nan = 1;
+		                double *d = (double*)byte_array->content, sum = 0.0;
+		                for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d)) { sum = sum + *d; nan = 0; }
+				if (nan) sum = NAN;
+				memcpy(result, (void*)(&sum), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_FLOAT:{
+				char nan = 1;
+		                float *d = (float*)byte_array->content, sum = 0.0;
+		                for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d)) { sum = sum + *d; nan = 0; }
+				if (nan) sum = NAN;
+				memcpy(result, (void*)(&sum), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_INT:{
+		                int *d = (int*)byte_array->content, sum = 0;
+		                for (i = 0; i < byte_array->numelem; i++, d++) sum = sum + *d;
+				memcpy(result, (void*)(&sum), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_SHORT:{
+		                short *d = (short*)byte_array->content, sum = 0;
+		                for (i = 0; i < byte_array->numelem; i++, d++) sum = sum + *d;
+				memcpy(result, (void*)(&sum), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_BYTE:{
+		                char *d = (char*)byte_array->content, sum = 0;
+		                for (i = 0; i < byte_array->numelem; i++, d++) sum = sum + *d;
+				memcpy(result, (void*)(&sum), byte_array->elemsize);
+		                break;
+		        }
+			case OPH_LONG:{
+		                long long *d = (long long*)byte_array->content, sum = 0;
+		                for (i = 0; i < byte_array->numelem; i++, d++) sum = sum + *d;
+				memcpy(result, (void*)(&sum), byte_array->elemsize);
+		                break;
+		        }
+		        default:
+		                pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                return -1;
+		}
+	}
         return 0;
 }
 int core_oph_sum_multi (oph_multistring* byte_array, oph_multistring *result)
 {
         int i,j;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
-	for(j = 0; j < byte_array->num_measure; j++)
+	if (byte_array->missingvalue)
 	{
-		current=in_string;
-        	switch(byte_array->type[j])
+		char nan;
+		for(j = 0; j < byte_array->num_measure; j++)
 		{
-                	case OPH_DOUBLE:
+			nan = 1;
+			current=in_string;
+			switch(byte_array->type[j])
 			{
-				char nan = 1;
-                        	double sum = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (!isnan(*(double*)current)) { sum += *(double*)current; nan = 0; }
-				if (nan) sum = NAN;
-				if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
-                        	break;
-                	}
-                	case OPH_FLOAT:
+		        	case OPH_DOUBLE:
+				{
+		                	double sum = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (!isnan(*(double*)current) && (*byte_array->missingvalue != *(double*)current)) { sum += *(double*)current; nan = 0; }
+					if (nan) sum = *byte_array->missingvalue;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_FLOAT:
+				{
+		                	float sum = 0.0, ms = (float)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (!isnan(*(float*)current) && (ms != *(float*)current)) { sum += *(float*)current; nan = 0; }
+					if (nan) sum = ms;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_INT:{
+		                	int sum = 0, ms = (int)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (ms != *(int*)current) { sum += *(int*)current; }
+					if (nan) sum = ms;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_SHORT:{
+		                	short sum = 0, ms = (short)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (ms != *(short*)current) { sum += *(short*)current; }
+					if (nan) sum = ms;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_BYTE:{
+		                	char sum = 0, ms = (char)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (ms != *(char*)current) { sum += *(char*)current; }
+					if (nan) sum = ms;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+			        }
+				case OPH_LONG:{
+		                	long long sum = 0, ms = (long long)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (ms != *(long long*)current) { sum += *(long long*)current; }
+					if (nan) sum = ms;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+			        }
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
+	}
+	else
+	{
+		for(j = 0; j < byte_array->num_measure; j++)
+		{
+			current=in_string;
+			switch(byte_array->type[j])
 			{
-				char nan = 1;
-                        	float sum = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (!isnan(*(float*)current)) { sum += *(float*)current; nan = 0; }
-				if (nan) sum = NAN;
-				if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
-                        	break;
-                	}
-                	case OPH_INT:{
-                        	int sum = 0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(int*)current;
-				if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
-                        	break;
-        	        }
-                	case OPH_SHORT:{
-                        	short sum = 0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(short*)current;
-				if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
-                        	break;
-        	        }
-                	case OPH_BYTE:{
-                        	char sum = 0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(char*)current;
-				if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
-                        	break;
-        	        }
-			case OPH_LONG:{
-                        	long long sum = 0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(long long*)current;
-				if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
-                        	break;
-	                }
-        	        default:
-                	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-                        	return -1;
-	        }
-		in_string+=byte_array->elemsize[j];
-		out_string+=result->elemsize[j];
+		        	case OPH_DOUBLE:
+				{
+					char nan = 1;
+		                	double sum = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (!isnan(*(double*)current)) { sum += *(double*)current; nan = 0; }
+					if (nan) sum = NAN;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_FLOAT:
+				{
+					char nan = 1;
+		                	float sum = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (!isnan(*(float*)current)) { sum += *(float*)current; nan = 0; }
+					if (nan) sum = NAN;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_INT:{
+		                	int sum = 0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(int*)current;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_SHORT:{
+		                	short sum = 0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(short*)current;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_BYTE:{
+		                	char sum = 0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(char*)current;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+			        }
+				case OPH_LONG:{
+		                	long long sum = 0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(long long*)current;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+			        }
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
 	}
         return 0;
 }
@@ -1963,78 +2645,187 @@ int core_oph_sum_multi (oph_multistring* byte_array, oph_multistring *result)
 int core_oph_avg (oph_stringPtr byte_array, char *result)
 {
         int i;
-	unsigned long numelem=0;
-        switch(byte_array->type){
-                case OPH_DOUBLE:{
-                        double *d = (double*)byte_array->content, sum = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				if (!isnan(*d))
+	unsigned long numelem = 0;
+	if (byte_array->missingvalue)
+	{
+		switch(byte_array->type){
+		        case OPH_DOUBLE:{
+		                double *d = (double*)byte_array->content, sum = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
 				{
-					sum = sum + *d;
-					numelem++;
-				}
-                        }
-			if (numelem) sum /= (double)numelem;
-			else sum = NAN;
-			memcpy(result, (void*)(&sum), byte_array->elemsize);
-                        break;
-                }
-                case OPH_FLOAT:{
-                        float *d = (float*)byte_array->content, sum = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				if (!isnan(*d))
+					if (!isnan(*d) && (*byte_array->missingvalue != *d))
+					{
+						sum = sum + *d;
+						numelem++;
+					}
+		                }
+				if (numelem) sum /= (double)numelem;
+				else sum = *byte_array->missingvalue;
+				memcpy(result, (void*)(&sum), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_FLOAT:{
+		                float *d = (float*)byte_array->content, sum = 0.0, ms = (float)*byte_array->missingvalue;
+				for (i = 0; i < byte_array->numelem; i++, d++)
 				{
-					sum = sum + *d;
-					numelem++;
-				}
-                        }
-			if (numelem) sum /= (float)numelem;
-			else sum = NAN;
-			memcpy(result, (void*)(&sum), byte_array->elemsize);
-                        break;
-                }
-                case OPH_INT:{
-			//The average is a float number
-                        int *d = (int*)byte_array->content;
-			float sum = 0;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum = sum + *d;
-			sum /= (float)byte_array->numelem;
-			memcpy(result, (void*)(&sum), core_sizeof(OPH_FLOAT));
-                        break;
-                }
-                case OPH_SHORT:{
-			//The average is a float number
-                        short *d = (short*)byte_array->content;
-			float sum = 0;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum = sum + *d;
-			sum /= (float)byte_array->numelem;
-			memcpy(result, (void*)(&sum), core_sizeof(OPH_FLOAT));
-                        break;
-                }
-                case OPH_BYTE:{
-			//The average is a float number
-                        char *d = (char*)byte_array->content;
-			float sum = 0;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum = sum + *d;
-			sum /= (float)byte_array->numelem;
-			memcpy(result, (void*)(&sum), core_sizeof(OPH_FLOAT));
-                        break;
-                }
-		case OPH_LONG:{
-			//The average is a float number
-                        long long *d = (long long*)byte_array->content;
-			double sum = 0;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum = sum + *d;
-			sum /= (double)byte_array->numelem;
-			memcpy(result, (void*)(&sum), core_sizeof(OPH_DOUBLE));
-                        break;
-                }
-                default:
-                        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-                        return -1;
-        }
+					if (!isnan(*d) && (ms != *d))
+					{
+						sum = sum + *d;
+						numelem++;
+					}
+		                }
+				if (numelem) sum /= (float)numelem;
+				else sum = ms;
+				memcpy(result, (void*)(&sum), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_INT:{
+				//The average is a float number
+		                int *d = (int*)byte_array->content, ms = (int)*byte_array->missingvalue;;
+				float sum = 0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (ms != *d)
+					{
+						sum = sum + *d;
+						numelem++;
+					}
+		                }
+				if (numelem) sum /= (float)numelem;
+				else sum = ms;
+				memcpy(result, (void*)(&sum), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_SHORT:{
+				//The average is a float number
+		                short *d = (short*)byte_array->content, ms = (short)*byte_array->missingvalue;
+				float sum = 0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (ms != *d)
+					{
+						sum = sum + *d;
+						numelem++;
+					}
+		                }
+				if (numelem) sum /= (float)numelem;
+				else sum = ms;
+				memcpy(result, (void*)(&sum), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_BYTE:{
+				//The average is a float number
+		                char *d = (char*)byte_array->content, ms = (char)*byte_array->missingvalue;
+				float sum = 0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (ms != *d)
+					{
+						sum = sum + *d;
+						numelem++;
+					}
+		                }
+				if (numelem) sum /= (float)numelem;
+				else sum = ms;
+				memcpy(result, (void*)(&sum), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+			case OPH_LONG:{
+				//The average is a double number
+		                long long *d = (long long*)byte_array->content, ms = (long long)*byte_array->missingvalue;
+				double sum = 0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (ms != *d)
+					{
+						sum = sum + *d;
+						numelem++;
+					}
+		                }
+				if (numelem) sum /= (double)numelem;
+				else sum = ms;
+				memcpy(result, (void*)(&sum), core_sizeof(OPH_DOUBLE));
+		                break;
+		        }
+		        default:
+		                pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                return -1;
+		}
+	}
+	else
+	{
+		switch(byte_array->type){
+		        case OPH_DOUBLE:{
+		                double *d = (double*)byte_array->content, sum = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (!isnan(*d))
+					{
+						sum = sum + *d;
+						numelem++;
+					}
+		                }
+				if (numelem) sum /= (double)numelem;
+				else sum = NAN;
+				memcpy(result, (void*)(&sum), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_FLOAT:{
+		                float *d = (float*)byte_array->content, sum = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (!isnan(*d))
+					{
+						sum = sum + *d;
+						numelem++;
+					}
+		                }
+				if (numelem) sum /= (float)numelem;
+				else sum = NAN;
+				memcpy(result, (void*)(&sum), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_INT:{
+				//The average is a float number
+		                int *d = (int*)byte_array->content;
+				float sum = 0;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum = sum + *d;
+				sum /= (float)byte_array->numelem;
+				memcpy(result, (void*)(&sum), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_SHORT:{
+				//The average is a float number
+		                short *d = (short*)byte_array->content;
+				float sum = 0;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum = sum + *d;
+				sum /= (float)byte_array->numelem;
+				memcpy(result, (void*)(&sum), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_BYTE:{
+				//The average is a float number
+		                char *d = (char*)byte_array->content;
+				float sum = 0;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum = sum + *d;
+				sum /= (float)byte_array->numelem;
+				memcpy(result, (void*)(&sum), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+			case OPH_LONG:{
+				//The average is a float number
+		                long long *d = (long long*)byte_array->content;
+				double sum = 0;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum = sum + *d;
+				sum /= (double)byte_array->numelem;
+				memcpy(result, (void*)(&sum), core_sizeof(OPH_DOUBLE));
+		                break;
+		        }
+		        default:
+		                pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                return -1;
+		}
+	}
         return 0;
 }
 int core_oph_avg_multi (oph_multistring* byte_array, oph_multistring *result)
@@ -2042,79 +2833,199 @@ int core_oph_avg_multi (oph_multistring* byte_array, oph_multistring *result)
         int i,j;
 	unsigned long numelem;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
-	for(j = 0; j < byte_array->num_measure; j++)
+	if (byte_array->missingvalue)
 	{
-		numelem=0;
-		current=in_string;
-        	switch(byte_array->type[j])
+		for(j = 0; j < byte_array->num_measure; j++)
 		{
-                	case OPH_DOUBLE:
+			numelem=0;
+			current=in_string;
+			switch(byte_array->type[j])
 			{
-                        	double *d, sum = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+		        	case OPH_DOUBLE:
 				{
-					d = (double*)current;
-					if (!isnan(*d))
+		                	double *d, sum = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
 					{
-						sum += *d;
-						numelem++;
-					}
-                        	}
-				if (numelem) sum /= (double)numelem;
-				else sum = NAN;
-				if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
-                        	break;
-                	}
-                	case OPH_FLOAT:{
-                        	float *d, sum = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+						d = (double*)current;
+						if (!isnan(*d) && (*byte_array->missingvalue != *d))
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (numelem) sum /= (double)numelem;
+					else sum = *byte_array->missingvalue;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_FLOAT:{
+		                	float *d, sum = 0.0, ms = (float)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (float*)current;
+						if (!isnan(*d) && (ms != *d))
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (numelem) sum /= (float)numelem;
+					else sum = ms;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_INT:{
+					int *d, ms = (int)*byte_array->missingvalue;
+		                	float sum = 0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (int*)current;
+						if (ms != *d)
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (numelem) sum /= (float)numelem;
+					else sum = ms;
+					if(core_oph_type_cast((void*)(&sum), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_SHORT:{
+					short *d, ms = (short)*byte_array->missingvalue;
+		                	float sum = 0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (short*)current;
+						if (ms != *d)
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (numelem) sum /= (float)numelem;
+					else sum = ms;
+					if(core_oph_type_cast((void*)(&sum), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+				case OPH_BYTE:{
+					char *d, ms = (char)*byte_array->missingvalue;
+		                	float sum = 0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (char*)current;
+						if (ms != *d)
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (numelem) sum /= (float)numelem;
+					else sum = ms;
+					if(core_oph_type_cast((void*)(&sum), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+				case OPH_LONG:{
+					long long *d, ms = (long long)*byte_array->missingvalue;
+		                	double sum = 0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (long long*)current;
+						if (ms != *d)
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (numelem) sum /= (double)numelem;
+					else sum = ms;
+					if(core_oph_type_cast((void*)(&sum), out_string, OPH_DOUBLE, result->type[j])) return -1;
+		                	break;
+			        }
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
+	}
+	else
+	{
+		for(j = 0; j < byte_array->num_measure; j++)
+		{
+			numelem=0;
+			current=in_string;
+			switch(byte_array->type[j])
+			{
+		        	case OPH_DOUBLE:
 				{
-					d = (float*)current;
-					if (!isnan(*d))
+		                	double *d, sum = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
 					{
-						sum += *d;
-						numelem++;
-					}
-                        	}
-				if (numelem) sum /= (float)numelem;
-				else sum = NAN;
-				if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
-                        	break;
-                	}
-                	case OPH_INT:{
-                        	float sum = 0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(int*)current;
-				sum /= (float)byte_array->numelem;
-				if(core_oph_type_cast((void*)(&sum), out_string, OPH_FLOAT, result->type[j])) return -1;
-                        	break;
-        	        }
-                	case OPH_SHORT:{
-                        	float sum = 0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(short*)current;
-				sum /= (float)byte_array->numelem;
-				if(core_oph_type_cast((void*)(&sum), out_string, OPH_FLOAT, result->type[j])) return -1;
-                        	break;
-        	        }
-			case OPH_BYTE:{
-                        	float sum = 0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(char*)current;
-				sum /= (float)byte_array->numelem;
-				if(core_oph_type_cast((void*)(&sum), out_string, OPH_FLOAT, result->type[j])) return -1;
-                        	break;
-	                }
-			case OPH_LONG:{
-                        	double sum = 0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(long long*)current;
-				sum /= (double)byte_array->numelem;
-				if(core_oph_type_cast((void*)(&sum), out_string, OPH_DOUBLE, result->type[j])) return -1;
-                        	break;
-	                }
-        	        default:
-                	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-                        	return -1;
-	        }
-		in_string+=byte_array->elemsize[j];
-		out_string+=result->elemsize[j];
+						d = (double*)current;
+						if (!isnan(*d))
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (numelem) sum /= (double)numelem;
+					else sum = NAN;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_FLOAT:{
+		                	float *d, sum = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (float*)current;
+						if (!isnan(*d))
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (numelem) sum /= (float)numelem;
+					else sum = NAN;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_INT:{
+		                	float sum = 0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(int*)current;
+					sum /= (float)byte_array->numelem;
+					if(core_oph_type_cast((void*)(&sum), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_SHORT:{
+		                	float sum = 0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(short*)current;
+					sum /= (float)byte_array->numelem;
+					if(core_oph_type_cast((void*)(&sum), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+				case OPH_BYTE:{
+		                	float sum = 0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(char*)current;
+					sum /= (float)byte_array->numelem;
+					if(core_oph_type_cast((void*)(&sum), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+				case OPH_LONG:{
+		                	double sum = 0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(long long*)current;
+					sum /= (double)byte_array->numelem;
+					if(core_oph_type_cast((void*)(&sum), out_string, OPH_DOUBLE, result->type[j])) return -1;
+		                	break;
+			        }
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
 	}
         return 0;
 }
@@ -2155,135 +3066,303 @@ int core_oph_std_multi (oph_multistring* byte_array, oph_multistring *result)
         int i,j;
 	unsigned long numelem;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
-	for(j = 0; j < byte_array->num_measure; j++)
+	if (byte_array->missingvalue)
 	{
-		numelem=0;
-		current = in_string;
-        	switch(byte_array->type[j])
+		for(j = 0; j < byte_array->num_measure; j++)
 		{
-                	case OPH_DOUBLE:
+			numelem=0;
+			current = in_string;
+			switch(byte_array->type[j])
 			{
-                        	double *d, sum = 0.0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+		        	case OPH_DOUBLE:
 				{
-					d = (double*)current;
-					if (!isnan(*d))
+		                	double *d, sum = 0.0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
 					{
-						sum += *d;
-						sum2 += (*d)*(*d);
-						numelem++;
-					}
-                        	}
-				if (!numelem) sum2 = NAN;
-				else
-				{
-					sum /= numelem;
-					sum2 /= numelem;
-					sum2 -= sum*sum;
-					if (numelem>1) sum2 *= numelem/(numelem-1.0);
-					sum2 = sqrt(fabs(sum2));
-				}
-				if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
-                        	break;
-                	}
-                	case OPH_FLOAT:{
-                        	float *d, sum = 0.0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (float*)current;
-					if (!isnan(*d))
+						d = (double*)current;
+						if (!isnan(*d) && (*byte_array->missingvalue != *d))
+						{
+							sum += *d;
+							sum2 += (*d)*(*d);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = *byte_array->missingvalue;
+					else
 					{
-						sum += *d;
-						sum2 += (*d)*(*d);
-						numelem++;
+						sum /= numelem;
+						sum2 /= numelem;
+						sum2 -= sum*sum;
+						if (numelem>1) sum2 *= numelem/(numelem-1.0);
+						sum2 = sqrt(fabs(sum2));
 					}
-                        	}
-				if (!numelem) sum2 = NAN;
-				else
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_FLOAT:{
+		                	float *d, sum = 0.0, sum2 = 0.0, ms = (float)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (float*)current;
+						if (!isnan(*d) && (ms != *d))
+						{
+							sum += *d;
+							sum2 += (*d)*(*d);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else
+					{
+						sum /= numelem;
+						sum2 /= numelem;
+						sum2 -= sum*sum;
+						if (numelem>1) sum2 *= numelem/(numelem-1.0);
+						sum2 = sqrtf(fabsf(sum2));
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_INT:{
+					int *d, ms = (int)*byte_array->missingvalue;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (int*)current;
+						if (ms != *d)
+						{
+							sum += *d;
+							sum2 += ((float)*d)*((float)*d);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else
+					{
+						sum /= numelem;
+						sum2 /= numelem;
+						sum2 -= sum*sum;
+						if (numelem>1) sum2 *= numelem/(numelem-1.0);
+						sum2 = sqrtf(fabsf(sum2));
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_SHORT:{
+					short *d, ms = (short)*byte_array->missingvalue;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (short*)current;
+						if (ms != *d)
+						{
+							sum += *d;
+							sum2 += ((float)*d)*((float)*d);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else
+					{
+						sum /= numelem;
+						sum2 /= numelem;
+						sum2 -= sum*sum;
+						if (numelem>1) sum2 *= numelem/(numelem-1.0);
+						sum2 = sqrtf(fabsf(sum2));
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_BYTE:{
+					char *d, ms = (char)*byte_array->missingvalue;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (char*)current;
+						if (ms != *d)
+						{
+							sum += *d;
+							sum2 += ((float)*d)*((float)*d);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else
+					{
+						sum /= numelem;
+						sum2 /= numelem;
+						sum2 -= sum*sum;
+						if (numelem>1) sum2 *= numelem/(numelem-1.0);
+						sum2 = sqrtf(fabsf(sum2));
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+				case OPH_LONG:{
+					long long *d, ms = (long long)*byte_array->missingvalue;
+					double sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (long long*)current;
+						if (ms != *d)
+						{
+							sum += *d;
+							sum2 += ((double)*d)*((double)*d);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else
+					{
+						sum /= numelem;
+						sum2 /= numelem;
+						sum2 -= sum*sum;
+						if (numelem>1) sum2 *= numelem/(numelem-1.0);
+						sum2 = sqrt(fabs(sum2));
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+		                	break;
+			        }
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
+	}
+	else
+	{
+		for(j = 0; j < byte_array->num_measure; j++)
+		{
+			numelem=0;
+			current = in_string;
+			switch(byte_array->type[j])
+			{
+		        	case OPH_DOUBLE:
 				{
-					sum /= numelem;
-					sum2 /= numelem;
+		                	double *d, sum = 0.0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (double*)current;
+						if (!isnan(*d))
+						{
+							sum += *d;
+							sum2 += (*d)*(*d);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = NAN;
+					else
+					{
+						sum /= numelem;
+						sum2 /= numelem;
+						sum2 -= sum*sum;
+						if (numelem>1) sum2 *= numelem/(numelem-1.0);
+						sum2 = sqrt(fabs(sum2));
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_FLOAT:{
+		                	float *d, sum = 0.0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (float*)current;
+						if (!isnan(*d))
+						{
+							sum += *d;
+							sum2 += (*d)*(*d);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = NAN;
+					else
+					{
+						sum /= numelem;
+						sum2 /= numelem;
+						sum2 -= sum*sum;
+						if (numelem>1) sum2 *= numelem/(numelem-1.0);
+						sum2 = sqrtf(fabsf(sum2));
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_INT:{
+					int *d;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (int*)current;
+						sum += *d;
+						sum2 += ((float)(*d))*((float)(*d));
+					}
+					sum /= (float)byte_array->numelem;
+					sum2 /= (float)byte_array->numelem;
 					sum2 -= sum*sum;
-					if (numelem>1) sum2 *= numelem/(numelem-1.0);
+					if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
 					sum2 = sqrtf(fabsf(sum2));
-				}
-				if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
-                        	break;
-                	}
-                	case OPH_INT:{
-				int *d;
-				float sum = 0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (int*)current;
-					sum += *d;
-					sum2 += ((float)(*d))*((float)(*d));
-				}
-				sum /= (float)byte_array->numelem;
-				sum2 /= (float)byte_array->numelem;
-				sum2 -= sum*sum;
-				if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
-				sum2 = sqrtf(fabsf(sum2));
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
-                        	break;
-        	        }
-                	case OPH_SHORT:{
-				short *d;
-				float sum = 0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (short*)current;
-					sum += *d;
-					sum2 += ((float)(*d))*((float)(*d));
-				}
-				sum /= (float)byte_array->numelem;
-				sum2 /= (float)byte_array->numelem;
-				sum2 -= sum*sum;
-				if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
-				sum2 = sqrtf(fabsf(sum2));
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
-                        	break;
-        	        }
-                	case OPH_BYTE:{
-				char *d;
-				float sum = 0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (char*)current;
-					sum += *d;
-					sum2 += ((float)(*d))*((float)(*d));
-				}
-				sum /= (float)byte_array->numelem;
-				sum2 /= (float)byte_array->numelem;
-				sum2 -= sum*sum;
-				if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
-				sum2 = sqrtf(fabsf(sum2));
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
-                        	break;
-        	        }
-			case OPH_LONG:{
-				long long *d;
-				double sum = 0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++)
-				{
-					d = (long long*)current;
-					sum += *d;
-					sum2 += ((double)(*d))*((double)(*d));
-				}
-				sum /= (double)byte_array->numelem;
-				sum2 /= (double)byte_array->numelem;
-				sum2 -= sum*sum;
-				if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
-				sum2 = sqrt(fabs(sum2));
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
-                        	break;
-	                }
-        	        default:
-                	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-                        	return -1;
-	        }
-		in_string+=byte_array->elemsize[j];
-		out_string+=result->elemsize[j];
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_SHORT:{
+					short *d;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (short*)current;
+						sum += *d;
+						sum2 += ((float)(*d))*((float)(*d));
+					}
+					sum /= (float)byte_array->numelem;
+					sum2 /= (float)byte_array->numelem;
+					sum2 -= sum*sum;
+					if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
+					sum2 = sqrtf(fabsf(sum2));
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_BYTE:{
+					char *d;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (char*)current;
+						sum += *d;
+						sum2 += ((float)(*d))*((float)(*d));
+					}
+					sum /= (float)byte_array->numelem;
+					sum2 /= (float)byte_array->numelem;
+					sum2 -= sum*sum;
+					if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
+					sum2 = sqrtf(fabsf(sum2));
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+				case OPH_LONG:{
+					long long *d;
+					double sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (long long*)current;
+						sum += *d;
+						sum2 += ((double)(*d))*((double)(*d));
+					}
+					sum /= (double)byte_array->numelem;
+					sum2 /= (double)byte_array->numelem;
+					sum2 -= sum*sum;
+					if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
+					sum2 = sqrt(fabs(sum2));
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+		                	break;
+			        }
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
 	}
         return 0;
 }
@@ -2291,148 +3370,23 @@ int core_oph_std_multi (oph_multistring* byte_array, oph_multistring *result)
 int core_oph_var (oph_stringPtr byte_array, char *result)
 {
         int i;
-	unsigned long numelem=0;
+	unsigned long numelem = 0;
 
-        switch(byte_array->type){
-                case OPH_DOUBLE:{
-                        double *d = (double*)byte_array->content, sum = 0.0, sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-                                if (!isnan(*d))
-				{
-					sum += *d;
-					sum2 += (*d)*(*d);
-					numelem++;
-				}
-                        }
-			if (!numelem) sum2 = NAN;
-			else
-			{
-				sum /= numelem;
-				sum2 /= numelem;
-				sum2 -= sum*sum;
-				if (numelem>1) sum2 *= numelem/(numelem-1.0);
-			}
-			memcpy(result, (void*)(&sum2), byte_array->elemsize);
-                        break;
-                }
-                case OPH_FLOAT:{
-                        float *d = (float*)byte_array->content, sum = 0.0, sum2 = 0.0;
-                        for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-                                if (!isnan(*d))
-				{
-					sum += *d;
-					sum2 += (*d)*(*d);
-					numelem++;
-				}
-                        }
-			if (!numelem) sum2 = NAN;
-			else
-			{
-				sum /= numelem;
-				sum2 /= numelem;
-				sum2 -= sum*sum;
-				if (numelem>1) sum2 *= numelem/(numelem-1.0);
-			}
-			memcpy(result, (void*)(&sum2), byte_array->elemsize);
-                        break;
-                }
-                case OPH_INT:{
-			//The standard deviation is a float number
-                        int *d = (int*)byte_array->content;
-			float sum = 0, sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				sum += *d;
-				sum2 += ((float)(*d))*((float)(*d));
-			}
-			sum /= (float)byte_array->numelem;
-			sum2 /= (float)byte_array->numelem;
-			sum2 -= sum*sum;
-			if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
-			memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
-                        break;
-                }
-                case OPH_SHORT:{
-			//The standard deviation is a float number
-                        short *d = (short*)byte_array->content;
-			float sum = 0, sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				sum += *d;
-				sum2 += ((float)(*d))*((float)(*d));
-			}
-			sum /= (float)byte_array->numelem;
-			sum2 /= (float)byte_array->numelem;
-			sum2 -= sum*sum;
-			if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
-			memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
-                        break;
-                }
-                case OPH_BYTE:{
-			//The standard deviation is a float number
-                        char *d = (char*)byte_array->content;
-			float sum = 0, sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				sum += *d;
-				sum2 += ((float)(*d))*((float)(*d));
-			}
-			sum /= (float)byte_array->numelem;
-			sum2 /= (float)byte_array->numelem;
-			sum2 -= sum*sum;
-			if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
-			memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
-                        break;
-                }
-		case OPH_LONG:{
-			//The standard deviation is a double number
-                        long long *d = (long long*)byte_array->content;
-			double sum = 0, sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				sum += *d;
-				sum2 += ((double)(*d))*((double)(*d));
-			}
-			sum /= (double)byte_array->numelem;
-			sum2 /= (double)byte_array->numelem;
-			sum2 -= sum*sum;
-			if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
-                        memcpy(result, (void*)(&sum2), core_sizeof(OPH_DOUBLE));
-                        break;
-                }
-                default:
-                        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-                        return -1;
-        }
-        return 0;
-}
-int core_oph_var_multi (oph_multistring* byte_array, oph_multistring *result)
-{
-        int i,j;
-	unsigned long numelem;
-	char *in_string = byte_array->content, *current, *out_string = result->content;
-	for(j = 0; j < byte_array->num_measure; j++)
+	if (byte_array->missingvalue)
 	{
-		numelem=0;
-		current = in_string;
-        	switch(byte_array->type[j])
-		{
-                	case OPH_DOUBLE:
-			{
-                        	double *d, sum = 0.0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+		switch(byte_array->type){
+		        case OPH_DOUBLE:{
+		                double *d = (double*)byte_array->content, sum = 0.0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
 				{
-					d = (double*)current;
-					if (!isnan(*d))
+		                        if (!isnan(*d) && (*byte_array->missingvalue != *d))
 					{
 						sum += *d;
 						sum2 += (*d)*(*d);
 						numelem++;
 					}
-                        	}
-				if (!numelem) sum2 = NAN;
+		                }
+				if (!numelem) sum2 = *byte_array->missingvalue;
 				else
 				{
 					sum /= numelem;
@@ -2440,22 +3394,21 @@ int core_oph_var_multi (oph_multistring* byte_array, oph_multistring *result)
 					sum2 -= sum*sum;
 					if (numelem>1) sum2 *= numelem/(numelem-1.0);
 				}
-				if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
-                        	break;
-                	}
-                	case OPH_FLOAT:{
-                        	float *d, sum = 0.0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+				memcpy(result, (void*)(&sum2), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_FLOAT:{
+		                float *d = (float*)byte_array->content, sum = 0.0, sum2 = 0.0, ms = (float)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
 				{
-					d = (float*)current;
-					if (!isnan(*d))
+		                        if (!isnan(*d) && (ms != *d))
 					{
 						sum += *d;
 						sum2 += (*d)*(*d);
 						numelem++;
 					}
-                        	}
-				if (!numelem) sum2 = NAN;
+		                }
+				if (!numelem) sum2 = ms;
 				else
 				{
 					sum /= numelem;
@@ -2463,63 +3416,211 @@ int core_oph_var_multi (oph_multistring* byte_array, oph_multistring *result)
 					sum2 -= sum*sum;
 					if (numelem>1) sum2 *= numelem/(numelem-1.0);
 				}
-				if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
-                        	break;
-                	}
-                	case OPH_INT:{
-				int *d;
+				memcpy(result, (void*)(&sum2), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_INT:{
+				//The standard deviation is a float number
+		                int *d = (int*)byte_array->content, ms = (int)*byte_array->missingvalue;
 				float sum = 0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+				for (i = 0; i < byte_array->numelem; i++, d++)
 				{
-					d = (int*)current;
-					sum += *d;
-					sum2 += ((float)(*d))*((float)(*d));
+					if (ms != *d)
+					{
+						sum += *d;
+						sum2 += ((float)*d)*((float)*d);
+						numelem++;
+					}
 				}
-				sum /= (float)byte_array->numelem;
-				sum2 /= (float)byte_array->numelem;
-				sum2 -= sum*sum;
-				if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
-                        	break;
-        	        }
-                	case OPH_SHORT:{
-				short *d;
+				if (!numelem) sum2 = ms;
+				else
+				{
+					sum /= numelem;
+					sum2 /= numelem;
+					sum2 -= sum*sum;
+					if (numelem>1) sum2 *= numelem/(numelem-1.0);
+				}
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_SHORT:{
+				//The standard deviation is a float number
+		                short *d = (short*)byte_array->content, ms = (short)*byte_array->missingvalue;
 				float sum = 0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+				for (i = 0; i < byte_array->numelem; i++, d++)
 				{
-					d = (short*)current;
-					sum += *d;
-					sum2 += ((float)(*d))*((float)(*d));
+					if (ms != *d)
+					{
+						sum += *d;
+						sum2 += ((float)*d)*((float)*d);
+						numelem++;
+					}
 				}
-				sum /= (float)byte_array->numelem;
-				sum2 /= (float)byte_array->numelem;
-				sum2 -= sum*sum;
-				if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
-                        	break;
-        	        }
-                	case OPH_BYTE:{
-				char *d;
+				if (!numelem) sum2 = ms;
+				else
+				{
+					sum /= numelem;
+					sum2 /= numelem;
+					sum2 -= sum*sum;
+					if (numelem>1) sum2 *= numelem/(numelem-1.0);
+				}
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_BYTE:{
+				//The standard deviation is a float number
+		                char *d = (char*)byte_array->content, ms = (char)*byte_array->missingvalue;
 				float sum = 0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+				for (i = 0; i < byte_array->numelem; i++, d++)
 				{
-					d = (char*)current;
-					sum += *d;
-					sum2 += ((float)(*d))*((float)(*d));
+					if (ms != *d)
+					{
+						sum += *d;
+						sum2 += ((float)*d)*((float)*d);
+						numelem++;
+					}
 				}
-				sum /= (float)byte_array->numelem;
-				sum2 /= (float)byte_array->numelem;
-				sum2 -= sum*sum;
-				if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
-                        	break;
-        	        }
+				if (!numelem) sum2 = ms;
+				else
+				{
+					sum /= numelem;
+					sum2 /= numelem;
+					sum2 -= sum*sum;
+					if (numelem>1) sum2 *= numelem/(numelem-1.0);
+				}
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
 			case OPH_LONG:{
-				long long *d;
+				//The standard deviation is a double number
+		                long long *d = (long long*)byte_array->content, ms = (long long)*byte_array->missingvalue;
 				double sum = 0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++)
+				for (i = 0; i < byte_array->numelem; i++, d++)
 				{
-					d = (long long*)current;
+					if (ms != *d)
+					{
+						sum += *d;
+						sum2 += ((double)*d)*((double)*d);
+						numelem++;
+					}
+				}
+				if (!numelem) sum2 = ms;
+				else
+				{
+					sum /= numelem;
+					sum2 /= numelem;
+					sum2 -= sum*sum;
+					if (numelem>1) sum2 *= numelem/(numelem-1.0);
+				}
+		                memcpy(result, (void*)(&sum2), core_sizeof(OPH_DOUBLE));
+		                break;
+		        }
+		        default:
+		                pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                return -1;
+		}
+	}
+	else
+	{
+		switch(byte_array->type){
+		        case OPH_DOUBLE:{
+		                double *d = (double*)byte_array->content, sum = 0.0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+		                        if (!isnan(*d))
+					{
+						sum += *d;
+						sum2 += (*d)*(*d);
+						numelem++;
+					}
+		                }
+				if (!numelem) sum2 = NAN;
+				else
+				{
+					sum /= numelem;
+					sum2 /= numelem;
+					sum2 -= sum*sum;
+					if (numelem>1) sum2 *= numelem/(numelem-1.0);
+				}
+				memcpy(result, (void*)(&sum2), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_FLOAT:{
+		                float *d = (float*)byte_array->content, sum = 0.0, sum2 = 0.0;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+		                        if (!isnan(*d))
+					{
+						sum += *d;
+						sum2 += (*d)*(*d);
+						numelem++;
+					}
+		                }
+				if (!numelem) sum2 = NAN;
+				else
+				{
+					sum /= numelem;
+					sum2 /= numelem;
+					sum2 -= sum*sum;
+					if (numelem>1) sum2 *= numelem/(numelem-1.0);
+				}
+				memcpy(result, (void*)(&sum2), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_INT:{
+				//The standard deviation is a float number
+		                int *d = (int*)byte_array->content;
+				float sum = 0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					sum += *d;
+					sum2 += ((float)(*d))*((float)(*d));
+				}
+				sum /= (float)byte_array->numelem;
+				sum2 /= (float)byte_array->numelem;
+				sum2 -= sum*sum;
+				if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_SHORT:{
+				//The standard deviation is a float number
+		                short *d = (short*)byte_array->content;
+				float sum = 0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					sum += *d;
+					sum2 += ((float)(*d))*((float)(*d));
+				}
+				sum /= (float)byte_array->numelem;
+				sum2 /= (float)byte_array->numelem;
+				sum2 -= sum*sum;
+				if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_BYTE:{
+				//The standard deviation is a float number
+		                char *d = (char*)byte_array->content;
+				float sum = 0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					sum += *d;
+					sum2 += ((float)(*d))*((float)(*d));
+				}
+				sum /= (float)byte_array->numelem;
+				sum2 /= (float)byte_array->numelem;
+				sum2 -= sum*sum;
+				if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+			case OPH_LONG:{
+				//The standard deviation is a double number
+		                long long *d = (long long*)byte_array->content;
+				double sum = 0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
 					sum += *d;
 					sum2 += ((double)(*d))*((double)(*d));
 				}
@@ -2527,15 +3628,306 @@ int core_oph_var_multi (oph_multistring* byte_array, oph_multistring *result)
 				sum2 /= (double)byte_array->numelem;
 				sum2 -= sum*sum;
 				if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
-                        	break;
-	                }
-        	        default:
-                	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-                        	return -1;
-	        }
-		in_string+=byte_array->elemsize[j];
-		out_string+=result->elemsize[j];
+		                memcpy(result, (void*)(&sum2), core_sizeof(OPH_DOUBLE));
+		                break;
+		        }
+		        default:
+		                pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                return -1;
+		}
+	}
+        return 0;
+}
+int core_oph_var_multi (oph_multistring* byte_array, oph_multistring *result)
+{
+        int i,j;
+	unsigned long numelem;
+	char *in_string = byte_array->content, *current, *out_string = result->content;
+	if (byte_array->missingvalue)
+	{
+		for(j = 0; j < byte_array->num_measure; j++)
+		{
+			numelem=0;
+			current = in_string;
+			switch(byte_array->type[j])
+			{
+		        	case OPH_DOUBLE:
+				{
+		                	double *d, sum = 0.0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (double*)current;
+						if (!isnan(*d) && (*byte_array->missingvalue != *d))
+						{
+							sum += *d;
+							sum2 += (*d)*(*d);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = *byte_array->missingvalue;
+					else
+					{
+						sum /= numelem;
+						sum2 /= numelem;
+						sum2 -= sum*sum;
+						if (numelem>1) sum2 *= numelem/(numelem-1.0);
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_FLOAT:{
+		                	float *d, sum = 0.0, sum2 = 0.0, ms = (float)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (float*)current;
+						if (!isnan(*d) && (ms != *d))
+						{
+							sum += *d;
+							sum2 += (*d)*(*d);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else
+					{
+						sum /= numelem;
+						sum2 /= numelem;
+						sum2 -= sum*sum;
+						if (numelem>1) sum2 *= numelem/(numelem-1.0);
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_INT:{
+					int *d, ms = (int)*byte_array->missingvalue;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (int*)current;
+						if (ms != *d)
+						{
+							sum += *d;
+							sum2 += ((float)*d)*((float)*d);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else
+					{
+						sum /= numelem;
+						sum2 /= numelem;
+						sum2 -= sum*sum;
+						if (numelem>1) sum2 *= numelem/(numelem-1.0);
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_SHORT:{
+					short *d, ms = (short)*byte_array->missingvalue;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (short*)current;
+						if (ms != *d)
+						{
+							sum += *d;
+							sum2 += ((float)*d)*((float)*d);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else
+					{
+						sum /= numelem;
+						sum2 /= numelem;
+						sum2 -= sum*sum;
+						if (numelem>1) sum2 *= numelem/(numelem-1.0);
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_BYTE:{
+					char *d, ms = (char)*byte_array->missingvalue;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (char*)current;
+						if (ms != *d)
+						{
+							sum += *d;
+							sum2 += ((float)*d)*((float)*d);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else
+					{
+						sum /= numelem;
+						sum2 /= numelem;
+						sum2 -= sum*sum;
+						if (numelem>1) sum2 *= numelem/(numelem-1.0);
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+				case OPH_LONG:{
+					long long *d, ms = (long long)*byte_array->missingvalue;
+					double sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (long long*)current;
+						if (ms != *d)
+						{
+							sum += *d;
+							sum2 += ((double)*d)*((double)*d);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else
+					{
+						sum /= numelem;
+						sum2 /= numelem;
+						sum2 -= sum*sum;
+						if (numelem>1) sum2 *= numelem/(numelem-1.0);
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+		                	break;
+			        }
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
+	}
+	else
+	{
+		for(j = 0; j < byte_array->num_measure; j++)
+		{
+			numelem=0;
+			current = in_string;
+			switch(byte_array->type[j])
+			{
+		        	case OPH_DOUBLE:
+				{
+		                	double *d, sum = 0.0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (double*)current;
+						if (!isnan(*d))
+						{
+							sum += *d;
+							sum2 += (*d)*(*d);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = NAN;
+					else
+					{
+						sum /= numelem;
+						sum2 /= numelem;
+						sum2 -= sum*sum;
+						if (numelem>1) sum2 *= numelem/(numelem-1.0);
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_FLOAT:{
+		                	float *d, sum = 0.0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (float*)current;
+						if (!isnan(*d))
+						{
+							sum += *d;
+							sum2 += (*d)*(*d);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = NAN;
+					else
+					{
+						sum /= numelem;
+						sum2 /= numelem;
+						sum2 -= sum*sum;
+						if (numelem>1) sum2 *= numelem/(numelem-1.0);
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_INT:{
+					int *d;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (int*)current;
+						sum += *d;
+						sum2 += ((float)(*d))*((float)(*d));
+					}
+					sum /= (float)byte_array->numelem;
+					sum2 /= (float)byte_array->numelem;
+					sum2 -= sum*sum;
+					if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_SHORT:{
+					short *d;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (short*)current;
+						sum += *d;
+						sum2 += ((float)(*d))*((float)(*d));
+					}
+					sum /= (float)byte_array->numelem;
+					sum2 /= (float)byte_array->numelem;
+					sum2 -= sum*sum;
+					if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_BYTE:{
+					char *d;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (char*)current;
+						sum += *d;
+						sum2 += ((float)(*d))*((float)(*d));
+					}
+					sum /= (float)byte_array->numelem;
+					sum2 /= (float)byte_array->numelem;
+					sum2 -= sum*sum;
+					if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+				case OPH_LONG:{
+					long long *d;
+					double sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (long long*)current;
+						sum += *d;
+						sum2 += ((double)(*d))*((double)(*d));
+					}
+					sum /= (double)byte_array->numelem;
+					sum2 /= (double)byte_array->numelem;
+					sum2 -= sum*sum;
+					if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+		                	break;
+			        }
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
 	}
         return 0;
 }
@@ -2549,102 +3941,247 @@ int core_oph_cmoment (oph_stringPtr byte_array, char *result)
 		return -1;
 	}
         int i;
-	unsigned long numelem=0;
-        switch(byte_array->type){
-                case OPH_DOUBLE:{
-                        double *d = (double*)byte_array->content, sum = 0.0, sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-                                if (!isnan(*d))
+	unsigned long numelem = 0;
+	if (byte_array->missingvalue)
+	{
+		switch(byte_array->type){
+		        case OPH_DOUBLE:{
+		                double *d = (double*)byte_array->content, sum = 0.0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
 				{
-					sum += *d;
-					numelem++;
-				}
-                        }
-			if (!numelem) sum2 = NAN;
-			else
-			{
-				sum /= numelem;
-				d = (double*)byte_array->content;
-				for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d)) sum2 += pow((*d)-sum, byte_array->param);
-				sum2 /= numelem;
-			}
-			memcpy(result, (void*)(&sum2), byte_array->elemsize);
-                        break;
-                }
-                case OPH_FLOAT:{
-                        float *d = (float*)byte_array->content, sum = 0.0, sum2 = 0.0;
-                        for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-                                if (!isnan(*d))
+		                        if (!isnan(*d) && (*byte_array->missingvalue != *d))
+					{
+						sum += *d;
+						numelem++;
+					}
+		                }
+				if (!numelem) sum2 = *byte_array->missingvalue;
+				else
 				{
-					sum += *d;
-					numelem++;
+					sum /= numelem;
+					d = (double*)byte_array->content;
+					for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d) && (*byte_array->missingvalue != *d)) sum2 += pow((*d)-sum, byte_array->param);
+					sum2 /= numelem;
 				}
-                        }
-			if (!numelem) sum2 = NAN;
-			else
-			{
-				sum /= numelem;
-				d = (float*)byte_array->content;
-				for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d)) sum2 += powf((*d)-sum, (float)byte_array->param);
-				sum2 /= numelem;
-			}
-			memcpy(result, (void*)(&sum2), byte_array->elemsize);
-                        break;
-                }
-                case OPH_INT:{
-			//The standard deviation is a float number
-                        int *d = (int*)byte_array->content;
-			float sum = 0, sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum += *d;
-			sum /= (float)byte_array->numelem;
-			d = (int*)byte_array->content;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf((*d)-sum, (float)byte_array->param);
-			sum2 /= (float)byte_array->numelem;
-			memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
-                        break;
-                }
-                case OPH_SHORT:{
-			//The standard deviation is a float number
-                        short *d = (short*)byte_array->content;
-			float sum = 0, sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum += *d;
-			sum /= (float)byte_array->numelem;
-			d = (short*)byte_array->content;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf((*d)-sum, (float)byte_array->param);
-			sum2 /= (float)byte_array->numelem;
-			memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
-                        break;
-                }
-                case OPH_BYTE:{
-			//The standard deviation is a float number
-                        char *d = (char*)byte_array->content;
-			float sum = 0, sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum += *d;
-			sum /= (float)byte_array->numelem;
-			d = (char*)byte_array->content;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf((*d)-sum, (float)byte_array->param);
-			sum2 /= (float)byte_array->numelem;
-			memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
-                        break;
-                }
-		case OPH_LONG:{
-			//The standard deviation is a double number
-                        long long *d = (long long*)byte_array->content;
-			double sum = 0, sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum += *d;
-			sum /= (double)byte_array->numelem;
-			d = (long long*)byte_array->content;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum2 += pow((*d)-sum, byte_array->param);
-			sum2 /= (double)byte_array->numelem;
-                        memcpy(result, (void*)(&sum2), core_sizeof(OPH_DOUBLE));
-                        break;
-                }
-                default:
-                        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-                        return -1;
-        }
+				memcpy(result, (void*)(&sum2), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_FLOAT:{
+		                float *d = (float*)byte_array->content, sum = 0.0, sum2 = 0.0, ms = (float)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+		                        if (!isnan(*d) && (ms != *d))
+					{
+						sum += *d;
+						numelem++;
+					}
+		                }
+				if (!numelem) sum2 = ms;
+				else
+				{
+					sum /= numelem;
+					d = (float*)byte_array->content;
+					for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d) && (ms != *d)) sum2 += powf((*d)-sum, (float)byte_array->param);
+					sum2 /= numelem;
+				}
+				memcpy(result, (void*)(&sum2), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_INT:{
+				//The standard deviation is a float number
+		                int *d = (int*)byte_array->content, ms = (int)*byte_array->missingvalue;
+				float sum = 0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+		                        if (ms != *d)
+					{
+						sum += *d;
+						numelem++;
+					}
+		                }
+				if (!numelem) sum2 = ms;
+				else
+				{
+					sum /= numelem;
+					d = (int*)byte_array->content;
+					for (i = 0; i < byte_array->numelem; i++, d++) if (ms != *d) sum2 += powf((*d)-sum, (float)byte_array->param);
+					sum2 /= numelem;
+				}
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_SHORT:{
+				//The standard deviation is a float number
+		                short *d = (short*)byte_array->content, ms = (short)*byte_array->missingvalue;
+				float sum = 0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+		                        if (ms != *d)
+					{
+						sum += *d;
+						numelem++;
+					}
+		                }
+				if (!numelem) sum2 = ms;
+				else
+				{
+					sum /= numelem;
+					d = (short*)byte_array->content;
+					for (i = 0; i < byte_array->numelem; i++, d++) if (ms != *d) sum2 += powf((*d)-sum, (float)byte_array->param);
+					sum2 /= numelem;
+				}
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_BYTE:{
+				//The standard deviation is a float number
+		                char *d = (char*)byte_array->content, ms = (char)*byte_array->missingvalue;
+				float sum = 0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+		                        if (ms != *d)
+					{
+						sum += *d;
+						numelem++;
+					}
+		                }
+				if (!numelem) sum2 = ms;
+				else
+				{
+					sum /= numelem;
+					d = (char*)byte_array->content;
+					for (i = 0; i < byte_array->numelem; i++, d++) if (ms != *d) sum2 += powf((*d)-sum, (float)byte_array->param);
+					sum2 /= numelem;
+				}
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+			case OPH_LONG:{
+				//The standard deviation is a double number
+		                long long *d = (long long*)byte_array->content, ms = (long long)*byte_array->missingvalue;
+				double sum = 0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+		                        if (ms != *d)
+					{
+						sum += *d;
+						numelem++;
+					}
+		                }
+				if (!numelem) sum2 = ms;
+				else
+				{
+					sum /= numelem;
+					d = (long long*)byte_array->content;
+					for (i = 0; i < byte_array->numelem; i++, d++) if (ms != *d) sum2 += pow((*d)-sum, byte_array->param);
+					sum2 /= numelem;
+				}
+		                memcpy(result, (void*)(&sum2), core_sizeof(OPH_DOUBLE));
+		                break;
+		        }
+		        default:
+		                pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                return -1;
+		}
+	}
+	else
+	{
+		switch(byte_array->type){
+		        case OPH_DOUBLE:{
+		                double *d = (double*)byte_array->content, sum = 0.0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+		                        if (!isnan(*d))
+					{
+						sum += *d;
+						numelem++;
+					}
+		                }
+				if (!numelem) sum2 = NAN;
+				else
+				{
+					sum /= numelem;
+					d = (double*)byte_array->content;
+					for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d)) sum2 += pow((*d)-sum, byte_array->param);
+					sum2 /= numelem;
+				}
+				memcpy(result, (void*)(&sum2), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_FLOAT:{
+		                float *d = (float*)byte_array->content, sum = 0.0, sum2 = 0.0;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+		                        if (!isnan(*d))
+					{
+						sum += *d;
+						numelem++;
+					}
+		                }
+				if (!numelem) sum2 = NAN;
+				else
+				{
+					sum /= numelem;
+					d = (float*)byte_array->content;
+					for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d)) sum2 += powf((*d)-sum, (float)byte_array->param);
+					sum2 /= numelem;
+				}
+				memcpy(result, (void*)(&sum2), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_INT:{
+				//The standard deviation is a float number
+		                int *d = (int*)byte_array->content;
+				float sum = 0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum += *d;
+				sum /= (float)byte_array->numelem;
+				d = (int*)byte_array->content;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf((*d)-sum, (float)byte_array->param);
+				sum2 /= (float)byte_array->numelem;
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_SHORT:{
+				//The standard deviation is a float number
+		                short *d = (short*)byte_array->content;
+				float sum = 0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum += *d;
+				sum /= (float)byte_array->numelem;
+				d = (short*)byte_array->content;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf((*d)-sum, (float)byte_array->param);
+				sum2 /= (float)byte_array->numelem;
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_BYTE:{
+				//The standard deviation is a float number
+		                char *d = (char*)byte_array->content;
+				float sum = 0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum += *d;
+				sum /= (float)byte_array->numelem;
+				d = (char*)byte_array->content;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf((*d)-sum, (float)byte_array->param);
+				sum2 /= (float)byte_array->numelem;
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+			case OPH_LONG:{
+				//The standard deviation is a double number
+		                long long *d = (long long*)byte_array->content;
+				double sum = 0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum += *d;
+				sum /= (double)byte_array->numelem;
+				d = (long long*)byte_array->content;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum2 += pow((*d)-sum, byte_array->param);
+				sum2 /= (double)byte_array->numelem;
+		                memcpy(result, (void*)(&sum2), core_sizeof(OPH_DOUBLE));
+		                break;
+		        }
+		        default:
+		                pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                return -1;
+		}
+	}
         return 0;
 }
 int core_oph_cmoment_multi (oph_multistring* byte_array, oph_multistring *result)
@@ -2657,147 +4194,327 @@ int core_oph_cmoment_multi (oph_multistring* byte_array, oph_multistring *result
         int i,j;
 	unsigned long numelem;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
-	for(j = 0; j < byte_array->num_measure; j++)
+	if (byte_array->missingvalue)
 	{
-		numelem=0;
-		current = in_string;
-        	switch(byte_array->type[j])
+		for(j = 0; j < byte_array->num_measure; j++)
 		{
-                	case OPH_DOUBLE:
+			numelem=0;
+			current = in_string;
+			switch(byte_array->type[j])
 			{
-                        	double *d, sum = 0.0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+		        	case OPH_DOUBLE:
 				{
-					d = (double*)current;
-					if (!isnan(*d))
-					{
-						sum += *d;
-						numelem++;
-					}
-                        	}
-				if (!numelem) sum2 = NAN;
-				else
-				{
-					sum /= numelem;
-					current = in_string;
-					for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+		                	double *d, sum = 0.0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
 					{
 						d = (double*)current;
-						if (!isnan(*d)) sum2 += pow((*d)-sum, byte_array->param);
-					}
-					sum2 /= numelem;
-				}
-				if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
-                        	break;
-                	}
-                	case OPH_FLOAT:{
-                        	float *d, sum = 0.0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (float*)current;
-					if (!isnan(*d))
+						if (!isnan(*d) && (*byte_array->missingvalue != *d))
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = *byte_array->missingvalue;
+					else
 					{
-						sum += *d;
-						numelem++;
+						sum /= numelem;
+						current = in_string;
+						for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+						{
+							d = (double*)current;
+							if (!isnan(*d) && (*byte_array->missingvalue != *d)) sum2 += pow((*d)-sum, byte_array->param);
+						}
+						sum2 /= numelem;
 					}
-                        	}
-				if (!numelem) sum2 = NAN;
-				else
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_FLOAT:{
+		                	float *d, sum = 0.0, sum2 = 0.0, ms = (float)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (float*)current;
+						if (!isnan(*d) && (ms != *d))
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else
+					{
+						sum /= numelem;
+						current = in_string;
+						for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+						{
+							d = (float*)current;
+							if (!isnan(*d) && (ms != *d)) sum2 += powf((*d)-sum, (float)byte_array->param);
+						}
+						sum2 /= numelem;
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_INT:{
+					int *d, ms = (int)*byte_array->missingvalue;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (int*)current;
+						if (ms != *d)
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else
+					{
+						sum /= numelem;
+						current = in_string;
+						for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+						{
+							d = (int*)current;
+							if (ms != *d) sum2 += powf((*d)-sum, (float)byte_array->param);
+						}
+						sum2 /= numelem;
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_SHORT:{
+					short *d, ms = (short)*byte_array->missingvalue;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (short*)current;
+						if (ms != *d)
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else
+					{
+						sum /= numelem;
+						current = in_string;
+						for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+						{
+							d = (short*)current;
+							if (ms != *d) sum2 += powf((*d)-sum, (float)byte_array->param);
+						}
+						sum2 /= numelem;
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_BYTE:{
+					char *d, ms = (char)*byte_array->missingvalue;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (char*)current;
+						if (ms != *d)
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else
+					{
+						sum /= numelem;
+						current = in_string;
+						for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+						{
+							d = (char*)current;
+							if (ms != *d) sum2 += powf((*d)-sum, (float)byte_array->param);
+						}
+						sum2 /= numelem;
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+				case OPH_LONG:{
+					long long *d, ms = (long long)*byte_array->missingvalue;
+					double sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (long long*)current;
+						if (ms != *d)
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else
+					{
+						sum /= numelem;
+						current = in_string;
+						for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+						{
+							d = (long long*)current;
+							if (ms != *d) sum2 += pow((*d)-sum, byte_array->param);
+						}
+						sum2 /= numelem;
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+		                	break;
+			        }
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
+	}
+	else
+	{
+		for(j = 0; j < byte_array->num_measure; j++)
+		{
+			numelem=0;
+			current = in_string;
+			switch(byte_array->type[j])
+			{
+		        	case OPH_DOUBLE:
 				{
-					sum /= numelem;
+		                	double *d, sum = 0.0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (double*)current;
+						if (!isnan(*d))
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = NAN;
+					else
+					{
+						sum /= numelem;
+						current = in_string;
+						for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+						{
+							d = (double*)current;
+							if (!isnan(*d)) sum2 += pow((*d)-sum, byte_array->param);
+						}
+						sum2 /= numelem;
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_FLOAT:{
+		                	float *d, sum = 0.0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (float*)current;
+						if (!isnan(*d))
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = NAN;
+					else
+					{
+						sum /= numelem;
+						current = in_string;
+						for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+						{
+							d = (float*)current;
+							if (!isnan(*d)) sum2 += powf((*d)-sum, (float)byte_array->param);
+						}
+						sum2 /= numelem;
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_INT:{
+					int *d;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (int*)current;
+						sum += *d;
+					}
+					sum /= (float)byte_array->numelem;
 					current = in_string;
 					for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
 					{
-						d = (float*)current;
-						if (!isnan(*d)) sum2 += powf((*d)-sum, (float)byte_array->param);
+						d = (int*)current;
+						sum2 += powf((*d)-sum, (float)byte_array->param);
 					}
-					sum2 /= numelem;
-				}
-				if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
-                        	break;
-                	}
-                	case OPH_INT:{
-				int *d;
-				float sum = 0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (int*)current;
-					sum += *d;
-				}
-				sum /= (float)byte_array->numelem;
-				current = in_string;
-				for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (int*)current;
-					sum2 += powf((*d)-sum, (float)byte_array->param);
-				}
-				sum2 /= (float)byte_array->numelem;
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
-                        	break;
-        	        }
-                	case OPH_SHORT:{
-				short *d;
-				float sum = 0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (short*)current;
-					sum += *d;
-				}
-				sum /= (float)byte_array->numelem;
-				current = in_string;
-				for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (short*)current;
-					sum2 += powf((*d)-sum, (float)byte_array->param);
-				}
-				sum2 /= (float)byte_array->numelem;
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
-                        	break;
-        	        }
-                	case OPH_BYTE:{
-				char *d;
-				float sum = 0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (char*)current;
-					sum += *d;
-				}
-				sum /= (float)byte_array->numelem;
-				current = in_string;
-				for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (char*)current;
-					sum2 += powf((*d)-sum, (float)byte_array->param);
-				}
-				sum2 /= (float)byte_array->numelem;
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
-                        	break;
-        	        }
-			case OPH_LONG:{
-				long long *d;
-				double sum = 0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++)
-				{
-					d = (long long*)current;
-					sum += *d;
-				}
-				sum /= (double)byte_array->numelem;
-				current = in_string;
-				for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (long long*)current;
-					sum2 += pow((*d)-sum, byte_array->param);
-				}
-				sum2 /= (double)byte_array->numelem;
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
-                        	break;
-	                }
-        	        default:
-                	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-                        	return -1;
-	        }
-		in_string+=byte_array->elemsize[j];
-		out_string+=result->elemsize[j];
+					sum2 /= (float)byte_array->numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_SHORT:{
+					short *d;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (short*)current;
+						sum += *d;
+					}
+					sum /= (float)byte_array->numelem;
+					current = in_string;
+					for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (short*)current;
+						sum2 += powf((*d)-sum, (float)byte_array->param);
+					}
+					sum2 /= (float)byte_array->numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_BYTE:{
+					char *d;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (char*)current;
+						sum += *d;
+					}
+					sum /= (float)byte_array->numelem;
+					current = in_string;
+					for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (char*)current;
+						sum2 += powf((*d)-sum, (float)byte_array->param);
+					}
+					sum2 /= (float)byte_array->numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+				case OPH_LONG:{
+					long long *d;
+					double sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (long long*)current;
+						sum += *d;
+					}
+					sum /= (double)byte_array->numelem;
+					current = in_string;
+					for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (long long*)current;
+						sum2 += pow((*d)-sum, byte_array->param);
+					}
+					sum2 /= (double)byte_array->numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+		                	break;
+			        }
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
 	}
         return 0;
 }
@@ -2811,102 +4528,247 @@ int core_oph_acmoment (oph_stringPtr byte_array, char *result)
 		return -1;
 	}
         int i;
-	unsigned long numelem=0;
-        switch(byte_array->type){
-                case OPH_DOUBLE:{
-                        double *d = (double*)byte_array->content, sum = 0.0, sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-                                if (!isnan(*d))
+	unsigned long numelem = 0;
+	if (byte_array->missingvalue)
+	{
+		switch(byte_array->type){
+		        case OPH_DOUBLE:{
+		                double *d = (double*)byte_array->content, sum = 0.0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
 				{
-					sum += *d;
-					numelem++;
-				}
-                        }
-			if (!numelem) sum2 = NAN;
-			else
-			{
-				sum /= numelem;
-				d = (double*)byte_array->content;
-				for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d)) sum2 += pow(abs((*d)-sum), byte_array->param);
-				sum2 /= numelem;
-			}
-			memcpy(result, (void*)(&sum2), byte_array->elemsize);
-                        break;
-                }
-                case OPH_FLOAT:{
-                        float *d = (float*)byte_array->content, sum = 0.0, sum2 = 0.0;
-                        for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-                                if (!isnan(*d))
+		                        if (!isnan(*d) && (*byte_array->missingvalue != *d))
+					{
+						sum += *d;
+						numelem++;
+					}
+		                }
+				if (!numelem) sum2 = *byte_array->missingvalue;
+				else
 				{
-					sum += *d;
-					numelem++;
+					sum /= numelem;
+					d = (double*)byte_array->content;
+					for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d) && (*byte_array->missingvalue != *d)) sum2 += pow(fabs((*d)-sum), byte_array->param);
+					sum2 /= numelem;
 				}
-                        }
-			if (!numelem) sum2 = NAN;
-			else
-			{
-				sum /= numelem;
-				d = (float*)byte_array->content;
-				for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d)) sum2 += powf(fabs((*d)-sum), (float)byte_array->param);
-				sum2 /= numelem;
-			}
-			memcpy(result, (void*)(&sum2), byte_array->elemsize);
-                        break;
-                }
-                case OPH_INT:{
-			//The standard deviation is a float number
-                        int *d = (int*)byte_array->content;
-			float sum = 0, sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum += *d;
-			sum /= (float)byte_array->numelem;
-			d = (int*)byte_array->content;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf(fabs((*d)-sum), (float)byte_array->param);
-			sum2 /= (float)byte_array->numelem;
-			memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
-                        break;
-                }
-                case OPH_SHORT:{
-			//The standard deviation is a float number
-                        short *d = (short*)byte_array->content;
-			float sum = 0, sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum += *d;
-			sum /= (float)byte_array->numelem;
-			d = (short*)byte_array->content;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf(fabs((*d)-sum), (float)byte_array->param);
-			sum2 /= (float)byte_array->numelem;
-			memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
-                        break;
-                }
-                case OPH_BYTE:{
-			//The standard deviation is a float number
-                        char *d = (char*)byte_array->content;
-			float sum = 0, sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum += *d;
-			sum /= (float)byte_array->numelem;
-			d = (char*)byte_array->content;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf(fabs((*d)-sum), (float)byte_array->param);
-			sum2 /= (float)byte_array->numelem;
-			memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
-                        break;
-                }
-		case OPH_LONG:{
-			//The standard deviation is a double number
-                        long long *d = (long long*)byte_array->content;
-			double sum = 0, sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum += *d;
-			sum /= (double)byte_array->numelem;
-			d = (long long*)byte_array->content;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum2 += pow(abs((*d)-sum), byte_array->param);
-			sum2 /= (double)byte_array->numelem;
-                        memcpy(result, (void*)(&sum2), core_sizeof(OPH_DOUBLE));
-                        break;
-                }
-                default:
-                        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-                        return -1;
-        }
+				memcpy(result, (void*)(&sum2), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_FLOAT:{
+		                float *d = (float*)byte_array->content, sum = 0.0, sum2 = 0.0, ms = (float)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+		                        if (!isnan(*d) && (ms != *d))
+					{
+						sum += *d;
+						numelem++;
+					}
+		                }
+				if (!numelem) sum2 = ms;
+				else
+				{
+					sum /= numelem;
+					d = (float*)byte_array->content;
+					for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d) && (ms != *d)) sum2 += powf(fabsf((*d)-sum), (float)byte_array->param);
+					sum2 /= numelem;
+				}
+				memcpy(result, (void*)(&sum2), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_INT:{
+				//The standard deviation is a float number
+		                int *d = (int*)byte_array->content, ms = (int)*byte_array->missingvalue;
+				float sum = 0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+		                        if (ms != *d)
+					{
+						sum += *d;
+						numelem++;
+					}
+		                }
+				if (!numelem) sum2 = ms;
+				else
+				{
+					sum /= numelem;
+					d = (int*)byte_array->content;
+					for (i = 0; i < byte_array->numelem; i++, d++) if (ms != *d) sum2 += powf(fabsf((*d)-sum), (float)byte_array->param);
+					sum2 /= numelem;
+				}
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_SHORT:{
+				//The standard deviation is a float number
+		                short *d = (short*)byte_array->content, ms = (short)*byte_array->missingvalue;
+				float sum = 0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+		                        if (ms != *d)
+					{
+						sum += *d;
+						numelem++;
+					}
+		                }
+				if (!numelem) sum2 = ms;
+				else
+				{
+					sum /= numelem;
+					d = (short*)byte_array->content;
+					for (i = 0; i < byte_array->numelem; i++, d++) if (ms != *d) sum2 += powf(fabsf((*d)-sum), (float)byte_array->param);
+					sum2 /= numelem;
+				}
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_BYTE:{
+				//The standard deviation is a float number
+		                char *d = (char*)byte_array->content, ms = (char)*byte_array->missingvalue;
+				float sum = 0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+		                        if (ms != *d)
+					{
+						sum += *d;
+						numelem++;
+					}
+		                }
+				if (!numelem) sum2 = ms;
+				else
+				{
+					sum /= numelem;
+					d = (char*)byte_array->content;
+					for (i = 0; i < byte_array->numelem; i++, d++) if (ms != *d) sum2 += powf(fabsf((*d)-sum), (float)byte_array->param);
+					sum2 /= numelem;
+				}
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+			case OPH_LONG:{
+				//The standard deviation is a double number
+		                long long *d = (long long*)byte_array->content, ms = (long long)*byte_array->missingvalue;
+				double sum = 0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+		                        if (ms != *d)
+					{
+						sum += *d;
+						numelem++;
+					}
+		                }
+				if (!numelem) sum2 = ms;
+				else
+				{
+					sum /= numelem;
+					d = (long long*)byte_array->content;
+					for (i = 0; i < byte_array->numelem; i++, d++) if (ms != *d) sum2 += pow(fabs((*d)-sum), byte_array->param);
+					sum2 /= numelem;
+				}
+		                memcpy(result, (void*)(&sum2), core_sizeof(OPH_DOUBLE));
+		                break;
+		        }
+		        default:
+		                pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                return -1;
+		}
+	}
+	else
+	{
+		switch(byte_array->type){
+		        case OPH_DOUBLE:{
+		                double *d = (double*)byte_array->content, sum = 0.0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+		                        if (!isnan(*d))
+					{
+						sum += *d;
+						numelem++;
+					}
+		                }
+				if (!numelem) sum2 = NAN;
+				else
+				{
+					sum /= numelem;
+					d = (double*)byte_array->content;
+					for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d)) sum2 += pow(fabs((*d)-sum), byte_array->param);
+					sum2 /= numelem;
+				}
+				memcpy(result, (void*)(&sum2), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_FLOAT:{
+		                float *d = (float*)byte_array->content, sum = 0.0, sum2 = 0.0;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+		                        if (!isnan(*d))
+					{
+						sum += *d;
+						numelem++;
+					}
+		                }
+				if (!numelem) sum2 = NAN;
+				else
+				{
+					sum /= numelem;
+					d = (float*)byte_array->content;
+					for (i = 0; i < byte_array->numelem; i++, d++) if (!isnan(*d)) sum2 += powf(fabsf((*d)-sum), (float)byte_array->param);
+					sum2 /= numelem;
+				}
+				memcpy(result, (void*)(&sum2), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_INT:{
+				//The standard deviation is a float number
+		                int *d = (int*)byte_array->content;
+				float sum = 0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum += *d;
+				sum /= (float)byte_array->numelem;
+				d = (int*)byte_array->content;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf(fabsf((*d)-sum), (float)byte_array->param);
+				sum2 /= (float)byte_array->numelem;
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_SHORT:{
+				//The standard deviation is a float number
+		                short *d = (short*)byte_array->content;
+				float sum = 0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum += *d;
+				sum /= (float)byte_array->numelem;
+				d = (short*)byte_array->content;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf(fabsf((*d)-sum), (float)byte_array->param);
+				sum2 /= (float)byte_array->numelem;
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_BYTE:{
+				//The standard deviation is a float number
+		                char *d = (char*)byte_array->content;
+				float sum = 0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum += *d;
+				sum /= (float)byte_array->numelem;
+				d = (char*)byte_array->content;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf(fabsf((*d)-sum), (float)byte_array->param);
+				sum2 /= (float)byte_array->numelem;
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+			case OPH_LONG:{
+				//The standard deviation is a double number
+		                long long *d = (long long*)byte_array->content;
+				double sum = 0, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum += *d;
+				sum /= (double)byte_array->numelem;
+				d = (long long*)byte_array->content;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum2 += pow(fabs((*d)-sum), byte_array->param);
+				sum2 /= (double)byte_array->numelem;
+		                memcpy(result, (void*)(&sum2), core_sizeof(OPH_DOUBLE));
+		                break;
+		        }
+		        default:
+		                pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                return -1;
+		}
+	}
         return 0;
 }
 int core_oph_acmoment_multi (oph_multistring* byte_array, oph_multistring *result)
@@ -2919,147 +4781,327 @@ int core_oph_acmoment_multi (oph_multistring* byte_array, oph_multistring *resul
         int i,j;
 	unsigned long numelem;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
-	for(j = 0; j < byte_array->num_measure; j++)
+	if (byte_array->missingvalue)
 	{
-		numelem=0;
-		current = in_string;
-        	switch(byte_array->type[j])
+		for(j = 0; j < byte_array->num_measure; j++)
 		{
-                	case OPH_DOUBLE:
+			numelem=0;
+			current = in_string;
+			switch(byte_array->type[j])
 			{
-                        	double *d, sum = 0.0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+		        	case OPH_DOUBLE:
 				{
-					d = (double*)current;
-					if (!isnan(*d))
-					{
-						sum += *d;
-						numelem++;
-					}
-                        	}
-				if (!numelem) sum2 = NAN;
-				else
-				{
-					sum /= numelem;
-					current = in_string;
-					for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+		                	double *d, sum = 0.0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
 					{
 						d = (double*)current;
-						if (!isnan(*d)) sum2 += pow(abs((*d)-sum), byte_array->param);
-					}
-					sum2 /= numelem;
-				}
-				if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
-                        	break;
-                	}
-                	case OPH_FLOAT:{
-                        	float *d, sum = 0.0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (float*)current;
-					if (!isnan(*d))
+						if (!isnan(*d) && (*byte_array->missingvalue != *d))
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = *byte_array->missingvalue;
+					else
 					{
-						sum += *d;
-						numelem++;
+						sum /= numelem;
+						current = in_string;
+						for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+						{
+							d = (double*)current;
+							if (!isnan(*d) && (*byte_array->missingvalue != *d)) sum2 += pow(fabs((*d)-sum), byte_array->param);
+						}
+						sum2 /= numelem;
 					}
-                        	}
-				if (!numelem) sum2 = NAN;
-				else
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_FLOAT:{
+		                	float *d, sum = 0.0, sum2 = 0.0, ms = (float)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (float*)current;
+						if (!isnan(*d) && (ms != *d))
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else
+					{
+						sum /= numelem;
+						current = in_string;
+						for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+						{
+							d = (float*)current;
+							if (!isnan(*d) && (ms != *d)) sum2 += powf(fabsf((*d)-sum), (float)byte_array->param);
+						}
+						sum2 /= numelem;
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_INT:{
+					int *d, ms = (int)*byte_array->missingvalue;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (int*)current;
+						if (ms != *d)
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else
+					{
+						sum /= numelem;
+						current = in_string;
+						for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+						{
+							d = (int*)current;
+							if (ms != *d) sum2 += powf(fabsf((*d)-sum), (float)byte_array->param);
+						}
+						sum2 /= numelem;
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_SHORT:{
+					short *d, ms = (short)*byte_array->missingvalue;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (short*)current;
+						if (ms != *d)
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else
+					{
+						sum /= numelem;
+						current = in_string;
+						for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+						{
+							d = (short*)current;
+							if (ms != *d) sum2 += powf(fabsf((*d)-sum), (float)byte_array->param);
+						}
+						sum2 /= numelem;
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_BYTE:{
+					char *d, ms = (char)*byte_array->missingvalue;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (char*)current;
+						if (ms != *d)
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else
+					{
+						sum /= numelem;
+						current = in_string;
+						for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+						{
+							d = (char*)current;
+							if (ms != *d) sum2 += powf(fabsf((*d)-sum), (float)byte_array->param);
+						}
+						sum2 /= numelem;
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+				case OPH_LONG:{
+					long long *d, ms = (long long)*byte_array->missingvalue;
+					double sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (long long*)current;
+						if (ms != *d)
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else
+					{
+						sum /= numelem;
+						current = in_string;
+						for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+						{
+							d = (long long*)current;
+							if (ms != *d) sum2 += pow(fabs((*d)-sum), byte_array->param);
+						}
+						sum2 /= numelem;
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+		                	break;
+			        }
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
+	}
+	else
+	{
+		for(j = 0; j < byte_array->num_measure; j++)
+		{
+			numelem=0;
+			current = in_string;
+			switch(byte_array->type[j])
+			{
+		        	case OPH_DOUBLE:
 				{
-					sum /= numelem;
+		                	double *d, sum = 0.0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (double*)current;
+						if (!isnan(*d))
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = NAN;
+					else
+					{
+						sum /= numelem;
+						current = in_string;
+						for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+						{
+							d = (double*)current;
+							if (!isnan(*d)) sum2 += pow(fabs((*d)-sum), byte_array->param);
+						}
+						sum2 /= numelem;
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_FLOAT:{
+		                	float *d, sum = 0.0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (float*)current;
+						if (!isnan(*d))
+						{
+							sum += *d;
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = NAN;
+					else
+					{
+						sum /= numelem;
+						current = in_string;
+						for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+						{
+							d = (float*)current;
+							if (!isnan(*d)) sum2 += powf(fabsf((*d)-sum), (float)byte_array->param);
+						}
+						sum2 /= numelem;
+					}
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_INT:{
+					int *d;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (int*)current;
+						sum += *d;
+					}
+					sum /= (float)byte_array->numelem;
 					current = in_string;
 					for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
 					{
-						d = (float*)current;
-						if (!isnan(*d)) sum2 += powf(fabs((*d)-sum), (float)byte_array->param);
+						d = (int*)current;
+						sum2 += powf(fabsf((*d)-sum), (float)byte_array->param);
 					}
-					sum2 /= numelem;
-				}
-				if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
-                        	break;
-                	}
-                	case OPH_INT:{
-				int *d;
-				float sum = 0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (int*)current;
-					sum += *d;
-				}
-				sum /= (float)byte_array->numelem;
-				current = in_string;
-				for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (int*)current;
-					sum2 += powf(fabs((*d)-sum), (float)byte_array->param);
-				}
-				sum2 /= (float)byte_array->numelem;
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
-                        	break;
-        	        }
-                	case OPH_SHORT:{
-				short *d;
-				float sum = 0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (short*)current;
-					sum += *d;
-				}
-				sum /= (float)byte_array->numelem;
-				current = in_string;
-				for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (short*)current;
-					sum2 += powf(fabs((*d)-sum), (float)byte_array->param);
-				}
-				sum2 /= (float)byte_array->numelem;
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
-                        	break;
-        	        }
-                	case OPH_BYTE:{
-				char *d;
-				float sum = 0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (char*)current;
-					sum += *d;
-				}
-				sum /= (float)byte_array->numelem;
-				current = in_string;
-				for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (char*)current;
-					sum2 += powf(fabs((*d)-sum), (float)byte_array->param);
-				}
-				sum2 /= (float)byte_array->numelem;
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
-                        	break;
-        	        }
-			case OPH_LONG:{
-				long long *d;
-				double sum = 0, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++)
-				{
-					d = (long long*)current;
-					sum += *d;
-				}
-				sum /= (double)byte_array->numelem;
-				current = in_string;
-				for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (long long*)current;
-					sum2 += pow(abs((*d)-sum), byte_array->param);
-				}
-				sum2 /= (double)byte_array->numelem;
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
-                        	break;
-	                }
-        	        default:
-                	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-                        	return -1;
-	        }
-		in_string+=byte_array->elemsize[j];
-		out_string+=result->elemsize[j];
+					sum2 /= (float)byte_array->numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_SHORT:{
+					short *d;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (short*)current;
+						sum += *d;
+					}
+					sum /= (float)byte_array->numelem;
+					current = in_string;
+					for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (short*)current;
+						sum2 += powf(fabsf((*d)-sum), (float)byte_array->param);
+					}
+					sum2 /= (float)byte_array->numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_BYTE:{
+					char *d;
+					float sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (char*)current;
+						sum += *d;
+					}
+					sum /= (float)byte_array->numelem;
+					current = in_string;
+					for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (char*)current;
+						sum2 += powf(fabsf((*d)-sum), (float)byte_array->param);
+					}
+					sum2 /= (float)byte_array->numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+				case OPH_LONG:{
+					long long *d;
+					double sum = 0, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (long long*)current;
+						sum += *d;
+					}
+					sum /= (double)byte_array->numelem;
+					current = in_string;
+					for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (long long*)current;
+						sum2 += pow(fabs((*d)-sum), byte_array->param);
+					}
+					sum2 /= (double)byte_array->numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+		                	break;
+			        }
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
 	}
         return 0;
 }
@@ -3073,78 +5115,187 @@ int core_oph_rmoment (oph_stringPtr byte_array, char *result)
 		return -1;
 	}
         int i;
-	unsigned long numelem=0;
-        switch(byte_array->type){
-                case OPH_DOUBLE:{
-		        double *d = (double*)byte_array->content, sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				if (!isnan(*d))
+	unsigned long numelem = 0;
+	if (byte_array->missingvalue)
+	{
+		switch(byte_array->type){
+		        case OPH_DOUBLE:{
+				double *d = (double*)byte_array->content, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
 				{
-					sum2 += pow(*d, byte_array->param);
-					numelem++;
+					if (!isnan(*d) && (*byte_array->missingvalue != *d))
+					{
+						sum2 += pow(*d, byte_array->param);
+						numelem++;
+					}
 				}
-			}
-			if (!numelem) sum2 = NAN;
-			else sum2 /= numelem;
-			memcpy(result, (void*)(&sum2), byte_array->elemsize);
-                        break;
-                }
-                case OPH_FLOAT:{
-                        float *d = (float*)byte_array->content, sum2 = 0.0;
-                        for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				if (!isnan(*d))
+				if (!numelem) sum2 = *byte_array->missingvalue;
+				else sum2 /= numelem;
+				memcpy(result, (void*)(&sum2), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_FLOAT:{
+		                float *d = (float*)byte_array->content, sum2 = 0.0, ms = (float)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
 				{
-					sum2 += powf(*d, (float)byte_array->param);
-					numelem++;
+					if (!isnan(*d) && (ms != *d))
+					{
+						sum2 += powf(*d, (float)byte_array->param);
+						numelem++;
+					}
 				}
-			}
-			if (!numelem) sum2 = NAN;
-			else sum2 /= numelem;
-			memcpy(result, (void*)(&sum2), byte_array->elemsize);
-                        break;
-                }
-                case OPH_INT:{
-			//The standard deviation is a float number
-                        int *d = (int*)byte_array->content;
-			float sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf(*d, (float)byte_array->param);
-			sum2 /= (float)byte_array->numelem;
-			memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
-                        break;
-                }
-                case OPH_SHORT:{
-			//The standard deviation is a float number
-                        short *d = (short*)byte_array->content;
-			float sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf(*d, (float)byte_array->param);
-			sum2 /= (float)byte_array->numelem;
-			memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
-                        break;
-                }
-                case OPH_BYTE:{
-			//The standard deviation is a float number
-                        char *d = (char*)byte_array->content;
-			float sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf(*d, (float)byte_array->param);
-			sum2 /= (float)byte_array->numelem;
-			memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
-                        break;
-                }
-		case OPH_LONG:{
-			//The standard deviation is a double number
-                        long long *d = (long long*)byte_array->content;
-			double sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum2 += pow(*d, byte_array->param);
-			sum2 /= (double)byte_array->numelem;
-                        memcpy(result, (void*)(&sum2), core_sizeof(OPH_DOUBLE));
-                        break;
-                }
-                default:
-                        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-                        return -1;
-        }
+				if (!numelem) sum2 = ms;
+				else sum2 /= numelem;
+				memcpy(result, (void*)(&sum2), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_INT:{
+				//The standard deviation is a float number
+		                int *d = (int*)byte_array->content, ms = (int)*byte_array->missingvalue;
+				float sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (ms != *d)
+					{
+						sum2 += powf(*d, (float)byte_array->param);
+						numelem++;
+					}
+				}
+				if (!numelem) sum2 = ms;
+				else sum2 /= numelem;
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_SHORT:{
+				//The standard deviation is a float number
+		                short *d = (short*)byte_array->content, ms = (short)*byte_array->missingvalue;
+				float sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (ms != *d)
+					{
+						sum2 += powf(*d, (float)byte_array->param);
+						numelem++;
+					}
+				}
+				if (!numelem) sum2 = ms;
+				else sum2 /= numelem;
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_BYTE:{
+				//The standard deviation is a float number
+		                char *d = (char*)byte_array->content, ms = (char)*byte_array->missingvalue;
+				float sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (ms != *d)
+					{
+						sum2 += powf(*d, (float)byte_array->param);
+						numelem++;
+					}
+				}
+				if (!numelem) sum2 = ms;
+				else sum2 /= numelem;
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+			case OPH_LONG:{
+				//The standard deviation is a double number
+		                long long *d = (long long*)byte_array->content, ms = (long long)*byte_array->missingvalue;
+				double sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (ms != *d)
+					{
+						sum2 += pow(*d, byte_array->param);
+						numelem++;
+					}
+				}
+				if (!numelem) sum2 = ms;
+				else sum2 /= numelem;
+		                memcpy(result, (void*)(&sum2), core_sizeof(OPH_DOUBLE));
+		                break;
+		        }
+		        default:
+		                pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                return -1;
+		}
+	}
+	else
+	{
+		switch(byte_array->type){
+		        case OPH_DOUBLE:{
+				double *d = (double*)byte_array->content, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (!isnan(*d))
+					{
+						sum2 += pow(*d, byte_array->param);
+						numelem++;
+					}
+				}
+				if (!numelem) sum2 = NAN;
+				else sum2 /= numelem;
+				memcpy(result, (void*)(&sum2), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_FLOAT:{
+		                float *d = (float*)byte_array->content, sum2 = 0.0;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (!isnan(*d))
+					{
+						sum2 += powf(*d, (float)byte_array->param);
+						numelem++;
+					}
+				}
+				if (!numelem) sum2 = NAN;
+				else sum2 /= numelem;
+				memcpy(result, (void*)(&sum2), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_INT:{
+				//The standard deviation is a float number
+		                int *d = (int*)byte_array->content;
+				float sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf(*d, (float)byte_array->param);
+				sum2 /= (float)byte_array->numelem;
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_SHORT:{
+				//The standard deviation is a float number
+		                short *d = (short*)byte_array->content;
+				float sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf(*d, (float)byte_array->param);
+				sum2 /= (float)byte_array->numelem;
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_BYTE:{
+				//The standard deviation is a float number
+		                char *d = (char*)byte_array->content;
+				float sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf(*d, (float)byte_array->param);
+				sum2 /= (float)byte_array->numelem;
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+			case OPH_LONG:{
+				//The standard deviation is a double number
+		                long long *d = (long long*)byte_array->content;
+				double sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum2 += pow(*d, byte_array->param);
+				sum2 /= (double)byte_array->numelem;
+		                memcpy(result, (void*)(&sum2), core_sizeof(OPH_DOUBLE));
+		                break;
+		        }
+		        default:
+		                pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                return -1;
+		}
+	}
         return 0;
 }
 int core_oph_rmoment_multi (oph_multistring* byte_array, oph_multistring *result)
@@ -3157,99 +5308,219 @@ int core_oph_rmoment_multi (oph_multistring* byte_array, oph_multistring *result
         int i,j;
 	unsigned long numelem;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
-	for(j = 0; j < byte_array->num_measure; j++)
+	if (byte_array->missingvalue)
 	{
-		numelem=0;
-		current = in_string;
-        	switch(byte_array->type[j])
+		for(j = 0; j < byte_array->num_measure; j++)
 		{
-                	case OPH_DOUBLE:
+			numelem=0;
+			current = in_string;
+			switch(byte_array->type[j])
 			{
-                        	double *d, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+		        	case OPH_DOUBLE:
 				{
-					d = (double*)current;
-					if (!isnan(*d))
+		                	double *d, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
 					{
-						sum2 += pow(*d, byte_array->param);
-						numelem++;
-					}
-                        	}
-				if (!numelem) sum2 = NAN;
-				else sum2 /= numelem;
-				if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
-                        	break;
-                	}
-                	case OPH_FLOAT:{
-                        	float *d, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+						d = (double*)current;
+						if (!isnan(*d) && (*byte_array->missingvalue != *d))
+						{
+							sum2 += pow(*d, byte_array->param);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = *byte_array->missingvalue;
+					else sum2 /= numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_FLOAT:{
+		                	float *d, sum2 = 0.0, ms = (float)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (float*)current;
+						if (!isnan(*d) && (ms != *d))
+						{
+							sum2 += powf(*d, (float)byte_array->param);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else sum2 /= numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_INT:{
+					int *d, ms = (int)*byte_array->missingvalue;
+					float sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (int*)current;
+						if (ms != *d)
+						{
+							sum2 += powf(*d, (float)byte_array->param);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else sum2 /= numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_SHORT:{
+					short *d, ms = (short)*byte_array->missingvalue;
+					float sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (short*)current;
+						if (ms != *d)
+						{
+							sum2 += powf(*d, (float)byte_array->param);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else sum2 /= numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_BYTE:{
+					char *d, ms = (char)*byte_array->missingvalue;
+					float sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (char*)current;
+						if (ms != *d)
+						{
+							sum2 += powf(*d, (float)byte_array->param);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else sum2 /= numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+				case OPH_LONG:{
+					long long *d, ms = (long long)*byte_array->missingvalue;
+					double sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (long long*)current;
+						if (ms != *d)
+						{
+							sum2 += pow(*d, byte_array->param);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else sum2 /= numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+		                	break;
+			        }
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
+	}
+	else
+	{
+		for(j = 0; j < byte_array->num_measure; j++)
+		{
+			numelem=0;
+			current = in_string;
+			switch(byte_array->type[j])
+			{
+		        	case OPH_DOUBLE:
 				{
-					d = (float*)current;
-					if (!isnan(*d))
+		                	double *d, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
 					{
+						d = (double*)current;
+						if (!isnan(*d))
+						{
+							sum2 += pow(*d, byte_array->param);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = NAN;
+					else sum2 /= numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_FLOAT:{
+		                	float *d, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (float*)current;
+						if (!isnan(*d))
+						{
+							sum2 += powf(*d, (float)byte_array->param);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = NAN;
+					else sum2 /= numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_INT:{
+					int *d;
+					float sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (int*)current;
 						sum2 += powf(*d, (float)byte_array->param);
-						numelem++;
 					}
-                        	}
-				if (!numelem) sum2 = NAN;
-				else sum2 /= numelem;
-				if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
-                        	break;
-                	}
-                	case OPH_INT:{
-				int *d;
-				float sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (int*)current;
-					sum2 += powf(*d, (float)byte_array->param);
-				}
-				sum2 /= (float)byte_array->numelem;
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
-                        	break;
-        	        }
-                	case OPH_SHORT:{
-				short *d;
-				float sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (short*)current;
-					sum2 += powf(*d, (float)byte_array->param);
-				}
-				sum2 /= (float)byte_array->numelem;
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
-                        	break;
-        	        }
-                	case OPH_BYTE:{
-				char *d;
-				float sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (char*)current;
-					sum2 += powf(*d, (float)byte_array->param);
-				}
-				sum2 /= (float)byte_array->numelem;
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
-                        	break;
-        	        }
-			case OPH_LONG:{
-				long long *d;
-				double sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++)
-				{
-					d = (long long*)current;
-					sum2 += pow(*d, byte_array->param);
-				}
-				sum2 /= (double)byte_array->numelem;
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
-                        	break;
-	                }
-        	        default:
-                	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-                        	return -1;
-	        }
-		in_string+=byte_array->elemsize[j];
-		out_string+=result->elemsize[j];
+					sum2 /= (float)byte_array->numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_SHORT:{
+					short *d;
+					float sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (short*)current;
+						sum2 += powf(*d, (float)byte_array->param);
+					}
+					sum2 /= (float)byte_array->numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_BYTE:{
+					char *d;
+					float sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (char*)current;
+						sum2 += powf(*d, (float)byte_array->param);
+					}
+					sum2 /= (float)byte_array->numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+				case OPH_LONG:{
+					long long *d;
+					double sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (long long*)current;
+						sum2 += pow(*d, byte_array->param);
+					}
+					sum2 /= (double)byte_array->numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+		                	break;
+			        }
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
 	}
         return 0;
 }
@@ -3263,78 +5534,187 @@ int core_oph_armoment (oph_stringPtr byte_array, char *result)
 		return -1;
 	}
         int i;
-	unsigned long numelem=0;
-        switch(byte_array->type){
-                case OPH_DOUBLE:{
-		        double *d = (double*)byte_array->content, sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				if (!isnan(*d))
+	unsigned long numelem = 0;
+	if (byte_array->missingvalue)
+	{
+		switch(byte_array->type){
+		        case OPH_DOUBLE:{
+				double *d = (double*)byte_array->content, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
 				{
-					sum2 += pow(abs(*d), byte_array->param);
-					numelem++;
+					if (!isnan(*d) && (*byte_array->missingvalue != *d))
+					{
+						sum2 += pow(fabs(*d), byte_array->param);
+						numelem++;
+					}
 				}
-			}
-			if (!numelem) sum2 = NAN;
-			else sum2 /= numelem;
-			memcpy(result, (void*)(&sum2), byte_array->elemsize);
-                        break;
-                }
-                case OPH_FLOAT:{
-                        float *d = (float*)byte_array->content, sum2 = 0.0;
-                        for (i = 0; i < byte_array->numelem; i++, d++)
-			{
-				if (!isnan(*d))
+				if (!numelem) sum2 = *byte_array->missingvalue;
+				else sum2 /= numelem;
+				memcpy(result, (void*)(&sum2), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_FLOAT:{
+		                float *d = (float*)byte_array->content, sum2 = 0.0, ms = (float)*byte_array->missingvalue;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
 				{
-					sum2 += powf(fabs(*d), (float)byte_array->param);
-					numelem++;
+					if (!isnan(*d) && (ms != *d))
+					{
+						sum2 += powf(fabsf(*d), (float)byte_array->param);
+						numelem++;
+					}
 				}
-			}
-			if (!numelem) sum2 = NAN;
-			else sum2 /= numelem;
-			memcpy(result, (void*)(&sum2), byte_array->elemsize);
-                        break;
-                }
-                case OPH_INT:{
-			//The standard deviation is a float number
-                        int *d = (int*)byte_array->content;
-			float sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf(fabs(*d), (float)byte_array->param);
-			sum2 /= (float)byte_array->numelem;
-			memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
-                        break;
-                }
-                case OPH_SHORT:{
-			//The standard deviation is a float number
-                        short *d = (short*)byte_array->content;
-			float sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf(fabs(*d), (float)byte_array->param);
-			sum2 /= (float)byte_array->numelem;
-			memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
-                        break;
-                }
-                case OPH_BYTE:{
-			//The standard deviation is a float number
-                        char *d = (char*)byte_array->content;
-			float sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf(fabs(*d), (float)byte_array->param);
-			sum2 /= (float)byte_array->numelem;
-			memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
-                        break;
-                }
-		case OPH_LONG:{
-			//The standard deviation is a double number
-                        long long *d = (long long*)byte_array->content;
-			double sum2 = 0.0;
-			for (i = 0; i < byte_array->numelem; i++, d++) sum2 += pow(abs(*d), byte_array->param);
-			sum2 /= (double)byte_array->numelem;
-                        memcpy(result, (void*)(&sum2), core_sizeof(OPH_DOUBLE));
-                        break;
-                }
-                default:
-                        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-                        return -1;
-        }
+				if (!numelem) sum2 = ms;
+				else sum2 /= numelem;
+				memcpy(result, (void*)(&sum2), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_INT:{
+				//The standard deviation is a float number
+		                int *d = (int*)byte_array->content, ms = (int)*byte_array->missingvalue;
+				float sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (ms != *d)
+					{
+						sum2 += powf(fabsf(*d), (float)byte_array->param);
+						numelem++;
+					}
+				}
+				if (!numelem) sum2 = ms;
+				else sum2 /= numelem;
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_SHORT:{
+				//The standard deviation is a float number
+		                short *d = (short*)byte_array->content, ms = (short)*byte_array->missingvalue;
+				float sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (ms != *d)
+					{
+						sum2 += powf(fabsf(*d), (float)byte_array->param);
+						numelem++;
+					}
+				}
+				if (!numelem) sum2 = ms;
+				else sum2 /= numelem;
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_BYTE:{
+				//The standard deviation is a float number
+		                char *d = (char*)byte_array->content, ms = (char)*byte_array->missingvalue;
+				float sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (ms != *d)
+					{
+						sum2 += powf(fabsf(*d), (float)byte_array->param);
+						numelem++;
+					}
+				}
+				if (!numelem) sum2 = ms;
+				else sum2 /= numelem;
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+			case OPH_LONG:{
+				//The standard deviation is a double number
+		                long long *d = (long long*)byte_array->content, ms = (long long)*byte_array->missingvalue;
+				double sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (ms != *d)
+					{
+						sum2 += pow(fabs(*d), byte_array->param);
+						numelem++;
+					}
+				}
+				if (!numelem) sum2 = ms;
+				else sum2 /= numelem;
+		                memcpy(result, (void*)(&sum2), core_sizeof(OPH_DOUBLE));
+		                break;
+		        }
+		        default:
+		                pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                return -1;
+		}
+	}
+	else
+	{
+		switch(byte_array->type){
+		        case OPH_DOUBLE:{
+				double *d = (double*)byte_array->content, sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (!isnan(*d))
+					{
+						sum2 += pow(fabs(*d), byte_array->param);
+						numelem++;
+					}
+				}
+				if (!numelem) sum2 = NAN;
+				else sum2 /= numelem;
+				memcpy(result, (void*)(&sum2), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_FLOAT:{
+		                float *d = (float*)byte_array->content, sum2 = 0.0;
+		                for (i = 0; i < byte_array->numelem; i++, d++)
+				{
+					if (!isnan(*d))
+					{
+						sum2 += powf(fabsf(*d), (float)byte_array->param);
+						numelem++;
+					}
+				}
+				if (!numelem) sum2 = NAN;
+				else sum2 /= numelem;
+				memcpy(result, (void*)(&sum2), byte_array->elemsize);
+		                break;
+		        }
+		        case OPH_INT:{
+				//The standard deviation is a float number
+		                int *d = (int*)byte_array->content;
+				float sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf(fabsf(*d), (float)byte_array->param);
+				sum2 /= (float)byte_array->numelem;
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_SHORT:{
+				//The standard deviation is a float number
+		                short *d = (short*)byte_array->content;
+				float sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf(fabsf(*d), (float)byte_array->param);
+				sum2 /= (float)byte_array->numelem;
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+		        case OPH_BYTE:{
+				//The standard deviation is a float number
+		                char *d = (char*)byte_array->content;
+				float sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum2 += powf(fabsf(*d), (float)byte_array->param);
+				sum2 /= (float)byte_array->numelem;
+				memcpy(result, (void*)(&sum2), core_sizeof(OPH_FLOAT));
+		                break;
+		        }
+			case OPH_LONG:{
+				//The standard deviation is a double number
+		                long long *d = (long long*)byte_array->content;
+				double sum2 = 0.0;
+				for (i = 0; i < byte_array->numelem; i++, d++) sum2 += pow(fabs(*d), byte_array->param);
+				sum2 /= (double)byte_array->numelem;
+		                memcpy(result, (void*)(&sum2), core_sizeof(OPH_DOUBLE));
+		                break;
+		        }
+		        default:
+		                pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                return -1;
+		}
+	}
         return 0;
 }
 int core_oph_armoment_multi (oph_multistring* byte_array, oph_multistring *result)
@@ -3347,99 +5727,219 @@ int core_oph_armoment_multi (oph_multistring* byte_array, oph_multistring *resul
         int i,j;
 	unsigned long numelem;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
-	for(j = 0; j < byte_array->num_measure; j++)
+	if (byte_array->missingvalue)
 	{
-		numelem=0;
-		current = in_string;
-        	switch(byte_array->type[j])
+		for(j = 0; j < byte_array->num_measure; j++)
 		{
-                	case OPH_DOUBLE:
+			numelem=0;
+			current = in_string;
+			switch(byte_array->type[j])
 			{
-                        	double *d, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+		        	case OPH_DOUBLE:
 				{
-					d = (double*)current;
-					if (!isnan(*d))
+		                	double *d, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
 					{
-						sum2 += pow(abs(*d), byte_array->param);
-						numelem++;
-					}
-                        	}
-				if (!numelem) sum2 = NAN;
-				else sum2 /= numelem;
-				if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
-                        	break;
-                	}
-                	case OPH_FLOAT:{
-                        	float *d, sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (float*)current;
-					if (!isnan(*d))
+						d = (double*)current;
+						if (!isnan(*d) && (*byte_array->missingvalue != *d))
+						{
+							sum2 += pow(fabs(*d), byte_array->param);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = *byte_array->missingvalue;
+					else sum2 /= numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_FLOAT:{
+		                	float *d, sum2 = 0.0, ms = (float)*byte_array->missingvalue;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
 					{
-						sum2 += powf(fabs(*d), (float)byte_array->param);
-						numelem++;
+						d = (float*)current;
+						if (!isnan(*d) && (ms != *d))
+						{
+							sum2 += powf(fabsf(*d), (float)byte_array->param);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else sum2 /= numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_INT:{
+					int *d, ms = (int)*byte_array->missingvalue;
+					float sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (int*)current;
+						if (ms != *d)
+						{
+							sum2 += powf(fabsf(*d), (float)byte_array->param);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else sum2 /= numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_SHORT:{
+					short *d, ms = (short)*byte_array->missingvalue;
+					float sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (short*)current;
+						if (ms != *d)
+						{
+							sum2 += powf(fabsf(*d), (float)byte_array->param);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else sum2 /= numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_BYTE:{
+					char *d, ms = (char)*byte_array->missingvalue;
+					float sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (char*)current;
+						if (ms != *d)
+						{
+							sum2 += powf(fabsf(*d), (float)byte_array->param);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else sum2 /= numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+				case OPH_LONG:{
+					long long *d, ms = (long long)*byte_array->missingvalue;
+					double sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (long long*)current;
+						if (ms != *d)
+						{
+							sum2 += pow(fabs(*d), byte_array->param);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = ms;
+					else sum2 /= numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+		                	break;
+			        }
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
+	}
+	else
+	{
+		for(j = 0; j < byte_array->num_measure; j++)
+		{
+			numelem=0;
+			current = in_string;
+			switch(byte_array->type[j])
+			{
+		        	case OPH_DOUBLE:
+				{
+		                	double *d, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (double*)current;
+						if (!isnan(*d))
+						{
+							sum2 += pow(fabs(*d), byte_array->param);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = NAN;
+					else sum2 /= numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_FLOAT:{
+		                	float *d, sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (float*)current;
+						if (!isnan(*d))
+						{
+							sum2 += powf(fabsf(*d), (float)byte_array->param);
+							numelem++;
+						}
+		                	}
+					if (!numelem) sum2 = NAN;
+					else sum2 /= numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+		                	break;
+		        	}
+		        	case OPH_INT:{
+					int *d;
+					float sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (int*)current;
+						sum2 += powf(fabsf(*d), (float)byte_array->param);
 					}
-                        	}
-				if (!numelem) sum2 = NAN;
-				else sum2 /= numelem;
-				if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
-                        	break;
-                	}
-                	case OPH_INT:{
-				int *d;
-				float sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (int*)current;
-					sum2 += powf(fabs(*d), (float)byte_array->param);
-				}
-				sum2 /= (float)byte_array->numelem;
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
-                        	break;
-        	        }
-                	case OPH_SHORT:{
-				short *d;
-				float sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (short*)current;
-					sum2 += powf(fabs(*d), (float)byte_array->param);
-				}
-				sum2 /= (float)byte_array->numelem;
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
-                        	break;
-        	        }
-                	case OPH_BYTE:{
-				char *d;
-				float sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
-				{
-					d = (char*)current;
-					sum2 += powf(fabs(*d), (float)byte_array->param);
-				}
-				sum2 /= (float)byte_array->numelem;
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
-                        	break;
-        	        }
-			case OPH_LONG:{
-				long long *d;
-				double sum2 = 0.0;
-                        	for (i = 0; i < byte_array->numelem; i++)
-				{
-					d = (long long*)current;
-					sum2 += pow(abs(*d), byte_array->param);
-				}
-				sum2 /= (double)byte_array->numelem;
-				if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
-                        	break;
-	                }
-        	        default:
-                	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
-                        	return -1;
-	        }
-		in_string+=byte_array->elemsize[j];
-		out_string+=result->elemsize[j];
+					sum2 /= (float)byte_array->numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_SHORT:{
+					short *d;
+					float sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (short*)current;
+						sum2 += powf(fabsf(*d), (float)byte_array->param);
+					}
+					sum2 /= (float)byte_array->numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+		        	case OPH_BYTE:{
+					char *d;
+					float sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (char*)current;
+						sum2 += powf(fabsf(*d), (float)byte_array->param);
+					}
+					sum2 /= (float)byte_array->numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+		                	break;
+			        }
+				case OPH_LONG:{
+					long long *d;
+					double sum2 = 0.0;
+		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize)
+					{
+						d = (long long*)current;
+						sum2 += pow(fabs(*d), byte_array->param);
+					}
+					sum2 /= (double)byte_array->numelem;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+		                	break;
+			        }
+			        default:
+		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+		                	return -1;
+			}
+			in_string+=byte_array->elemsize[j];
+			out_string+=result->elemsize[j];
+		}
 	}
         return 0;
 }
@@ -3464,217 +5964,568 @@ int core_oph_sum_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, cha
 int core_oph_sum_array2(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result, int* count)
 {
     int j;
-    switch (byte_arraya->type) {
-    case OPH_INT:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((int *)(result))[j] = ((int *)(byte_arraya->content))[j] + (byte_arrayb ? ((int *)(byte_arrayb->content))[j] : 0);
-        }
-	if (count) count[0]++; // Only count[0] is updated to improve performance
-        break;
-    }
-    case OPH_SHORT:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((short *)(result))[j] = ((short *)(byte_arraya->content))[j] + (byte_arrayb ? ((short *)(byte_arrayb->content))[j] : 0);
-        }
-	if (count) count[0]++; // Only count[0] is updated to improve performance
-        break;
-    }
-    case OPH_BYTE:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((char *)(result))[j] = ((char *)(byte_arraya->content))[j] + (byte_arrayb ? ((char *)(byte_arrayb->content))[j] : 0);
-        }
-	if (count) count[0]++; // Only count[0] is updated to improve performance
-        break;
-    }
-    case OPH_LONG:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j] + (byte_arrayb ? ((long long *)(byte_arrayb->content))[j] : 0);
-        }
-	if (count) count[0]++; // Only count[0] is updated to improve performance
-        break;
-    }
-    case OPH_FLOAT:
-    {
-	for (j = 0; j < byte_arraya->numelem; j++)
+	if (byte_arraya->missingvalue)
 	{
-		if (!isnan(((float *)(byte_arraya->content))[j]))
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
+	    {
+		int ms = (int)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++)
 		{
-			if (byte_arrayb)
+			if (ms != ((int *)(byte_arraya->content))[j])
 			{
-				if (!isnan(((float *)(byte_arrayb->content))[j]))
-				    ((float *)(result))[j] = ((float *)(byte_arraya->content))[j] + ((float *)(byte_arrayb->content))[j];
+				if (byte_arrayb)
+				{
+					if (ms != ((int *)(byte_arrayb->content))[j])
+					    ((int *)(result))[j] = ((int *)(byte_arraya->content))[j] + ((int *)(byte_arrayb->content))[j];
+					else ((int *)(result))[j] = ((int *)(byte_arraya->content))[j];
+				}
+				else ((int *)(result))[j] = ((int *)(byte_arraya->content))[j];
+				if (count) count[j]++;
+			}
+			else
+			{
+				if (byte_arrayb) ((int *)(result))[j] = ((int *)(byte_arrayb->content))[j];
+				else ((int *)(result))[j] = ms;
+			}
+		}
+		break;
+	    }
+	    case OPH_SHORT:
+	    {
+		short ms = (short)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++)
+		{
+			if (ms != ((short *)(byte_arraya->content))[j])
+			{
+				if (byte_arrayb)
+				{
+					if (ms != ((short *)(byte_arrayb->content))[j])
+					    ((short *)(result))[j] = ((short *)(byte_arraya->content))[j] + ((short *)(byte_arrayb->content))[j];
+					else ((short *)(result))[j] = ((short *)(byte_arraya->content))[j];
+				}
+				else ((short *)(result))[j] = ((short *)(byte_arraya->content))[j];
+				if (count) count[j]++;
+			}
+			else
+			{
+				if (byte_arrayb) ((short *)(result))[j] = ((short *)(byte_arrayb->content))[j];
+				else ((short *)(result))[j] = ms;
+			}
+		}
+		break;
+	    }
+	    case OPH_BYTE:
+	    {
+		char ms = (char)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++)
+		{
+			if (ms != ((char *)(byte_arraya->content))[j])
+			{
+				if (byte_arrayb)
+				{
+					if (ms != ((char *)(byte_arrayb->content))[j])
+					    ((char *)(result))[j] = ((char *)(byte_arraya->content))[j] + ((char *)(byte_arrayb->content))[j];
+					else ((char *)(result))[j] = ((char *)(byte_arraya->content))[j];
+				}
+				else ((char *)(result))[j] = ((char *)(byte_arraya->content))[j];
+				if (count) count[j]++;
+			}
+			else
+			{
+				if (byte_arrayb) ((char *)(result))[j] = ((char *)(byte_arrayb->content))[j];
+				else ((char *)(result))[j] = ms;
+			}
+		}
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		long long ms = (long long)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++)
+		{
+			if (ms != ((long long *)(byte_arraya->content))[j])
+			{
+				if (byte_arrayb)
+				{
+					if (ms != ((long long *)(byte_arrayb->content))[j])
+					    ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j] + ((long long *)(byte_arrayb->content))[j];
+					else ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j];
+				}
+				else ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j];
+				if (count) count[j]++;
+			}
+			else
+			{
+				if (byte_arrayb) ((long long *)(result))[j] = ((long long *)(byte_arrayb->content))[j];
+				else ((long long *)(result))[j] = ms;
+			}
+		}
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		float ms = (float)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++)
+		{
+			if (!isnan(((float *)(byte_arraya->content))[j]) && (ms != ((float *)(byte_arraya->content))[j]))
+			{
+				if (byte_arrayb)
+				{
+					if (!isnan(((float *)(byte_arrayb->content))[j]) && (ms != ((float *)(byte_arrayb->content))[j]))
+					    ((float *)(result))[j] = ((float *)(byte_arraya->content))[j] + ((float *)(byte_arrayb->content))[j];
+					else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+				}
 				else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+				if (count) count[j]++;
 			}
-			else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
-			if (count) count[j]++;
-		}
-		else
-		{
-			if (byte_arrayb) ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
-			else ((float *)(result))[j] = NAN;
-		}
-	}
-        break;
-    }
-    case OPH_DOUBLE:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++)
-	{
-		if (!isnan(((double *)(byte_arraya->content))[j]))
-		{
-			if (byte_arrayb)
+			else
 			{
-				if (!isnan(((double *)(byte_arrayb->content))[j]))
-				    ((double *)(result))[j] = ((double *)(byte_arraya->content))[j] + ((double *)(byte_arrayb->content))[j];
-				else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+				if (byte_arrayb) ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+				else ((float *)(result))[j] = ms;
 			}
-			else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
-			if (count) count[j]++;
 		}
-		else
+		break;
+	    }
+	    case OPH_DOUBLE:
+	    {
+		double ms = (double)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++)
 		{
-			if (byte_arrayb) ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
-			else ((double *)(result))[j] = NAN;
+			if (!isnan(((double *)(byte_arraya->content))[j]) && (ms != ((double *)(byte_arraya->content))[j]))
+			{
+				if (byte_arrayb)
+				{
+					if (!isnan(((double *)(byte_arrayb->content))[j]) && (ms != ((double *)(byte_arrayb->content))[j]))
+					    ((double *)(result))[j] = ((double *)(byte_arraya->content))[j] + ((double *)(byte_arrayb->content))[j];
+					else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+				}
+				else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+				if (count) count[j]++;
+			}
+			else
+			{
+				if (byte_arrayb) ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+				else ((double *)(result))[j] = ms;
+			}
 		}
+		break;
+	    }
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
 	}
-        break;
-    }
-    default:
-        pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-        return -1;
-    }
+	else
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((int *)(result))[j] = ((int *)(byte_arraya->content))[j] + (byte_arrayb ? ((int *)(byte_arrayb->content))[j] : 0);
+		}
+		if (count) count[0]++; // Only count[0] is updated to improve performance
+		break;
+	    }
+	    case OPH_SHORT:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((short *)(result))[j] = ((short *)(byte_arraya->content))[j] + (byte_arrayb ? ((short *)(byte_arrayb->content))[j] : 0);
+		}
+		if (count) count[0]++; // Only count[0] is updated to improve performance
+		break;
+	    }
+	    case OPH_BYTE:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((char *)(result))[j] = ((char *)(byte_arraya->content))[j] + (byte_arrayb ? ((char *)(byte_arrayb->content))[j] : 0);
+		}
+		if (count) count[0]++; // Only count[0] is updated to improve performance
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j] + (byte_arrayb ? ((long long *)(byte_arrayb->content))[j] : 0);
+		}
+		if (count) count[0]++; // Only count[0] is updated to improve performance
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++)
+		{
+			if (!isnan(((float *)(byte_arraya->content))[j]))
+			{
+				if (byte_arrayb)
+				{
+					if (!isnan(((float *)(byte_arrayb->content))[j]))
+					    ((float *)(result))[j] = ((float *)(byte_arraya->content))[j] + ((float *)(byte_arrayb->content))[j];
+					else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+				}
+				else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+				if (count) count[j]++;
+			}
+			else
+			{
+				if (byte_arrayb) ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+				else ((float *)(result))[j] = NAN;
+			}
+		}
+		break;
+	    }
+	    case OPH_DOUBLE:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++)
+		{
+			if (!isnan(((double *)(byte_arraya->content))[j]))
+			{
+				if (byte_arrayb)
+				{
+					if (!isnan(((double *)(byte_arrayb->content))[j]))
+					    ((double *)(result))[j] = ((double *)(byte_arraya->content))[j] + ((double *)(byte_arrayb->content))[j];
+					else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+				}
+				else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+				if (count) count[j]++;
+			}
+			else
+			{
+				if (byte_arrayb) ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+				else ((double *)(result))[j] = NAN;
+			}
+		}
+		break;
+	    }
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
     return 0;
 }
 
 int core_oph_sub_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result){
     int j;
-    switch (byte_arraya->type) {
-    case OPH_INT:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((int *)(result))[j] = ((int *)(byte_arraya->content))[j] - ((int *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_SHORT:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((short *)(result))[j] = ((short *)(byte_arraya->content))[j] - ((short *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_BYTE:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((char *)(result))[j] = ((char *)(byte_arraya->content))[j] - ((char *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_LONG:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j] - ((long long *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_FLOAT:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (!isnan(((float *)(byte_arraya->content))[j]))
+	if (byte_arraya->missingvalue)
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
 	    {
-		if (!isnan(((float *)(byte_arrayb->content))[j]))
-	            ((float *)(result))[j] = ((float *)(byte_arraya->content))[j] - ((float *)(byte_arrayb->content))[j];
-		else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+		int ms = (int)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((int *)(byte_arraya->content))[j])
+		    {
+			if (ms != ((int *)(byte_arrayb->content))[j])
+			    ((int *)(result))[j] = ((int *)(byte_arraya->content))[j] - ((int *)(byte_arrayb->content))[j];
+			else ((int *)(result))[j] = ((int *)(byte_arraya->content))[j];
+		    }
+		    else if (ms == ((int *)(byte_arrayb->content))[j]) ((int *)(result))[j] = ms;
+		    else ((int *)(result))[j] = - ((int *)(byte_arrayb->content))[j];
+		}
+		break;
 	    }
-	    else ((float *)(result))[j] = - ((float *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_DOUBLE:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (!isnan(((double *)(byte_arraya->content))[j]))
+	    case OPH_SHORT:
 	    {
-		if (!isnan(((double *)(byte_arrayb->content))[j]))
-	            ((double *)(result))[j] = ((double *)(byte_arraya->content))[j] - ((double *)(byte_arrayb->content))[j];
-		else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+		short ms = (short)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((short *)(byte_arraya->content))[j])
+		    {
+			if (ms != ((short *)(byte_arrayb->content))[j])
+			    ((short *)(result))[j] = ((short *)(byte_arraya->content))[j] - ((short *)(byte_arrayb->content))[j];
+			else ((short *)(result))[j] = ((short *)(byte_arraya->content))[j];
+		    }
+		    else if (ms == ((short *)(byte_arrayb->content))[j]) ((short *)(result))[j] = ms;
+		    else ((short *)(result))[j] = - ((short *)(byte_arrayb->content))[j];
+		}
+		break;
 	    }
-	    else ((double *)(result))[j] = - ((double *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    default:
-        pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-        return -1;
-    }
+	    case OPH_BYTE:
+	    {
+		char ms = (char)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((char *)(byte_arraya->content))[j])
+		    {
+			if (ms != ((char *)(byte_arrayb->content))[j])
+			    ((char *)(result))[j] = ((char *)(byte_arraya->content))[j] - ((char *)(byte_arrayb->content))[j];
+			else ((char *)(result))[j] = ((char *)(byte_arraya->content))[j];
+		    }
+		    else if (ms == ((char *)(byte_arrayb->content))[j]) ((char *)(result))[j] = ms;
+		    else ((char *)(result))[j] = - ((char *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		long long ms = (long long)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((long long *)(byte_arraya->content))[j])
+		    {
+			if (ms != ((long long *)(byte_arrayb->content))[j])
+			    ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j] - ((long long *)(byte_arrayb->content))[j];
+			else ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j];
+		    }
+		    else if (ms == ((long long *)(byte_arrayb->content))[j]) ((long long *)(result))[j] = ms;
+		    else ((long long *)(result))[j] = - ((long long *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		float ms = (float)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((float *)(byte_arraya->content))[j]) && (ms != ((float *)(byte_arraya->content))[j]))
+		    {
+			if (!isnan(((float *)(byte_arrayb->content))[j]) && (ms != ((float *)(byte_arrayb->content))[j]))
+			    ((float *)(result))[j] = ((float *)(byte_arraya->content))[j] - ((float *)(byte_arrayb->content))[j];
+			else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+		    }
+		    else if (isnan(((float *)(byte_arrayb->content))[j]) || (ms == ((float *)(byte_arrayb->content))[j])) ((float *)(result))[j] = ms;
+		    else ((float *)(result))[j] = - ((float *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_DOUBLE:
+	    {
+		double ms = (double)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((double *)(byte_arraya->content))[j]) && (ms != ((double *)(byte_arraya->content))[j]))
+		    {
+			if (!isnan(((double *)(byte_arrayb->content))[j]) && (ms != ((double *)(byte_arrayb->content))[j]))
+			    ((double *)(result))[j] = ((double *)(byte_arraya->content))[j] - ((double *)(byte_arrayb->content))[j];
+			else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+		    }
+		    else if (isnan(((double *)(byte_arrayb->content))[j]) || (ms == ((double *)(byte_arrayb->content))[j])) ((double *)(result))[j] = ms;
+		    else ((double *)(result))[j] = - ((double *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
+	else
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((int *)(result))[j] = ((int *)(byte_arraya->content))[j] - ((int *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_SHORT:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((short *)(result))[j] = ((short *)(byte_arraya->content))[j] - ((short *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_BYTE:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((char *)(result))[j] = ((char *)(byte_arraya->content))[j] - ((char *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j] - ((long long *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((float *)(byte_arraya->content))[j]))
+		    {
+			if (!isnan(((float *)(byte_arrayb->content))[j]))
+			    ((float *)(result))[j] = ((float *)(byte_arraya->content))[j] - ((float *)(byte_arrayb->content))[j];
+			else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+		    }
+		    else ((float *)(result))[j] = - ((float *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_DOUBLE:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((double *)(byte_arraya->content))[j]))
+		    {
+			if (!isnan(((double *)(byte_arrayb->content))[j]))
+			    ((double *)(result))[j] = ((double *)(byte_arraya->content))[j] - ((double *)(byte_arrayb->content))[j];
+			else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+		    }
+		    else ((double *)(result))[j] = - ((double *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
     return 0;
 }
 
 int core_oph_mul_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result){
     int j;
-    switch (byte_arraya->type) {
-    case OPH_INT:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((int *)(result))[j] = ((int *)(byte_arraya->content))[j] * ((int *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_SHORT:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((short *)(result))[j] = ((short *)(byte_arraya->content))[j] * ((short *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_BYTE:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((char *)(result))[j] = ((char *)(byte_arraya->content))[j] * ((char *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_LONG:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j] * ((long long *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_FLOAT:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (!isnan(((float *)(byte_arraya->content))[j]))
+	if (byte_arraya->missingvalue)
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
 	    {
-		if (!isnan(((float *)(byte_arrayb->content))[j]))
-	            ((float *)(result))[j] = ((float *)(byte_arraya->content))[j] * ((float *)(byte_arrayb->content))[j];
-		else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+		int ms = (int)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((int *)(byte_arraya->content))[j])
+		    {
+			if (ms != ((int *)(byte_arrayb->content))[j])
+			    ((int *)(result))[j] = ((int *)(byte_arraya->content))[j] * ((int *)(byte_arrayb->content))[j];
+			else ((int *)(result))[j] = ((int *)(byte_arraya->content))[j];
+		    }
+		    else ((int *)(result))[j] = ((int *)(byte_arrayb->content))[j];
+		}
+		break;
 	    }
-	    else ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_DOUBLE:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (!isnan(((double *)(byte_arraya->content))[j]))
+	    case OPH_SHORT:
 	    {
-		if (!isnan(((double *)(byte_arrayb->content))[j]))
-	            ((double *)(result))[j] = ((double *)(byte_arraya->content))[j] * ((double *)(byte_arrayb->content))[j];
-		else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+		short ms = (short)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((short *)(byte_arraya->content))[j])
+		    {
+			if (ms != ((short *)(byte_arrayb->content))[j])
+			    ((short *)(result))[j] = ((short *)(byte_arraya->content))[j] * ((short *)(byte_arrayb->content))[j];
+			else ((short *)(result))[j] = ((short *)(byte_arraya->content))[j];
+		    }
+		    else ((short *)(result))[j] = ((short *)(byte_arrayb->content))[j];
+		}
+		break;
 	    }
-	    else ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    default:
-        pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-        return -1;
-    }
+	    case OPH_BYTE:
+	    {
+		char ms = (char)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((char *)(byte_arraya->content))[j])
+		    {
+			if (ms != ((char *)(byte_arrayb->content))[j])
+			    ((char *)(result))[j] = ((char *)(byte_arraya->content))[j] * ((char *)(byte_arrayb->content))[j];
+			else ((char *)(result))[j] = ((char *)(byte_arraya->content))[j];
+		    }
+		    else ((char *)(result))[j] = ((char *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		long long ms = (long long)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((long long *)(byte_arraya->content))[j])
+		    {
+			if (ms != ((long long *)(byte_arrayb->content))[j])
+			    ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j] * ((long long *)(byte_arrayb->content))[j];
+			else ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j];
+		    }
+		    else ((long long *)(result))[j] = ((long long *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		float ms = (float)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((float *)(byte_arraya->content))[j]) && (ms != ((float *)(byte_arraya->content))[j]))
+		    {
+			if (!isnan(((float *)(byte_arrayb->content))[j]) && (ms != ((float *)(byte_arrayb->content))[j]))
+			    ((float *)(result))[j] = ((float *)(byte_arraya->content))[j] * ((float *)(byte_arrayb->content))[j];
+			else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+		    }
+		    else ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_DOUBLE:
+	    {
+		double ms = (double)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((double *)(byte_arraya->content))[j]) && (ms != ((double *)(byte_arraya->content))[j]))
+		    {
+			if (!isnan(((double *)(byte_arrayb->content))[j]) && (ms != ((double *)(byte_arrayb->content))[j]))
+			    ((double *)(result))[j] = ((double *)(byte_arraya->content))[j] * ((double *)(byte_arrayb->content))[j];
+			else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+		    }
+		    else ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
+	else
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((int *)(result))[j] = ((int *)(byte_arraya->content))[j] * ((int *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_SHORT:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((short *)(result))[j] = ((short *)(byte_arraya->content))[j] * ((short *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_BYTE:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((char *)(result))[j] = ((char *)(byte_arraya->content))[j] * ((char *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j] * ((long long *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((float *)(byte_arraya->content))[j]))
+		    {
+			if (!isnan(((float *)(byte_arrayb->content))[j]))
+			    ((float *)(result))[j] = ((float *)(byte_arraya->content))[j] * ((float *)(byte_arrayb->content))[j];
+			else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+		    }
+		    else ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_DOUBLE:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((double *)(byte_arraya->content))[j]))
+		    {
+			if (!isnan(((double *)(byte_arrayb->content))[j]))
+			    ((double *)(result))[j] = ((double *)(byte_arraya->content))[j] * ((double *)(byte_arrayb->content))[j];
+			else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+		    }
+		    else ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
     return 0;
 }
 
@@ -3732,655 +6583,1642 @@ int core_oph_mask_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, ch
 
 int core_oph_div_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result){
     int j;
-    switch (byte_arraya->type) {
-    case OPH_INT:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((int *)(result))[j] = ((int *)(byte_arraya->content))[j] / ((int *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_SHORT:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((short *)(result))[j] = ((short *)(byte_arraya->content))[j] / ((short *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_BYTE:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((char *)(result))[j] = ((char *)(byte_arraya->content))[j] / ((char *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_LONG:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j] / ((long long *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_FLOAT:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (!isnan(((float *)(byte_arraya->content))[j]))
+	if (byte_arraya->missingvalue)
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
 	    {
-		if (!isnan(((float *)(byte_arrayb->content))[j]))
-	            ((float *)(result))[j] = ((float *)(byte_arraya->content))[j] / ((float *)(byte_arrayb->content))[j];
-		else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+		int ms = (int)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((int *)(byte_arraya->content))[j])
+		    {
+			if (ms != ((int *)(byte_arrayb->content))[j])
+			    ((int *)(result))[j] = ((int *)(byte_arraya->content))[j] / ((int *)(byte_arrayb->content))[j];
+			else ((int *)(result))[j] = ((int *)(byte_arraya->content))[j];
+		    }
+		    else if (ms == ((int *)(byte_arrayb->content))[j]) ((int *)(result))[j] = ms;
+		    else ((int *)(result))[j] = 1 / ((int *)(byte_arrayb->content))[j];
+		}
+		break;
 	    }
-	    else ((float *)(result))[j] = 1.0 / ((float *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_DOUBLE:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (!isnan(((double *)(byte_arraya->content))[j]))
+	    case OPH_SHORT:
 	    {
-		if (!isnan(((double *)(byte_arrayb->content))[j]))
-	            ((double *)(result))[j] = ((double *)(byte_arraya->content))[j] / ((double *)(byte_arrayb->content))[j];
-		else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+		short ms = (short)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((short *)(byte_arraya->content))[j])
+		    {
+			if (ms != ((short *)(byte_arrayb->content))[j])
+			    ((short *)(result))[j] = ((short *)(byte_arraya->content))[j] / ((short *)(byte_arrayb->content))[j];
+			else ((short *)(result))[j] = ((short *)(byte_arraya->content))[j];
+		    }
+		    else if (ms == ((short *)(byte_arrayb->content))[j]) ((short *)(result))[j] = ms;
+		    else ((short *)(result))[j] = 1 / ((short *)(byte_arrayb->content))[j];
+		}
+		break;
 	    }
-	    else ((double *)(result))[j] = 1.0 / ((double *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    default:
-        pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-        return -1;
-    }
+	    case OPH_BYTE:
+	    {
+		char ms = (char)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((char *)(byte_arraya->content))[j])
+		    {
+			if (ms != ((char *)(byte_arrayb->content))[j])
+			    ((char *)(result))[j] = ((char *)(byte_arraya->content))[j] / ((char *)(byte_arrayb->content))[j];
+			else ((char *)(result))[j] = ((char *)(byte_arraya->content))[j];
+		    }
+		    else if (ms == ((char *)(byte_arrayb->content))[j]) ((char *)(result))[j] = ms;
+		    else ((char *)(result))[j] = 1 / ((char *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		long long ms = (long long)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((long long *)(byte_arraya->content))[j])
+		    {
+			if (ms != ((long long *)(byte_arrayb->content))[j])
+			    ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j] / ((long long *)(byte_arrayb->content))[j];
+			else ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j];
+		    }
+		    else if (ms == ((long long *)(byte_arrayb->content))[j]) ((long long *)(result))[j] = ms;
+		    else ((long long *)(result))[j] = 1 / ((long long *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		float ms = (float)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((float *)(byte_arraya->content))[j]) && (ms != ((float *)(byte_arraya->content))[j]))
+		    {
+			if (!isnan(((float *)(byte_arrayb->content))[j]) && (ms != ((float *)(byte_arrayb->content))[j]))
+			    ((float *)(result))[j] = ((float *)(byte_arraya->content))[j] / ((float *)(byte_arrayb->content))[j];
+			else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+		    }
+		    else if (isnan(((float *)(byte_arrayb->content))[j]) || (ms == ((float *)(byte_arrayb->content))[j])) ((float *)(result))[j] = ms;
+		    else ((float *)(result))[j] = 1.0 / ((float *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_DOUBLE:
+	    {
+		double ms = (double)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((double *)(byte_arraya->content))[j]) && (ms != ((double *)(byte_arraya->content))[j]))
+		    {
+			if (!isnan(((double *)(byte_arrayb->content))[j]) && (ms != ((double *)(byte_arrayb->content))[j]))
+			    ((double *)(result))[j] = ((double *)(byte_arraya->content))[j] / ((double *)(byte_arrayb->content))[j];
+			else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+		    }
+		    else if (isnan(((double *)(byte_arrayb->content))[j]) || (ms == ((double *)(byte_arrayb->content))[j])) ((double *)(result))[j] = ms;
+		    else ((double *)(result))[j] = 1.0 / ((double *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
+	else
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((int *)(result))[j] = ((int *)(byte_arraya->content))[j] / ((int *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_SHORT:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((short *)(result))[j] = ((short *)(byte_arraya->content))[j] / ((short *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_BYTE:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((char *)(result))[j] = ((char *)(byte_arraya->content))[j] / ((char *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j] / ((long long *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((float *)(byte_arraya->content))[j]))
+		    {
+			if (!isnan(((float *)(byte_arrayb->content))[j]))
+			    ((float *)(result))[j] = ((float *)(byte_arraya->content))[j] / ((float *)(byte_arrayb->content))[j];
+			else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+		    }
+		    else ((float *)(result))[j] = 1.0 / ((float *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_DOUBLE:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((double *)(byte_arraya->content))[j]))
+		    {
+			if (!isnan(((double *)(byte_arrayb->content))[j]))
+			    ((double *)(result))[j] = ((double *)(byte_arraya->content))[j] / ((double *)(byte_arrayb->content))[j];
+			else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+		    }
+		    else ((double *)(result))[j] = 1.0 / ((double *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
     return 0;
 }
 
 int core_oph_abs_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result){
     int j;
-    switch (byte_arraya->type) {
-    case OPH_INT:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((int *)(result))[j] = (int) sqrt(fabs(((int *)(byte_arraya->content))[j] * ((int *)(byte_arraya->content))[j] + ((int *)(byte_arrayb->content))[j] * ((int *)(byte_arrayb->content))[j]));
-        }
-        break;
-    }
-    case OPH_SHORT:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((short *)(result))[j] = (short) sqrt(fabs(((short *)(byte_arraya->content))[j] * ((short *)(byte_arraya->content))[j] + ((short *)(byte_arrayb->content))[j] * ((short *)(byte_arrayb->content))[j]));
-        }
-        break;
-    }
-    case OPH_BYTE:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((char *)(result))[j] = (char) sqrt(fabs(((char *)(byte_arraya->content))[j] * ((char *)(byte_arraya->content))[j] + ((char *)(byte_arrayb->content))[j] * ((char *)(byte_arrayb->content))[j]));
-        }
-        break;
-    }
-    case OPH_LONG:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((long long *)(result))[j] = (long long) sqrt(fabs(((long long *)(byte_arraya->content))[j] * ((long long *)(byte_arraya->content))[j] + ((long long *)(byte_arrayb->content))[j] * ((long long *)(byte_arrayb->content))[j]));
-        }
-        break;
-    }
-    case OPH_FLOAT:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (isnan(((float *)(byte_arraya->content))[j]) || isnan(((float *)(byte_arrayb->content))[j])) ((float *)(result))[j] = NAN;
-	    else ((float *)(result))[j] = (float) sqrt(fabs(((float *)(byte_arraya->content))[j] * ((float *)(byte_arraya->content))[j] + ((float *)(byte_arrayb->content))[j] * ((float *)(byte_arrayb->content))[j]));
-        }
-        break;
-    }
-    case OPH_DOUBLE:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (isnan(((double *)(byte_arraya->content))[j]) || isnan(((double *)(byte_arrayb->content))[j])) ((double *)(result))[j] = NAN;
-	    else ((double *)(result))[j] = (double) sqrt(fabs(((double *)(byte_arraya->content))[j] * ((double *)(byte_arraya->content))[j] + ((double *)(byte_arrayb->content))[j] * ((double *)(byte_arrayb->content))[j]));
-        }
-        break;
-    }
-    default:
-        pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-        return -1;
-    }
+	if (byte_arraya->missingvalue)
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
+	    {
+		int ms = (int)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if ((ms == ((int *)(byte_arraya->content))[j]) || (ms == ((int *)(byte_arrayb->content))[j])) ((int *)(result))[j] = ms;
+		    else ((int *)(result))[j] = (int) sqrtf(fabsf(((int *)(byte_arraya->content))[j] * ((int *)(byte_arraya->content))[j] + ((int *)(byte_arrayb->content))[j] * ((int *)(byte_arrayb->content))[j]));
+		}
+		break;
+	    }
+	    case OPH_SHORT:
+	    {
+		short ms = (short)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if ((ms == ((short *)(byte_arraya->content))[j]) || (ms == ((short *)(byte_arrayb->content))[j])) ((short *)(result))[j] = ms;
+		    else ((short *)(result))[j] = (short) sqrtf(fabsf(((short *)(byte_arraya->content))[j] * ((short *)(byte_arraya->content))[j] + ((short *)(byte_arrayb->content))[j] * ((short *)(byte_arrayb->content))[j]));
+		}
+		break;
+	    }
+	    case OPH_BYTE:
+	    {
+		char ms = (char)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if ((ms == ((char *)(byte_arraya->content))[j]) || (ms == ((char *)(byte_arrayb->content))[j])) ((char *)(result))[j] = ms;
+		    else ((char *)(result))[j] = (char) sqrtf(fabsf(((char *)(byte_arraya->content))[j] * ((char *)(byte_arraya->content))[j] + ((char *)(byte_arrayb->content))[j] * ((char *)(byte_arrayb->content))[j]));
+		}
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		long long ms = (long long)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if ((ms == ((double *)(byte_arraya->content))[j]) || (ms == ((double *)(byte_arrayb->content))[j])) ((double *)(result))[j] = ms;
+		    else ((double *)(result))[j] = (double) sqrt(fabs(((double *)(byte_arraya->content))[j] * ((double *)(byte_arraya->content))[j] + ((double *)(byte_arrayb->content))[j] * ((double *)(byte_arrayb->content))[j]));
+		}
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		float ms = (float)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (isnan(((float *)(byte_arraya->content))[j]) || (ms == ((float *)(byte_arraya->content))[j]) || isnan(((float *)(byte_arrayb->content))[j]) || (ms == ((float *)(byte_arrayb->content))[j])) ((float *)(result))[j] = ms;
+		    else ((float *)(result))[j] = (float) sqrtf(fabsf(((float *)(byte_arraya->content))[j] * ((float *)(byte_arraya->content))[j] + ((float *)(byte_arrayb->content))[j] * ((float *)(byte_arrayb->content))[j]));
+		}
+		break;
+	    }
+	    case OPH_DOUBLE:
+	    {
+		double ms = (double)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (isnan(((double *)(byte_arraya->content))[j]) || (ms == ((double *)(byte_arraya->content))[j]) || isnan(((double *)(byte_arrayb->content))[j]) || (ms == ((double *)(byte_arrayb->content))[j])) ((double *)(result))[j] = ms;
+		    else ((double *)(result))[j] = (double) sqrt(fabs(((double *)(byte_arraya->content))[j] * ((double *)(byte_arraya->content))[j] + ((double *)(byte_arrayb->content))[j] * ((double *)(byte_arrayb->content))[j]));
+		}
+		break;
+	    }
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
+	else
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((int *)(result))[j] = (int) sqrtf(fabsf(((int *)(byte_arraya->content))[j] * ((int *)(byte_arraya->content))[j] + ((int *)(byte_arrayb->content))[j] * ((int *)(byte_arrayb->content))[j]));
+		}
+		break;
+	    }
+	    case OPH_SHORT:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((short *)(result))[j] = (short) sqrtf(fabsf(((short *)(byte_arraya->content))[j] * ((short *)(byte_arraya->content))[j] + ((short *)(byte_arrayb->content))[j] * ((short *)(byte_arrayb->content))[j]));
+		}
+		break;
+	    }
+	    case OPH_BYTE:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((char *)(result))[j] = (char) sqrtf(fabsf(((char *)(byte_arraya->content))[j] * ((char *)(byte_arraya->content))[j] + ((char *)(byte_arrayb->content))[j] * ((char *)(byte_arrayb->content))[j]));
+		}
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((long long *)(result))[j] = (long long) sqrt(fabs(((long long *)(byte_arraya->content))[j] * ((long long *)(byte_arraya->content))[j] + ((long long *)(byte_arrayb->content))[j] * ((long long *)(byte_arrayb->content))[j]));
+		}
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (isnan(((float *)(byte_arraya->content))[j]) || isnan(((float *)(byte_arrayb->content))[j])) ((float *)(result))[j] = NAN;
+		    else ((float *)(result))[j] = (float) sqrtf(fabsf(((float *)(byte_arraya->content))[j] * ((float *)(byte_arraya->content))[j] + ((float *)(byte_arrayb->content))[j] * ((float *)(byte_arrayb->content))[j]));
+		}
+		break;
+	    }
+	    case OPH_DOUBLE:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (isnan(((double *)(byte_arraya->content))[j]) || isnan(((double *)(byte_arrayb->content))[j])) ((double *)(result))[j] = NAN;
+		    else ((double *)(result))[j] = (double) sqrt(fabs(((double *)(byte_arraya->content))[j] * ((double *)(byte_arraya->content))[j] + ((double *)(byte_arrayb->content))[j] * ((double *)(byte_arrayb->content))[j]));
+		}
+		break;
+	    }
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
     return 0;
 }
 
 int core_oph_arg_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result){
     int j;
-    switch (byte_arraya->type) {
-    case OPH_INT:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((int *)(result))[j] = (int) atan2((double)(((int *)(byte_arrayb->content))[j]),(double)((int *)(byte_arraya->content))[j]);
-        }
-        break;
-    }
-    case OPH_SHORT:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((short *)(result))[j] = (short) atan2((double)(((short *)(byte_arrayb->content))[j]),(double)((short *)(byte_arraya->content))[j]);
-        }
-        break;
-    }
-    case OPH_BYTE:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((char *)(result))[j] = (char) atan2((double)(((char *)(byte_arrayb->content))[j]),(double)((char *)(byte_arraya->content))[j]);
-        }
-        break;
-    }
-    case OPH_LONG:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            ((long long *)(result))[j] = (long long) atan2((double)(((long long *)(byte_arrayb->content))[j]),(double)((long long *)(byte_arraya->content))[j]);
-        }
-        break;
-    }
-    case OPH_FLOAT:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (!isnan(((float *)(byte_arraya->content))[j]))
+	if (byte_arraya->missingvalue)
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
 	    {
-		if (!isnan(((float *)(byte_arrayb->content))[j]))
-	            ((float *)(result))[j] = (float) atan2((double)(((float *)(byte_arrayb->content))[j]),(double)((float *)(byte_arraya->content))[j]);
-		else ((float *)(result))[j] = 0.0;
+		int ms = (int)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((int *)(byte_arraya->content))[j])
+		    {
+			if (ms != ((int *)(byte_arrayb->content))[j])
+			    ((int *)(result))[j] = (int) atan2((double)(((int *)(byte_arrayb->content))[j]),(double)((int *)(byte_arraya->content))[j]);
+			else ((int *)(result))[j] = 0.0;
+		    }
+		    else if (ms == ((int *)(byte_arrayb->content))[j]) ((int *)(result))[j] = ms;
+		    else ((int *)(result))[j] = (int)(M_PI/2);
+		}
+		break;
 	    }
-	    else ((float *)(result))[j] = (float)(M_PI/2);
-        }
-        break;
-    }
-    case OPH_DOUBLE:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (!isnan(((double *)(byte_arraya->content))[j]))
+	    case OPH_SHORT:
 	    {
-		if (!isnan(((double *)(byte_arrayb->content))[j]))
-	            ((double *)(result))[j] = atan2(((double *)(byte_arrayb->content))[j],((double *)(byte_arraya->content))[j]);
-		else ((double *)(result))[j] = 0.0;
+		short ms = (short)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((short *)(byte_arraya->content))[j])
+		    {
+			if (ms != ((short *)(byte_arrayb->content))[j])
+			    ((short *)(result))[j] = (short) atan2((double)(((short *)(byte_arrayb->content))[j]),(double)((short *)(byte_arraya->content))[j]);
+			else ((short *)(result))[j] = 0.0;
+		    }
+		    else if (ms == ((short *)(byte_arrayb->content))[j]) ((short *)(result))[j] = ms;
+		    else ((short *)(result))[j] = (short)(M_PI/2);
+		}
+		break;
 	    }
-	    else ((double *)(result))[j] = (double)(M_PI/2);
-        }
-        break;
-    }
-    default:
-        pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-        return -1;
-    }
+	    case OPH_BYTE:
+	    {
+		char ms = (char)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((char *)(byte_arraya->content))[j])
+		    {
+			if (ms != ((char *)(byte_arrayb->content))[j])
+			    ((char *)(result))[j] = (char) atan2((double)(((char *)(byte_arrayb->content))[j]),(double)((char *)(byte_arraya->content))[j]);
+			else ((char *)(result))[j] = 0.0;
+		    }
+		    else if (ms == ((char *)(byte_arrayb->content))[j]) ((char *)(result))[j] = ms;
+		    else ((char *)(result))[j] = (char)(M_PI/2);
+		}
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		long long ms = (long long)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((long long *)(byte_arraya->content))[j])
+		    {
+			if (ms != ((long long *)(byte_arrayb->content))[j])
+			    ((long long *)(result))[j] = (long long) atan2((double)(((long long *)(byte_arrayb->content))[j]),(double)((long long *)(byte_arraya->content))[j]);
+			else ((long long *)(result))[j] = 0.0;
+		    }
+		    else if (ms == ((long long *)(byte_arrayb->content))[j]) ((long long *)(result))[j] = ms;
+		    else ((long long *)(result))[j] = (long long)(M_PI/2);
+		}
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		float ms = (float)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((float *)(byte_arraya->content))[j]) && (ms != ((float *)(byte_arraya->content))[j]))
+		    {
+			if (!isnan(((float *)(byte_arrayb->content))[j]) && (ms != ((float *)(byte_arrayb->content))[j]))
+			    ((float *)(result))[j] = (float) atan2((double)(((float *)(byte_arrayb->content))[j]),(double)((float *)(byte_arraya->content))[j]);
+			else ((float *)(result))[j] = 0.0;
+		    }
+		    else if (isnan(((float *)(byte_arrayb->content))[j]) || (ms == ((float *)(byte_arrayb->content))[j])) ((float *)(result))[j] = ms;
+		    else ((float *)(result))[j] = (float)(M_PI/2);
+		}
+		break;
+	    }
+	    case OPH_DOUBLE:
+	    {
+		double ms = (double)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((double *)(byte_arraya->content))[j]) && (ms != ((double *)(byte_arraya->content))[j]))
+		    {
+			if (!isnan(((double *)(byte_arrayb->content))[j]) && (ms != ((double *)(byte_arrayb->content))[j]))
+			    ((double *)(result))[j] = atan2(((double *)(byte_arrayb->content))[j],((double *)(byte_arraya->content))[j]);
+			else ((double *)(result))[j] = 0.0;
+		    }
+		    else if (isnan(((double *)(byte_arrayb->content))[j]) || (ms == ((double *)(byte_arrayb->content))[j])) ((double *)(result))[j] = ms;
+		    else ((double *)(result))[j] = (double)(M_PI/2);
+		}
+		break;
+	    }
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
+	else
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((int *)(result))[j] = (int) atan2((double)(((int *)(byte_arrayb->content))[j]),(double)((int *)(byte_arraya->content))[j]);
+		}
+		break;
+	    }
+	    case OPH_SHORT:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((short *)(result))[j] = (short) atan2((double)(((short *)(byte_arrayb->content))[j]),(double)((short *)(byte_arraya->content))[j]);
+		}
+		break;
+	    }
+	    case OPH_BYTE:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((char *)(result))[j] = (char) atan2((double)(((char *)(byte_arrayb->content))[j]),(double)((char *)(byte_arraya->content))[j]);
+		}
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    ((long long *)(result))[j] = (long long) atan2((double)(((long long *)(byte_arrayb->content))[j]),(double)((long long *)(byte_arraya->content))[j]);
+		}
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((float *)(byte_arraya->content))[j]))
+		    {
+			if (!isnan(((float *)(byte_arrayb->content))[j]))
+			    ((float *)(result))[j] = (float) atan2((double)(((float *)(byte_arrayb->content))[j]),(double)((float *)(byte_arraya->content))[j]);
+			else ((float *)(result))[j] = 0.0;
+		    }
+		    else ((float *)(result))[j] = (float)(M_PI/2);
+		}
+		break;
+	    }
+	    case OPH_DOUBLE:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((double *)(byte_arraya->content))[j]))
+		    {
+			if (!isnan(((double *)(byte_arrayb->content))[j]))
+			    ((double *)(result))[j] = atan2(((double *)(byte_arrayb->content))[j],((double *)(byte_arraya->content))[j]);
+			else ((double *)(result))[j] = 0.0;
+		    }
+		    else ((double *)(result))[j] = (double)(M_PI/2);
+		}
+		break;
+	    }
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
     return 0;
 }
 
 int core_oph_sum2_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result){
     int j;
-    switch (byte_arraya->type) {
-    case OPH_INT:
-    {
-        int val_i;
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            val_i = ((int *)(byte_arraya->content))[j];
-            ((int *)(result))[j] = (val_i*val_i) + ((int *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_SHORT:
-    {
-        short val_i;
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            val_i = ((short *)(byte_arraya->content))[j];
-            ((short *)(result))[j] = (val_i*val_i) + ((short *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_BYTE:
-    {
-        char val_i;
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            val_i = ((char *)(byte_arraya->content))[j];
-            ((char *)(result))[j] = (val_i*val_i) + ((char *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_LONG:
-    {
-        long long val_l;
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            val_l = ((long long *)(byte_arraya->content))[j];
-            ((long long *)(result))[j] = (val_l*val_l) + ((long long *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_FLOAT:
-    {
-        float val_f;
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            val_f = ((float *)(byte_arraya->content))[j];
-            if (!isnan(val_f))
+	if (byte_arraya->missingvalue)
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
 	    {
-		if (!isnan(((float *)(byte_arrayb->content))[j]))
-	            ((float *)(result))[j] = val_f*val_f + ((float *)(byte_arrayb->content))[j];
-		else ((float *)(result))[j] = val_f*val_f;
+		int val_i, ms = (int)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_i = ((int *)(byte_arraya->content))[j];
+		    if (ms != val_i)
+		    {
+			if (ms != ((int *)(byte_arrayb->content))[j])
+			    ((int *)(result))[j] = val_i*val_i + ((int *)(byte_arrayb->content))[j];
+			else ((int *)(result))[j] = val_i*val_i;
+		    }
+		    else ((int *)(result))[j] = ((int *)(byte_arrayb->content))[j];
+		}
+		break;
 	    }
-	    else ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_DOUBLE:
-    {
-        double val_d;
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            val_d = ((double *)(byte_arraya->content))[j];
-            if (!isnan(val_d))
+	    case OPH_SHORT:
 	    {
-		if (!isnan(((double *)(byte_arrayb->content))[j]))
-	            ((double *)(result))[j] = val_d*val_d + ((double *)(byte_arrayb->content))[j];
-		else ((double *)(result))[j] = val_d*val_d;
+		short val_i, ms = (short)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_i = ((short *)(byte_arraya->content))[j];
+		    if (ms != val_i)
+		    {
+			if (ms != ((short *)(byte_arrayb->content))[j])
+			    ((short *)(result))[j] = val_i*val_i + ((short *)(byte_arrayb->content))[j];
+			else ((short *)(result))[j] = val_i*val_i;
+		    }
+		    else ((short *)(result))[j] = ((short *)(byte_arrayb->content))[j];
+		}
+		break;
 	    }
-	    else ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    default:
-        pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-        return -1;
-    }
+	    case OPH_BYTE:
+	    {
+		char val_i, ms = (char)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_i = ((char *)(byte_arraya->content))[j];
+		    if (ms != val_i)
+		    {
+			if (ms != ((char *)(byte_arrayb->content))[j])
+			    ((char *)(result))[j] = val_i*val_i + ((char *)(byte_arrayb->content))[j];
+			else ((char *)(result))[j] = val_i*val_i;
+		    }
+		    else ((char *)(result))[j] = ((char *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		long long val_l, ms = (long long)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_l = ((long long *)(byte_arraya->content))[j];
+		    if (ms != val_l)
+		    {
+			if (ms != ((long long *)(byte_arrayb->content))[j])
+			    ((long long *)(result))[j] = val_l*val_l + ((long long *)(byte_arrayb->content))[j];
+			else ((long long *)(result))[j] = val_l*val_l;
+		    }
+		    else ((long long *)(result))[j] = ((long long *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		float val_f, ms = (float)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_f = ((float *)(byte_arraya->content))[j];
+		    if (!isnan(val_f) && (ms != val_f))
+		    {
+			if (!isnan(((float *)(byte_arrayb->content))[j]) && (ms != ((float *)(byte_arrayb->content))[j]))
+			    ((float *)(result))[j] = val_f*val_f + ((float *)(byte_arrayb->content))[j];
+			else ((float *)(result))[j] = val_f*val_f;
+		    }
+		    else ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_DOUBLE:
+	    {
+		double val_d, ms = (double)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_d = ((double *)(byte_arraya->content))[j];
+		    if (!isnan(val_d) && (ms != val_d))
+		    {
+			if (!isnan(((double *)(byte_arrayb->content))[j]) && (ms != ((double *)(byte_arrayb->content))[j]))
+			    ((double *)(result))[j] = val_d*val_d + ((double *)(byte_arrayb->content))[j];
+			else ((double *)(result))[j] = val_d*val_d;
+		    }
+		    else ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
+	else
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
+	    {
+		int val_i;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_i = ((int *)(byte_arraya->content))[j];
+		    ((int *)(result))[j] = (val_i*val_i) + ((int *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_SHORT:
+	    {
+		short val_i;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_i = ((short *)(byte_arraya->content))[j];
+		    ((short *)(result))[j] = (val_i*val_i) + ((short *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_BYTE:
+	    {
+		char val_i;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_i = ((char *)(byte_arraya->content))[j];
+		    ((char *)(result))[j] = (val_i*val_i) + ((char *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		long long val_l;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_l = ((long long *)(byte_arraya->content))[j];
+		    ((long long *)(result))[j] = (val_l*val_l) + ((long long *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		float val_f;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_f = ((float *)(byte_arraya->content))[j];
+		    if (!isnan(val_f))
+		    {
+			if (!isnan(((float *)(byte_arrayb->content))[j]))
+			    ((float *)(result))[j] = val_f*val_f + ((float *)(byte_arrayb->content))[j];
+			else ((float *)(result))[j] = val_f*val_f;
+		    }
+		    else ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_DOUBLE:
+	    {
+		double val_d;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_d = ((double *)(byte_arraya->content))[j];
+		    if (!isnan(val_d))
+		    {
+			if (!isnan(((double *)(byte_arrayb->content))[j]))
+			    ((double *)(result))[j] = val_d*val_d + ((double *)(byte_arrayb->content))[j];
+			else ((double *)(result))[j] = val_d*val_d;
+		    }
+		    else ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
     return 0;
 }
 
 int core_oph_sum3_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result){
     int j;
-    switch (byte_arraya->type) {
-    case OPH_INT:
-    {
-        int val_i;
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            val_i = ((int *)(byte_arraya->content))[j];
-            ((int *)(result))[j] = (val_i*val_i*val_i) + ((int *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_SHORT:
-    {
-        short val_i;
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            val_i = ((short *)(byte_arraya->content))[j];
-            ((short *)(result))[j] = (val_i*val_i*val_i) + ((short *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_BYTE:
-    {
-        char val_i;
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            val_i = ((char *)(byte_arraya->content))[j];
-            ((char *)(result))[j] = (val_i*val_i*val_i) + ((char *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_LONG:
-    {
-        long long val_l;
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            val_l = ((long long *)(byte_arraya->content))[j];
-            ((long long *)(result))[j] = (val_l*val_l*val_l) + ((long long *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_FLOAT:
-    {
-        float val_f;
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            val_f = ((float *)(byte_arraya->content))[j];
-            if (!isnan(val_f))
+	if (byte_arraya->missingvalue)
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
 	    {
-		if (!isnan(((float *)(byte_arrayb->content))[j]))
-	            ((float *)(result))[j] = val_f*val_f*val_f + ((float *)(byte_arrayb->content))[j];
-		else ((float *)(result))[j] = val_f*val_f*val_f;
+		int val_i, ms = (int)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_i = ((int *)(byte_arraya->content))[j];
+		    if (ms != val_i)
+		    {
+			if (ms != ((int *)(byte_arrayb->content))[j])
+			    ((int *)(result))[j] = val_i*val_i*val_i + ((int *)(byte_arrayb->content))[j];
+			else ((int *)(result))[j] = val_i*val_i*val_i;
+		    }
+		    else ((int *)(result))[j] = ((int *)(byte_arrayb->content))[j];
+		}
+		break;
 	    }
-	    else ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_DOUBLE:
-    {
-        double val_d;
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            val_d = ((double *)(byte_arraya->content))[j];
-            if (!isnan(val_d))
+	    case OPH_SHORT:
 	    {
-		if (!isnan(((double *)(byte_arrayb->content))[j]))
-	            ((double *)(result))[j] = val_d*val_d*val_d + ((double *)(byte_arrayb->content))[j];
-		else ((double *)(result))[j] = val_d*val_d*val_d;
+		short val_i, ms = (short)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_i = ((short *)(byte_arraya->content))[j];
+		    if (ms != val_i)
+		    {
+			if (ms != ((short *)(byte_arrayb->content))[j])
+			    ((short *)(result))[j] = val_i*val_i*val_i + ((short *)(byte_arrayb->content))[j];
+			else ((short *)(result))[j] = val_i*val_i*val_i;
+		    }
+		    else ((short *)(result))[j] = ((short *)(byte_arrayb->content))[j];
+		}
+		break;
 	    }
-	    else ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    default:
-        pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-        return -1;
-    }
+	    case OPH_BYTE:
+	    {
+		char val_i, ms = (char)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_i = ((char *)(byte_arraya->content))[j];
+		    if (ms != val_i)
+		    {
+			if (ms != ((char *)(byte_arrayb->content))[j])
+			    ((char *)(result))[j] = val_i*val_i*val_i + ((char *)(byte_arrayb->content))[j];
+			else ((char *)(result))[j] = val_i*val_i*val_i;
+		    }
+		    else ((char *)(result))[j] = ((char *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		long long val_l, ms = (long long)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_l = ((long long *)(byte_arraya->content))[j];
+		    if (ms != val_l)
+		    {
+			if (ms != ((long long *)(byte_arrayb->content))[j])
+			    ((long long *)(result))[j] = val_l*val_l*val_l + ((long long *)(byte_arrayb->content))[j];
+			else ((long long *)(result))[j] = val_l*val_l*val_l;
+		    }
+		    else ((long long *)(result))[j] = ((long long *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		float val_f, ms = (float)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_f = ((float *)(byte_arraya->content))[j];
+		    if (!isnan(val_f) && (ms != val_f))
+		    {
+			if (!isnan(((float *)(byte_arrayb->content))[j]) && (ms != ((float *)(byte_arrayb->content))[j]))
+			    ((float *)(result))[j] = val_f*val_f*val_f + ((float *)(byte_arrayb->content))[j];
+			else ((float *)(result))[j] = val_f*val_f*val_f;
+		    }
+		    else ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_DOUBLE:
+	    {
+		double val_d, ms = (double)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_d = ((double *)(byte_arraya->content))[j];
+		    if (!isnan(val_d) && (ms != val_d))
+		    {
+			if (!isnan(((double *)(byte_arrayb->content))[j]) && (ms != ((double *)(byte_arrayb->content))[j]))
+			    ((double *)(result))[j] = val_d*val_d*val_d + ((double *)(byte_arrayb->content))[j];
+			else ((double *)(result))[j] = val_d*val_d*val_d;
+		    }
+		    else ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
+	else
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
+	    {
+		int val_i;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_i = ((int *)(byte_arraya->content))[j];
+		    ((int *)(result))[j] = (val_i*val_i*val_i) + ((int *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_SHORT:
+	    {
+		short val_i;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_i = ((short *)(byte_arraya->content))[j];
+		    ((short *)(result))[j] = (val_i*val_i*val_i) + ((short *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_BYTE:
+	    {
+		char val_i;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_i = ((char *)(byte_arraya->content))[j];
+		    ((char *)(result))[j] = (val_i*val_i*val_i) + ((char *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		long long val_l;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_l = ((long long *)(byte_arraya->content))[j];
+		    ((long long *)(result))[j] = (val_l*val_l*val_l) + ((long long *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		float val_f;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_f = ((float *)(byte_arraya->content))[j];
+		    if (!isnan(val_f))
+		    {
+			if (!isnan(((float *)(byte_arrayb->content))[j]))
+			    ((float *)(result))[j] = val_f*val_f*val_f + ((float *)(byte_arrayb->content))[j];
+			else ((float *)(result))[j] = val_f*val_f*val_f;
+		    }
+		    else ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_DOUBLE:
+	    {
+		double val_d;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_d = ((double *)(byte_arraya->content))[j];
+		    if (!isnan(val_d))
+		    {
+			if (!isnan(((double *)(byte_arrayb->content))[j]))
+			    ((double *)(result))[j] = val_d*val_d*val_d + ((double *)(byte_arrayb->content))[j];
+			else ((double *)(result))[j] = val_d*val_d*val_d;
+		    }
+		    else ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
     return 0;
 }
 
 int core_oph_sum4_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result){
     int j;
-    switch (byte_arraya->type) {
-    case OPH_INT:
-    {
-        int val_i;
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            val_i = ((int *)(byte_arraya->content))[j];
-            ((int *)(result))[j] = (val_i*val_i*val_i*val_i) + ((int *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_SHORT:
-    {
-        short val_i;
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            val_i = ((short *)(byte_arraya->content))[j];
-            ((short *)(result))[j] = (val_i*val_i*val_i*val_i) + ((short *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_BYTE:
-    {
-        char val_i;
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            val_i = ((char *)(byte_arraya->content))[j];
-            ((char *)(result))[j] = (val_i*val_i*val_i*val_i) + ((char *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_LONG:
-    {
-        long long val_l;
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            val_l = ((long long *)(byte_arraya->content))[j];
-            ((long long *)(result))[j] = (val_l*val_l*val_l*val_l) + ((long long *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_FLOAT:
-    {
-        float val_f;
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            val_f = ((float *)(byte_arraya->content))[j];
-            if (!isnan(val_f))
+	if (byte_arraya->missingvalue)
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
 	    {
-		if (!isnan(((float *)(byte_arrayb->content))[j]))
-	            ((float *)(result))[j] = val_f*val_f*val_f*val_f + ((float *)(byte_arrayb->content))[j];
-		else ((float *)(result))[j] = val_f*val_f*val_f*val_f;
+		int val_i, ms = (int)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_i = ((int *)(byte_arraya->content))[j];
+		    if (ms != val_i)
+		    {
+			val_i *= val_i;
+			if (ms != ((int *)(byte_arrayb->content))[j])
+			    ((int *)(result))[j] = val_i*val_i + ((int *)(byte_arrayb->content))[j];
+			else ((int *)(result))[j] = val_i*val_i;
+		    }
+		    else ((int *)(result))[j] = ((int *)(byte_arrayb->content))[j];
+		}
+		break;
 	    }
-	    else ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    case OPH_DOUBLE:
-    {
-        double val_d;
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            val_d = ((double *)(byte_arraya->content))[j];
-            if (!isnan(val_d))
+	    case OPH_SHORT:
 	    {
-		if (!isnan(((double *)(byte_arrayb->content))[j]))
-	            ((double *)(result))[j] = val_d*val_d*val_d*val_d + ((double *)(byte_arrayb->content))[j];
-		else ((double *)(result))[j] = val_d*val_d*val_d*val_d;
+		short val_i, ms = (short)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_i = ((short *)(byte_arraya->content))[j];
+		    if (ms != val_i)
+		    {
+			val_i *= val_i;
+			if (ms != ((short *)(byte_arrayb->content))[j])
+			    ((short *)(result))[j] = val_i*val_i + ((short *)(byte_arrayb->content))[j];
+			else ((short *)(result))[j] = val_i*val_i;
+		    }
+		    else ((short *)(result))[j] = ((short *)(byte_arrayb->content))[j];
+		}
+		break;
 	    }
-	    else ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
-        }
-        break;
-    }
-    default:
-        pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-        return -1;
-    }
+	    case OPH_BYTE:
+	    {
+		char val_i, ms = (char)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_i = ((char *)(byte_arraya->content))[j];
+		    if (ms != val_i)
+		    {
+			val_i *= val_i;
+			if (ms != ((char *)(byte_arrayb->content))[j])
+			    ((char *)(result))[j] = val_i*val_i + ((char *)(byte_arrayb->content))[j];
+			else ((char *)(result))[j] = val_i*val_i;
+		    }
+		    else ((char *)(result))[j] = ((char *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		long long val_l, ms = (long long)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_l = ((long long *)(byte_arraya->content))[j];
+		    if (ms != val_l)
+		    {
+			val_l *= val_l;
+			if (ms != ((long long *)(byte_arrayb->content))[j])
+			    ((long long *)(result))[j] = val_l*val_l + ((long long *)(byte_arrayb->content))[j];
+			else ((long long *)(result))[j] = val_l*val_l;
+		    }
+		    else ((long long *)(result))[j] = ((long long *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		float val_f, ms = (float)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_f = ((float *)(byte_arraya->content))[j];
+		    if (!isnan(val_f) && (ms != val_f))
+		    {
+			val_f *= val_f;
+			if (!isnan(((float *)(byte_arrayb->content))[j]) && (ms != ((float *)(byte_arrayb->content))[j]))
+			    ((float *)(result))[j] = val_f*val_f + ((float *)(byte_arrayb->content))[j];
+			else ((float *)(result))[j] = val_f*val_f;
+		    }
+		    else ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_DOUBLE:
+	    {
+		double val_d, ms = (double)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_d = ((double *)(byte_arraya->content))[j];
+		    if (!isnan(val_d) && (ms != val_d))
+		    {
+			val_d *= val_d;
+			if (!isnan(((double *)(byte_arrayb->content))[j]) && (ms != ((double *)(byte_arrayb->content))[j]))
+			    ((double *)(result))[j] = val_d*val_d + ((double *)(byte_arrayb->content))[j];
+			else ((double *)(result))[j] = val_d*val_d;
+		    }
+		    else ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
+	else
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
+	    {
+		int val_i;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_i = ((int *)(byte_arraya->content))[j];
+		    val_i*=val_i;
+		    ((int *)(result))[j] = val_i*val_i + ((int *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_SHORT:
+	    {
+		short val_i;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_i = ((short *)(byte_arraya->content))[j];
+		    val_i*=val_i;
+		    ((short *)(result))[j] = val_i*val_i + ((short *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_BYTE:
+	    {
+		char val_i;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_i = ((char *)(byte_arraya->content))[j];
+		    val_i*=val_i;
+		    ((char *)(result))[j] = val_i*val_i + ((char *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		long long val_l;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_l = ((long long *)(byte_arraya->content))[j];
+		    val_l*=val_l;
+		    ((long long *)(result))[j] = val_l*val_l + ((long long *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		float val_f;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_f = ((float *)(byte_arraya->content))[j];
+		    if (!isnan(val_f))
+		    {
+			val_f*=val_f;
+			if (!isnan(((float *)(byte_arrayb->content))[j]))
+			    ((float *)(result))[j] = val_f*val_f + ((float *)(byte_arrayb->content))[j];
+			else ((float *)(result))[j] = val_f*val_f;
+		    }
+		    else ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_DOUBLE:
+	    {
+		double val_d;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    val_d = ((double *)(byte_arraya->content))[j];
+		    if (!isnan(val_d))
+		    {
+			val_d*=val_d;
+			if (!isnan(((double *)(byte_arrayb->content))[j]))
+			    ((double *)(result))[j] = val_d*val_d + ((double *)(byte_arrayb->content))[j];
+			else ((double *)(result))[j] = val_d*val_d;
+		    }
+		    else ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
     return 0;
 }
 
 int core_oph_count_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result){
     int j;
-    switch (byte_arraya->type) {
-    case OPH_INT:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-		if (byte_arrayb) ((int *)(result))[j] = 1 + ((int *)(byte_arrayb->content))[j];
-		else ((int *)(result))[j] = 1;
-        }
-        break;
-    }
-    case OPH_SHORT:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-		if (byte_arrayb) ((short *)(result))[j] = 1 + ((short *)(byte_arrayb->content))[j];
-		else ((short *)(result))[j] = 1;
-        }
-        break;
-    }
-    case OPH_BYTE:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-		if (byte_arrayb) ((char *)(result))[j] = 1 + ((char *)(byte_arrayb->content))[j];
-		else ((char *)(result))[j] = 1;
-        }
-        break;
-    }
-    case OPH_LONG:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-		if (byte_arrayb) ((long long *)(result))[j] = 1 + ((long long *)(byte_arrayb->content))[j];
-		else ((long long *)(result))[j] = 1;
-        }
-        break;
-    }
-    case OPH_FLOAT:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (!isnan(((float *)(byte_arraya->content))[j]))
+	if (byte_arraya->missingvalue)
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
 	    {
-		if (byte_arrayb)
-		{
-			if (!isnan(((float *)(byte_arrayb->content))[j]))
-			    ((float *)(result))[j] = 1 + ((float *)(byte_arrayb->content))[j];
+		int ms = (int)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((int *)(byte_arraya->content))[j])
+		    {
+			if (byte_arrayb)
+			{
+				if (ms != ((int *)(byte_arrayb->content))[j])
+				    ((int *)(result))[j] = 1 + ((int *)(byte_arrayb->content))[j];
+				else ((int *)(result))[j] = 1;
+			}
+			else ((int *)(result))[j] = 1;
+		    }
+		    else
+		    {
+			if (byte_arrayb) ((int *)(result))[j] = ((int *)(byte_arrayb->content))[j];
+			else ((int *)(result))[j] = 0;
+		    }
+		}
+		break;
+	    }
+	    case OPH_SHORT:
+	    {
+		short ms = (short)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((short *)(byte_arraya->content))[j])
+		    {
+			if (byte_arrayb)
+			{
+				if (ms != ((short *)(byte_arrayb->content))[j])
+				    ((short *)(result))[j] = 1 + ((short *)(byte_arrayb->content))[j];
+				else ((short *)(result))[j] = 1;
+			}
+			else ((short *)(result))[j] = 1;
+		    }
+		    else
+		    {
+			if (byte_arrayb) ((short *)(result))[j] = ((short *)(byte_arrayb->content))[j];
+			else ((short *)(result))[j] = 0;
+		    }
+		}
+		break;
+	    }
+	    case OPH_BYTE:
+	    {
+		char ms = (char)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((char *)(byte_arraya->content))[j])
+		    {
+			if (byte_arrayb)
+			{
+				if (ms != ((char *)(byte_arrayb->content))[j])
+				    ((char *)(result))[j] = 1 + ((char *)(byte_arrayb->content))[j];
+				else ((char *)(result))[j] = 1;
+			}
+			else ((char *)(result))[j] = 1;
+		    }
+		    else
+		    {
+			if (byte_arrayb) ((char *)(result))[j] = ((char *)(byte_arrayb->content))[j];
+			else ((char *)(result))[j] = 0;
+		    }
+		}
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		long long ms = (long long)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((long long *)(byte_arraya->content))[j])
+		    {
+			if (byte_arrayb)
+			{
+				if (ms != ((long long *)(byte_arrayb->content))[j])
+				    ((long long *)(result))[j] = 1 + ((long long *)(byte_arrayb->content))[j];
+				else ((long long *)(result))[j] = 1;
+			}
+			else ((long long *)(result))[j] = 1;
+		    }
+		    else
+		    {
+			if (byte_arrayb) ((long long *)(result))[j] = ((long long *)(byte_arrayb->content))[j];
+			else ((long long *)(result))[j] = 0;
+		    }
+		}
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		float ms = (float)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((float *)(byte_arraya->content))[j]) && (ms != ((float *)(byte_arraya->content))[j]))
+		    {
+			if (byte_arrayb)
+			{
+				if (!isnan(((float *)(byte_arrayb->content))[j]) && (ms != ((float *)(byte_arrayb->content))[j]))
+				    ((float *)(result))[j] = 1 + ((float *)(byte_arrayb->content))[j];
+				else ((float *)(result))[j] = 1;
+			}
 			else ((float *)(result))[j] = 1;
+		    }
+		    else
+		    {
+			if (byte_arrayb) ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+			else ((float *)(result))[j] = 0;
+		    }
 		}
-		else ((float *)(result))[j] = 1;
+		break;
 	    }
-	    else
+	    case OPH_DOUBLE:
 	    {
-		if (byte_arrayb) ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
-		else ((float *)(result))[j] = 0;
-	    }
-        }
-        break;
-    }
-    case OPH_DOUBLE:
-    {
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (!isnan(((double *)(byte_arraya->content))[j]))
-	    {
-		if (byte_arrayb)
-		{
-			if (!isnan(((double *)(byte_arrayb->content))[j]))
-			    ((double *)(result))[j] = 1 + ((double *)(byte_arrayb->content))[j];
+		double ms = (double)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((double *)(byte_arraya->content))[j]) && (ms != ((double *)(byte_arraya->content))[j]))
+		    {
+			if (byte_arrayb)
+			{
+				if (!isnan(((double *)(byte_arrayb->content))[j]) && (ms != ((double *)(byte_arrayb->content))[j]))
+				    ((double *)(result))[j] = 1 + ((double *)(byte_arrayb->content))[j];
+				else ((double *)(result))[j] = 1;
+			}
 			else ((double *)(result))[j] = 1;
+		    }
+		    else
+		    {
+			if (byte_arrayb) ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+			else ((double *)(result))[j] = 0;
+		    }
 		}
-		else ((double *)(result))[j] = 1;
+		break;
 	    }
-	    else
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
+	else
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
 	    {
-		if (byte_arrayb) ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
-		else ((double *)(result))[j] = 0;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+			if (byte_arrayb) ((int *)(result))[j] = 1 + ((int *)(byte_arrayb->content))[j];
+			else ((int *)(result))[j] = 1;
+		}
+		break;
 	    }
-        }
-        break;
-    }
-    default:
-        pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-        return -1;
-    }
+	    case OPH_SHORT:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+			if (byte_arrayb) ((short *)(result))[j] = 1 + ((short *)(byte_arrayb->content))[j];
+			else ((short *)(result))[j] = 1;
+		}
+		break;
+	    }
+	    case OPH_BYTE:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+			if (byte_arrayb) ((char *)(result))[j] = 1 + ((char *)(byte_arrayb->content))[j];
+			else ((char *)(result))[j] = 1;
+		}
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+			if (byte_arrayb) ((long long *)(result))[j] = 1 + ((long long *)(byte_arrayb->content))[j];
+			else ((long long *)(result))[j] = 1;
+		}
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((float *)(byte_arraya->content))[j]))
+		    {
+			if (byte_arrayb)
+			{
+				if (!isnan(((float *)(byte_arrayb->content))[j]))
+				    ((float *)(result))[j] = 1 + ((float *)(byte_arrayb->content))[j];
+				else ((float *)(result))[j] = 1;
+			}
+			else ((float *)(result))[j] = 1;
+		    }
+		    else
+		    {
+			if (byte_arrayb) ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+			else ((float *)(result))[j] = 0;
+		    }
+		}
+		break;
+	    }
+	    case OPH_DOUBLE:
+	    {
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((double *)(byte_arraya->content))[j]))
+		    {
+			if (byte_arrayb)
+			{
+				if (!isnan(((double *)(byte_arrayb->content))[j]))
+				    ((double *)(result))[j] = 1 + ((double *)(byte_arrayb->content))[j];
+				else ((double *)(result))[j] = 1;
+			}
+			else ((double *)(result))[j] = 1;
+		    }
+		    else
+		    {
+			if (byte_arrayb) ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+			else ((double *)(result))[j] = 0;
+		    }
+		}
+		break;
+	    }
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
     return 0;
 }
 
 int core_oph_max_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result){
     int j;
-    switch (byte_arraya->type) {
-    case OPH_INT:
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (((int *)(byte_arraya->content))[j] >= ((int *)(byte_arrayb->content))[j]) {
-                ((int *)(result))[j] = ((int *)(byte_arraya->content))[j];
-            } else {
-                ((int *)(result))[j] = ((int *)(byte_arrayb->content))[j];
-            }
-        }
-        break;
-    case OPH_SHORT:
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (((short *)(byte_arraya->content))[j] >= ((short *)(byte_arrayb->content))[j]) {
-                ((short *)(result))[j] = ((short *)(byte_arraya->content))[j];
-            } else {
-                ((short *)(result))[j] = ((short *)(byte_arrayb->content))[j];
-            }
-        }
-        break;
-    case OPH_BYTE:
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (((char *)(byte_arraya->content))[j] >= ((char *)(byte_arrayb->content))[j]) {
-                ((char *)(result))[j] = ((char *)(byte_arraya->content))[j];
-            } else {
-                ((char *)(result))[j] = ((char *)(byte_arrayb->content))[j];
-            }
-        }
-        break;
-    case OPH_LONG:
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (((long long *)(byte_arraya->content))[j] >= ((long long *)(byte_arrayb->content))[j]) {
-                ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j];
-            } else {
-                ((long long *)(result))[j] = ((long long *)(byte_arrayb->content))[j];
-            }
-        }
-        break;
-    case OPH_FLOAT:
-        for (j = 0; j < byte_arraya->numelem; j++) {
-	    if (!isnan(((float *)(byte_arraya->content))[j]))
+	if (byte_arraya->missingvalue)
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
 	    {
-	    	if (!isnan(((float *)(byte_arrayb->content))[j]))
-		{
-			if (((float *)(byte_arraya->content))[j] >= ((float *)(byte_arrayb->content))[j]) {
-				((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
-			} else {
-				((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+		int ms = (int)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((int *)(byte_arraya->content))[j])
+		    {
+		    	if (ms != ((int *)(byte_arrayb->content))[j])
+			{
+				if (((int *)(byte_arraya->content))[j] >= ((int *)(byte_arrayb->content))[j]) {
+					((int *)(result))[j] = ((int *)(byte_arraya->content))[j];
+				} else {
+					((int *)(result))[j] = ((int *)(byte_arrayb->content))[j];
+				}
 			}
+			else ((int *)(result))[j] = ((int *)(byte_arraya->content))[j];
+		    }
+		    else ((int *)(result))[j] = ((int *)(byte_arrayb->content))[j];
 		}
-		else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+		break;
 	    }
-	    else ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
-        }
-        break;
-    case OPH_DOUBLE:
-        for (j = 0; j < byte_arraya->numelem; j++) {
-	    if (!isnan(((double *)(byte_arraya->content))[j]))
+	    case OPH_SHORT:
 	    {
-	    	if (!isnan(((double *)(byte_arrayb->content))[j]))
-		{
-			if (((double *)(byte_arraya->content))[j] >= ((double *)(byte_arrayb->content))[j]) {
-				((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
-			} else {
-				((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+		short ms = (short)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((short *)(byte_arraya->content))[j])
+		    {
+		    	if (ms != ((short *)(byte_arrayb->content))[j])
+			{
+				if (((short *)(byte_arraya->content))[j] >= ((short *)(byte_arrayb->content))[j]) {
+					((short *)(result))[j] = ((short *)(byte_arraya->content))[j];
+				} else {
+					((short *)(result))[j] = ((short *)(byte_arrayb->content))[j];
+				}
 			}
+			else ((short *)(result))[j] = ((short *)(byte_arraya->content))[j];
+		    }
+		    else ((short *)(result))[j] = ((short *)(byte_arrayb->content))[j];
 		}
-		else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+		break;
 	    }
-	    else ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
-        }
-        break;
-    default:
-        pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-        return -1;
-    }
+	    case OPH_BYTE:
+	    {
+		char ms = (char)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((char *)(byte_arraya->content))[j])
+		    {
+		    	if (ms != ((char *)(byte_arrayb->content))[j])
+			{
+				if (((char *)(byte_arraya->content))[j] >= ((char *)(byte_arrayb->content))[j]) {
+					((char *)(result))[j] = ((char *)(byte_arraya->content))[j];
+				} else {
+					((char *)(result))[j] = ((char *)(byte_arrayb->content))[j];
+				}
+			}
+			else ((char *)(result))[j] = ((char *)(byte_arraya->content))[j];
+		    }
+		    else ((char *)(result))[j] = ((char *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		long long ms = (long long)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((long long *)(byte_arraya->content))[j])
+		    {
+		    	if (ms != ((long long *)(byte_arrayb->content))[j])
+			{
+				if (((long long *)(byte_arraya->content))[j] >= ((long long *)(byte_arrayb->content))[j]) {
+					((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j];
+				} else {
+					((long long *)(result))[j] = ((long long *)(byte_arrayb->content))[j];
+				}
+			}
+			else ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j];
+		    }
+		    else ((long long *)(result))[j] = ((long long *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		float ms = (float)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((float *)(byte_arraya->content))[j]) && (ms != ((float *)(byte_arraya->content))[j]))
+		    {
+		    	if (!isnan(((float *)(byte_arrayb->content))[j]) && (ms != ((float *)(byte_arrayb->content))[j]))
+			{
+				if (((float *)(byte_arraya->content))[j] >= ((float *)(byte_arrayb->content))[j]) {
+					((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+				} else {
+					((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+				}
+			}
+			else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+		    }
+		    else ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_DOUBLE:
+	    {
+		double ms = (double)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((double *)(byte_arraya->content))[j]) && (ms != ((double *)(byte_arraya->content))[j]))
+		    {
+		    	if (!isnan(((double *)(byte_arrayb->content))[j]) && (ms != ((double *)(byte_arrayb->content))[j]))
+			{
+				if (((double *)(byte_arraya->content))[j] >= ((double *)(byte_arrayb->content))[j]) {
+					((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+				} else {
+					((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+				}
+			}
+			else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+		    }
+		    else ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
+	else
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (((int *)(byte_arraya->content))[j] >= ((int *)(byte_arrayb->content))[j]) {
+		        ((int *)(result))[j] = ((int *)(byte_arraya->content))[j];
+		    } else {
+		        ((int *)(result))[j] = ((int *)(byte_arrayb->content))[j];
+		    }
+		}
+		break;
+	    case OPH_SHORT:
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (((short *)(byte_arraya->content))[j] >= ((short *)(byte_arrayb->content))[j]) {
+		        ((short *)(result))[j] = ((short *)(byte_arraya->content))[j];
+		    } else {
+		        ((short *)(result))[j] = ((short *)(byte_arrayb->content))[j];
+		    }
+		}
+		break;
+	    case OPH_BYTE:
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (((char *)(byte_arraya->content))[j] >= ((char *)(byte_arrayb->content))[j]) {
+		        ((char *)(result))[j] = ((char *)(byte_arraya->content))[j];
+		    } else {
+		        ((char *)(result))[j] = ((char *)(byte_arrayb->content))[j];
+		    }
+		}
+		break;
+	    case OPH_LONG:
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (((long long *)(byte_arraya->content))[j] >= ((long long *)(byte_arrayb->content))[j]) {
+		        ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j];
+		    } else {
+		        ((long long *)(result))[j] = ((long long *)(byte_arrayb->content))[j];
+		    }
+		}
+		break;
+	    case OPH_FLOAT:
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((float *)(byte_arraya->content))[j]))
+		    {
+		    	if (!isnan(((float *)(byte_arrayb->content))[j]))
+			{
+				if (((float *)(byte_arraya->content))[j] >= ((float *)(byte_arrayb->content))[j]) {
+					((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+				} else {
+					((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+				}
+			}
+			else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+		    }
+		    else ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+		}
+		break;
+	    case OPH_DOUBLE:
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((double *)(byte_arraya->content))[j]))
+		    {
+		    	if (!isnan(((double *)(byte_arrayb->content))[j]))
+			{
+				if (((double *)(byte_arraya->content))[j] >= ((double *)(byte_arrayb->content))[j]) {
+					((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+				} else {
+					((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+				}
+			}
+			else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+		    }
+		    else ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+		}
+		break;
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
     return 0;
 }
 
 int core_oph_min_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result){
     int j;
-    switch (byte_arraya->type) {
-    case OPH_INT:
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (((int *)(byte_arraya->content))[j] < ((int *)(byte_arrayb->content))[j]) {
-                ((int *)(result))[j] = ((int *)(byte_arraya->content))[j];
-            } else {
-                ((int *)(result))[j] = ((int *)(byte_arrayb->content))[j];
-            }
-        }
-        break;
-    case OPH_SHORT:
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (((short *)(byte_arraya->content))[j] < ((short *)(byte_arrayb->content))[j]) {
-                ((short *)(result))[j] = ((short *)(byte_arraya->content))[j];
-            } else {
-                ((short *)(result))[j] = ((short *)(byte_arrayb->content))[j];
-            }
-        }
-        break;
-    case OPH_BYTE:
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (((char *)(byte_arraya->content))[j] < ((char *)(byte_arrayb->content))[j]) {
-                ((char *)(result))[j] = ((char *)(byte_arraya->content))[j];
-            } else {
-                ((char *)(result))[j] = ((char *)(byte_arrayb->content))[j];
-            }
-        }
-        break;
-    case OPH_LONG:
-        for (j = 0; j < byte_arraya->numelem; j++) {
-            if (((long long *)(byte_arraya->content))[j] < ((long long *)(byte_arrayb->content))[j]) {
-                ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j];
-            } else {
-                ((long long *)(result))[j] = ((long long *)(byte_arrayb->content))[j];
-            }
-        }
-        break;
-    case OPH_FLOAT:
-        for (j = 0; j < byte_arraya->numelem; j++) {
-	    if (!isnan(((float *)(byte_arraya->content))[j]))
+	if (byte_arraya->missingvalue)
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
 	    {
-	    	if (!isnan(((float *)(byte_arrayb->content))[j]))
-		{
-			if (((float *)(byte_arraya->content))[j] < ((float *)(byte_arrayb->content))[j]) {
-				((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
-			} else {
-				((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+		int ms = (int)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((int *)(byte_arraya->content))[j])
+		    {
+		    	if (ms != ((int *)(byte_arrayb->content))[j])
+			{
+				if (((int *)(byte_arraya->content))[j] < ((int *)(byte_arrayb->content))[j]) {
+					((int *)(result))[j] = ((int *)(byte_arraya->content))[j];
+				} else {
+					((int *)(result))[j] = ((int *)(byte_arrayb->content))[j];
+				}
 			}
+			else ((int *)(result))[j] = ((int *)(byte_arraya->content))[j];
+		    }
+		    else ((int *)(result))[j] = ((int *)(byte_arrayb->content))[j];
 		}
-		else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+		break;
 	    }
-	    else ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
-        }
-        break;
-    case OPH_DOUBLE:
-        for (j = 0; j < byte_arraya->numelem; j++) {
-	    if (!isnan(((double *)(byte_arraya->content))[j]))
+	    case OPH_SHORT:
 	    {
-	    	if (!isnan(((double *)(byte_arrayb->content))[j]))
-		{
-			if (((double *)(byte_arraya->content))[j] < ((double *)(byte_arrayb->content))[j]) {
-				((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
-			} else {
-				((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+		short ms = (short)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((short *)(byte_arraya->content))[j])
+		    {
+		    	if (ms != ((short *)(byte_arrayb->content))[j])
+			{
+				if (((short *)(byte_arraya->content))[j] < ((short *)(byte_arrayb->content))[j]) {
+					((short *)(result))[j] = ((short *)(byte_arraya->content))[j];
+				} else {
+					((short *)(result))[j] = ((short *)(byte_arrayb->content))[j];
+				}
 			}
+			else ((short *)(result))[j] = ((short *)(byte_arraya->content))[j];
+		    }
+		    else ((short *)(result))[j] = ((short *)(byte_arrayb->content))[j];
 		}
-		else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+		break;
 	    }
-	    else ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
-        }
-        break;
-    default:
-        pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-        return -1;
-    }
+	    case OPH_BYTE:
+	    {
+		char ms = (char)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((char *)(byte_arraya->content))[j])
+		    {
+		    	if (ms != ((char *)(byte_arrayb->content))[j])
+			{
+				if (((char *)(byte_arraya->content))[j] < ((char *)(byte_arrayb->content))[j]) {
+					((char *)(result))[j] = ((char *)(byte_arraya->content))[j];
+				} else {
+					((char *)(result))[j] = ((char *)(byte_arrayb->content))[j];
+				}
+			}
+			else ((char *)(result))[j] = ((char *)(byte_arraya->content))[j];
+		    }
+		    else ((char *)(result))[j] = ((char *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_LONG:
+	    {
+		long long ms = (long long)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (ms != ((long long *)(byte_arraya->content))[j])
+		    {
+		    	if (ms != ((long long *)(byte_arrayb->content))[j])
+			{
+				if (((long long *)(byte_arraya->content))[j] < ((long long *)(byte_arrayb->content))[j]) {
+					((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j];
+				} else {
+					((long long *)(result))[j] = ((long long *)(byte_arrayb->content))[j];
+				}
+			}
+			else ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j];
+		    }
+		    else ((long long *)(result))[j] = ((long long *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_FLOAT:
+	    {
+		float ms = (float)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((float *)(byte_arraya->content))[j]) && (ms != ((float *)(byte_arraya->content))[j]))
+		    {
+		    	if (!isnan(((float *)(byte_arrayb->content))[j]) && (ms != ((float *)(byte_arrayb->content))[j]))
+			{
+				if (((float *)(byte_arraya->content))[j] < ((float *)(byte_arrayb->content))[j]) {
+					((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+				} else {
+					((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+				}
+			}
+			else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+		    }
+		    else ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    case OPH_DOUBLE:
+	    {
+		double ms = (double)*byte_arraya->missingvalue;
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((double *)(byte_arraya->content))[j]) && (ms != ((double *)(byte_arraya->content))[j]))
+		    {
+		    	if (!isnan(((double *)(byte_arrayb->content))[j]) && (ms != ((double *)(byte_arrayb->content))[j]))
+			{
+				if (((double *)(byte_arraya->content))[j] < ((double *)(byte_arrayb->content))[j]) {
+					((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+				} else {
+					((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+				}
+			}
+			else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+		    }
+		    else ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+		}
+		break;
+	    }
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
+	else
+	{
+	    switch (byte_arraya->type) {
+	    case OPH_INT:
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (((int *)(byte_arraya->content))[j] < ((int *)(byte_arrayb->content))[j]) {
+		        ((int *)(result))[j] = ((int *)(byte_arraya->content))[j];
+		    } else {
+		        ((int *)(result))[j] = ((int *)(byte_arrayb->content))[j];
+		    }
+		}
+		break;
+	    case OPH_SHORT:
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (((short *)(byte_arraya->content))[j] < ((short *)(byte_arrayb->content))[j]) {
+		        ((short *)(result))[j] = ((short *)(byte_arraya->content))[j];
+		    } else {
+		        ((short *)(result))[j] = ((short *)(byte_arrayb->content))[j];
+		    }
+		}
+		break;
+	    case OPH_BYTE:
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (((char *)(byte_arraya->content))[j] < ((char *)(byte_arrayb->content))[j]) {
+		        ((char *)(result))[j] = ((char *)(byte_arraya->content))[j];
+		    } else {
+		        ((char *)(result))[j] = ((char *)(byte_arrayb->content))[j];
+		    }
+		}
+		break;
+	    case OPH_LONG:
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (((long long *)(byte_arraya->content))[j] < ((long long *)(byte_arrayb->content))[j]) {
+		        ((long long *)(result))[j] = ((long long *)(byte_arraya->content))[j];
+		    } else {
+		        ((long long *)(result))[j] = ((long long *)(byte_arrayb->content))[j];
+		    }
+		}
+		break;
+	    case OPH_FLOAT:
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((float *)(byte_arraya->content))[j]))
+		    {
+		    	if (!isnan(((float *)(byte_arrayb->content))[j]))
+			{
+				if (((float *)(byte_arraya->content))[j] < ((float *)(byte_arrayb->content))[j]) {
+					((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+				} else {
+					((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+				}
+			}
+			else ((float *)(result))[j] = ((float *)(byte_arraya->content))[j];
+		    }
+		    else ((float *)(result))[j] = ((float *)(byte_arrayb->content))[j];
+		}
+		break;
+	    case OPH_DOUBLE:
+		for (j = 0; j < byte_arraya->numelem; j++) {
+		    if (!isnan(((double *)(byte_arraya->content))[j]))
+		    {
+		    	if (!isnan(((double *)(byte_arrayb->content))[j]))
+			{
+				if (((double *)(byte_arraya->content))[j] < ((double *)(byte_arrayb->content))[j]) {
+					((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+				} else {
+					((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+				}
+			}
+			else ((double *)(result))[j] = ((double *)(byte_arraya->content))[j];
+		    }
+		    else ((double *)(result))[j] = ((double *)(byte_arrayb->content))[j];
+		}
+		break;
+	    default:
+		pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+		return -1;
+	    }
+	}
     return 0;
 }
 
@@ -4520,7 +8358,7 @@ int core_oph_find(oph_stringPtr byte_array, double value, double distance, long 
 		}
 		case OPH_FLOAT:{
 			for (i = 0; i < byte_array->numelem; i++){
-				if( fabs(*(float*)((byte_array->content)+(i*byte_array->elemsize)) - value) <= distance ){
+				if( fabsf(*(float*)((byte_array->content)+(i*byte_array->elemsize)) - value) <= distance ){
                                         (*count)++;
                                 }
 			}
@@ -4528,7 +8366,7 @@ int core_oph_find(oph_stringPtr byte_array, double value, double distance, long 
 		}
 		case OPH_INT:{
 			for (i = 0; i < byte_array->numelem; i++){
-				if( fabs(*(int*)((byte_array->content)+(i*byte_array->elemsize)) - value) <= distance ){
+				if( fabsf(*(int*)((byte_array->content)+(i*byte_array->elemsize)) - value) <= distance ){
                                         (*count)++;
                                 }
 			}
@@ -4536,7 +8374,7 @@ int core_oph_find(oph_stringPtr byte_array, double value, double distance, long 
 		}
 		case OPH_SHORT:{
 			for (i = 0; i < byte_array->numelem; i++){
-				if( fabs(*(short*)((byte_array->content)+(i*byte_array->elemsize)) - value) <= distance ){
+				if( fabsf(*(short*)((byte_array->content)+(i*byte_array->elemsize)) - value) <= distance ){
                                         (*count)++;
                                 }
 			}
@@ -4544,7 +8382,7 @@ int core_oph_find(oph_stringPtr byte_array, double value, double distance, long 
 		}
 		case OPH_BYTE:{
 			for (i = 0; i < byte_array->numelem; i++){
-				if( fabs(*(char*)((byte_array->content)+(i*byte_array->elemsize)) - value) <= distance ){
+				if( fabsf(*(char*)((byte_array->content)+(i*byte_array->elemsize)) - value) <= distance ){
                                         (*count)++;
                                 }
 			}
@@ -6055,17 +9893,17 @@ int core_oph_abs_array_multi(char* valueA, char* valueB, char* result, oph_type 
 	{
 		case OPH_INT:
 		{
-			*((int *)(result)) = (int)sqrt(fabs( *((int *)(valueA)) * *((int *)(valueA)) + *((int *)(valueB)) * *((int *)(valueB))) );
+			*((int *)(result)) = (int)sqrtf(fabsf( *((int *)(valueA)) * *((int *)(valueA)) + *((int *)(valueB)) * *((int *)(valueB))) );
 			break;
 		}
 		case OPH_SHORT:
 		{
-			*((short *)(result)) = (short)sqrt(fabs( *((short *)(valueA)) * *((short *)(valueA)) + *((short *)(valueB)) * *((short *)(valueB))) );
+			*((short *)(result)) = (short)sqrtf(fabsf( *((short *)(valueA)) * *((short *)(valueA)) + *((short *)(valueB)) * *((short *)(valueB))) );
 			break;
 		}
 		case OPH_BYTE:
 		{
-			*((char *)(result)) = (char)sqrt(fabs( *((char *)(valueA)) * *((char *)(valueA)) + *((char *)(valueB)) * *((char *)(valueB))) );
+			*((char *)(result)) = (char)sqrtf(fabsf( *((char *)(valueA)) * *((char *)(valueA)) + *((char *)(valueB)) * *((char *)(valueB))) );
 			break;
 		}
 		case OPH_LONG:
@@ -6076,7 +9914,7 @@ int core_oph_abs_array_multi(char* valueA, char* valueB, char* result, oph_type 
 		case OPH_FLOAT:
 		{
 			if (isnan(*((float *)(valueA))) || isnan(*((float *)(valueB)))) *((float *)(result)) = NAN;
-			else *((float *)(result)) = (float)sqrt(fabs( *((float *)(valueA)) * *((float *)(valueA)) + *((float *)(valueB)) * *((float *)(valueB))) );
+			else *((float *)(result)) = (float)sqrtf(fabsf( *((float *)(valueA)) * *((float *)(valueA)) + *((float *)(valueB)) * *((float *)(valueB))) );
 			break;
 		}
 		case OPH_DOUBLE:

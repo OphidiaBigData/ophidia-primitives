@@ -127,8 +127,8 @@ int core_oph_quantile_multi (oph_multistring* byte_array, oph_multistring *resul
 my_bool oph_reduce_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
         int i = 0;
-        if((args->arg_count < 3) || (args->arg_count > 6)){
-                strcpy(message, "ERROR: Wrong arguments! oph_reduce(input_OPH_TYPE, output_OPH_TYPE, measure, [OPH_REDUCE_OPERATOR], [count], [order])");
+        if((args->arg_count < 3) || (args->arg_count > 7)){
+                strcpy(message, "ERROR: Wrong arguments! oph_reduce(input_OPH_TYPE, output_OPH_TYPE, measure, [OPH_REDUCE_OPERATOR], [count], [order], [missingvalue])");
                 return 1;
         }
         
@@ -142,6 +142,13 @@ my_bool oph_reduce_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 		else if(i == 5){
                         if(args->arg_type[i] == STRING_RESULT){
                                 strcpy(message, "ERROR: Wrong argument 'order' to oph_reduce function");
+                                return 1;
+                        }
+			args->arg_type[i] = REAL_RESULT;
+                }
+		else if(i == 6){
+                        if(args->arg_type[i] == STRING_RESULT){
+                                strcpy(message, "ERROR: Wrong argument 'missingvalue' to oph_reduce function");
                                 return 1;
                         }
 			args->arg_type[i] = REAL_RESULT;
@@ -288,6 +295,14 @@ char* oph_reduce(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *
 		}
 	}
 	else multim->param = 2.0;
+
+	double missingvalue;
+	if(args->arg_count > 6)
+	{
+		missingvalue = *((double*)(args->args[6]));
+		multim->missingvalue = &missingvalue;
+	}
+	else multim->missingvalue = NULL;
 
 	//Check on the output
 	if((multim->numelem)%block_count){

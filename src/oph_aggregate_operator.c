@@ -26,8 +26,8 @@ int msglevel = 1;
 my_bool oph_aggregate_operator_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
         int i = 0;
-        if(args->arg_count < 3 || args->arg_count > 4){
-                strcpy(message, "ERROR: Wrong arguments! oph_aggregate_operator(input_OPH_TYPE, output_OPH_TYPE, measure, [OPERATOR])");
+        if(args->arg_count < 3 || args->arg_count > 5){
+                strcpy(message, "ERROR: Wrong arguments! oph_aggregate_operator(input_OPH_TYPE, output_OPH_TYPE, measure, [OPERATOR], [missingvalue])");
                 return 1;
         }
         
@@ -36,6 +36,7 @@ my_bool oph_aggregate_operator_init(UDF_INIT *initid, UDF_ARGS *args, char *mess
                         strcpy(message, "ERROR: Wrong arguments to oph_reverse function");
                         return 1;
                 }
+		if(i == 4) args->arg_type[i] = REAL_RESULT;
         }
 
 	oph_agg_oper_data *dat = (oph_agg_oper_data*)malloc(sizeof(oph_agg_oper_data));
@@ -240,6 +241,14 @@ void oph_aggregate_operator_add( UDF_INIT* initid, UDF_ARGS* args, char* is_null
 	measure.elemsize = res->measure.elemsize;
 	measure.numelem = res->measure.numelem;
 
+	double missingvalue;
+	if(args->arg_count > 4)
+	{
+		missingvalue = *((double*)(args->args[4]));
+		measure.missingvalue = &missingvalue;
+	}
+	else measure.missingvalue = NULL;
+
 	if (res->oper == OPH_AVG)
 	{
 		if (core_oph_sum_array2(&measure, dat->first ? NULL : &(res->measure), res->measure.content, dat->count))
@@ -287,6 +296,13 @@ char* oph_aggregate_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, uns
 		return NULL;
 	}
 
+	double missingvalue = 0, *pointer = NULL;
+	if(args->arg_count > 4)
+	{
+		missingvalue = *((double*)(args->args[4]));
+		pointer = &missingvalue;
+	}
+
 	switch(dat->result.oper)
 	{
 		case OPH_COUNT:
@@ -302,7 +318,7 @@ char* oph_aggregate_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, uns
 					double* position = (double*)res->content;
 					for(i = 0; i < res->numelem; i++)
 					{
-						if (!dat->count[i]) *position = NAN;
+						if (!dat->count[i]) *position = pointer ? missingvalue : NAN;
 						else *position /= dat->count[i];
 						position++;
 					}
@@ -312,7 +328,7 @@ char* oph_aggregate_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, uns
 					float* position = (float*)res->content;
 					for(i = 0; i < res->numelem; i++)
 					{
-						if (!dat->count[i]) *position = NAN;
+						if (!dat->count[i]) *position = pointer ? (float)missingvalue : NAN;
 						else *position /= dat->count[i];
 						position++;
 					}
@@ -323,8 +339,8 @@ char* oph_aggregate_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, uns
 					int* position = (int*)res->content;
 					for(i = 0; i < res->numelem; i++)
 					{
-						if (!dat->count[0]) accumulator[i] = 0;
-						else accumulator[i] = (float)(*position) / dat->count[0]; // Only count[0] is updated to improve performance
+						if (!dat->count[pointer ? i : 0]) accumulator[i] = (float)missingvalue;
+						else accumulator[i] = (float)(*position) / dat->count[pointer ? i : 0]; // Only count[0] is updated to improve performance
 						position++;
 					}
 					free(res->content);
@@ -338,8 +354,8 @@ char* oph_aggregate_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, uns
 					long long* position = (long long*)res->content;
 					for(i = 0; i < res->numelem; i++)
 					{
-						if (!dat->count[0]) accumulator[i] = 0;
-						else accumulator[i] = (double)(*position) / dat->count[0]; // Only count[0] is updated to improve performance
+						if (!dat->count[pointer ? i : 0]) accumulator[i] = missingvalue;
+						else accumulator[i] = (double)(*position) / dat->count[pointer ? i : 0]; // Only count[0] is updated to improve performance
 						position++;
 					}
 					free(res->content);
@@ -353,8 +369,8 @@ char* oph_aggregate_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, uns
 					short* position = (short*)res->content;
 					for(i = 0; i < res->numelem; i++)
 					{
-						if (!dat->count[0]) accumulator[i] = 0;
-						else accumulator[i] = (float)(*position) / dat->count[0]; // Only count[0] is updated to improve performance
+						if (!dat->count[pointer ? i : 0]) accumulator[i] = (float)missingvalue;
+						else accumulator[i] = (float)(*position) / dat->count[pointer ? i : 0]; // Only count[0] is updated to improve performance
 						position++;
 					}
 					free(res->content);
@@ -368,8 +384,8 @@ char* oph_aggregate_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, uns
 					char* position = (char*)res->content;
 					for(i = 0; i < res->numelem; i++)
 					{
-						if (!dat->count[0]) accumulator[i] = 0;
-						else accumulator[i] = (float)(*position) / dat->count[0]; // Only count[0] is updated to improve performance
+						if (!dat->count[pointer ? i : 0]) accumulator[i] = (float)missingvalue;
+						else accumulator[i] = (float)(*position) / dat->count[pointer ? i : 0]; // Only count[0] is updated to improve performance
 						position++;
 					}
 					free(res->content);

@@ -65,6 +65,7 @@ typedef struct oph_string{
         oph_type type;
         size_t elemsize;
         unsigned long numelem;
+	double *missingvalue;
 	double param;
 	void* extend;
 } oph_string;
@@ -81,6 +82,7 @@ typedef struct oph_multistring{
 	unsigned long numelem;	//Number of blocks (multimeasure block) in the array
 	size_t blocksize;	//Number of byte between two subsequent measure value in the multimeasure array (=SUM(elemsize[i]))
 	unsigned int islast;	//Flag used to check if it is the last element in case of array of multistring
+	double *missingvalue;	//Pointer to the value to be considered as missing value; no value or NAN in case it is NULL
 	double param;		//Free param
 	void* extend;		//Free space
 } oph_multistring;

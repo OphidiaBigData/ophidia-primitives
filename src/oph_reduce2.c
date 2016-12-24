@@ -117,9 +117,9 @@ int core_oph_quantile (oph_stringPtr byte_array, char *result)
 |------------------------------------------------------------------*/
 my_bool oph_reduce2_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
-        if((args->arg_count < 3) || (args->arg_count > 8))
+        if((args->arg_count < 3) || (args->arg_count > 9))
 	{
-		strcpy(message, "ERROR: Wrong arguments! oph_reduce2(input_OPH_TYPE, output_OPH_TYPE, measure, [OPH_OPERATOR], [count], [block_size], [size], [order])");
+		strcpy(message, "ERROR: Wrong arguments! oph_reduce2(input_OPH_TYPE, output_OPH_TYPE, measure, [OPH_OPERATOR], [count], [block_size], [size], [order], [missingvalue])");
 		return 1;
         }
 
@@ -178,6 +178,15 @@ my_bool oph_reduce2_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 							return 1;
 						}
 						args->arg_type[7] = REAL_RESULT;
+						if (args->arg_count > 8)
+						{
+							if (args->arg_type[8] == STRING_RESULT)
+							{
+								strcpy(message, "ERROR: Wrong argument 'missingvalue' to oph_reduce2 function");
+								return 1;
+							}
+							args->arg_type[8] = REAL_RESULT;
+						}
 					}
 				}
 			}
@@ -488,6 +497,14 @@ char* oph_reduce2(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long 
 		}
 	}
 	else curr_array.param = 2.0;
+
+	double missingvalue;
+	if(args->arg_count > 8)
+	{
+		missingvalue = *((double*)(args->args[8]));
+		curr_array.missingvalue = &missingvalue;
+	}
+	else curr_array.missingvalue = NULL;
 	curr_array.extend = (void*)tmp->temp2;
 
 	char temporary[result_size];

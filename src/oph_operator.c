@@ -26,16 +26,22 @@ int msglevel = 1;
 my_bool oph_operator_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
         int i = 0;
-        if((args->arg_count < 3) || (args->arg_count > 6)){
-                strcpy(message, "ERROR: Wrong arguments! oph_operator(input_OPH_TYPE, output_OPH_TYPE, measure, [OPH_OPERATOR], [OPH_HIERARCHY], [order])");
+        if((args->arg_count < 3) || (args->arg_count > 7)){
+                strcpy(message, "ERROR: Wrong arguments! oph_operator(input_OPH_TYPE, output_OPH_TYPE, measure, [OPH_OPERATOR], [OPH_HIERARCHY], [order], [missingvalue])");
                 return 1;
         }
         
         for(i = 0; i < args->arg_count; i++){
-		if (i==5)
-		{
+		if (i == 5){
 			if(args->arg_type[i] == STRING_RESULT){
                                 strcpy(message, "ERROR: Wrong argument 'order' to oph_operator function");
+                                return 1;
+                        }
+			args->arg_type[i] = REAL_RESULT;
+		}
+		else if (i == 6){
+			if(args->arg_type[i] == STRING_RESULT){
+                                strcpy(message, "ERROR: Wrong argument 'missingvalue' to oph_operator function");
                                 return 1;
                         }
 			args->arg_type[i] = REAL_RESULT;
@@ -236,6 +242,14 @@ char* oph_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long
 		param->measure = measure;
 	}
 	else measure = param->measure;
+
+	double missingvalue;
+	if(args->arg_count > 6)
+	{
+		missingvalue = *((double*)(args->args[6]));
+		measure->missingvalue = &missingvalue;
+	}
+	else measure->missingvalue = NULL;
 
 	measure->content = args->args[2];
 
