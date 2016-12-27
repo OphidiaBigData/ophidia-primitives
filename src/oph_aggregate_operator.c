@@ -32,11 +32,17 @@ my_bool oph_aggregate_operator_init(UDF_INIT *initid, UDF_ARGS *args, char *mess
         }
         
         for(i = 0; i < args->arg_count; i++){
-                if(args->arg_type[i] != STRING_RESULT){
+		if (i == 4){
+			if (args->args[i] && (args->arg_type[i] == STRING_RESULT)){
+                                strcpy(message, "ERROR: Wrong argument 'missingvalue' to oph_operator function");
+                                return 1;
+                        }
+			args->arg_type[i] = REAL_RESULT;
+		}
+                else if(args->arg_type[i] != STRING_RESULT){
                         strcpy(message, "ERROR: Wrong arguments to oph_reverse function");
                         return 1;
                 }
-		if(i == 4) args->arg_type[i] = REAL_RESULT;
         }
 
 	oph_agg_oper_data *dat = (oph_agg_oper_data*)malloc(sizeof(oph_agg_oper_data));
@@ -242,7 +248,7 @@ void oph_aggregate_operator_add( UDF_INIT* initid, UDF_ARGS* args, char* is_null
 	measure.numelem = res->measure.numelem;
 
 	double missingvalue;
-	if(args->arg_count > 4)
+	if((args->arg_count > 4) && args->args[4])
 	{
 		missingvalue = *((double*)(args->args[4]));
 		measure.missingvalue = &missingvalue;
@@ -297,7 +303,7 @@ char* oph_aggregate_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, uns
 	}
 
 	double missingvalue = 0, *pointer = NULL;
-	if(args->arg_count > 4)
+	if((args->arg_count > 4) && args->args[4])
 	{
 		missingvalue = *((double*)(args->args[4]));
 		pointer = &missingvalue;

@@ -25,14 +25,21 @@ int msglevel = 1;
 |------------------------------------------------------------------*/
 my_bool oph_mul_array_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
-        if(args->arg_count != 4){
-                strcpy(message, "ERROR: Wrong arguments! oph_mul_array(input_OPH_TYPE, output_OPH_TYPE, measure_a, measure_b)");
+	if((args->arg_count < 4) || (args->arg_count > 5)){
+                strcpy(message, "ERROR: Wrong arguments! oph_mul_array(input_OPH_TYPE, output_OPH_TYPE, measure_a, measure_b, [missingvalue])");
                 return 1;
         }
         
 	int i;
         for(i = 0; i < args->arg_count; i++){
-                if(args->arg_type[i] != STRING_RESULT){
+                if(i == 4){
+                        if (args->args[i] && (args->arg_type[i] == STRING_RESULT)){
+                                strcpy(message, "ERROR: Wrong argument 'missingvalue' to oph_abs_array function");
+                                return 1;
+                        }
+			args->arg_type[i] = REAL_RESULT;
+                }
+                else if(args->arg_type[i] != STRING_RESULT){
                         strcpy(message, "ERROR: Wrong arguments to oph_mul_array function");
                         return 1;
                 }

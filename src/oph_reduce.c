@@ -147,7 +147,7 @@ my_bool oph_reduce_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 			args->arg_type[i] = REAL_RESULT;
                 }
 		else if(i == 6){
-                        if(args->arg_type[i] == STRING_RESULT){
+                        if (args->args[i] && (args->arg_type[i] == STRING_RESULT)){
                                 strcpy(message, "ERROR: Wrong argument 'missingvalue' to oph_reduce function");
                                 return 1;
                         }
@@ -297,7 +297,7 @@ char* oph_reduce(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *
 	else multim->param = 2.0;
 
 	double missingvalue;
-	if(args->arg_count > 6)
+	if((args->arg_count > 6) && args->args[6])
 	{
 		missingvalue = *((double*)(args->args[6]));
 		multim->missingvalue = &missingvalue;

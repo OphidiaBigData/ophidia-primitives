@@ -182,7 +182,7 @@ my_bool oph_reduce3_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 						args->arg_type[7] = REAL_RESULT;
 						if (args->arg_count > 8)
 						{
-							if (args->arg_type[8] == STRING_RESULT)
+							if (args->args[8] && (args->arg_type[8] == STRING_RESULT))
 							{
 								strcpy(message, "ERROR: Wrong argument 'missingvalue' to oph_reduce3 function");
 								return 1;
@@ -521,7 +521,7 @@ char* oph_reduce3(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long 
 	else curr_array.param = 2.0;
 
 	double missingvalue;
-	if(args->arg_count > 8)
+	if((args->arg_count > 8) && args->args[8])
 	{
 		missingvalue = *((double*)(args->args[8]));
 		curr_array.missingvalue = &missingvalue;
