@@ -33,7 +33,7 @@ int core_oph_concat_multi(oph_generic_param_multi* param)
 		{
 			for (j=0;j<measure->numelem;++j) // Loop on elements
 			{
-				if(core_oph_type_cast(ic + j*measure->blocksize, oc + j*result->blocksize, measure->type[i], result->type[i]))
+				if(core_oph_type_cast(ic + j*measure->blocksize, oc + j*result->blocksize, measure->type[i], result->type[i], NULL))
 				{
 					pmesg(1, __FILE__, __LINE__, "Error in compute array\n");
 					return 1;

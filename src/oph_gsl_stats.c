@@ -260,352 +260,269 @@ int oph_gsl_stats_produce( void *in_data, const size_t data_len, oph_type data_t
         if (data_type==OPH_INT) {
             switch (i) {
                 case 0: // 1xxxxxxxxxxxxx : mean
-                	tmp = gsl_stats_int_mean((int *)in_data,1,data_len);
-            		if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
+                    tmp = gsl_stats_int_mean((int *)in_data,1,data_len);
                     break;
                 case 1: // x1xxxxxxxxxxxx : variance
                     tmp = gsl_stats_int_variance((int *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 2: // xx1xxxxxxxxxxx : std dev
                     tmp = gsl_stats_int_sd((int *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 3: // xxx1xxxxxxxxxx : abs dev
                     tmp = gsl_stats_int_absdev((int *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 4: // xxxx1xxxxxxxxx : skew
                     tmp = gsl_stats_int_skew((int *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 5: // xxxxx1xxxxxxxx : kurtosis
                     tmp = gsl_stats_int_kurtosis((int *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 6: // xxxxxx1xxxxxxx : autocorrelation
                     tmp = gsl_stats_int_lag1_autocorrelation((int *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 7: // xxxxxxx1xxxxxx : max
                     tmp = gsl_stats_int_max((int *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 8: // xxxxxxxx1xxxxx : min
                     tmp = gsl_stats_int_min((int *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 9: // xxxxxxxxx1xxxx : 0.05 quantile
                     tmp = gsl_stats_int_quantile_from_sorted_data((int *)in_data,1,data_len,0.05);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 10: // xxxxxxxxxx1xxx : 0.25 quantile->Q1
                     tmp = gsl_stats_int_quantile_from_sorted_data((int *)in_data,1,data_len,0.25);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 11: // xxxxxxxxxxx1xx : 0.5 quantile->Q2 (median)
                     tmp = gsl_stats_int_quantile_from_sorted_data((int *)in_data,1,data_len,0.5);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 12: // xxxxxxxxxxxx1x : 0.75 quantile->Q3
                     tmp = gsl_stats_int_quantile_from_sorted_data((int *)in_data,1,data_len,0.75);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 13: // xxxxxxxxxxxxx1 : 0.95 quantile
                     tmp = gsl_stats_int_quantile_from_sorted_data((int *)in_data,1,data_len,0.95);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
             }
 	} else if (data_type==OPH_SHORT) {
             switch (i) {
                 case 0: // 1xxxxxxxxxxxxx : mean
-                	tmp = gsl_stats_short_mean((short *)in_data,1,data_len);
-            		if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
+                    tmp = gsl_stats_short_mean((short *)in_data,1,data_len);
                     break;
                 case 1: // x1xxxxxxxxxxxx : variance
                     tmp = gsl_stats_short_variance((short *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 2: // xx1xxxxxxxxxxx : std dev
                     tmp = gsl_stats_short_sd((short *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 3: // xxx1xxxxxxxxxx : abs dev
                     tmp = gsl_stats_short_absdev((short *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 4: // xxxx1xxxxxxxxx : skew
                     tmp = gsl_stats_short_skew((short *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 5: // xxxxx1xxxxxxxx : kurtosis
                     tmp = gsl_stats_short_kurtosis((short *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 6: // xxxxxx1xxxxxxx : autocorrelation
                     tmp = gsl_stats_short_lag1_autocorrelation((short *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 7: // xxxxxxx1xxxxxx : max
                     tmp = gsl_stats_short_max((short *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 8: // xxxxxxxx1xxxxx : min
                     tmp = gsl_stats_short_min((short *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 9: // xxxxxxxxx1xxxx : 0.05 quantile
                     tmp = gsl_stats_short_quantile_from_sorted_data((short *)in_data,1,data_len,0.05);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 10: // xxxxxxxxxx1xxx : 0.25 quantile->Q1
                     tmp = gsl_stats_short_quantile_from_sorted_data((short *)in_data,1,data_len,0.25);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 11: // xxxxxxxxxxx1xx : 0.5 quantile->Q2 (median)
                     tmp = gsl_stats_short_quantile_from_sorted_data((short *)in_data,1,data_len,0.5);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 12: // xxxxxxxxxxxx1x : 0.75 quantile->Q3
                     tmp = gsl_stats_short_quantile_from_sorted_data((short *)in_data,1,data_len,0.75);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 13: // xxxxxxxxxxxxx1 : 0.95 quantile
                     tmp = gsl_stats_short_quantile_from_sorted_data((short *)in_data,1,data_len,0.95);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
             }
 	} else if (data_type==OPH_BYTE) {
             switch (i) {
                 case 0: // 1xxxxxxxxxxxxx : mean
-                	tmp = gsl_stats_char_mean((char *)in_data,1,data_len);
-            		if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
+                    tmp = gsl_stats_char_mean((char *)in_data,1,data_len);
                     break;
                 case 1: // x1xxxxxxxxxxxx : variance
                     tmp = gsl_stats_char_variance((char *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 2: // xx1xxxxxxxxxxx : std dev
                     tmp = gsl_stats_char_sd((char *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 3: // xxx1xxxxxxxxxx : abs dev
                     tmp = gsl_stats_char_absdev((char *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 4: // xxxx1xxxxxxxxx : skew
                     tmp = gsl_stats_char_skew((char *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 5: // xxxxx1xxxxxxxx : kurtosis
                     tmp = gsl_stats_char_kurtosis((char *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 6: // xxxxxx1xxxxxxx : autocorrelation
                     tmp = gsl_stats_char_lag1_autocorrelation((char *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 7: // xxxxxxx1xxxxxx : max
                     tmp = gsl_stats_char_max((char *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 8: // xxxxxxxx1xxxxx : min
                     tmp = gsl_stats_char_min((char *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 9: // xxxxxxxxx1xxxx : 0.05 quantile
                     tmp = gsl_stats_char_quantile_from_sorted_data((char *)in_data,1,data_len,0.05);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 10: // xxxxxxxxxx1xxx : 0.25 quantile->Q1
                     tmp = gsl_stats_char_quantile_from_sorted_data((char *)in_data,1,data_len,0.25);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 11: // xxxxxxxxxxx1xx : 0.5 quantile->Q2 (median)
                     tmp = gsl_stats_char_quantile_from_sorted_data((char *)in_data,1,data_len,0.5);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 12: // xxxxxxxxxxxx1x : 0.75 quantile->Q3
                     tmp = gsl_stats_char_quantile_from_sorted_data((char *)in_data,1,data_len,0.75);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 13: // xxxxxxxxxxxxx1 : 0.95 quantile
                     tmp = gsl_stats_char_quantile_from_sorted_data((char *)in_data,1,data_len,0.95);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
             }
         } else if (data_type==OPH_LONG) {
             switch (i) {
                 case 0: // 1xxxxxxxxxxxxx : mean
                     tmp = gsl_stats_long_mean((long *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 1: // x1xxxxxxxxxxxx : variance
                     tmp = gsl_stats_long_variance((long *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 2: // xx1xxxxxxxxxxx : std dev
                     tmp = gsl_stats_long_sd((long *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 3: // xxx1xxxxxxxxxx : abs dev
                     tmp = gsl_stats_long_absdev((long *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 4: // xxxx1xxxxxxxxx : skew
                     tmp = gsl_stats_long_skew((long *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 5: // xxxxx1xxxxxxxx : kurtosis
                     tmp = gsl_stats_long_kurtosis((long *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 6: // xxxxxx1xxxxxxx : autocorrelation
                     tmp = gsl_stats_long_lag1_autocorrelation((long *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 7: // xxxxxxx1xxxxxx : max
                     tmp = gsl_stats_long_max((long *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 8: // xxxxxxxx1xxxxx : min
                     tmp = gsl_stats_long_min((long *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 9: // xxxxxxxxx1xxxx : 0.05 quantile
                     tmp = gsl_stats_long_quantile_from_sorted_data((long *)in_data,1,data_len,0.05);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 10: // xxxxxxxxxx1xxx : 0.25 quantile->Q1
                     tmp = gsl_stats_long_quantile_from_sorted_data((long *)in_data,1,data_len,0.25);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 11: // xxxxxxxxxxx1xx : 0.5 quantile->Q2 (median)
                     tmp = gsl_stats_long_quantile_from_sorted_data((long *)in_data,1,data_len,0.5);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 12: // xxxxxxxxxxxx1x : 0.75 quantile->Q3
                     tmp = gsl_stats_long_quantile_from_sorted_data((long *)in_data,1,data_len,0.75);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 13: // xxxxxxxxxxxxx1 : 0.95 quantile
                     tmp = gsl_stats_long_quantile_from_sorted_data((long *)in_data,1,data_len,0.95);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
             }
         } else if (data_type==OPH_FLOAT) {
             switch (i) {
                 case 0: // 1xxxxxxxxxxxxx : mean
                     tmp = gsl_stats_float_mean((float *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 1: // x1xxxxxxxxxxxx : variance
                     tmp = gsl_stats_float_variance((float *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 2: // xx1xxxxxxxxxxx : std dev
                     tmp = gsl_stats_float_sd((float *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 3: // xxx1xxxxxxxxxx : abs dev
                     tmp = gsl_stats_float_absdev((float *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 4: // xxxx1xxxxxxxxx : skew
                     tmp = gsl_stats_float_skew((float *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 5: // xxxxx1xxxxxxxx : kurtosis
                     tmp = gsl_stats_float_kurtosis((float *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 6: // xxxxxx1xxxxxxx : autocorrelation
                     tmp = gsl_stats_float_lag1_autocorrelation((float *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 7: // xxxxxxx1xxxxxx : max
                     tmp = gsl_stats_float_max((float *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 8: // xxxxxxxx1xxxxx : min
                     tmp = gsl_stats_float_min((float *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 9: // xxxxxxxxx1xxxx : 0.05 quantile
                     tmp = gsl_stats_float_quantile_from_sorted_data((float *)in_data,1,data_len,0.05);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 10: // xxxxxxxxxx1xxx : 0.25 quantile->Q1
                     tmp = gsl_stats_float_quantile_from_sorted_data((float *)in_data,1,data_len,0.25);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 11: // xxxxxxxxxxx1xx : 0.5 quantile->Q2 (median)
                     tmp = gsl_stats_float_quantile_from_sorted_data((float *)in_data,1,data_len,0.5);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 12: // xxxxxxxxxxxx1x : 0.75 quantile->Q3
                     tmp = gsl_stats_float_quantile_from_sorted_data((float *)in_data,1,data_len,0.75);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 13: // xxxxxxxxxxxxx1 : 0.95 quantile
                     tmp = gsl_stats_float_quantile_from_sorted_data((float *)in_data,1,data_len,0.95);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
             }
         } else {
             switch (i) {
                 case 0: // 1xxxxxxxxxxxxx : mean
                     tmp = gsl_stats_mean((double *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 1: // x1xxxxxxxxxxxx : variance
                     tmp = gsl_stats_variance((double *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 2: // xx1xxxxxxxxxxx : std dev
                     tmp = gsl_stats_sd((double *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 3: // xxx1xxxxxxxxxx : abs dev
                     tmp = gsl_stats_absdev((double *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 4: // xxxx1xxxxxxxxx : skew
                     tmp = gsl_stats_skew((double *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 5: // xxxxx1xxxxxxxx : kurtosis
                     tmp = gsl_stats_kurtosis((double *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 6: // xxxxxx1xxxxxxx : autocorrelation
                     tmp = gsl_stats_lag1_autocorrelation((double *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 7: // xxxxxxx1xxxxxx : max
                     tmp = gsl_stats_max((double *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 8: // xxxxxxxx1xxxxx : min
                     tmp = gsl_stats_min((double *)in_data,1,data_len);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 9: // xxxxxxxxx1xxxx : 0.05 quantile
                     tmp = gsl_stats_quantile_from_sorted_data((double *)in_data,1,data_len,0.05);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 10: // xxxxxxxxxx1xxx : 0.25 quantile->Q1
                     tmp = gsl_stats_quantile_from_sorted_data((double *)in_data,1,data_len,0.25);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 11: // xxxxxxxxxxx1xx : 0.5 quantile->Q2 (median)
                     tmp = gsl_stats_quantile_from_sorted_data((double *)in_data,1,data_len,0.5);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 12: // xxxxxxxxxxxx1x : 0.75 quantile->Q3
                     tmp = gsl_stats_quantile_from_sorted_data((double *)in_data,1,data_len,0.75);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
                     break;
                 case 13: // xxxxxxxxxxxxx1 : 0.95 quantile
                     tmp = gsl_stats_quantile_from_sorted_data((double *)in_data,1,data_len,0.95);
-                    if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) return 1;
             }
         }
+	if(core_oph_type_cast(&tmp,out_data + (j * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type, NULL)) return 1;
 
         i++;
     }

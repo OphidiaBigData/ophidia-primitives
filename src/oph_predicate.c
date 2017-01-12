@@ -87,6 +87,7 @@ char* oph_predicate(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lon
 
         measure.content = args->args[2];
         measure.length = &(args->lengths[2]);
+	measure.missingvalue = NULL;
 
 	core_set_elemsize(&(measure));
 

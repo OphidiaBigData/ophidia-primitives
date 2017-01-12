@@ -183,7 +183,7 @@ char* oph_gsl_sort(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long
 
 	int i;
 	for (i = 0; i < measure->numelem; i++) {
-		if(core_oph_type_cast(measure->content + (i * measure->elemsize),output->content + (i * output->elemsize), measure->type, output->type)) {
+		if(core_oph_type_cast(measure->content + (i * measure->elemsize),output->content + (i * output->elemsize), measure->type, output->type, NULL)) {
 			pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
 			*length=0;
 			*is_null=0;

@@ -90,7 +90,7 @@ int core_oph_permute(oph_permute_param* param)
 	{
 		for (j=0; j<measure->numelem; ++j)
 		{
-			if(core_oph_type_cast(measure->content + j*measure->elemsize, param->result + param->index[j]*param->result_elemsize, measure->type, param->result_type))
+			if(core_oph_type_cast(measure->content + j*measure->elemsize, param->result + param->index[j]*param->result_elemsize, measure->type, param->result_type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 				return 1;
@@ -101,7 +101,7 @@ int core_oph_permute(oph_permute_param* param)
 	{
 		for (j=0; j<measure->numelem; ++j)
 		{
-			if(core_oph_type_cast(measure->content + j*measure->elemsize, param->result + j*param->result_elemsize, measure->type, param->result_type))
+			if(core_oph_type_cast(measure->content + j*measure->elemsize, param->result + j*param->result_elemsize, measure->type, param->result_type, NULL))
 			{
 		                pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 				return 1;

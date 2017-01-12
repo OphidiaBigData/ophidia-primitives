@@ -188,7 +188,7 @@ char* oph_gsl_complex_get_imag(UDF_INIT *initid, UDF_ARGS *args, char *result, u
     			run_sum2 += output->elemsize[k];
     		}
     		for (k = 0; k < measure->numelem; k++) {
-    			if(core_oph_type_cast(measure->content + (k * measure->blocksize) + run_sum1 + sizeof(int), output->content + (k * output->blocksize) + run_sum2, OPH_INT, output->type[i])) {
+    			if(core_oph_type_cast(measure->content + (k * measure->blocksize) + run_sum1 + sizeof(int), output->content + (k * output->blocksize) + run_sum2, OPH_INT, output->type[i], NULL)) {
     				param->error = 1;
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;
@@ -206,7 +206,7 @@ char* oph_gsl_complex_get_imag(UDF_INIT *initid, UDF_ARGS *args, char *result, u
     			run_sum2 += output->elemsize[k];
     		}
     		for (k = 0; k < measure->numelem; k++) {
-    			if(core_oph_type_cast(measure->content + (k * measure->blocksize) + run_sum1 + sizeof(long long), output->content + (k * output->blocksize) + run_sum2, OPH_LONG, output->type[i])) {
+    			if(core_oph_type_cast(measure->content + (k * measure->blocksize) + run_sum1 + sizeof(long long), output->content + (k * output->blocksize) + run_sum2, OPH_LONG, output->type[i], NULL)) {
     				param->error = 1;
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;
@@ -224,7 +224,7 @@ char* oph_gsl_complex_get_imag(UDF_INIT *initid, UDF_ARGS *args, char *result, u
     			run_sum2 += output->elemsize[k];
     		}
     		for (k = 0; k < measure->numelem; k++) {
-    			if(core_oph_type_cast(measure->content + (k * measure->blocksize) + run_sum1 + sizeof(float), output->content + (k * output->blocksize) + run_sum2, OPH_FLOAT, output->type[i])) {
+    			if(core_oph_type_cast(measure->content + (k * measure->blocksize) + run_sum1 + sizeof(float), output->content + (k * output->blocksize) + run_sum2, OPH_FLOAT, output->type[i], NULL)) {
     				param->error = 1;
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;
@@ -242,7 +242,7 @@ char* oph_gsl_complex_get_imag(UDF_INIT *initid, UDF_ARGS *args, char *result, u
     			run_sum2 += output->elemsize[k];
     		}
     		for (k = 0; k < measure->numelem; k++) {
-    			if(core_oph_type_cast(measure->content + (k * measure->blocksize) + run_sum1 + sizeof(double), output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i])) {
+    			if(core_oph_type_cast(measure->content + (k * measure->blocksize) + run_sum1 + sizeof(double), output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i], NULL)) {
     				param->error = 1;
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;

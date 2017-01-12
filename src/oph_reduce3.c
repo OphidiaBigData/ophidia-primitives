@@ -571,7 +571,7 @@ char* oph_reduce3(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long 
                         *error=1;
 			return NULL;
                 }
-		if(core_oph_type_cast(temporary, tmp->result+i*output_array.elemsize, result_type, output_array.type))
+		if(core_oph_type_cast(temporary, tmp->result+i*output_array.elemsize, result_type, output_array.type, curr_array.missingvalue))
 		{
                         pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
                         *length=0;

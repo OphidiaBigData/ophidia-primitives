@@ -32,7 +32,7 @@ int core_oph_roll_up(oph_roll_up_param* param)
 			char *input_ptr = measure->content, *output_ptr = param->result + param->rows*row_size;
 			for (i=0; i<measure->numelem; ++i, input_ptr += measure->elemsize, output_ptr += param->result_elemsize)
 			{
-				if(core_oph_type_cast(input_ptr, output_ptr, measure->type, param->result_type))
+				if(core_oph_type_cast(input_ptr, output_ptr, measure->type, param->result_type, NULL))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;

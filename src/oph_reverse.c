@@ -26,7 +26,7 @@ int core_oph_reverse(oph_generic_param* param)
 	oph_string* byte_array = (oph_string*)param->measure;
 	for (i=0; i<byte_array->numelem; ++i)
 	{		
-		if(core_oph_type_cast(byte_array->content+(byte_array->numelem-i-1)*byte_array->elemsize, param->result+i*param->result_elemsize, byte_array->type, param->result_type))
+		if(core_oph_type_cast(byte_array->content+(byte_array->numelem-i-1)*byte_array->elemsize, param->result+i*param->result_elemsize, byte_array->type, param->result_type, NULL))
 		{
 	                pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 			return 1;

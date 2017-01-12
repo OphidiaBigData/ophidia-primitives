@@ -193,7 +193,7 @@ char* oph_gsl_complex_get_abs(UDF_INIT *initid, UDF_ARGS *args, char *result, un
     			z.dat[0] = (double) *((int *) (measure->content + (k * measure->blocksize) + run_sum1));   //real part
     			z.dat[1] = (double) *((int *) (measure->content + (k * measure->blocksize) + run_sum1 + sizeof(int)));   //imag part
     			tmp = gsl_complex_abs(z);
-    			if(core_oph_type_cast(&tmp, output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i])) {
+    			if(core_oph_type_cast(&tmp, output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i], NULL)) {
     				param->error = 1;
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;
@@ -214,7 +214,7 @@ char* oph_gsl_complex_get_abs(UDF_INIT *initid, UDF_ARGS *args, char *result, un
     			z.dat[0] = (double) *((long long *) (measure->content + (k * measure->blocksize) + run_sum1));   //real part
     			z.dat[1] = (double) *((long long *) (measure->content + (k * measure->blocksize) + run_sum1 + sizeof(long long)));   //imag part
     			tmp = gsl_complex_abs(z);
-    			if(core_oph_type_cast(&tmp, output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i])) {
+    			if(core_oph_type_cast(&tmp, output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i], NULL)) {
     				param->error = 1;
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;
@@ -235,7 +235,7 @@ char* oph_gsl_complex_get_abs(UDF_INIT *initid, UDF_ARGS *args, char *result, un
     			z.dat[0] = (double) *((float *) (measure->content + (k * measure->blocksize) + run_sum1));   //real part
     			z.dat[1] = (double) *((float *) (measure->content + (k * measure->blocksize) + run_sum1 + sizeof(float)));   //imag part
     			tmp = gsl_complex_abs(z);
-    			if(core_oph_type_cast(&tmp, output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i])) {
+    			if(core_oph_type_cast(&tmp, output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i], NULL)) {
     				param->error = 1;
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;
@@ -256,7 +256,7 @@ char* oph_gsl_complex_get_abs(UDF_INIT *initid, UDF_ARGS *args, char *result, un
     			z.dat[0] = *((double *) (measure->content + (k * measure->blocksize) + run_sum1));   //real part
     			z.dat[1] = *((double *) (measure->content + (k * measure->blocksize) + run_sum1 + sizeof(double)));   //imag part
     			tmp = gsl_complex_abs(z);
-    			if(core_oph_type_cast(&tmp, output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i])) {
+    			if(core_oph_type_cast(&tmp, output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i], NULL)) {
     				param->error = 1;
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;

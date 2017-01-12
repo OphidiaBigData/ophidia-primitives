@@ -49,7 +49,7 @@ int core_oph_quantile_multi (oph_multistring* byte_array, oph_multistring *resul
 				k = floor(delta);
 				delta = delta - k;
 				sum = (1-delta) * (*(((double*)byte_array->extend)+k)) + delta * (*(((double*)byte_array->extend)+k+1));
-				if(core_oph_type_cast((void*)(&sum), out_string, OPH_DOUBLE, result->type[j])) return -1;
+				if(core_oph_type_cast((void*)(&sum), out_string, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
                         	break;
                 	}
                 	case OPH_FLOAT:{
@@ -60,7 +60,7 @@ int core_oph_quantile_multi (oph_multistring* byte_array, oph_multistring *resul
 				k = floor(delta);
 				delta = delta - k;
 				sum = (1-delta) * (*(((float*)byte_array->extend)+k)) + delta * (*(((float*)byte_array->extend)+k+1));
-				if(core_oph_type_cast((void*)(&sum), out_string, OPH_DOUBLE, result->type[j])) return -1;
+				if(core_oph_type_cast((void*)(&sum), out_string, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
                         	break;
                 	}
                 	case OPH_INT:{
@@ -71,7 +71,7 @@ int core_oph_quantile_multi (oph_multistring* byte_array, oph_multistring *resul
 				k = floor(delta);
 				delta = delta - k;
 				sum = (1-delta) * (*(((int*)byte_array->extend)+k)) + delta * (*(((int*)byte_array->extend)+k+1));
-				if(core_oph_type_cast((void*)(&sum), out_string, OPH_DOUBLE, result->type[j])) return -1;
+				if(core_oph_type_cast((void*)(&sum), out_string, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
                         	break;
         	        }
                 	case OPH_SHORT:{
@@ -82,7 +82,7 @@ int core_oph_quantile_multi (oph_multistring* byte_array, oph_multistring *resul
 				k = floor(delta);
 				delta = delta - k;
 				sum = (1-delta) * (*(((short*)byte_array->extend)+k)) + delta * (*(((short*)byte_array->extend)+k+1));
-				if(core_oph_type_cast((void*)(&sum), out_string, OPH_DOUBLE, result->type[j])) return -1;
+				if(core_oph_type_cast((void*)(&sum), out_string, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
                         	break;
         	        }
                 	case OPH_BYTE:{
@@ -93,7 +93,7 @@ int core_oph_quantile_multi (oph_multistring* byte_array, oph_multistring *resul
 				k = floor(delta);
 				delta = delta - k;
 				sum = (1-delta) * (*(((char*)byte_array->extend)+k)) + delta * (*(((char*)byte_array->extend)+k+1));
-				if(core_oph_type_cast((void*)(&sum), out_string, OPH_DOUBLE, result->type[j])) return -1;
+				if(core_oph_type_cast((void*)(&sum), out_string, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
                         	break;
         	        }
 			case OPH_LONG:{
@@ -104,7 +104,7 @@ int core_oph_quantile_multi (oph_multistring* byte_array, oph_multistring *resul
 				k = floor(delta);
 				delta = delta - k;
 				sum = (1-delta) * (*(((long long*)byte_array->extend)+k)) + delta * (*(((long long*)byte_array->extend)+k+1));
-				if(core_oph_type_cast((void*)(&sum), out_string, OPH_DOUBLE, result->type[j])) return -1;
+				if(core_oph_type_cast((void*)(&sum), out_string, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
                         	break;
 	                }
         	        default:

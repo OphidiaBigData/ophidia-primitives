@@ -29,7 +29,7 @@ int core_oph_get_subarray2(oph_get_subarray2_param* param)
 	{
 		if (param->flags[j])
 		{
-			if(core_oph_type_cast(measure->content + j*measure->elemsize, param->result + k*param->result_elemsize, measure->type, param->result_type))
+			if(core_oph_type_cast(measure->content + j*measure->elemsize, param->result + k*param->result_elemsize, measure->type, param->result_type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 				return OPH_SUBSET_SYSTEM_ERR;

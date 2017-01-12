@@ -146,8 +146,8 @@ int core_set_oph_multistring(oph_multistring **str, char* type, unsigned long *l
 void free_oph_multistring(oph_multistring* str);
 int core_set_oper(oph_requestPtr req, char* oper, unsigned long *len);
 int core_set_oper_multi(oph_request_multi* req, char* oper, unsigned long *len);
-int core_oph_type_cast (void *input, char *output, oph_type in_type, oph_type out_type);
-int core_oph_multistring_cast (oph_multistring* input, oph_multistring* output);
+int core_oph_type_cast (void *input, char *output, oph_type in_type, oph_type out_type, double *missingvalue);
+int core_oph_multistring_cast (oph_multistring* input, oph_multistring* output, double *missingvalue);
 // Set value of elemsize as the sizeof elements in byte string - Must be called after core_set_type function
 int core_set_elemsize(oph_stringPtr str);
 

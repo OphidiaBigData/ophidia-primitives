@@ -57,7 +57,7 @@ int core_oph_expand_multi(oph_multistring* byte_array, oph_multistring* result, 
 		if (!param)
 		{
 			for (i=0; i<result->numelem; i++)
-				if(core_oph_type_cast(byte_array->content + i*byte_array->elemsize[j], result->content + i*result->elemsize[j], byte_array->type[j], result->type[j])) return -1;
+				if(core_oph_type_cast(byte_array->content + i*byte_array->elemsize[j], result->content + i*result->elemsize[j], byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		}
 		else
 		{
@@ -73,7 +73,7 @@ int core_oph_expand_multi(oph_multistring* byte_array, oph_multistring* result, 
 				}
 				if (param->index[k] < current+param->step/2.0)
 				{
-					if(core_oph_type_cast(byte_array->content + k*byte_array->elemsize[j], result->content + i*result->elemsize[j], byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast(byte_array->content + k*byte_array->elemsize[j], result->content + i*result->elemsize[j], byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 					k++;
 				}
 				else
@@ -84,13 +84,13 @@ int core_oph_expand_multi(oph_multistring* byte_array, oph_multistring* result, 
 						{
 							case OPH_DOUBLE:
 							{
-								if(core_oph_type_cast(&current, result->content + i*result->elemsize[j], byte_array->type[j], result->type[j])) return -1;
+								if(core_oph_type_cast(&current, result->content + i*result->elemsize[j], byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 								break;
 							}
 							case OPH_FLOAT:
 							{
 								float f = (float)current;
-								if(core_oph_type_cast(&f, result->content + i*result->elemsize[j], byte_array->type[j], result->type[j])) return -1;
+								if(core_oph_type_cast(&f, result->content + i*result->elemsize[j], byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 								break;
 							}
 							default:
@@ -98,7 +98,7 @@ int core_oph_expand_multi(oph_multistring* byte_array, oph_multistring* result, 
 								return -1;
 						}
 					}
-					else if(core_oph_type_cast(nan, result->content + i*result->elemsize[j], byte_array->type[j], result->type[j])) return -1;
+					else if(core_oph_type_cast(nan, result->content + i*result->elemsize[j], byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 				}
 				current += param->step;
 			}

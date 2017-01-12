@@ -72,7 +72,7 @@ int core_oph_gsl_fit_linear_coeff_multi(oph_multistring* byte_array, oph_multist
 		out_pointer = out_string;
 		for (k=0;k<OPH_GSL_FIT_LINEAR_COEFF_NUMBER;++k) if (fit->flag[k])
 		{
-			if (core_oph_type_cast(&fit->c[k], out_pointer, OPH_DOUBLE, result->type[j])) return -1;
+			if (core_oph_type_cast(&fit->c[k], out_pointer, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 			out_pointer += result->blocksize;
 		}
 		in_string += byte_array->elemsize[j];

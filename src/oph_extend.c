@@ -22,7 +22,7 @@ int msglevel = 1;
 
 int core_oph_extend_multi(oph_multistring* byte_array, oph_multistring* result, int number)
 {
-	if (core_oph_multistring_cast(byte_array, result)) return -1;
+	if (core_oph_multistring_cast(byte_array, result, byte_array->missingvalue)) return -1;
 
         int i;
 	for (i=1;i<number;++i) memcpy(result->content + i*byte_array->length, result->content, byte_array->length);

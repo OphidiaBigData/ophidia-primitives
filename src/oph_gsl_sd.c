@@ -45,7 +45,7 @@ int core_oph_gsl_sd(oph_stringPtr byte_array, oph_gsl_sd_struct* result)
 					if (!isnan(*d)) { tmp[max]=*d; max++; }
 				if (max) res = gsl_stats_sd(tmp, 1, max);
 			}
-			if(core_oph_type_cast(&res, result->result, byte_array->type, result->result_type)) return -1;
+			if(core_oph_type_cast(&res, result->result, byte_array->type, result->result_type, NULL)) return -1;
                         break;
                 }
                 case OPH_FLOAT:
@@ -65,35 +65,35 @@ int core_oph_gsl_sd(oph_stringPtr byte_array, oph_gsl_sd_struct* result)
 					if (!isnan(*d)) { tmp[max]=*d; max++; }
 				if (max) res = gsl_stats_float_sd(tmp, 1, max);
 			}
-			if(core_oph_type_cast(&res, result->result, byte_array->type, result->result_type)) return -1;
+			if(core_oph_type_cast(&res, result->result, byte_array->type, result->result_type, NULL)) return -1;
                         break;
                 }
                 case OPH_INT:
 		{
                         int *d = (int*)byte_array->content;
 			int res = gsl_stats_int_sd(d, 1, (size_t) byte_array->numelem);
-			if(core_oph_type_cast(&res, result->result, byte_array->type, result->result_type)) return -1;
+			if(core_oph_type_cast(&res, result->result, byte_array->type, result->result_type, NULL)) return -1;
                         break;
                 }
                 case OPH_SHORT:
 		{
                         short *d = (short*)byte_array->content;
 			short res = gsl_stats_short_sd(d, 1, (size_t) byte_array->numelem);
-			if(core_oph_type_cast(&res, result->result, byte_array->type, result->result_type)) return -1;
+			if(core_oph_type_cast(&res, result->result, byte_array->type, result->result_type, NULL)) return -1;
                         break;
                 }
                 case OPH_BYTE:
 		{
                         char *d = (char*)byte_array->content;
 			char res = gsl_stats_char_sd(d, 1, (size_t) byte_array->numelem);
-			if(core_oph_type_cast(&res, result->result, byte_array->type, result->result_type)) return -1;
+			if(core_oph_type_cast(&res, result->result, byte_array->type, result->result_type, NULL)) return -1;
                         break;
                 }
                 case OPH_LONG:
 		{
                         long long *d = (long long*)byte_array->content;
 			long long res = gsl_stats_long_sd((const long int*)d, 1, (size_t) byte_array->numelem);
-			if(core_oph_type_cast(&res, result->result, byte_array->type, result->result_type)) return -1;
+			if(core_oph_type_cast(&res, result->result, byte_array->type, result->result_type, NULL)) return -1;
                         break;
                 }
 		default:

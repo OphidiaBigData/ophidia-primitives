@@ -641,7 +641,7 @@ char* oph_aggregate_stats_partial(UDF_INIT *initid, UDF_ARGS *args, char *result
 
     // Add count to result array
 	for (k = 0; k < dat->result.numelem; k+=size) {
-		if (core_oph_type_cast(&dat->count, dat->result.content + k*dat->result.elemsize, OPH_INT, dat->result.type))
+		if (core_oph_type_cast(&dat->count, dat->result.content + k*dat->result.elemsize, OPH_INT, dat->result.type, NULL))
 		{
 			pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 			*length=0;
@@ -655,7 +655,7 @@ char* oph_aggregate_stats_partial(UDF_INIT *initid, UDF_ARGS *args, char *result
 	for (j = 0; j < size - 1; j++)
 	{
 		for (k = 0; k < dat->result.numelem; k+=size) {
-			if (core_oph_type_cast(dat->partials[j].content + q*dat->measure.elemsize, dat->result.content + (j+1+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+			if (core_oph_type_cast(dat->partials[j].content + q*dat->measure.elemsize, dat->result.content + (j+1+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;

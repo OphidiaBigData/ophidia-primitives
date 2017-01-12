@@ -526,7 +526,7 @@ int core_oph_math (oph_stringPtr byte_array, oph_math_oper *operation, oph_strin
                         double d;
                         for (i = 0; i < byte_array->numelem; i++){
                                 d = fnptr_d(*(double*)(byte_array->content + i*byte_array->elemsize));
-				if(core_oph_type_cast(&d, result + i*output->elemsize, byte_array->type, output->type))
+				if(core_oph_type_cast(&d, result + i*output->elemsize, byte_array->type, output->type, byte_array->missingvalue))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -564,7 +564,7 @@ int core_oph_math (oph_stringPtr byte_array, oph_math_oper *operation, oph_strin
                         float d;
                         for (i = 0; i < byte_array->numelem; i++){
                                 d = fnptr_f(*(float*)(byte_array->content + i*byte_array->elemsize));
-                                if(core_oph_type_cast(&d, result + i*output->elemsize, byte_array->type, output->type))
+                                if(core_oph_type_cast(&d, result + i*output->elemsize, byte_array->type, output->type, byte_array->missingvalue))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -602,7 +602,7 @@ int core_oph_math (oph_stringPtr byte_array, oph_math_oper *operation, oph_strin
                         int d;
                         for (i = 0; i < byte_array->numelem; i++){
                                 d = fnptr_i(*(int*)(byte_array->content + i*byte_array->elemsize));
-                                if(core_oph_type_cast(&d, result + i*output->elemsize, byte_array->type, output->type))
+                                if(core_oph_type_cast(&d, result + i*output->elemsize, byte_array->type, output->type, byte_array->missingvalue))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -640,7 +640,7 @@ int core_oph_math (oph_stringPtr byte_array, oph_math_oper *operation, oph_strin
                         short d;
                         for (i = 0; i < byte_array->numelem; i++){
                                 d = fnptr_s(*(short*)(byte_array->content + i*byte_array->elemsize));
-                                if(core_oph_type_cast(&d, result + i*output->elemsize, byte_array->type, output->type))
+                                if(core_oph_type_cast(&d, result + i*output->elemsize, byte_array->type, output->type, byte_array->missingvalue))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -678,7 +678,7 @@ int core_oph_math (oph_stringPtr byte_array, oph_math_oper *operation, oph_strin
                         char d;
                         for (i = 0; i < byte_array->numelem; i++){
                                 d = fnptr_b(*(char*)(byte_array->content + i*byte_array->elemsize));
-                                if(core_oph_type_cast(&d, result + i*output->elemsize, byte_array->type, output->type))
+                                if(core_oph_type_cast(&d, result + i*output->elemsize, byte_array->type, output->type, byte_array->missingvalue))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -716,7 +716,7 @@ int core_oph_math (oph_stringPtr byte_array, oph_math_oper *operation, oph_strin
                         long long d;
                         for (i = 0; i < byte_array->numelem; i++){
                                 d = fnptr_l(*(long long*)(byte_array->content + i*byte_array->elemsize));
-                                if(core_oph_type_cast(&d, result + i*output->elemsize, byte_array->type, output->type))
+                                if(core_oph_type_cast(&d, result + i*output->elemsize, byte_array->type, output->type, byte_array->missingvalue))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -768,12 +768,12 @@ int core_oph_math (oph_stringPtr byte_array, oph_math_oper *operation, oph_strin
                                 c.dat[0] = ((double *)(byte_array->content))[i];    //real part
                                 c.dat[1] = ((double *)(byte_array->content))[i+1];  //imag part
                                 d = fnptr_cd(c);
-				if(core_oph_type_cast(&(d.dat[0]), result + i*output->elemsize, byte_array->type, output->type))
+				if(core_oph_type_cast(&(d.dat[0]), result + i*output->elemsize, byte_array->type, output->type, byte_array->missingvalue))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
 				}
-				if(core_oph_type_cast(&(d.dat[1]), result + (i+1)*output->elemsize, byte_array->type, output->type))
+				if(core_oph_type_cast(&(d.dat[1]), result + (i+1)*output->elemsize, byte_array->type, output->type, byte_array->missingvalue))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -828,12 +828,12 @@ int core_oph_math (oph_stringPtr byte_array, oph_math_oper *operation, oph_strin
                                 c.dat[0] = (double) ((float *)(byte_array->content))[i];    //real part
                                 c.dat[1] = (double) ((float *)(byte_array->content))[i+1];  //imag part
                                 d = fnptr_cf(c);
-  				if(core_oph_type_cast(&(d.dat[0]), result + i*output->elemsize, byte_array->type, output->type))
+  				if(core_oph_type_cast(&(d.dat[0]), result + i*output->elemsize, byte_array->type, output->type, byte_array->missingvalue))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
 				}
-				if(core_oph_type_cast(&(d.dat[1]), result + (i+1)*output->elemsize, byte_array->type, output->type))
+				if(core_oph_type_cast(&(d.dat[1]), result + (i+1)*output->elemsize, byte_array->type, output->type, byte_array->missingvalue))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -888,12 +888,12 @@ int core_oph_math (oph_stringPtr byte_array, oph_math_oper *operation, oph_strin
                                 c.dat[0] = (double) ((long long *)(byte_array->content))[i];    //real part
                                 c.dat[1] = (double) ((long long *)(byte_array->content))[i+1];  //imag part
                                 d = fnptr_cl(c);
-				if(core_oph_type_cast(&(d.dat[0]), result + i*output->elemsize, byte_array->type, output->type))
+				if(core_oph_type_cast(&(d.dat[0]), result + i*output->elemsize, byte_array->type, output->type, byte_array->missingvalue))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
 				}
-				if(core_oph_type_cast(&(d.dat[1]), result + (i+1)*output->elemsize, byte_array->type, output->type))
+				if(core_oph_type_cast(&(d.dat[1]), result + (i+1)*output->elemsize, byte_array->type, output->type, byte_array->missingvalue))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -948,12 +948,12 @@ int core_oph_math (oph_stringPtr byte_array, oph_math_oper *operation, oph_strin
                                 c.dat[0] = (double) ((int *)(byte_array->content))[i];    //real part
                                 c.dat[1] = (double) ((int *)(byte_array->content))[i+1];  //imag part
                                 d = fnptr_ci(c);
-				if(core_oph_type_cast(&(d.dat[0]), result + i*output->elemsize, byte_array->type, output->type))
+				if(core_oph_type_cast(&(d.dat[0]), result + i*output->elemsize, byte_array->type, output->type, byte_array->missingvalue))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
 				}
-				if(core_oph_type_cast(&(d.dat[1]), result + (i+1)*output->elemsize, byte_array->type, output->type))
+				if(core_oph_type_cast(&(d.dat[1]), result + (i+1)*output->elemsize, byte_array->type, output->type, byte_array->missingvalue))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;

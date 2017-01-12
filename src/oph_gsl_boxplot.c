@@ -50,18 +50,18 @@ int core_oph_gsl_boxplot_multi(oph_multistring* byte_array, oph_multistring* res
 				for (i=0;i<byte_array->numelem;++i) d[i]=*(double*)(in_string+i*byte_array->blocksize);
 				gsl_sort(d, 1, (size_t) byte_array->numelem);						
 				
-				if(core_oph_type_cast(d, out_string, byte_array->type[j], result->type[j] )) return -1;
+				if(core_oph_type_cast(d, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 
 				tmp = gsl_stats_quantile_from_sorted_data (d, 1, (size_t) byte_array->numelem, 0.25);
-				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize : blocksize[0]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure+j] )) return -1;
+				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize : blocksize[0]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure+j], byte_array->missingvalue )) return -1;
 
 				tmp = gsl_stats_median_from_sorted_data(d, 1, (size_t) byte_array->numelem);
-				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*2 : blocksize[1]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*2+j] )) return -1;
+				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*2 : blocksize[1]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*2+j], byte_array->missingvalue )) return -1;
 
 				tmp = gsl_stats_quantile_from_sorted_data (d, 1, (size_t) byte_array->numelem, 0.75);
-				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*3 : blocksize[2]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*3+j] )) return -1;
+				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*3 : blocksize[2]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*3+j], byte_array->missingvalue )) return -1;
 
-				if(core_oph_type_cast(d+byte_array->numelem-1, out_string + (output_format ? result->blocksize*4 : blocksize[3]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*4+j] )) return -1;
+				if(core_oph_type_cast(d+byte_array->numelem-1, out_string + (output_format ? result->blocksize*4 : blocksize[3]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*4+j], byte_array->missingvalue )) return -1;
 
 				free(d);
 		                break;
@@ -72,18 +72,18 @@ int core_oph_gsl_boxplot_multi(oph_multistring* byte_array, oph_multistring* res
 				for (i=0;i<byte_array->numelem;++i) d[i]=*(float*)(in_string+i*byte_array->blocksize);
 				gsl_sort_float(d, 1, (size_t) byte_array->numelem);						
 
-				if(core_oph_type_cast(d, out_string, byte_array->type[j], result->type[j] )) return -1;
+				if(core_oph_type_cast(d, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue )) return -1;
 
 				tmp = gsl_stats_float_quantile_from_sorted_data (d, 1, (size_t) byte_array->numelem, 0.25);
-				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize : blocksize[0]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure+j] )) return -1;
+				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize : blocksize[0]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure+j], byte_array->missingvalue )) return -1;
 
 				tmp = gsl_stats_float_median_from_sorted_data(d, 1, (size_t) byte_array->numelem);
-				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*2 : blocksize[1]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*2+j] )) return -1;
+				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*2 : blocksize[1]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*2+j], byte_array->missingvalue )) return -1;
 
 				tmp = gsl_stats_float_quantile_from_sorted_data (d, 1, (size_t) byte_array->numelem, 0.75);
-				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*3 : blocksize[2]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*3+j] )) return -1;
+				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*3 : blocksize[2]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*3+j], byte_array->missingvalue )) return -1;
 
-				if(core_oph_type_cast(d+byte_array->numelem-1, out_string + (output_format ? result->blocksize*4 : blocksize[3]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*4+j] )) return -1;
+				if(core_oph_type_cast(d+byte_array->numelem-1, out_string + (output_format ? result->blocksize*4 : blocksize[3]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*4+j], byte_array->missingvalue )) return -1;
 
 				free(d);
 		                break;
@@ -95,18 +95,18 @@ int core_oph_gsl_boxplot_multi(oph_multistring* byte_array, oph_multistring* res
 
 				gsl_sort_int(d, 1, (size_t) byte_array->numelem);						
 
-				if(core_oph_type_cast(d, out_string, byte_array->type[j], result->type[j] )) return -1;
+				if(core_oph_type_cast(d, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue )) return -1;
 
 				tmp = gsl_stats_int_quantile_from_sorted_data (d, 1, (size_t) byte_array->numelem, 0.25);
-				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize : blocksize[0]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure+j] )) return -1;
+				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize : blocksize[0]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure+j], byte_array->missingvalue )) return -1;
 
 				tmp = gsl_stats_int_median_from_sorted_data(d, 1, (size_t) byte_array->numelem);
-				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*2 : blocksize[1]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*2+j] )) return -1;
+				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*2 : blocksize[1]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*2+j], byte_array->missingvalue )) return -1;
 
 				tmp = gsl_stats_int_quantile_from_sorted_data (d, 1, (size_t) byte_array->numelem, 0.75);
-				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*3 : blocksize[2]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*3+j] )) return -1;
+				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*3 : blocksize[2]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*3+j], byte_array->missingvalue )) return -1;
 
-				if(core_oph_type_cast(d+byte_array->numelem-1, out_string + (output_format ? result->blocksize*4 : blocksize[3]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*4+j] )) return -1;
+				if(core_oph_type_cast(d+byte_array->numelem-1, out_string + (output_format ? result->blocksize*4 : blocksize[3]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*4+j], byte_array->missingvalue )) return -1;
 
 				free(d);
 		                break;
@@ -118,18 +118,18 @@ int core_oph_gsl_boxplot_multi(oph_multistring* byte_array, oph_multistring* res
 
 				gsl_sort_short(d, 1, (size_t) byte_array->numelem);						
 
-				if(core_oph_type_cast(d, out_string, byte_array->type[j], result->type[j] )) return -1;
+				if(core_oph_type_cast(d, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue )) return -1;
 
 				tmp = gsl_stats_short_quantile_from_sorted_data (d, 1, (size_t) byte_array->numelem, 0.25);
-				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize : blocksize[0]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure+j] )) return -1;
+				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize : blocksize[0]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure+j], byte_array->missingvalue )) return -1;
 
 				tmp = gsl_stats_short_median_from_sorted_data(d, 1, (size_t) byte_array->numelem);
-				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*2 : blocksize[1]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*2+j] )) return -1;
+				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*2 : blocksize[1]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*2+j], byte_array->missingvalue )) return -1;
 
 				tmp = gsl_stats_short_quantile_from_sorted_data (d, 1, (size_t) byte_array->numelem, 0.75);
-				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*3 : blocksize[2]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*3+j] )) return -1;
+				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*3 : blocksize[2]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*3+j], byte_array->missingvalue )) return -1;
 
-				if(core_oph_type_cast(d+byte_array->numelem-1, out_string + (output_format ? result->blocksize*4 : blocksize[3]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*4+j] )) return -1;
+				if(core_oph_type_cast(d+byte_array->numelem-1, out_string + (output_format ? result->blocksize*4 : blocksize[3]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*4+j], byte_array->missingvalue )) return -1;
 
 				free(d);
 		                break;
@@ -141,18 +141,18 @@ int core_oph_gsl_boxplot_multi(oph_multistring* byte_array, oph_multistring* res
 
 				gsl_sort_char(d, 1, (size_t) byte_array->numelem);						
 
-				if(core_oph_type_cast(d, out_string, byte_array->type[j], result->type[j] )) return -1;
+				if(core_oph_type_cast(d, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue )) return -1;
 
 				tmp = gsl_stats_char_quantile_from_sorted_data (d, 1, (size_t) byte_array->numelem, 0.25);
-				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize : blocksize[0]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure+j] )) return -1;
+				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize : blocksize[0]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure+j], byte_array->missingvalue )) return -1;
 
 				tmp = gsl_stats_char_median_from_sorted_data(d, 1, (size_t) byte_array->numelem);
-				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*2 : blocksize[1]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*2+j] )) return -1;
+				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*2 : blocksize[1]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*2+j], byte_array->missingvalue )) return -1;
 
 				tmp = gsl_stats_char_quantile_from_sorted_data (d, 1, (size_t) byte_array->numelem, 0.75);
-				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*3 : blocksize[2]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*3+j] )) return -1;
+				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*3 : blocksize[2]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*3+j], byte_array->missingvalue )) return -1;
 
-				if(core_oph_type_cast(d+byte_array->numelem-1, out_string + (output_format ? result->blocksize*4 : blocksize[3]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*4+j] )) return -1;
+				if(core_oph_type_cast(d+byte_array->numelem-1, out_string + (output_format ? result->blocksize*4 : blocksize[3]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*4+j], byte_array->missingvalue )) return -1;
 
 				free(d);
 		                break;
@@ -164,18 +164,18 @@ int core_oph_gsl_boxplot_multi(oph_multistring* byte_array, oph_multistring* res
 
 				gsl_sort_long((long int *)d, 1, (size_t) byte_array->numelem);						
 
-				if(core_oph_type_cast(d, out_string, byte_array->type[j], result->type[j] )) return -1;
+				if(core_oph_type_cast(d, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue )) return -1;
 
 				tmp = gsl_stats_long_quantile_from_sorted_data ((const long int*)d, 1, (size_t) byte_array->numelem, 0.25);
-				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize : blocksize[0]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure+j] )) return -1;
+				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize : blocksize[0]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure+j], byte_array->missingvalue )) return -1;
 
 				tmp = gsl_stats_long_median_from_sorted_data((const long int*)d, 1, (size_t) byte_array->numelem);
-				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*2 : blocksize[1]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*2+j] )) return -1;
+				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*2 : blocksize[1]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*2+j], byte_array->missingvalue )) return -1;
 
 				tmp = gsl_stats_long_quantile_from_sorted_data ((const long int*)d, 1, (size_t) byte_array->numelem, 0.75);
-				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*3 : blocksize[2]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*3+j] )) return -1;
+				if(core_oph_type_cast(&tmp, out_string + (output_format ? result->blocksize*3 : blocksize[2]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*3+j], byte_array->missingvalue )) return -1;
 
-				if(core_oph_type_cast(d+byte_array->numelem-1, out_string + (output_format ? result->blocksize*4 : blocksize[3]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*4+j] )) return -1;
+				if(core_oph_type_cast(d+byte_array->numelem-1, out_string + (output_format ? result->blocksize*4 : blocksize[3]), byte_array->type[j], output_format ? result->type[j] : result->type[byte_array->num_measure*4+j], byte_array->missingvalue )) return -1;
 
 				free(d);
 		                break;

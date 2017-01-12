@@ -259,7 +259,7 @@ char* oph_extract(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long 
 	{
 		index = *((long long*)(index_list->content+i*index_list->elemsize))-1; // Non 'C'-like indexing
 		memcpy(temporary, measure->content+index*measure->elemsize, measure->elemsize);
-		if(core_oph_type_cast(temporary, param->result+i*param->result_elemsize, measure->type, param->result_type))
+		if(core_oph_type_cast(temporary, param->result+i*param->result_elemsize, measure->type, param->result_type, NULL))
 		{
                         pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
                         *length=0;

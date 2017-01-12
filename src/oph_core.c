@@ -100,7 +100,7 @@ int core_set_type(oph_stringPtr str, char* type, unsigned long *len){
         return 0;
 }
 
-int core_oph_multistring_cast (oph_multistring* input, oph_multistring* output){
+int core_oph_multistring_cast (oph_multistring* input, oph_multistring* output, double *missingvalue){
 	/*
 		Assume that input and output multistrings have the same num_measure; 
 		the output numelem controls the number of elements to cast in the input string
@@ -113,14 +113,11 @@ int core_oph_multistring_cast (oph_multistring* input, oph_multistring* output){
 		return -1;
 	}
 	//Check if I can skip the cast phase
-	i = 1;
-	for (j = 0; j < input->num_measure; j++){
-		if(input->type[j] != output->type[j]){
-			i=0;
+	for (j = 0; j < input->num_measure; j++) {
+		if (input->type[j] != output->type[j])
 			break;
-		}
 	}
-	if(i){
+	if (j < input->num_measure) {
         	memcpy(output->content, (void*)(input->content), output->numelem*output->blocksize);
 		return 0;
 	}
@@ -129,35 +126,18 @@ int core_oph_multistring_cast (oph_multistring* input, oph_multistring* output){
 	out_tmp = output->content;
 	for (j = 0; j < input->num_measure; j++){
 		for (i = 0; i < output->numelem; i++){
-			if(core_oph_type_cast( (in_tmp)+(i*input->blocksize), (out_tmp)+(i*output->blocksize), input->type[j], output->type[j])){
+			if(core_oph_type_cast( (in_tmp)+(i*input->blocksize), (out_tmp)+(i*output->blocksize), input->type[j], output->type[j], missingvalue)){
                 		pmesg(1, __FILE__, __LINE__, "Unable to convert elements type\n");
 				return -1;
 			}
 		}
-		in_tmp+=input->elemsize[j];
-		out_tmp+=output->elemsize[j];
+		in_tmp += input->elemsize[j];
+		out_tmp += output->elemsize[j];
 	}
 	return 0;
 }
 
 int core_set_oph_multistring(oph_multistring **str, char* type, unsigned long *len){
-
-/*
-	This function allocates the array of oph_multistring structures and the internal variables.
- 	Given the array of oph_multistring structures, this function sets:
-
-	typedef struct oph_multistring{
-	        char *content;          //Not set
-        	unsigned long *length;  //Not set
-	        oph_type *type;         //Yes (need to be deallocate outside)
-        	size_t num_measure;     //Yes 
-	        size_t *elemsize;       //Yes (need to be deallocate outside)
-        	unsigned long numelem;  //Not set
-		size_t blocksize;	//Yes
-        	unsigned int islast;    //Yes
-	} oph_multistring;
-
-*/
 
         if(!type || !str || !len){
                 pmesg(1, __FILE__, __LINE__, "Null input parameter\n");
@@ -194,6 +174,7 @@ int core_set_oph_multistring(oph_multistring **str, char* type, unsigned long *l
 		(*str)[i].blocksize = 0;
 		(*str)[i].param = 0;
 		(*str)[i].extend = NULL;
+		(*str)[i].missingvalue = NULL;
 	}
 	(*str)[i-1].islast = 1;
 
@@ -1016,7 +997,7 @@ int core_oph_convert (oph_stringPtr byte_array, void *result){
  |               Array functions (BEGIN)                            |
  |------------------------------------------------------------------*/
 
-int core_oph_type_cast (void *input, char *output, oph_type in_type, oph_type out_type)
+int core_oph_type_cast (void *input, char *output, oph_type in_type, oph_type out_type, double *missingvalue)
 {
 	switch(out_type){
 		case OPH_DOUBLE:{
@@ -1084,12 +1065,12 @@ int core_oph_type_cast (void *input, char *output, oph_type in_type, oph_type ou
 		case OPH_INT:{
 			switch(in_type){
 				case OPH_DOUBLE:{
-					if (isnan(*((double*)input))) *((int*)output) = 0;
+					if (isnan(*((double*)input))) *((int*)output) = missingvalue ? (int)*missingvalue : 0;
 					else *((int*)output) = (*((double*)input));
 					return 0;
 				}
 				case OPH_FLOAT:{
-					if (isnan(*((float*)input))) *((int*)output) = 0;
+					if (isnan(*((float*)input))) *((int*)output) = missingvalue ? (int)*missingvalue : 0;
 					else *((int*)output) = (*((float*)input));
 					return 0;
 				}
@@ -1117,12 +1098,12 @@ int core_oph_type_cast (void *input, char *output, oph_type in_type, oph_type ou
 		case OPH_SHORT:{
 			switch(in_type){
 				case OPH_DOUBLE:{
-					if (isnan(*((double*)input))) *((short*)output) = 0L;
+					if (isnan(*((double*)input))) *((short*)output) = missingvalue ? (short)*missingvalue : 0;
 					else *((short*)output) = (*((double*)input));
 					return 0;
 				}
 				case OPH_FLOAT:{
-					if (isnan(*((float*)input))) *((short*)output) = 0L;
+					if (isnan(*((float*)input))) *((short*)output) = missingvalue ? (short)*missingvalue : 0;
 					else *((short*)output) = (*((float*)input));
 					return 0;
 				}
@@ -1150,12 +1131,12 @@ int core_oph_type_cast (void *input, char *output, oph_type in_type, oph_type ou
 		case OPH_BYTE:{
 			switch(in_type){
 				case OPH_DOUBLE:{
-					if (isnan(*((double*)input))) *((char*)output) = 0L;
+					if (isnan(*((double*)input))) *((char*)output) = missingvalue ? (char)*missingvalue : 0;
 					else *((char*)output) = (*((double*)input));
 					return 0;
 				}
 				case OPH_FLOAT:{
-					if (isnan(*((float*)input))) *((char*)output) = 0L;
+					if (isnan(*((float*)input))) *((char*)output) = missingvalue ? (char)*missingvalue : 0;
 					else *((char*)output) = (*((float*)input));
 					return 0;
 				}
@@ -1183,12 +1164,12 @@ int core_oph_type_cast (void *input, char *output, oph_type in_type, oph_type ou
 		case OPH_LONG:{
 			switch(in_type){
 				case OPH_DOUBLE:{
-					if (isnan(*((double*)input))) *((long long*)output) = 0L;
+					if (isnan(*((double*)input))) *((long long*)output) = missingvalue ? (long long)*missingvalue : 0;
 					else *((long long*)output) = (*((double*)input));
 					return 0;
 				}
 				case OPH_FLOAT:{
-					if (isnan(*((float*)input))) *((long long*)output) = 0L;
+					if (isnan(*((float*)input))) *((long long*)output) = missingvalue ? (long long)*missingvalue : 0;
 					else *((long long*)output) = (*((float*)input));
 					return 0;
 				}
@@ -1316,7 +1297,7 @@ int core_oph_count_multi (oph_multistring* byte_array, oph_multistring *result)
 						d = (double*)current;
 						if (!isnan(*d) && (*byte_array->missingvalue != *d)) count++;
 		                	}
-					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j])) return -1;
+					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j], byte_array->missingvalue)) return -1;
 					break;
 		        	}
 		        	case OPH_FLOAT:{
@@ -1326,7 +1307,7 @@ int core_oph_count_multi (oph_multistring* byte_array, oph_multistring *result)
 						d = (float*)current;
 						if (!isnan(*d) && (ms != *d)) count++;
 		                	}
-					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j])) return -1;
+					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j], byte_array->missingvalue)) return -1;
 					break;
 		        	}
 				case OPH_BYTE:{
@@ -1336,7 +1317,7 @@ int core_oph_count_multi (oph_multistring* byte_array, oph_multistring *result)
 						d = (char*)current;
 						if (ms != *d) count++;
 		                	}
-					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j])) return -1;
+					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j], byte_array->missingvalue)) return -1;
 					break;
 		        	}
 				case OPH_SHORT:{
@@ -1346,7 +1327,7 @@ int core_oph_count_multi (oph_multistring* byte_array, oph_multistring *result)
 						d = (short*)current;
 						if (ms != *d) count++;
 		                	}
-					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j])) return -1;
+					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j], byte_array->missingvalue)) return -1;
 					break;
 		        	}
 				case OPH_INT:{
@@ -1356,7 +1337,7 @@ int core_oph_count_multi (oph_multistring* byte_array, oph_multistring *result)
 						d = (int*)current;
 						if (ms != *d) count++;
 		                	}
-					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j])) return -1;
+					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j], byte_array->missingvalue)) return -1;
 					break;
 		        	}
 				case OPH_LONG:{
@@ -1366,7 +1347,7 @@ int core_oph_count_multi (oph_multistring* byte_array, oph_multistring *result)
 						d = (long long*)current;
 						if (ms != *d) count++;
 		                	}
-					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j])) return -1;
+					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j], byte_array->missingvalue)) return -1;
 					break;
 		        	}
 			        default:
@@ -1393,7 +1374,7 @@ int core_oph_count_multi (oph_multistring* byte_array, oph_multistring *result)
 						d = (double*)current;
 						if (!isnan(*d)) count++;
 		                	}
-					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j])) return -1;
+					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j], byte_array->missingvalue)) return -1;
 					break;
 		        	}
 		        	case OPH_FLOAT:{
@@ -1403,7 +1384,7 @@ int core_oph_count_multi (oph_multistring* byte_array, oph_multistring *result)
 						d = (float*)current;
 						if (!isnan(*d)) count++;
 		                	}
-					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j])) return -1;
+					if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j], byte_array->missingvalue)) return -1;
 					break;
 		        	}
 				case OPH_BYTE:
@@ -1411,7 +1392,7 @@ int core_oph_count_multi (oph_multistring* byte_array, oph_multistring *result)
 				case OPH_INT:
 				case OPH_LONG:
 					count = byte_array->numelem;
-		                	if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j])) return -1;
+		                	if (core_oph_type_cast((void*)(&count), out_string, OPH_LONG, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        default:
 		        	        pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
@@ -1683,7 +1664,7 @@ int core_oph_max_multi (oph_multistring* byte_array, oph_multistring *result)
 							else max = d;
 						}
 		                	}
-					if(core_oph_type_cast(max ? max : byte_array->missingvalue, out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast(max ? max : byte_array->missingvalue, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_FLOAT:{
@@ -1700,7 +1681,7 @@ int core_oph_max_multi (oph_multistring* byte_array, oph_multistring *result)
 							else max = d;
 						}
 		                	}
-					if(core_oph_type_cast(max ? max : &ms, out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast(max ? max : &ms, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_INT:{
@@ -1717,7 +1698,7 @@ int core_oph_max_multi (oph_multistring* byte_array, oph_multistring *result)
 							else max = d;
 						}
 		                	}
-					if(core_oph_type_cast(max ? max : &ms, out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast(max ? max : &ms, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_SHORT:{
@@ -1734,7 +1715,7 @@ int core_oph_max_multi (oph_multistring* byte_array, oph_multistring *result)
 							else max = d;
 						}
 		                	}
-					if(core_oph_type_cast(max ? max : &ms, out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast(max ? max : &ms, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_BYTE:{
@@ -1751,7 +1732,7 @@ int core_oph_max_multi (oph_multistring* byte_array, oph_multistring *result)
 							else max = d;
 						}
 		                	}
-					if(core_oph_type_cast(max ? max : &ms, out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast(max ? max : &ms, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 				case OPH_LONG:{
@@ -1768,7 +1749,7 @@ int core_oph_max_multi (oph_multistring* byte_array, oph_multistring *result)
 							else max = d;
 						}
 		                	}
-					if(core_oph_type_cast(max ? max : &ms, out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast(max ? max : &ms, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 			        default:
@@ -1803,12 +1784,12 @@ int core_oph_max_multi (oph_multistring* byte_array, oph_multistring *result)
 		                	}
 					if (max){
 						//Cast of the output
-						if(core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j])) return -1;
+						if(core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 					}
 					else
 					{
 						double value=NAN;
-						if(core_oph_type_cast((void*)(&value), out_string, byte_array->type[j], result->type[j])) return -1;
+						if(core_oph_type_cast((void*)(&value), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 					}
 		                	break;
 		        	}
@@ -1828,12 +1809,12 @@ int core_oph_max_multi (oph_multistring* byte_array, oph_multistring *result)
 		                	}
 					if (max){
 						//Cast of the output
-						if(core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j])) return -1;
+						if(core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 					}
 					else
 					{
 						float value=NAN;
-						if(core_oph_type_cast((void*)(&value), out_string, byte_array->type[j], result->type[j])) return -1;
+						if(core_oph_type_cast((void*)(&value), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 					}
 		                	break;
 		        	}
@@ -1848,7 +1829,7 @@ int core_oph_max_multi (oph_multistring* byte_array, oph_multistring *result)
 						}
 						else max = d;
 		                	}
-					if (!max || core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j]))
+					if (!max || core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
 					{
 						pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
 						return -1;
@@ -1866,7 +1847,7 @@ int core_oph_max_multi (oph_multistring* byte_array, oph_multistring *result)
 						}
 						else max = d;
 		                	}
-					if (!max || core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j]))
+					if (!max || core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
 					{
 						pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
 						return -1;
@@ -1884,7 +1865,7 @@ int core_oph_max_multi (oph_multistring* byte_array, oph_multistring *result)
 						}
 						else max = d;
 		                	}
-					if (!max || core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j]))
+					if (!max || core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
 					{
 						pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
 						return -1;
@@ -1902,7 +1883,7 @@ int core_oph_max_multi (oph_multistring* byte_array, oph_multistring *result)
 						}
 						else max = d;
 		                	}
-					if (!max || core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j]))
+					if (!max || core_oph_type_cast((void*)max, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
 					{
 						pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
 						return -1;
@@ -2180,7 +2161,7 @@ int core_oph_min_multi (oph_multistring* byte_array, oph_multistring *result)
 							else min = d;
 						}
 		                	}
-					if(core_oph_type_cast(min ? min : byte_array->missingvalue, out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast(min ? min : byte_array->missingvalue, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_FLOAT:{
@@ -2197,7 +2178,7 @@ int core_oph_min_multi (oph_multistring* byte_array, oph_multistring *result)
 							else min = d;
 						}
 		                	}
-					if(core_oph_type_cast(min ? min : &ms, out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast(min ? min : &ms, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_INT:{
@@ -2214,7 +2195,7 @@ int core_oph_min_multi (oph_multistring* byte_array, oph_multistring *result)
 							else min = d;
 						}
 		                	}
-					if(core_oph_type_cast(min ? min : &ms, out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast(min ? min : &ms, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_SHORT:{
@@ -2231,7 +2212,7 @@ int core_oph_min_multi (oph_multistring* byte_array, oph_multistring *result)
 							else min = d;
 						}
 		                	}
-					if(core_oph_type_cast(min ? min : &ms, out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast(min ? min : &ms, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_BYTE:{
@@ -2248,7 +2229,7 @@ int core_oph_min_multi (oph_multistring* byte_array, oph_multistring *result)
 							else min = d;
 						}
 		                	}
-					if(core_oph_type_cast(min ? min : &ms, out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast(min ? min : &ms, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 				case OPH_LONG:{
@@ -2265,7 +2246,7 @@ int core_oph_min_multi (oph_multistring* byte_array, oph_multistring *result)
 							else min = d;
 						}
 		                	}
-					if(core_oph_type_cast(min ? min : &ms, out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast(min ? min : &ms, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 			        default:
@@ -2300,12 +2281,12 @@ int core_oph_min_multi (oph_multistring* byte_array, oph_multistring *result)
 		                	}
 					if (min){
 						//Cast of the output
-						if(core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j])) return -1;
+						if(core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 					}
 					else
 					{
 						double value=NAN;
-						if(core_oph_type_cast((void*)(&value), out_string, byte_array->type[j], result->type[j])) return -1;
+						if(core_oph_type_cast((void*)(&value), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 					}
 		                	break;
 		        	}
@@ -2325,12 +2306,12 @@ int core_oph_min_multi (oph_multistring* byte_array, oph_multistring *result)
 		                	}
 					if (min){
 						//Cast of the output
-						if(core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j])) return -1;
+						if(core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 					}
 					else
 					{
 						float value=NAN;
-						if(core_oph_type_cast((void*)(&value), out_string, byte_array->type[j], result->type[j])) return -1;
+						if(core_oph_type_cast((void*)(&value), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 					}
 		                	break;
 		        	}
@@ -2345,7 +2326,7 @@ int core_oph_min_multi (oph_multistring* byte_array, oph_multistring *result)
 						}
 						else min = d;
 		                	}
-					if (!min || core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j]))
+					if (!min || core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
 					{
 						pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
 						return -1;
@@ -2363,7 +2344,7 @@ int core_oph_min_multi (oph_multistring* byte_array, oph_multistring *result)
 						}
 						else min = d;
 		                	}
-					if (!min || core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j]))
+					if (!min || core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
 					{
 						pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
 						return -1;
@@ -2381,7 +2362,7 @@ int core_oph_min_multi (oph_multistring* byte_array, oph_multistring *result)
 						}
 						else min = d;
 		                	}
-					if (!min || core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j]))
+					if (!min || core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
 					{
 						pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
 						return -1;
@@ -2399,7 +2380,7 @@ int core_oph_min_multi (oph_multistring* byte_array, oph_multistring *result)
 						}
 						else min = d;
 		                	}
-					if (!min || core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j]))
+					if (!min || core_oph_type_cast((void*)min, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
 					{
 						pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
 						return -1;
@@ -2535,7 +2516,7 @@ int core_oph_sum_multi (oph_multistring* byte_array, oph_multistring *result)
 		                	double sum = 0.0;
 		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (!isnan(*(double*)current) && (*byte_array->missingvalue != *(double*)current)) { sum += *(double*)current; nan = 0; }
 					if (nan) sum = *byte_array->missingvalue;
-					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_FLOAT:
@@ -2543,35 +2524,35 @@ int core_oph_sum_multi (oph_multistring* byte_array, oph_multistring *result)
 		                	float sum = 0.0, ms = (float)*byte_array->missingvalue;
 		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (!isnan(*(float*)current) && (ms != *(float*)current)) { sum += *(float*)current; nan = 0; }
 					if (nan) sum = ms;
-					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_INT:{
 		                	int sum = 0, ms = (int)*byte_array->missingvalue;
 		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (ms != *(int*)current) { sum += *(int*)current; }
 					if (nan) sum = ms;
-					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_SHORT:{
 		                	short sum = 0, ms = (short)*byte_array->missingvalue;
 		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (ms != *(short*)current) { sum += *(short*)current; }
 					if (nan) sum = ms;
-					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_BYTE:{
 		                	char sum = 0, ms = (char)*byte_array->missingvalue;
 		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (ms != *(char*)current) { sum += *(char*)current; }
 					if (nan) sum = ms;
-					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 				case OPH_LONG:{
 		                	long long sum = 0, ms = (long long)*byte_array->missingvalue;
 		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (ms != *(long long*)current) { sum += *(long long*)current; }
 					if (nan) sum = ms;
-					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 			        default:
@@ -2595,7 +2576,7 @@ int core_oph_sum_multi (oph_multistring* byte_array, oph_multistring *result)
 		                	double sum = 0.0;
 		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (!isnan(*(double*)current)) { sum += *(double*)current; nan = 0; }
 					if (nan) sum = NAN;
-					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_FLOAT:
@@ -2604,31 +2585,31 @@ int core_oph_sum_multi (oph_multistring* byte_array, oph_multistring *result)
 		                	float sum = 0.0;
 		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) if (!isnan(*(float*)current)) { sum += *(float*)current; nan = 0; }
 					if (nan) sum = NAN;
-					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_INT:{
 		                	int sum = 0;
 		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(int*)current;
-					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_SHORT:{
 		                	short sum = 0;
 		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(short*)current;
-					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_BYTE:{
 		                	char sum = 0;
 		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(char*)current;
-					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 				case OPH_LONG:{
 		                	long long sum = 0;
 		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(long long*)current;
-					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 			        default:
@@ -2855,7 +2836,7 @@ int core_oph_avg_multi (oph_multistring* byte_array, oph_multistring *result)
 		                	}
 					if (numelem) sum /= (double)numelem;
 					else sum = *byte_array->missingvalue;
-					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_FLOAT:{
@@ -2871,7 +2852,7 @@ int core_oph_avg_multi (oph_multistring* byte_array, oph_multistring *result)
 		                	}
 					if (numelem) sum /= (float)numelem;
 					else sum = ms;
-					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_INT:{
@@ -2888,7 +2869,7 @@ int core_oph_avg_multi (oph_multistring* byte_array, oph_multistring *result)
 		                	}
 					if (numelem) sum /= (float)numelem;
 					else sum = ms;
-					if(core_oph_type_cast((void*)(&sum), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_SHORT:{
@@ -2905,7 +2886,7 @@ int core_oph_avg_multi (oph_multistring* byte_array, oph_multistring *result)
 		                	}
 					if (numelem) sum /= (float)numelem;
 					else sum = ms;
-					if(core_oph_type_cast((void*)(&sum), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 				case OPH_BYTE:{
@@ -2922,7 +2903,7 @@ int core_oph_avg_multi (oph_multistring* byte_array, oph_multistring *result)
 		                	}
 					if (numelem) sum /= (float)numelem;
 					else sum = ms;
-					if(core_oph_type_cast((void*)(&sum), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 				case OPH_LONG:{
@@ -2939,7 +2920,7 @@ int core_oph_avg_multi (oph_multistring* byte_array, oph_multistring *result)
 		                	}
 					if (numelem) sum /= (double)numelem;
 					else sum = ms;
-					if(core_oph_type_cast((void*)(&sum), out_string, OPH_DOUBLE, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 			        default:
@@ -2972,7 +2953,7 @@ int core_oph_avg_multi (oph_multistring* byte_array, oph_multistring *result)
 		                	}
 					if (numelem) sum /= (double)numelem;
 					else sum = NAN;
-					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_FLOAT:{
@@ -2988,35 +2969,35 @@ int core_oph_avg_multi (oph_multistring* byte_array, oph_multistring *result)
 		                	}
 					if (numelem) sum /= (float)numelem;
 					else sum = NAN;
-					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_INT:{
 		                	float sum = 0;
 		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(int*)current;
 					sum /= (float)byte_array->numelem;
-					if(core_oph_type_cast((void*)(&sum), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_SHORT:{
 		                	float sum = 0;
 		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(short*)current;
 					sum /= (float)byte_array->numelem;
-					if(core_oph_type_cast((void*)(&sum), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 				case OPH_BYTE:{
 		                	float sum = 0;
 		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(char*)current;
 					sum /= (float)byte_array->numelem;
-					if(core_oph_type_cast((void*)(&sum), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 				case OPH_LONG:{
 		                	double sum = 0;
 		                	for (i = 0; i < byte_array->numelem; i++, current+=byte_array->blocksize) sum += *(long long*)current;
 					sum /= (double)byte_array->numelem;
-					if(core_oph_type_cast((void*)(&sum), out_string, OPH_DOUBLE, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum), out_string, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 			        default:
@@ -3096,7 +3077,7 @@ int core_oph_std_multi (oph_multistring* byte_array, oph_multistring *result)
 						if (numelem>1) sum2 *= numelem/(numelem-1.0);
 						sum2 = sqrt(fabs(sum2));
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_FLOAT:{
@@ -3120,7 +3101,7 @@ int core_oph_std_multi (oph_multistring* byte_array, oph_multistring *result)
 						if (numelem>1) sum2 *= numelem/(numelem-1.0);
 						sum2 = sqrtf(fabsf(sum2));
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_INT:{
@@ -3145,7 +3126,7 @@ int core_oph_std_multi (oph_multistring* byte_array, oph_multistring *result)
 						if (numelem>1) sum2 *= numelem/(numelem-1.0);
 						sum2 = sqrtf(fabsf(sum2));
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_SHORT:{
@@ -3170,7 +3151,7 @@ int core_oph_std_multi (oph_multistring* byte_array, oph_multistring *result)
 						if (numelem>1) sum2 *= numelem/(numelem-1.0);
 						sum2 = sqrtf(fabsf(sum2));
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_BYTE:{
@@ -3195,7 +3176,7 @@ int core_oph_std_multi (oph_multistring* byte_array, oph_multistring *result)
 						if (numelem>1) sum2 *= numelem/(numelem-1.0);
 						sum2 = sqrtf(fabsf(sum2));
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 				case OPH_LONG:{
@@ -3220,7 +3201,7 @@ int core_oph_std_multi (oph_multistring* byte_array, oph_multistring *result)
 						if (numelem>1) sum2 *= numelem/(numelem-1.0);
 						sum2 = sqrt(fabs(sum2));
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 			        default:
@@ -3261,7 +3242,7 @@ int core_oph_std_multi (oph_multistring* byte_array, oph_multistring *result)
 						if (numelem>1) sum2 *= numelem/(numelem-1.0);
 						sum2 = sqrt(fabs(sum2));
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_FLOAT:{
@@ -3285,7 +3266,7 @@ int core_oph_std_multi (oph_multistring* byte_array, oph_multistring *result)
 						if (numelem>1) sum2 *= numelem/(numelem-1.0);
 						sum2 = sqrtf(fabsf(sum2));
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_INT:{
@@ -3302,7 +3283,7 @@ int core_oph_std_multi (oph_multistring* byte_array, oph_multistring *result)
 					sum2 -= sum*sum;
 					if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
 					sum2 = sqrtf(fabsf(sum2));
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_SHORT:{
@@ -3319,7 +3300,7 @@ int core_oph_std_multi (oph_multistring* byte_array, oph_multistring *result)
 					sum2 -= sum*sum;
 					if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
 					sum2 = sqrtf(fabsf(sum2));
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_BYTE:{
@@ -3336,7 +3317,7 @@ int core_oph_std_multi (oph_multistring* byte_array, oph_multistring *result)
 					sum2 -= sum*sum;
 					if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
 					sum2 = sqrtf(fabsf(sum2));
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 				case OPH_LONG:{
@@ -3353,7 +3334,7 @@ int core_oph_std_multi (oph_multistring* byte_array, oph_multistring *result)
 					sum2 -= sum*sum;
 					if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
 					sum2 = sqrt(fabs(sum2));
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 			        default:
@@ -3672,7 +3653,7 @@ int core_oph_var_multi (oph_multistring* byte_array, oph_multistring *result)
 						sum2 -= sum*sum;
 						if (numelem>1) sum2 *= numelem/(numelem-1.0);
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_FLOAT:{
@@ -3695,7 +3676,7 @@ int core_oph_var_multi (oph_multistring* byte_array, oph_multistring *result)
 						sum2 -= sum*sum;
 						if (numelem>1) sum2 *= numelem/(numelem-1.0);
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_INT:{
@@ -3719,7 +3700,7 @@ int core_oph_var_multi (oph_multistring* byte_array, oph_multistring *result)
 						sum2 -= sum*sum;
 						if (numelem>1) sum2 *= numelem/(numelem-1.0);
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_SHORT:{
@@ -3743,7 +3724,7 @@ int core_oph_var_multi (oph_multistring* byte_array, oph_multistring *result)
 						sum2 -= sum*sum;
 						if (numelem>1) sum2 *= numelem/(numelem-1.0);
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_BYTE:{
@@ -3767,7 +3748,7 @@ int core_oph_var_multi (oph_multistring* byte_array, oph_multistring *result)
 						sum2 -= sum*sum;
 						if (numelem>1) sum2 *= numelem/(numelem-1.0);
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 				case OPH_LONG:{
@@ -3791,7 +3772,7 @@ int core_oph_var_multi (oph_multistring* byte_array, oph_multistring *result)
 						sum2 -= sum*sum;
 						if (numelem>1) sum2 *= numelem/(numelem-1.0);
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 			        default:
@@ -3831,7 +3812,7 @@ int core_oph_var_multi (oph_multistring* byte_array, oph_multistring *result)
 						sum2 -= sum*sum;
 						if (numelem>1) sum2 *= numelem/(numelem-1.0);
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_FLOAT:{
@@ -3854,7 +3835,7 @@ int core_oph_var_multi (oph_multistring* byte_array, oph_multistring *result)
 						sum2 -= sum*sum;
 						if (numelem>1) sum2 *= numelem/(numelem-1.0);
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_INT:{
@@ -3870,7 +3851,7 @@ int core_oph_var_multi (oph_multistring* byte_array, oph_multistring *result)
 					sum2 /= (float)byte_array->numelem;
 					sum2 -= sum*sum;
 					if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_SHORT:{
@@ -3886,7 +3867,7 @@ int core_oph_var_multi (oph_multistring* byte_array, oph_multistring *result)
 					sum2 /= (float)byte_array->numelem;
 					sum2 -= sum*sum;
 					if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_BYTE:{
@@ -3902,7 +3883,7 @@ int core_oph_var_multi (oph_multistring* byte_array, oph_multistring *result)
 					sum2 /= (float)byte_array->numelem;
 					sum2 -= sum*sum;
 					if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 				case OPH_LONG:{
@@ -3918,7 +3899,7 @@ int core_oph_var_multi (oph_multistring* byte_array, oph_multistring *result)
 					sum2 /= (double)byte_array->numelem;
 					sum2 -= sum*sum;
 					if (byte_array->numelem>1) sum2 *= byte_array->numelem/(byte_array->numelem-1.0);
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 			        default:
@@ -4226,7 +4207,7 @@ int core_oph_cmoment_multi (oph_multistring* byte_array, oph_multistring *result
 						}
 						sum2 /= numelem;
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_FLOAT:{
@@ -4252,7 +4233,7 @@ int core_oph_cmoment_multi (oph_multistring* byte_array, oph_multistring *result
 						}
 						sum2 /= numelem;
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_INT:{
@@ -4279,7 +4260,7 @@ int core_oph_cmoment_multi (oph_multistring* byte_array, oph_multistring *result
 						}
 						sum2 /= numelem;
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_SHORT:{
@@ -4306,7 +4287,7 @@ int core_oph_cmoment_multi (oph_multistring* byte_array, oph_multistring *result
 						}
 						sum2 /= numelem;
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_BYTE:{
@@ -4333,7 +4314,7 @@ int core_oph_cmoment_multi (oph_multistring* byte_array, oph_multistring *result
 						}
 						sum2 /= numelem;
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 				case OPH_LONG:{
@@ -4360,7 +4341,7 @@ int core_oph_cmoment_multi (oph_multistring* byte_array, oph_multistring *result
 						}
 						sum2 /= numelem;
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 			        default:
@@ -4403,7 +4384,7 @@ int core_oph_cmoment_multi (oph_multistring* byte_array, oph_multistring *result
 						}
 						sum2 /= numelem;
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_FLOAT:{
@@ -4429,7 +4410,7 @@ int core_oph_cmoment_multi (oph_multistring* byte_array, oph_multistring *result
 						}
 						sum2 /= numelem;
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_INT:{
@@ -4448,7 +4429,7 @@ int core_oph_cmoment_multi (oph_multistring* byte_array, oph_multistring *result
 						sum2 += powf((*d)-sum, (float)byte_array->param);
 					}
 					sum2 /= (float)byte_array->numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_SHORT:{
@@ -4467,7 +4448,7 @@ int core_oph_cmoment_multi (oph_multistring* byte_array, oph_multistring *result
 						sum2 += powf((*d)-sum, (float)byte_array->param);
 					}
 					sum2 /= (float)byte_array->numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_BYTE:{
@@ -4486,7 +4467,7 @@ int core_oph_cmoment_multi (oph_multistring* byte_array, oph_multistring *result
 						sum2 += powf((*d)-sum, (float)byte_array->param);
 					}
 					sum2 /= (float)byte_array->numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 				case OPH_LONG:{
@@ -4505,7 +4486,7 @@ int core_oph_cmoment_multi (oph_multistring* byte_array, oph_multistring *result
 						sum2 += pow((*d)-sum, byte_array->param);
 					}
 					sum2 /= (double)byte_array->numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 			        default:
@@ -4813,7 +4794,7 @@ int core_oph_acmoment_multi (oph_multistring* byte_array, oph_multistring *resul
 						}
 						sum2 /= numelem;
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_FLOAT:{
@@ -4839,7 +4820,7 @@ int core_oph_acmoment_multi (oph_multistring* byte_array, oph_multistring *resul
 						}
 						sum2 /= numelem;
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_INT:{
@@ -4866,7 +4847,7 @@ int core_oph_acmoment_multi (oph_multistring* byte_array, oph_multistring *resul
 						}
 						sum2 /= numelem;
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_SHORT:{
@@ -4893,7 +4874,7 @@ int core_oph_acmoment_multi (oph_multistring* byte_array, oph_multistring *resul
 						}
 						sum2 /= numelem;
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_BYTE:{
@@ -4920,7 +4901,7 @@ int core_oph_acmoment_multi (oph_multistring* byte_array, oph_multistring *resul
 						}
 						sum2 /= numelem;
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 				case OPH_LONG:{
@@ -4947,7 +4928,7 @@ int core_oph_acmoment_multi (oph_multistring* byte_array, oph_multistring *resul
 						}
 						sum2 /= numelem;
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 			        default:
@@ -4990,7 +4971,7 @@ int core_oph_acmoment_multi (oph_multistring* byte_array, oph_multistring *resul
 						}
 						sum2 /= numelem;
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_FLOAT:{
@@ -5016,7 +4997,7 @@ int core_oph_acmoment_multi (oph_multistring* byte_array, oph_multistring *resul
 						}
 						sum2 /= numelem;
 					}
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_INT:{
@@ -5035,7 +5016,7 @@ int core_oph_acmoment_multi (oph_multistring* byte_array, oph_multistring *resul
 						sum2 += powf(fabsf((*d)-sum), (float)byte_array->param);
 					}
 					sum2 /= (float)byte_array->numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_SHORT:{
@@ -5054,7 +5035,7 @@ int core_oph_acmoment_multi (oph_multistring* byte_array, oph_multistring *resul
 						sum2 += powf(fabsf((*d)-sum), (float)byte_array->param);
 					}
 					sum2 /= (float)byte_array->numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_BYTE:{
@@ -5073,7 +5054,7 @@ int core_oph_acmoment_multi (oph_multistring* byte_array, oph_multistring *resul
 						sum2 += powf(fabsf((*d)-sum), (float)byte_array->param);
 					}
 					sum2 /= (float)byte_array->numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 				case OPH_LONG:{
@@ -5092,7 +5073,7 @@ int core_oph_acmoment_multi (oph_multistring* byte_array, oph_multistring *resul
 						sum2 += pow(fabs((*d)-sum), byte_array->param);
 					}
 					sum2 /= (double)byte_array->numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 			        default:
@@ -5330,7 +5311,7 @@ int core_oph_rmoment_multi (oph_multistring* byte_array, oph_multistring *result
 		                	}
 					if (!numelem) sum2 = *byte_array->missingvalue;
 					else sum2 /= numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_FLOAT:{
@@ -5346,7 +5327,7 @@ int core_oph_rmoment_multi (oph_multistring* byte_array, oph_multistring *result
 		                	}
 					if (!numelem) sum2 = ms;
 					else sum2 /= numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_INT:{
@@ -5363,7 +5344,7 @@ int core_oph_rmoment_multi (oph_multistring* byte_array, oph_multistring *result
 		                	}
 					if (!numelem) sum2 = ms;
 					else sum2 /= numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_SHORT:{
@@ -5380,7 +5361,7 @@ int core_oph_rmoment_multi (oph_multistring* byte_array, oph_multistring *result
 		                	}
 					if (!numelem) sum2 = ms;
 					else sum2 /= numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_BYTE:{
@@ -5397,7 +5378,7 @@ int core_oph_rmoment_multi (oph_multistring* byte_array, oph_multistring *result
 		                	}
 					if (!numelem) sum2 = ms;
 					else sum2 /= numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 				case OPH_LONG:{
@@ -5414,7 +5395,7 @@ int core_oph_rmoment_multi (oph_multistring* byte_array, oph_multistring *result
 		                	}
 					if (!numelem) sum2 = ms;
 					else sum2 /= numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 			        default:
@@ -5447,7 +5428,7 @@ int core_oph_rmoment_multi (oph_multistring* byte_array, oph_multistring *result
 		                	}
 					if (!numelem) sum2 = NAN;
 					else sum2 /= numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_FLOAT:{
@@ -5463,7 +5444,7 @@ int core_oph_rmoment_multi (oph_multistring* byte_array, oph_multistring *result
 		                	}
 					if (!numelem) sum2 = NAN;
 					else sum2 /= numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_INT:{
@@ -5475,7 +5456,7 @@ int core_oph_rmoment_multi (oph_multistring* byte_array, oph_multistring *result
 						sum2 += powf(*d, (float)byte_array->param);
 					}
 					sum2 /= (float)byte_array->numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_SHORT:{
@@ -5487,7 +5468,7 @@ int core_oph_rmoment_multi (oph_multistring* byte_array, oph_multistring *result
 						sum2 += powf(*d, (float)byte_array->param);
 					}
 					sum2 /= (float)byte_array->numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_BYTE:{
@@ -5499,7 +5480,7 @@ int core_oph_rmoment_multi (oph_multistring* byte_array, oph_multistring *result
 						sum2 += powf(*d, (float)byte_array->param);
 					}
 					sum2 /= (float)byte_array->numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 				case OPH_LONG:{
@@ -5511,7 +5492,7 @@ int core_oph_rmoment_multi (oph_multistring* byte_array, oph_multistring *result
 						sum2 += pow(*d, byte_array->param);
 					}
 					sum2 /= (double)byte_array->numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 			        default:
@@ -5749,7 +5730,7 @@ int core_oph_armoment_multi (oph_multistring* byte_array, oph_multistring *resul
 		                	}
 					if (!numelem) sum2 = *byte_array->missingvalue;
 					else sum2 /= numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_FLOAT:{
@@ -5765,7 +5746,7 @@ int core_oph_armoment_multi (oph_multistring* byte_array, oph_multistring *resul
 		                	}
 					if (!numelem) sum2 = ms;
 					else sum2 /= numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_INT:{
@@ -5782,7 +5763,7 @@ int core_oph_armoment_multi (oph_multistring* byte_array, oph_multistring *resul
 		                	}
 					if (!numelem) sum2 = ms;
 					else sum2 /= numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_SHORT:{
@@ -5799,7 +5780,7 @@ int core_oph_armoment_multi (oph_multistring* byte_array, oph_multistring *resul
 		                	}
 					if (!numelem) sum2 = ms;
 					else sum2 /= numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_BYTE:{
@@ -5816,7 +5797,7 @@ int core_oph_armoment_multi (oph_multistring* byte_array, oph_multistring *resul
 		                	}
 					if (!numelem) sum2 = ms;
 					else sum2 /= numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 				case OPH_LONG:{
@@ -5833,7 +5814,7 @@ int core_oph_armoment_multi (oph_multistring* byte_array, oph_multistring *resul
 		                	}
 					if (!numelem) sum2 = ms;
 					else sum2 /= numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 			        default:
@@ -5866,7 +5847,7 @@ int core_oph_armoment_multi (oph_multistring* byte_array, oph_multistring *resul
 		                	}
 					if (!numelem) sum2 = NAN;
 					else sum2 /= numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_FLOAT:{
@@ -5882,7 +5863,7 @@ int core_oph_armoment_multi (oph_multistring* byte_array, oph_multistring *resul
 		                	}
 					if (!numelem) sum2 = NAN;
 					else sum2 /= numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 		        	}
 		        	case OPH_INT:{
@@ -5894,7 +5875,7 @@ int core_oph_armoment_multi (oph_multistring* byte_array, oph_multistring *resul
 						sum2 += powf(fabsf(*d), (float)byte_array->param);
 					}
 					sum2 /= (float)byte_array->numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_SHORT:{
@@ -5906,7 +5887,7 @@ int core_oph_armoment_multi (oph_multistring* byte_array, oph_multistring *resul
 						sum2 += powf(fabsf(*d), (float)byte_array->param);
 					}
 					sum2 /= (float)byte_array->numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 		        	case OPH_BYTE:{
@@ -5918,7 +5899,7 @@ int core_oph_armoment_multi (oph_multistring* byte_array, oph_multistring *resul
 						sum2 += powf(fabsf(*d), (float)byte_array->param);
 					}
 					sum2 /= (float)byte_array->numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 				case OPH_LONG:{
@@ -5930,7 +5911,7 @@ int core_oph_armoment_multi (oph_multistring* byte_array, oph_multistring *resul
 						sum2 += pow(fabs(*d), byte_array->param);
 					}
 					sum2 /= (double)byte_array->numelem;
-					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&sum2), out_string, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 		                	break;
 			        }
 			        default:
@@ -8422,7 +8403,7 @@ int core_oph_shift(oph_generic_param* param, long long offset, double filling, i
 			{
 				for (i=0, j=0; j<part1; i+=byte_array->elemsize, j+=param->result_elemsize)
 				{
-					if(core_oph_type_cast(byte_array->content+i, result+part2+j, byte_array->type, param->result_type))
+					if(core_oph_type_cast(byte_array->content+i, result+part2+j, byte_array->type, param->result_type, NULL))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -8437,7 +8418,7 @@ int core_oph_shift(oph_generic_param* param, long long offset, double filling, i
 			{
 				for (i=0, j=0; j<part2; i+=byte_array->elemsize, j+=param->result_elemsize)
 				{
-					if(core_oph_type_cast(byte_array->content+opart1+i, result+j, byte_array->type, param->result_type))
+					if(core_oph_type_cast(byte_array->content+opart1+i, result+j, byte_array->type, param->result_type, NULL))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -8452,7 +8433,7 @@ int core_oph_shift(oph_generic_param* param, long long offset, double filling, i
 			{
 				for (i=0;i<offset;++i)
 				{
-					if(core_oph_type_cast(&filling, result+i*param->result_elemsize, byte_array->type, param->result_type))
+					if(core_oph_type_cast(&filling, result+i*param->result_elemsize, byte_array->type, param->result_type, NULL))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -8465,7 +8446,7 @@ int core_oph_shift(oph_generic_param* param, long long offset, double filling, i
 				float value = (float)filling;
 				for (i=0;i<offset;++i)
 				{
-					if(core_oph_type_cast(&value, result+i*param->result_elemsize, byte_array->type, param->result_type))
+					if(core_oph_type_cast(&value, result+i*param->result_elemsize, byte_array->type, param->result_type, NULL))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -8478,7 +8459,7 @@ int core_oph_shift(oph_generic_param* param, long long offset, double filling, i
 				int value = (int)filling;
 				for (i=0;i<offset;++i)
 				{
-					if(core_oph_type_cast(&value, result+i*param->result_elemsize, byte_array->type, param->result_type))
+					if(core_oph_type_cast(&value, result+i*param->result_elemsize, byte_array->type, param->result_type, NULL))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -8491,7 +8472,7 @@ int core_oph_shift(oph_generic_param* param, long long offset, double filling, i
 				short value = (short)filling;
 				for (i=0;i<offset;++i)
 				{
-					if(core_oph_type_cast(&value, result+i*param->result_elemsize, byte_array->type, param->result_type))
+					if(core_oph_type_cast(&value, result+i*param->result_elemsize, byte_array->type, param->result_type, NULL))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -8504,7 +8485,7 @@ int core_oph_shift(oph_generic_param* param, long long offset, double filling, i
 				char value = (char)filling;
 				for (i=0;i<offset;++i)
 				{
-					if(core_oph_type_cast(&value, result+i*param->result_elemsize, byte_array->type, param->result_type))
+					if(core_oph_type_cast(&value, result+i*param->result_elemsize, byte_array->type, param->result_type, NULL))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -8517,7 +8498,7 @@ int core_oph_shift(oph_generic_param* param, long long offset, double filling, i
 				long long value = (long long)filling;
 				for (i=0;i<offset;++i)
 				{
-					if(core_oph_type_cast(&value, result+i*param->result_elemsize, byte_array->type, param->result_type))
+					if(core_oph_type_cast(&value, result+i*param->result_elemsize, byte_array->type, param->result_type, NULL))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -8545,7 +8526,7 @@ int core_oph_shift(oph_generic_param* param, long long offset, double filling, i
 			{
 				for (i=0, j=0; j<part1; i+=byte_array->elemsize, j+=param->result_elemsize)
 				{
-					if(core_oph_type_cast(byte_array->content+opart2+i, result+j, byte_array->type, param->result_type))
+					if(core_oph_type_cast(byte_array->content+opart2+i, result+j, byte_array->type, param->result_type, NULL))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -8560,7 +8541,7 @@ int core_oph_shift(oph_generic_param* param, long long offset, double filling, i
 			{
 				for (i=0, j=0; j<part2; i+=byte_array->elemsize, j+=param->result_elemsize)
 				{
-					if(core_oph_type_cast(byte_array->content+i, result+part1+j, byte_array->type, param->result_type))
+					if(core_oph_type_cast(byte_array->content+i, result+part1+j, byte_array->type, param->result_type, NULL))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -8575,7 +8556,7 @@ int core_oph_shift(oph_generic_param* param, long long offset, double filling, i
 			{
 				for (i=0;i<-offset;++i)
 				{
-					if(core_oph_type_cast(&filling, result+part1+i*param->result_elemsize, byte_array->type, param->result_type))
+					if(core_oph_type_cast(&filling, result+part1+i*param->result_elemsize, byte_array->type, param->result_type, NULL))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -8588,7 +8569,7 @@ int core_oph_shift(oph_generic_param* param, long long offset, double filling, i
 				float value = (float)filling;
 				for (i=0;i<-offset;++i)
 				{
-					if(core_oph_type_cast(&value, result+part1+i*param->result_elemsize, byte_array->type, param->result_type))
+					if(core_oph_type_cast(&value, result+part1+i*param->result_elemsize, byte_array->type, param->result_type, NULL))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -8601,7 +8582,7 @@ int core_oph_shift(oph_generic_param* param, long long offset, double filling, i
 				int value = (int)filling;
 				for (i=0;i<-offset;++i)
 				{
-					if(core_oph_type_cast(&value, result+part1+i*param->result_elemsize, byte_array->type, param->result_type))
+					if(core_oph_type_cast(&value, result+part1+i*param->result_elemsize, byte_array->type, param->result_type, NULL))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -8614,7 +8595,7 @@ int core_oph_shift(oph_generic_param* param, long long offset, double filling, i
 				short value = (short)filling;
 				for (i=0;i<-offset;++i)
 				{
-					if(core_oph_type_cast(&value, result+part1+i*param->result_elemsize, byte_array->type, param->result_type))
+					if(core_oph_type_cast(&value, result+part1+i*param->result_elemsize, byte_array->type, param->result_type, NULL))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -8627,7 +8608,7 @@ int core_oph_shift(oph_generic_param* param, long long offset, double filling, i
 				char value = (char)filling;
 				for (i=0;i<-offset;++i)
 				{
-					if(core_oph_type_cast(&value, result+part1+i*param->result_elemsize, byte_array->type, param->result_type))
+					if(core_oph_type_cast(&value, result+part1+i*param->result_elemsize, byte_array->type, param->result_type, NULL))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -8640,7 +8621,7 @@ int core_oph_shift(oph_generic_param* param, long long offset, double filling, i
 				long long value = (long long)filling;
 				for (i=0;i<-offset;++i)
 				{
-					if(core_oph_type_cast(&value, result+part1+i*param->result_elemsize, byte_array->type, param->result_type))
+					if(core_oph_type_cast(&value, result+part1+i*param->result_elemsize, byte_array->type, param->result_type, NULL))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -8660,7 +8641,7 @@ int core_oph_shift(oph_generic_param* param, long long offset, double filling, i
 	{
 		for (i=0;i<byte_array->numelem;++i)
 		{
-			if(core_oph_type_cast(byte_array->content+i*byte_array->elemsize, result+i*param->result_elemsize, byte_array->type, param->result_type))
+			if(core_oph_type_cast(byte_array->content+i*byte_array->elemsize, result+i*param->result_elemsize, byte_array->type, param->result_type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 				return 1;
@@ -8722,7 +8703,7 @@ int core_oph_simple_moving_avg (oph_generic_param *param, long long k)
 						moving_avg = NAN;	
 					}			
 				}
-				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, byte_array->type, param->result_type))
+				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, byte_array->type, param->result_type, NULL))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -8772,7 +8753,7 @@ int core_oph_simple_moving_avg (oph_generic_param *param, long long k)
 						moving_avg = NAN;
 					}			
 				}
-				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, byte_array->type, param->result_type))
+				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, byte_array->type, param->result_type, NULL))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -8800,7 +8781,7 @@ int core_oph_simple_moving_avg (oph_generic_param *param, long long k)
 					moving_sum = moving_sum + d[i] - d[i - k];
 					moving_avg = (float)moving_sum/(float)k;
 				}
-				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, OPH_FLOAT, param->result_type))
+				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, OPH_FLOAT, param->result_type, NULL))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -8828,7 +8809,7 @@ int core_oph_simple_moving_avg (oph_generic_param *param, long long k)
 					moving_sum = moving_sum + d[i] - d[i - k];
 					moving_avg = (float)moving_sum/(float)k;
 				}
-				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, OPH_FLOAT, param->result_type))
+				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, OPH_FLOAT, param->result_type, NULL))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -8856,7 +8837,7 @@ int core_oph_simple_moving_avg (oph_generic_param *param, long long k)
 					moving_sum = moving_sum + d[i] - d[i - k];
 					moving_avg = (float)moving_sum/(float)k;
 				}
-				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, OPH_FLOAT, param->result_type))
+				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, OPH_FLOAT, param->result_type, NULL))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -8882,7 +8863,7 @@ int core_oph_simple_moving_avg (oph_generic_param *param, long long k)
 					moving_sum = moving_sum + d[i] - d[i - k];
 					moving_avg = (double)moving_sum/(double)k;
 				}
-				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, OPH_DOUBLE, param->result_type))
+				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, OPH_DOUBLE, param->result_type, NULL))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -8953,7 +8934,7 @@ int core_oph_simple_moving_avg_multi (oph_multistring* byte_array, oph_multistri
 							moving_avg = NAN;	
 						}			
 					}
-					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, byte_array->type[j], result->type[j]))
+					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, byte_array->type[j], result->type[j], byte_array->missingvalue))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -9004,7 +8985,7 @@ int core_oph_simple_moving_avg_multi (oph_multistring* byte_array, oph_multistri
 							moving_avg = NAN;
 						}			
 					}
-					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, byte_array->type[j], result->type[j]))
+					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, byte_array->type[j], result->type[j], byte_array->missingvalue))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -9033,7 +9014,7 @@ int core_oph_simple_moving_avg_multi (oph_multistring* byte_array, oph_multistri
 						moving_sum = moving_sum + *d - *(int*)(in_string+(i-k)*byte_array->blocksize);
 						moving_avg = (float)moving_sum/(float)k;
 					}
-					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, OPH_FLOAT, result->type[j]))
+					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, OPH_FLOAT, result->type[j], byte_array->missingvalue))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -9062,7 +9043,7 @@ int core_oph_simple_moving_avg_multi (oph_multistring* byte_array, oph_multistri
 						moving_sum = moving_sum + *d - *(short*)(in_string+(i-k)*byte_array->blocksize);
 						moving_avg = (float)moving_sum/(float)k;
 					}
-					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, OPH_FLOAT, result->type[j]))
+					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, OPH_FLOAT, result->type[j], byte_array->missingvalue))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -9091,7 +9072,7 @@ int core_oph_simple_moving_avg_multi (oph_multistring* byte_array, oph_multistri
 						moving_sum = moving_sum + *d - *(char*)(in_string+(i-k)*byte_array->blocksize);
 						moving_avg = (float)moving_sum/(float)k;
 					}
-					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, OPH_FLOAT, result->type[j]))
+					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, OPH_FLOAT, result->type[j], byte_array->missingvalue))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -9118,7 +9099,7 @@ int core_oph_simple_moving_avg_multi (oph_multistring* byte_array, oph_multistri
 						moving_sum = moving_sum + *d - *(long long*)(in_string+(i-k)*byte_array->blocksize);
 						moving_avg = (double)moving_sum/(double)k;
 					}
-					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, OPH_DOUBLE, result->type[j]))
+					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, OPH_DOUBLE, result->type[j], byte_array->missingvalue))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -9144,7 +9125,7 @@ int core_oph_exponential_moving_avg (oph_generic_param *param, double a)
 	switch(byte_array->type){
 		case OPH_DOUBLE:{
 			double *d = (double*)byte_array->content;
-			if(core_oph_type_cast(d, result, byte_array->type, param->result_type))
+			if(core_oph_type_cast(d, result, byte_array->type, param->result_type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 				return 1;
@@ -9162,7 +9143,7 @@ int core_oph_exponential_moving_avg (oph_generic_param *param, double a)
 					moving_avg = prev_elem ;
 				}	
 				prev_elem = moving_avg;				
-				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, byte_array->type, param->result_type))
+				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, byte_array->type, param->result_type, NULL))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -9172,7 +9153,7 @@ int core_oph_exponential_moving_avg (oph_generic_param *param, double a)
 		}
 		case OPH_FLOAT:{
 			float *d = (float*)byte_array->content;
-			if(core_oph_type_cast(d, result, byte_array->type, param->result_type))
+			if(core_oph_type_cast(d, result, byte_array->type, param->result_type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 				return 1;
@@ -9189,7 +9170,7 @@ int core_oph_exponential_moving_avg (oph_generic_param *param, double a)
 					moving_avg = prev_elem ;
 				}	
 				prev_elem = moving_avg;								
-				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, byte_array->type, param->result_type))
+				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, byte_array->type, param->result_type, NULL))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -9202,7 +9183,7 @@ int core_oph_exponential_moving_avg (oph_generic_param *param, double a)
 			int *d = (int*)byte_array->content;
 			//Compute first element
 			float prev_elem = (float)d[0], moving_avg;
-			if(core_oph_type_cast(&prev_elem, result, OPH_FLOAT, param->result_type))
+			if(core_oph_type_cast(&prev_elem, result, OPH_FLOAT, param->result_type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 				return 1;
@@ -9211,7 +9192,7 @@ int core_oph_exponential_moving_avg (oph_generic_param *param, double a)
 			{
 				moving_avg = (1 - a) *prev_elem + (float)a*d[i];
 				prev_elem = moving_avg;
-				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, OPH_FLOAT, param->result_type))
+				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, OPH_FLOAT, param->result_type, NULL))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -9224,7 +9205,7 @@ int core_oph_exponential_moving_avg (oph_generic_param *param, double a)
 			short *d = (short*)byte_array->content;
 			//Compute first element
 			float prev_elem = (float)d[0], moving_avg;
-			if(core_oph_type_cast(&prev_elem, result, OPH_FLOAT, param->result_type))
+			if(core_oph_type_cast(&prev_elem, result, OPH_FLOAT, param->result_type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 				return 1;
@@ -9233,7 +9214,7 @@ int core_oph_exponential_moving_avg (oph_generic_param *param, double a)
 			{
 				moving_avg = (1 - a) *prev_elem + (float)a*d[i];
 				prev_elem = moving_avg;
-				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, OPH_FLOAT, param->result_type))
+				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, OPH_FLOAT, param->result_type, NULL))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -9246,7 +9227,7 @@ int core_oph_exponential_moving_avg (oph_generic_param *param, double a)
 			char *d = (char*)byte_array->content;
 			//Compute first element
 			float prev_elem = (float)d[0], moving_avg;
-			if(core_oph_type_cast(&prev_elem, result, OPH_FLOAT, param->result_type))
+			if(core_oph_type_cast(&prev_elem, result, OPH_FLOAT, param->result_type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 				return 1;
@@ -9255,7 +9236,7 @@ int core_oph_exponential_moving_avg (oph_generic_param *param, double a)
 			{
 				moving_avg = (1 - a) *prev_elem + (float)a*d[i];
 				prev_elem = moving_avg;
-				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, OPH_FLOAT, param->result_type))
+				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, OPH_FLOAT, param->result_type, NULL))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -9268,7 +9249,7 @@ int core_oph_exponential_moving_avg (oph_generic_param *param, double a)
 			long long *d = (long long*)byte_array->content;
 			//Compute first element
 			double prev_elem = (double)d[0], moving_avg;
-			if(core_oph_type_cast(&prev_elem, result, OPH_DOUBLE, param->result_type))
+			if(core_oph_type_cast(&prev_elem, result, OPH_DOUBLE, param->result_type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 				return 1;
@@ -9277,7 +9258,7 @@ int core_oph_exponential_moving_avg (oph_generic_param *param, double a)
 			{
 				moving_avg = (1 - a) *prev_elem + (double)a*d[i];
 				prev_elem = moving_avg;
-				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, OPH_DOUBLE, param->result_type))
+				if(core_oph_type_cast(&moving_avg, result+i*param->result_elemsize, OPH_DOUBLE, param->result_type, NULL))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -9306,7 +9287,7 @@ int core_oph_exponential_moving_avg_multi (oph_multistring* byte_array, oph_mult
 		{
 			case OPH_DOUBLE:{
 				double *d = (double*)in_string;
-				if(core_oph_type_cast(d, out_string, byte_array->type[j], result->type[j]))
+				if(core_oph_type_cast(d, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -9325,7 +9306,7 @@ int core_oph_exponential_moving_avg_multi (oph_multistring* byte_array, oph_mult
 						moving_avg = prev_elem ;
 					}	
 					prev_elem = moving_avg;				
-					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, byte_array->type[j], result->type[j]))
+					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, byte_array->type[j], result->type[j], byte_array->missingvalue))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -9335,7 +9316,7 @@ int core_oph_exponential_moving_avg_multi (oph_multistring* byte_array, oph_mult
 			}
 			case OPH_FLOAT:{
 				float *d = (float*)in_string;
-				if(core_oph_type_cast(d, out_string, byte_array->type[j], result->type[j]))
+				if(core_oph_type_cast(d, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -9353,7 +9334,7 @@ int core_oph_exponential_moving_avg_multi (oph_multistring* byte_array, oph_mult
 						moving_avg = prev_elem ;
 					}	
 					prev_elem = moving_avg;								
-					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, byte_array->type[j], result->type[j]))
+					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, byte_array->type[j], result->type[j], byte_array->missingvalue))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -9366,7 +9347,7 @@ int core_oph_exponential_moving_avg_multi (oph_multistring* byte_array, oph_mult
 				int *d = (int*)in_string;
 				//Compute first element
 				float prev_elem = (float)(*d), moving_avg;
-				if(core_oph_type_cast(&prev_elem, out_string, OPH_FLOAT, result->type[j]))
+				if(core_oph_type_cast(&prev_elem, out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -9376,7 +9357,7 @@ int core_oph_exponential_moving_avg_multi (oph_multistring* byte_array, oph_mult
 					d = (int*)(in_string+i*byte_array->blocksize);
 					moving_avg = (1 - a)*prev_elem + (float)(a*(*d));
 					prev_elem = moving_avg;
-					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, OPH_FLOAT, result->type[j]))
+					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, OPH_FLOAT, result->type[j], byte_array->missingvalue))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -9389,7 +9370,7 @@ int core_oph_exponential_moving_avg_multi (oph_multistring* byte_array, oph_mult
 				short *d = (short*)in_string;
 				//Compute first element
 				float prev_elem = (float)(*d), moving_avg;
-				if(core_oph_type_cast(&prev_elem, out_string, OPH_FLOAT, result->type[j]))
+				if(core_oph_type_cast(&prev_elem, out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -9399,7 +9380,7 @@ int core_oph_exponential_moving_avg_multi (oph_multistring* byte_array, oph_mult
 					d = (short*)(in_string+i*byte_array->blocksize);
 					moving_avg = (1 - a)*prev_elem + (float)(a*(*d));
 					prev_elem = moving_avg;
-					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, OPH_FLOAT, result->type[j]))
+					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, OPH_FLOAT, result->type[j], byte_array->missingvalue))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -9412,7 +9393,7 @@ int core_oph_exponential_moving_avg_multi (oph_multistring* byte_array, oph_mult
 				char *d = (char*)in_string;
 				//Compute first element
 				float prev_elem = (float)(*d), moving_avg;
-				if(core_oph_type_cast(&prev_elem, out_string, OPH_FLOAT, result->type[j]))
+				if(core_oph_type_cast(&prev_elem, out_string, OPH_FLOAT, result->type[j], byte_array->missingvalue))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -9422,7 +9403,7 @@ int core_oph_exponential_moving_avg_multi (oph_multistring* byte_array, oph_mult
 					d = (char*)(in_string+i*byte_array->blocksize);
 					moving_avg = (1 - a)*prev_elem + (float)(a*(*d));
 					prev_elem = moving_avg;
-					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, OPH_FLOAT, result->type[j]))
+					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, OPH_FLOAT, result->type[j], byte_array->missingvalue))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -9435,7 +9416,7 @@ int core_oph_exponential_moving_avg_multi (oph_multistring* byte_array, oph_mult
 				long long *d = (long long*)in_string;
 				//Compute first element
 				double prev_elem = (double)(*d), moving_avg;
-				if(core_oph_type_cast(&prev_elem, out_string, OPH_DOUBLE, result->type[j]))
+				if(core_oph_type_cast(&prev_elem, out_string, OPH_DOUBLE, result->type[j], byte_array->missingvalue))
 				{
 					pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -9445,7 +9426,7 @@ int core_oph_exponential_moving_avg_multi (oph_multistring* byte_array, oph_mult
 					d = (long long*)(in_string+i*byte_array->blocksize);
 					moving_avg = (1 - a)*prev_elem + (double)(a*(*d));
 					prev_elem = moving_avg;
-					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, OPH_DOUBLE, result->type[j]))
+					if(core_oph_type_cast(&moving_avg, out_string+i*result->blocksize, OPH_DOUBLE, result->type[j], byte_array->missingvalue))
 					{
 						pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 						return 1;
@@ -9482,7 +9463,7 @@ int core_oph_oper_array_multi(oph_generic_param_multi* param)
 				pmesg(1, __FILE__, __LINE__, "Error in compute array\n");
 				return 1;
 			}
-			if(core_oph_type_cast(temporary, result->content + offsetO + j*result->blocksize, measure->type[i], result->type[i]))
+			if(core_oph_type_cast(temporary, result->content + offsetO + j*result->blocksize, measure->type[i], result->type[i], NULL))
 			{
 				pmesg(1, __FILE__, __LINE__, "Error in compute array\n");
 				return 1;

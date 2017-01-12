@@ -186,14 +186,14 @@ char* oph_gsl_complex_to_rect(UDF_INIT *initid, UDF_ARGS *args, char *result, un
     			rho = (double) ((int *)(args->args[2]))[i];   //real part
     			theta = (double) ((int *)(args->args[2]))[i+1]; //imag part
     			z = gsl_complex_polar(rho,theta);
-    			if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(int)), OPH_DOUBLE, OPH_INT)) {
+    			if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(int)), OPH_DOUBLE, OPH_INT, NULL)) {
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;
     				*is_null=0;
     				*error=1;
     				return NULL;
     			}
-    			if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(int)), OPH_DOUBLE, OPH_INT)) {
+    			if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(int)), OPH_DOUBLE, OPH_INT, NULL)) {
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;
     				*is_null=0;
@@ -208,14 +208,14 @@ char* oph_gsl_complex_to_rect(UDF_INIT *initid, UDF_ARGS *args, char *result, un
     			rho = (double) ((int *)(args->args[2]))[i];   //real part
     			theta = (double) ((int *)(args->args[2]))[i+1]; //imag part
     			z = gsl_complex_polar(rho,theta);
-    			if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(long long)), OPH_DOUBLE, OPH_LONG)) {
+    			if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(long long)), OPH_DOUBLE, OPH_LONG, NULL)) {
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;
     				*is_null=0;
     				*error=1;
     				return NULL;
     			}
-    			if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(long long)), OPH_DOUBLE, OPH_LONG)) {
+    			if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(long long)), OPH_DOUBLE, OPH_LONG, NULL)) {
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;
     				*is_null=0;
@@ -230,14 +230,14 @@ char* oph_gsl_complex_to_rect(UDF_INIT *initid, UDF_ARGS *args, char *result, un
     			rho = (double) ((int *)(args->args[2]))[i];   //real part
     			theta = (double) ((int *)(args->args[2]))[i+1]; //imag part
     			z = gsl_complex_polar(rho,theta);
-    			if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(float)), OPH_DOUBLE, OPH_FLOAT)) {
+    			if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(float)), OPH_DOUBLE, OPH_FLOAT, NULL)) {
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;
     				*is_null=0;
     				*error=1;
     				return NULL;
     			}
-    			if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(float)), OPH_DOUBLE, OPH_FLOAT)) {
+    			if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(float)), OPH_DOUBLE, OPH_FLOAT, NULL)) {
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;
     				*is_null=0;
@@ -252,14 +252,14 @@ char* oph_gsl_complex_to_rect(UDF_INIT *initid, UDF_ARGS *args, char *result, un
     			rho = (double) ((int *)(args->args[2]))[i];   //real part
     			theta = (double) ((int *)(args->args[2]))[i+1]; //imag part
     			z = gsl_complex_polar(rho,theta);
-    			if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(double)), OPH_DOUBLE, OPH_DOUBLE)) {
+    			if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(double)), OPH_DOUBLE, OPH_DOUBLE, NULL)) {
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;
     				*is_null=0;
     				*error=1;
     				return NULL;
     			}
-    			if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(double)), OPH_DOUBLE, OPH_DOUBLE)) {
+    			if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(double)), OPH_DOUBLE, OPH_DOUBLE, NULL)) {
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;
     				*is_null=0;
@@ -284,14 +284,14 @@ char* oph_gsl_complex_to_rect(UDF_INIT *initid, UDF_ARGS *args, char *result, un
     				rho = (double) ((long long *)(args->args[2]))[i];   //real part
     				theta = (double) ((long long *)(args->args[2]))[i+1]; //imag part
     				z = gsl_complex_polar(rho,theta);
-    				if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(int)), OPH_DOUBLE, OPH_INT)) {
+    				if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(int)), OPH_DOUBLE, OPH_INT, NULL)) {
     					pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     					*length=0;
     					*is_null=0;
     					*error=1;
     					return NULL;
     				}
-    				if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(int)), OPH_DOUBLE, OPH_INT)) {
+    				if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(int)), OPH_DOUBLE, OPH_INT, NULL)) {
     					pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     					*length=0;
     					*is_null=0;
@@ -306,14 +306,14 @@ char* oph_gsl_complex_to_rect(UDF_INIT *initid, UDF_ARGS *args, char *result, un
     				rho = (double) ((long long *)(args->args[2]))[i];   //real part
     				theta = (double) ((long long *)(args->args[2]))[i+1]; //imag part
     				z = gsl_complex_polar(rho,theta);
-    				if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(long long)), OPH_DOUBLE, OPH_LONG)) {
+    				if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(long long)), OPH_DOUBLE, OPH_LONG, NULL)) {
     					pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     					*length=0;
     					*is_null=0;
     					*error=1;
     					return NULL;
     				}
-    				if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(long long)), OPH_DOUBLE, OPH_LONG)) {
+    				if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(long long)), OPH_DOUBLE, OPH_LONG, NULL)) {
     					pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     					*length=0;
     					*is_null=0;
@@ -328,14 +328,14 @@ char* oph_gsl_complex_to_rect(UDF_INIT *initid, UDF_ARGS *args, char *result, un
     				rho = (double) ((long long *)(args->args[2]))[i];   //real part
     				theta = (double) ((long long *)(args->args[2]))[i+1]; //imag part
     				z = gsl_complex_polar(rho,theta);
-    				if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(float)), OPH_DOUBLE, OPH_FLOAT)) {
+    				if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(float)), OPH_DOUBLE, OPH_FLOAT, NULL)) {
     					pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     					*length=0;
     					*is_null=0;
     					*error=1;
     					return NULL;
     				}
-    				if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(float)), OPH_DOUBLE, OPH_FLOAT)) {
+    				if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(float)), OPH_DOUBLE, OPH_FLOAT, NULL)) {
     					pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     					*length=0;
     					*is_null=0;
@@ -350,14 +350,14 @@ char* oph_gsl_complex_to_rect(UDF_INIT *initid, UDF_ARGS *args, char *result, un
     				rho = (double) ((long long *)(args->args[2]))[i];   //real part
     				theta = (double) ((long long *)(args->args[2]))[i+1]; //imag part
     				z = gsl_complex_polar(rho,theta);
-    				if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(double)), OPH_DOUBLE, OPH_DOUBLE)) {
+    				if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(double)), OPH_DOUBLE, OPH_DOUBLE, NULL)) {
     					pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     					*length=0;
     					*is_null=0;
     					*error=1;
     					return NULL;
     				}
-    				if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(double)), OPH_DOUBLE, OPH_DOUBLE)) {
+    				if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(double)), OPH_DOUBLE, OPH_DOUBLE, NULL)) {
     					pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     					*length=0;
     					*is_null=0;
@@ -382,14 +382,14 @@ char* oph_gsl_complex_to_rect(UDF_INIT *initid, UDF_ARGS *args, char *result, un
     					rho = (double) ((float *)(args->args[2]))[i];   //real part
     					theta = (double) ((float *)(args->args[2]))[i+1]; //imag part
     					z = gsl_complex_polar(rho,theta);
-    					if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(int)), OPH_DOUBLE, OPH_INT)) {
+    					if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(int)), OPH_DOUBLE, OPH_INT, NULL)) {
     						pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     						*length=0;
     						*is_null=0;
     						*error=1;
     						return NULL;
     					}
-    					if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(int)), OPH_DOUBLE, OPH_INT)) {
+    					if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(int)), OPH_DOUBLE, OPH_INT, NULL)) {
     						pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     						*length=0;
     						*is_null=0;
@@ -404,14 +404,14 @@ char* oph_gsl_complex_to_rect(UDF_INIT *initid, UDF_ARGS *args, char *result, un
     					rho = (double) ((float *)(args->args[2]))[i];   //real part
     					theta = (double) ((float *)(args->args[2]))[i+1]; //imag part
     					z = gsl_complex_polar(rho,theta);
-    					if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(long long)), OPH_DOUBLE, OPH_LONG)) {
+    					if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(long long)), OPH_DOUBLE, OPH_LONG, NULL)) {
     						pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     						*length=0;
     						*is_null=0;
     						*error=1;
     						return NULL;
     					}
-    					if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(long long)), OPH_DOUBLE, OPH_LONG)) {
+    					if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(long long)), OPH_DOUBLE, OPH_LONG, NULL)) {
     						pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     						*length=0;
     						*is_null=0;
@@ -426,14 +426,14 @@ char* oph_gsl_complex_to_rect(UDF_INIT *initid, UDF_ARGS *args, char *result, un
     					rho = (double) ((float *)(args->args[2]))[i];   //real part
     					theta = (double) ((float *)(args->args[2]))[i+1]; //imag part
     					z = gsl_complex_polar(rho,theta);
-    					if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(float)), OPH_DOUBLE, OPH_FLOAT)) {
+    					if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(float)), OPH_DOUBLE, OPH_FLOAT, NULL)) {
     						pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     						*length=0;
     						*is_null=0;
     						*error=1;
     						return NULL;
     					}
-    					if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(float)), OPH_DOUBLE, OPH_FLOAT)) {
+    					if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(float)), OPH_DOUBLE, OPH_FLOAT, NULL)) {
     						pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     						*length=0;
     						*is_null=0;
@@ -448,14 +448,14 @@ char* oph_gsl_complex_to_rect(UDF_INIT *initid, UDF_ARGS *args, char *result, un
     					rho = (double) ((float *)(args->args[2]))[i];   //real part
     					theta = (double) ((float *)(args->args[2]))[i+1]; //imag part
     					z = gsl_complex_polar(rho,theta);
-    					if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(double)), OPH_DOUBLE, OPH_DOUBLE)) {
+    					if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(double)), OPH_DOUBLE, OPH_DOUBLE, NULL)) {
     						pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     						*length=0;
     						*is_null=0;
     						*error=1;
     						return NULL;
     					}
-    					if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(double)), OPH_DOUBLE, OPH_DOUBLE)) {
+    					if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(double)), OPH_DOUBLE, OPH_DOUBLE, NULL)) {
     						pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     						*length=0;
     						*is_null=0;
@@ -480,14 +480,14 @@ char* oph_gsl_complex_to_rect(UDF_INIT *initid, UDF_ARGS *args, char *result, un
     						rho = ((double *)(args->args[2]))[i];   //real part
     						theta = ((double *)(args->args[2]))[i+1]; //imag part
     						z = gsl_complex_polar(rho,theta);
-    						if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(int)), OPH_DOUBLE, OPH_INT)) {
+    						if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(int)), OPH_DOUBLE, OPH_INT, NULL)) {
     							pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     							*length=0;
     							*is_null=0;
     							*error=1;
     							return NULL;
     						}
-    						if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(int)), OPH_DOUBLE, OPH_INT)) {
+    						if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(int)), OPH_DOUBLE, OPH_INT, NULL)) {
     							pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     							*length=0;
     							*is_null=0;
@@ -502,14 +502,14 @@ char* oph_gsl_complex_to_rect(UDF_INIT *initid, UDF_ARGS *args, char *result, un
     						rho = ((double *)(args->args[2]))[i];   //real part
     						theta = ((double *)(args->args[2]))[i+1]; //imag part
     						z = gsl_complex_polar(rho,theta);
-    						if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(long long)), OPH_DOUBLE, OPH_LONG)) {
+    						if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(long long)), OPH_DOUBLE, OPH_LONG, NULL)) {
     							pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     							*length=0;
     							*is_null=0;
     							*error=1;
     							return NULL;
     						}
-    						if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(long long)), OPH_DOUBLE, OPH_LONG)) {
+    						if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(long long)), OPH_DOUBLE, OPH_LONG, NULL)) {
     							pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     							*length=0;
     							*is_null=0;
@@ -524,14 +524,14 @@ char* oph_gsl_complex_to_rect(UDF_INIT *initid, UDF_ARGS *args, char *result, un
     						rho = ((double *)(args->args[2]))[i];   //real part
     						theta = ((double *)(args->args[2]))[i+1]; //imag part
     						z = gsl_complex_polar(rho,theta);
-    						if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(float)), OPH_DOUBLE, OPH_FLOAT)) {
+    						if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(float)), OPH_DOUBLE, OPH_FLOAT, NULL)) {
     							pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     							*length=0;
     							*is_null=0;
     							*error=1;
     							return NULL;
     						}
-    						if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(float)), OPH_DOUBLE, OPH_FLOAT)) {
+    						if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(float)), OPH_DOUBLE, OPH_FLOAT, NULL)) {
     							pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     							*length=0;
     							*is_null=0;
@@ -546,14 +546,14 @@ char* oph_gsl_complex_to_rect(UDF_INIT *initid, UDF_ARGS *args, char *result, un
     						rho = ((double *)(args->args[2]))[i];   //real part
     						theta = ((double *)(args->args[2]))[i+1]; //imag part
     						z = gsl_complex_polar(rho,theta);
-    						if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(double)), OPH_DOUBLE, OPH_DOUBLE)) {
+    						if(core_oph_type_cast(&(z.dat[0]), output->content + (j * sizeof(double)), OPH_DOUBLE, OPH_DOUBLE, NULL)) {
     							pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     							*length=0;
     							*is_null=0;
     							*error=1;
     							return NULL;
     						}
-    						if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(double)), OPH_DOUBLE, OPH_DOUBLE)) {
+    						if(core_oph_type_cast(&(z.dat[1]), output->content + ((j+1) * sizeof(double)), OPH_DOUBLE, OPH_DOUBLE, NULL)) {
     							pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     							*length=0;
     							*is_null=0;

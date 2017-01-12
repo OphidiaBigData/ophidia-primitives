@@ -34,7 +34,7 @@ int core_oph_interlace_multi(oph_generic_param_multi* param)
 			ic = measure->content;
 			for (i=0;i<measure->num_measure;++i) // Loop on data types
 			{
-				if(core_oph_type_cast(ic + j*measure->blocksize, oc, measure->type[i], result->type[output_format ? h%result->num_measure : h]))
+				if(core_oph_type_cast(ic + j*measure->blocksize, oc, measure->type[i], result->type[output_format ? h%result->num_measure : h], NULL))
 				{
 					pmesg(1, __FILE__, __LINE__, "Error in compute array\n");
 					return 1;

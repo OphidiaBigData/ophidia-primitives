@@ -74,7 +74,7 @@ int core_oph_gsl_spline_multi(oph_multistring* byte_array, oph_multistring* resu
 		{
 			if ((spline->new_x[k] < spline->old_x[0]) || (spline->new_x[k] > spline->old_x[byte_array->numelem-1])) tmp = NAN;
 			else tmp = gsl_spline_eval(spline->spline, spline->new_x[k], spline->acc);
-			if (core_oph_type_cast(&tmp, out_pointer, OPH_DOUBLE, result->type[j])) return -1;
+			if (core_oph_type_cast(&tmp, out_pointer, OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 			out_pointer += result->blocksize;
 		}
 		in_string += byte_array->elemsize[j];

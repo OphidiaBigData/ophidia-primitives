@@ -24,7 +24,7 @@ int core_oph_get_subarray_multi(oph_multistring* byte_array, oph_multistring* re
         unsigned long start_ind;
 	start_ind = start*byte_array->blocksize;
 	(byte_array->content)+=start_ind;
-	if(core_oph_multistring_cast(byte_array,result))
+	if(core_oph_multistring_cast(byte_array,result,byte_array->missingvalue))
 		return -1;
         return 0;
 }

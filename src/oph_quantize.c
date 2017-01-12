@@ -232,7 +232,7 @@ char* oph_quantize(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long
     			if (!assigned) {
 					tmp = quant_values[quant_levels_num];
 				}
-    			if(core_oph_type_cast(&tmp, output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i])) {
+    			if(core_oph_type_cast(&tmp, output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i], NULL)) {
     				param->error = 1;
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;
@@ -262,7 +262,7 @@ char* oph_quantize(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long
     			if (!assigned) {
 					tmp = quant_values[quant_levels_num];
 				}
-    			if(core_oph_type_cast(&tmp, output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i])) {
+    			if(core_oph_type_cast(&tmp, output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i], NULL)) {
     				param->error = 1;
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;
@@ -292,7 +292,7 @@ char* oph_quantize(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long
     			if (!assigned) {
 					tmp = quant_values[quant_levels_num];
 				}
-    			if(core_oph_type_cast(&tmp, output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i])) {
+    			if(core_oph_type_cast(&tmp, output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i], NULL)) {
     				param->error = 1;
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;
@@ -322,7 +322,7 @@ char* oph_quantize(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long
     			if (!assigned) {
 					tmp = quant_values[quant_levels_num];
 				}
-    			if(core_oph_type_cast(&tmp, output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i])) {
+    			if(core_oph_type_cast(&tmp, output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i], NULL)) {
     				param->error = 1;
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;
@@ -353,7 +353,7 @@ char* oph_quantize(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long
     				if (!isnan(tmp))
     					tmp = quant_values[quant_levels_num];
 				}
-    			if(core_oph_type_cast(&tmp, output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i])) {
+    			if(core_oph_type_cast(&tmp, output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i], NULL)) {
     				param->error = 1;
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;
@@ -384,7 +384,7 @@ char* oph_quantize(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long
     				if (!isnan(tmp))
     					tmp = quant_values[quant_levels_num];
 				}
-    			if(core_oph_type_cast(&tmp, output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i])) {
+    			if(core_oph_type_cast(&tmp, output->content + (k * output->blocksize) + run_sum2, OPH_DOUBLE, output->type[i], NULL)) {
     				param->error = 1;
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				*length=0;

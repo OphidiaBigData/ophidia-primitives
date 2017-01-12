@@ -251,7 +251,7 @@ int oph_gsl_quantile_produce(const void *sorted_data, const size_t data_len, oph
         case OPH_INT:
             for (i = 0; i < qnum; i++) {
             	tmp = gsl_stats_int_quantile_from_sorted_data((int *)sorted_data,1,data_len,quantiles[i]);
-    			if(core_oph_type_cast(&tmp, output_data + (i * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) {
+    			if(core_oph_type_cast(&tmp, output_data + (i * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type, NULL)) {
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				return 1;
     			}
@@ -260,7 +260,7 @@ int oph_gsl_quantile_produce(const void *sorted_data, const size_t data_len, oph
         case OPH_SHORT:
             for (i = 0; i < qnum; i++) {
             	tmp = gsl_stats_short_quantile_from_sorted_data((short *)sorted_data,1,data_len,quantiles[i]);
-    			if(core_oph_type_cast(&tmp, output_data + (i * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) {
+    			if(core_oph_type_cast(&tmp, output_data + (i * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type, NULL)) {
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				return 1;
     			}
@@ -269,7 +269,7 @@ int oph_gsl_quantile_produce(const void *sorted_data, const size_t data_len, oph
         case OPH_BYTE:
             for (i = 0; i < qnum; i++) {
             	tmp = gsl_stats_char_quantile_from_sorted_data((char *)sorted_data,1,data_len,quantiles[i]);
-    			if(core_oph_type_cast(&tmp, output_data + (i * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) {
+    			if(core_oph_type_cast(&tmp, output_data + (i * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type, NULL)) {
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				return 1;
     			}
@@ -278,7 +278,7 @@ int oph_gsl_quantile_produce(const void *sorted_data, const size_t data_len, oph
         case OPH_LONG:
             for (i = 0; i < qnum; i++) {
             	tmp = gsl_stats_long_quantile_from_sorted_data((long *)sorted_data,1,data_len,quantiles[i]);
-    			if(core_oph_type_cast(&tmp, output_data + (i * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) {
+    			if(core_oph_type_cast(&tmp, output_data + (i * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type, NULL)) {
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				return 1;
     			}
@@ -287,7 +287,7 @@ int oph_gsl_quantile_produce(const void *sorted_data, const size_t data_len, oph
         case OPH_FLOAT:
             for (i = 0; i < qnum; i++) {
                 tmp = gsl_stats_float_quantile_from_sorted_data((float *)sorted_data,1,data_len,quantiles[i]);
-    			if(core_oph_type_cast(&tmp, output_data + (i * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) {
+    			if(core_oph_type_cast(&tmp, output_data + (i * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type, NULL)) {
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				return 1;
     			}
@@ -296,7 +296,7 @@ int oph_gsl_quantile_produce(const void *sorted_data, const size_t data_len, oph
         case OPH_DOUBLE:
             for (i = 0; i < qnum; i++) {
                 tmp = gsl_stats_quantile_from_sorted_data((double *)sorted_data,1,data_len,quantiles[i]);
-    			if(core_oph_type_cast(&tmp, output_data + (i * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type)) {
+    			if(core_oph_type_cast(&tmp, output_data + (i * core_sizeof(out_data_type)), OPH_DOUBLE, out_data_type, NULL)) {
     				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
     				return 1;
     			}

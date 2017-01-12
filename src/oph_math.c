@@ -181,6 +181,7 @@ char* oph_math(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *le
         output = (oph_stringPtr) (initid->ptr);
 
 	measure->content = args->args[2];
+	measure->missingvalue = NULL;
 
 	res = core_oph_math(measure, operation, output);
 	if(res){

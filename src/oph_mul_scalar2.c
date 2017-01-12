@@ -40,42 +40,42 @@ int core_oph_mul_scalar2_multi(oph_multistring* byte_array, double *scalars, oph
 		        case OPH_DOUBLE:{
 		                for (i = 0; i < byte_array->numelem; i++){
 		                        tmp = (*(double*)((byte_array->content)+(i*byte_array->elemsize[j])) * scalars[0]);
-					if(core_oph_type_cast((void*)(&tmp), (result->content)+(i*result->elemsize[j]), OPH_DOUBLE, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&tmp), (result->content)+(i*result->elemsize[j]), OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 				}
 				break;
 			}
 		        case OPH_FLOAT:{
 		                for (i = 0; i < byte_array->numelem; i++){
 		                        tmp = (double) (*(float*)((byte_array->content)+(i*byte_array->elemsize[j])) * scalars[0]);
-					if(core_oph_type_cast((void*)(&tmp), (result->content)+(i*result->elemsize[j]), OPH_DOUBLE, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&tmp), (result->content)+(i*result->elemsize[j]), OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 				}
 				break;
 			}
 		        case OPH_INT:{
 		                for (i = 0; i < byte_array->numelem; i++){
 		                        tmp = (double) (*(int*)((byte_array->content)+(i*byte_array->elemsize[j])) * scalars[0]);
-					if(core_oph_type_cast((void*)(&tmp), (result->content)+(i*result->elemsize[j]), OPH_DOUBLE, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&tmp), (result->content)+(i*result->elemsize[j]), OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 				}
 				break;
 			}
 		        case OPH_SHORT:{
 		                for (i = 0; i < byte_array->numelem; i++){
 		                        tmp = (double) (*(short*)((byte_array->content)+(i*byte_array->elemsize[j])) * scalars[0]);
-					if(core_oph_type_cast((void*)(&tmp), (result->content)+(i*result->elemsize[j]), OPH_DOUBLE, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&tmp), (result->content)+(i*result->elemsize[j]), OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 				}
 				break;
 			}
 		        case OPH_BYTE:{
 		                for (i = 0; i < byte_array->numelem; i++){
 		                        tmp = (double) (*(char*)((byte_array->content)+(i*byte_array->elemsize[j])) * scalars[0]);
-					if(core_oph_type_cast((void*)(&tmp), (result->content)+(i*result->elemsize[j]), OPH_DOUBLE, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&tmp), (result->content)+(i*result->elemsize[j]), OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 				}
 				break;
 			}
 		        case OPH_LONG:{
 		                for (i = 0; i < byte_array->numelem; i++){
 		                        tmp = (double) (*(long long*)((byte_array->content)+(i*byte_array->elemsize[j])) * scalars[0]);
-					if(core_oph_type_cast((void*)(&tmp), (result->content)+(i*result->elemsize[j]), OPH_DOUBLE, result->type[j])) return -1;
+					if(core_oph_type_cast((void*)(&tmp), (result->content)+(i*result->elemsize[j]), OPH_DOUBLE, result->type[j], byte_array->missingvalue)) return -1;
 				}
 				break;
 			}

@@ -809,7 +809,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
 		    float d;
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
 			d = internal_mean_i(dat->count,((int *)(dat->partials[0].content))[q]);
-			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type))
+			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -826,7 +826,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
 		    float d;
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_variance_i(dat->count,((int *)(dat->partials[0].content))[q],((int *)(dat->partials[1].content))[q]);
-			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type))
+			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -843,7 +843,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
 		    float d;
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_stddev_i(dat->count,((int *)(dat->partials[0].content))[q],((int *)(dat->partials[1].content))[q]);
-			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type))
+			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -860,7 +860,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
 		    float d;
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_skew_i(dat->count,((int *)(dat->partials[0].content))[q],((int *)(dat->partials[1].content))[q],((int *)(dat->partials[2].content))[q]);
-			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type))
+			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -877,7 +877,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
 		    float d;
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_kurtosis_i(dat->count,((int *)(dat->partials[0].content))[q],((int *)(dat->partials[1].content))[q],((int *)(dat->partials[2].content))[q],((int *)(dat->partials[3].content))[q]);
-			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type))
+			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -904,7 +904,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                         s=4;
                     }
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
-			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -934,7 +934,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                         s++;
                     }
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
- 			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+ 			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -953,7 +953,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
 		    double d;
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_mean_l(dat->count,((long long *)(dat->partials[0].content))[q]);
-			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_DOUBLE, dat->result.type))
+			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_DOUBLE, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -970,7 +970,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
 		    double d;
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_variance_l(dat->count,((long long *)(dat->partials[0].content))[q],((long long *)(dat->partials[1].content))[q]);
-			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_DOUBLE, dat->result.type))
+			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_DOUBLE, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -987,7 +987,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
 		    double d;
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_stddev_l(dat->count,((long long *)(dat->partials[0].content))[q],((long long *)(dat->partials[1].content))[q]);
-			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_DOUBLE, dat->result.type))
+			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_DOUBLE, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1004,7 +1004,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
 		    double d;
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_skew_l(dat->count,((long long *)(dat->partials[0].content))[q],((long long *)(dat->partials[1].content))[q],((long long *)(dat->partials[2].content))[q]);
-                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_DOUBLE, dat->result.type))
+                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_DOUBLE, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1021,7 +1021,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
 		    double d;
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_kurtosis_l(dat->count,((long long *)(dat->partials[0].content))[q],((long long *)(dat->partials[1].content))[q],((long long *)(dat->partials[2].content))[q],((long long *)(dat->partials[3].content))[q]);
-                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_DOUBLE, dat->result.type))
+                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_DOUBLE, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1048,7 +1048,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                         s=4;
                     }
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
-			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1078,7 +1078,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                         s++;
                     }
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
-			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1096,7 +1096,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                 case 0: // mean
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_mean_f(dat->count,((float *)(dat->partials[0].content))[q]);
-                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1110,7 +1110,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                 case 1: // variance
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_variance_f(dat->count,((float *)(dat->partials[0].content))[q],((float *)(dat->partials[1].content))[q]);
-                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1124,7 +1124,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                 case 2: // std dev
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_stddev_f(dat->count,((float *)(dat->partials[0].content))[q],((float *)(dat->partials[1].content))[q]);
-                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1138,7 +1138,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                 case 3: // skew
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_skew_f(dat->count,((float *)(dat->partials[0].content))[q],((float *)(dat->partials[1].content))[q],((float *)(dat->partials[2].content))[q]);
-                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1152,7 +1152,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                 case 4: // kurtosis
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_kurtosis_f(dat->count,((float *)(dat->partials[0].content))[q],((float *)(dat->partials[1].content))[q],((float *)(dat->partials[2].content))[q],((float *)(dat->partials[3].content))[q]);
-                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1178,7 +1178,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                         s=4;
                     }
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
-			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1208,7 +1208,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                         s++;
                     }
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
-			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1226,7 +1226,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                 case 0: // mean
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_mean_d(dat->count,((double *)(dat->partials[0].content))[q]);
-                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1240,7 +1240,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                 case 1: // variance
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_variance_d(dat->count,((double *)(dat->partials[0].content))[q],((double *)(dat->partials[1].content))[q]);
-                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1254,7 +1254,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                 case 2: // std dev
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_stddev_d(dat->count,((double *)(dat->partials[0].content))[q],((double *)(dat->partials[1].content))[q]);
-                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1268,7 +1268,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                 case 3: // skew
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_skew_d(dat->count,((double *)(dat->partials[0].content))[q],((double *)(dat->partials[1].content))[q],((double *)(dat->partials[2].content))[q]);
-                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1282,7 +1282,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                 case 4: // kurtosis
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_kurtosis_d(dat->count,((double *)(dat->partials[0].content))[q],((double *)(dat->partials[1].content))[q],((double *)(dat->partials[2].content))[q],((double *)(dat->partials[3].content))[q]);
-                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+                        if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1308,7 +1308,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                         s=4;
                     }
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
-			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1338,7 +1338,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                         s++;
                     }
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
-			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1357,7 +1357,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
 		    float d;
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
 			d = internal_mean_s(dat->count,((short *)(dat->partials[0].content))[q]);
-			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type))
+			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1374,7 +1374,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
 		    float d;
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_variance_s(dat->count,((short *)(dat->partials[0].content))[q],((short *)(dat->partials[1].content))[q]);
-			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type))
+			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1391,7 +1391,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
 		    float d;
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_stddev_s(dat->count,((short *)(dat->partials[0].content))[q],((short *)(dat->partials[1].content))[q]);
-			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type))
+			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1408,7 +1408,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
 		    float d;
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_skew_s(dat->count,((short *)(dat->partials[0].content))[q],((short *)(dat->partials[1].content))[q],((short *)(dat->partials[2].content))[q]);
-			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type))
+			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1425,7 +1425,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
 		    float d;
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_kurtosis_s(dat->count,((short *)(dat->partials[0].content))[q],((short *)(dat->partials[1].content))[q],((short *)(dat->partials[2].content))[q],((short *)(dat->partials[3].content))[q]);
-			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type))
+			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1452,7 +1452,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                         s=4;
                     }
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
-			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1482,7 +1482,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                         s++;
                     }
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
- 			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+ 			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1501,7 +1501,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
 		    float d;
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
 			d = internal_mean_b(dat->count,((char *)(dat->partials[0].content))[q]);
-			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type))
+			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1518,7 +1518,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
 		    float d;
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_variance_b(dat->count,((char *)(dat->partials[0].content))[q],((char *)(dat->partials[1].content))[q]);
-			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type))
+			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1535,7 +1535,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
 		    float d;
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_stddev_b(dat->count,((char *)(dat->partials[0].content))[q],((char *)(dat->partials[1].content))[q]);
-			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type))
+			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1552,7 +1552,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
 		    float d;
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_skew_b(dat->count,((char *)(dat->partials[0].content))[q],((char *)(dat->partials[1].content))[q],((char *)(dat->partials[2].content))[q]);
-			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type))
+			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1569,7 +1569,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
 		    float d;
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
                         d = internal_kurtosis_b(dat->count,((char *)(dat->partials[0].content))[q],((char *)(dat->partials[1].content))[q],((char *)(dat->partials[2].content))[q],((char *)(dat->partials[3].content))[q]);
-			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type))
+			if (core_oph_type_cast(&d, dat->result.content + (j+k)*dat->result.elemsize, OPH_FLOAT, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1596,7 +1596,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                         s=4;
                     }
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
-			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;
@@ -1626,7 +1626,7 @@ char* oph_aggregate_stats(UDF_INIT *initid, UDF_ARGS *args, char *result, unsign
                         s++;
                     }
                     for (k = 0; k < dat->result.numelem; k+=dat->mask.numelem) {
- 			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type))
+ 			if (core_oph_type_cast(dat->partials[s].content + q*dat->measure.elemsize, dat->result.content + (j+k)*dat->result.elemsize, dat->measure.type, dat->result.type, NULL))
 			{
 				pmesg(1,  __FILE__, __LINE__, "Error in casting\n");
 				*length=0;

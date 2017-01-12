@@ -419,7 +419,7 @@ char* oph_aggregate_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, uns
 
 	for (i=0; i<res->numelem; ++i)
 	{
-		if(core_oph_type_cast(res->content + i*res->elemsize, dat->result_data + i*dat->result_size, res->type, dat->result_type))
+		if(core_oph_type_cast(res->content + i*res->elemsize, dat->result_data + i*dat->result_size, res->type, dat->result_type, pointer))
 		{
 		        pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 		        *length=0;

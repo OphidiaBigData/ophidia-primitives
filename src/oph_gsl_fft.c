@@ -231,7 +231,7 @@ char* oph_gsl_fft(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long 
         int i,j=0;
         memset(output->content,0,*(output->length));
         for (i = 0; i < (output->numelem)/2; i++) {
-			if(core_oph_type_cast(args->args[2] + (i*sizeof(double)), output->content + (j * sizeof(double)), OPH_DOUBLE, OPH_DOUBLE)) {
+			if(core_oph_type_cast(args->args[2] + (i*sizeof(double)), output->content + (j * sizeof(double)), OPH_DOUBLE, OPH_DOUBLE, NULL)) {
 				pmesg(1,  __FILE__, __LINE__, "Error casting output\n");
 				*length=0;
 				*is_null=0;
