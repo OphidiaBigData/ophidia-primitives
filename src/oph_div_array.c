@@ -171,6 +171,14 @@ char* oph_div_array(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lon
 
 	for (i=0;i<2;++i) measure[i].content = args->args[2+i];
 
+	double missingvalue;
+	if((args->arg_count > 4) && args->args[4])
+	{
+		missingvalue = *((double*)(args->args[4]));
+		measure->missingvalue = &missingvalue;
+	}
+	else measure->missingvalue = NULL;
+
 	oph_multistring* output;
 	if (!param->error && !param->result)
 	{

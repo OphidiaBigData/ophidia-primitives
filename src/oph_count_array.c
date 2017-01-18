@@ -25,8 +25,8 @@ int msglevel = 1;
 |------------------------------------------------------------------*/
 my_bool oph_count_array_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
-	if((args->arg_count < 3) || (args->arg_count > 4)){
-		strcpy(message, "ERROR! Wrong arguments! oph_count_array(input_OPH_TYPE, output_OPH_TYPE, measure, [include_missing_values])");
+	if((args->arg_count < 3) || (args->arg_count > 5)){
+		strcpy(message, "ERROR! Wrong arguments! oph_count_array(input_OPH_TYPE, output_OPH_TYPE, measure, [include_missing_values], [missingvalue])");
 		return 1;
 	}
 
@@ -42,6 +42,14 @@ my_bool oph_count_array_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
                 if(args->arg_type[3] != INT_RESULT){
                         strcpy(message, "ERROR: Wrong arguments to oph_count_array function");
                         return 1;
+                }
+		if (args->arg_count > 4)
+		{
+                        if (args->args[4] && (args->arg_type[4] == STRING_RESULT)){
+                                strcpy(message, "ERROR: Wrong argument 'missingvalue' to oph_count_array function");
+                                return 1;
+                        }
+			args->arg_type[4] = REAL_RESULT;
                 }
 	}
 
@@ -110,30 +118,44 @@ long long oph_count_array(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char 
         measure->content = args->args[2];
 
 	int include = 1;
-	if (args->arg_count > 3) include = (long long)args->args[3];
+	if (args->arg_count > 3) include = (long long)(args->args[3]);
+
+	double *missingvalue = NULL;
+	if (args->arg_count > 4) missingvalue = (double*)(args->args[4]);
 
 	if (include) count = measure->numelem;
 	else
 	{
 		int i,j,stop;
 		size_t elemsize=0, offset;
+		char *item;
 		for (i=0; i<measure->numelem; ++i, elemsize += measure->blocksize)
 		{
 			stop = offset = 0;
 			for (j=0;j<measure->num_measure;++j)
 			{
+				item = measure->content + elemsize + offset;
 				switch(measure->type[j])
 				{
 					case OPH_DOUBLE:
-						if (!isnan(*(double*)(measure->content+elemsize+offset))) stop=1;
+						if (!isnan(*((double*)item))) stop = 1;
+						else if (missingvalue && (*((double*)item) == (double)*missingvalue)) stop = 1;
 						break;
 					case OPH_FLOAT:
-						if (!isnan(*(float*)(measure->content+elemsize+offset))) stop=1;
+						if (!isnan(*((float*)item))) stop = 1;
+						else if (missingvalue && (*((float*)item) == (float)*missingvalue)) stop = 1;
 						break;
 					case OPH_LONG:
+						if (missingvalue && (*((long long*)item) == (long long)*missingvalue)) stop = 1;
+						break;
 					case OPH_INT:
+						if (missingvalue && (*((int*)item) == (int)*missingvalue)) stop = 1;
+						break;
 					case OPH_SHORT:
+						if (missingvalue && (*((short*)item) == (short)*missingvalue)) stop = 1;
+						break;
 					case OPH_BYTE:
+						if (missingvalue && (*((char*)item) == (char)*missingvalue)) stop = 1;
 						break;
 					default:
 						pmesg(1, __FILE__, __LINE__, "Type non recognized\n");

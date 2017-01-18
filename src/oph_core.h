@@ -119,7 +119,7 @@ typedef struct {
 	oph_multistring *measure;
 	oph_multistring *result;
 	void* extend;
-	int (*core_oph_oper) (char* valueA, char* valueB, char* result, oph_type type);
+	int (*core_oph_oper) (char* valueA, char* valueB, char* result, oph_type type, double *missingvalue);
 	int (*core_oph_oper_multi) (oph_multistring* byte_array, oph_multistring* res);
 	int (*core_oph_oper_multi_ext) (oph_multistring* byte_array, oph_multistring* res, void* extend);
 } oph_generic_param_multi;
@@ -169,13 +169,13 @@ oph_oper core_get_oper (char* oper, unsigned long *len);
 long core_count_array(oph_stringPtr str);
 
 int core_oph_sum2_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result);
-int core_oph_sum2_array_multi(char* valueA, char* valueB, char* result, oph_type type);
+int core_oph_sum2_array_multi(char* valueA, char* valueB, char* result, oph_type type, double* missingvalue);
 
 int core_oph_sum3_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result);
-int core_oph_sum3_array_multi(char* valueA, char* valueB, char* result, oph_type type);
+int core_oph_sum3_array_multi(char* valueA, char* valueB, char* result, oph_type type, double* missingvalue);
 
 int core_oph_sum4_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char* result);
-int core_oph_sum4_array_multi(char* valueA, char* valueB, char* result, oph_type type);
+int core_oph_sum4_array_multi(char* valueA, char* valueB, char* result, oph_type type, double* missingvalue);
 
 void free_oph_generic_param_multi(oph_generic_param_multi* param);
 
@@ -310,15 +310,15 @@ int core_oph_exponential_moving_avg_multi (oph_multistring* byte_array, oph_mult
 
 // Compute a binary operation on the array
 int core_oph_oper_array_multi(oph_generic_param_multi* param);
-int core_oph_sum_array_multi(char* valueA, char* valueB, char* valueO, oph_type type);
-int core_oph_mul_array_multi(char* valueA, char* valueB, char* valueO, oph_type type);
-int core_oph_mask_array_multi(char* valueA, char* valueB, char* valueO, oph_type type);
-int core_oph_sub_array_multi(char* valueA, char* valueB, char* valueO, oph_type type);
-int core_oph_div_array_multi(char* valueA, char* valueB, char* valueO, oph_type type);
-int core_oph_abs_array_multi(char* valueA, char* valueB, char* valueO, oph_type type);
-int core_oph_arg_array_multi(char* valueA, char* valueB, char* valueO, oph_type type);
-int core_oph_max_array_multi(char* valueA, char* valueB, char* valueO, oph_type type);
-int core_oph_min_array_multi(char* valueA, char* valueB, char* valueO, oph_type type);
+int core_oph_sum_array_multi(char* valueA, char* valueB, char* valueO, oph_type type, double* missingvalue);
+int core_oph_mul_array_multi(char* valueA, char* valueB, char* valueO, oph_type type, double* missingvalue);
+int core_oph_mask_array_multi(char* valueA, char* valueB, char* valueO, oph_type type, double* missingvalue);
+int core_oph_sub_array_multi(char* valueA, char* valueB, char* valueO, oph_type type, double* missingvalue);
+int core_oph_div_array_multi(char* valueA, char* valueB, char* valueO, oph_type type, double* missingvalue);
+int core_oph_abs_array_multi(char* valueA, char* valueB, char* valueO, oph_type type, double* missingvalue);
+int core_oph_arg_array_multi(char* valueA, char* valueB, char* valueO, oph_type type, double* missingvalue);
+int core_oph_max_array_multi(char* valueA, char* valueB, char* valueO, oph_type type, double* missingvalue);
+int core_oph_min_array_multi(char* valueA, char* valueB, char* valueO, oph_type type, double* missingvalue);
 
 /*------------------------------------------------------------------|
  |               Array functions (END)                              |

@@ -199,6 +199,14 @@ char* oph_operator_array(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigne
 
 	for (i=0;i<2;++i) measure[i].content = args->args[2+i];
 
+	double missingvalue;
+	if((args->arg_count > 5) && args->args[5])
+	{
+		missingvalue = *((double*)(args->args[5]));
+		measure->missingvalue = &missingvalue;
+	}
+	else measure->missingvalue = NULL;
+
 	oph_multistring* output;
 	if (!param->error && !param->result)
 	{
