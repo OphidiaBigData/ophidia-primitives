@@ -10450,7 +10450,7 @@ int core_oph_sub_array_multi(char* valueA, char* valueB, char* result, oph_type 
 				if (!isnan(*((float *)(valueA))))
 				{
 					if (!isnan(*((float *)(valueB)))) *((float *)(result)) = *((float *)(valueA)) - *((float *)(valueB));
-					else *((float *)(result)) = - *((float *)(valueA));
+					else *((float *)(result)) = *((float *)(valueA));
 				}
 				else *((float *)(result)) = - *((float *)(valueB));
 				break;
@@ -10460,7 +10460,7 @@ int core_oph_sub_array_multi(char* valueA, char* valueB, char* result, oph_type 
 				if (!isnan(*((double *)(valueA))))
 				{
 					if (!isnan(*((double *)(valueB)))) *((double *)(result)) = *((double *)(valueA)) - *((double *)(valueB));
-					else *((double *)(result)) = - *((double *)(valueA));
+					else *((double *)(result)) = *((double *)(valueA));
 				}
 				else *((double *)(result)) = - *((double *)(valueB));
 				break;
@@ -10590,9 +10590,9 @@ int core_oph_div_array_multi(char* valueA, char* valueB, char* result, oph_type 
 				if (!isnan(*((float *)(valueA))))
 				{
 					if (!isnan(*((float *)(valueB)))) *((float *)(result)) = *((float *)(valueA)) / *((float *)(valueB));
-					else *((float *)(result)) = 1.0/ *((float *)(valueA));
+					else *((float *)(result)) = *((float *)(valueA));
 				}
-				else *((float *)(result)) = 1.0/ *((float *)(valueB));
+				else *((float *)(result)) = 1.0 / *((float *)(valueB));
 				break;
 			}
 			case OPH_DOUBLE:
@@ -10600,9 +10600,9 @@ int core_oph_div_array_multi(char* valueA, char* valueB, char* result, oph_type 
 				if (!isnan(*((double *)(valueA))))
 				{
 					if (!isnan(*((double *)(valueB)))) *((double *)(result)) = *((double *)(valueA)) / *((double *)(valueB));
-					else *((double *)(result)) = 1.0/ *((double *)(valueA));
+					else *((double *)(result)) = *((double *)(valueA));
 				}
-				else *((double *)(result)) = 1.0/ *((double *)(valueB));
+				else *((double *)(result)) = 1.0 / *((double *)(valueB));
 				break;
 			}
 			default:
