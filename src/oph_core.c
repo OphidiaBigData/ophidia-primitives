@@ -9478,943 +9478,1565 @@ int core_oph_oper_array_multi(oph_generic_param_multi* param)
 
 int core_oph_sum_array_multi(char* valueA, char* valueB, char* result, oph_type type, double* missingvalue)
 {
-	switch (type)
+	if (missingvalue)
 	{
-		case OPH_INT:
+		switch (type)
 		{
-			if (!missingvalue || (*((int *)(valueA)) != (int)*missingvalue))
+			case OPH_INT:
 			{
-				if (!missingvalue || (*((int *)(valueB)) != (int)*missingvalue))
-					*((int *)(result)) = *((int *)(valueA)) + *((int *)(valueB));
-				else *((int *)(result)) = *((int *)(valueA));
+				if (*((int *)(valueA)) != (int)*missingvalue)
+				{
+					if (*((int *)(valueB)) != (int)*missingvalue)
+						*((int *)(result)) = *((int *)(valueA)) + *((int *)(valueB));
+					else *((int *)(result)) = *((int *)(valueA));
+				}
+				else if (*((int *)(valueB)) != (int)*missingvalue)
+					*((int *)(result)) = *((int *)(valueB));
+				else *((int *)(result)) = (int)*missingvalue;
+				break;
 			}
-			else if (*((int *)(valueB)) != (int)*missingvalue)
-				*((int *)(result)) = *((int *)(valueB));
-			else *((int *)(result)) = (int)*missingvalue;
-			break;
+			case OPH_SHORT:
+			{
+				if (*((short *)(valueA)) != (short)*missingvalue)
+				{
+					if (*((short *)(valueB)) != (short)*missingvalue)
+						*((short *)(result)) = *((short *)(valueA)) + *((short *)(valueB));
+					else *((short *)(result)) = *((short *)(valueA));
+				}
+				else if (*((short *)(valueB)) != (short)*missingvalue)
+					*((short *)(result)) = *((short *)(valueB));
+				else *((short *)(result)) = (short)*missingvalue;
+				break;
+			}
+			case OPH_BYTE:
+			{
+				if (*((char *)(valueA)) != (char)*missingvalue)
+				{
+					if (*((char *)(valueB)) != (char)*missingvalue)
+						*((char *)(result)) = *((char *)(valueA)) + *((char *)(valueB));
+					else *((char *)(result)) = *((char *)(valueA));
+				}
+				else if (*((char *)(valueB)) != (char)*missingvalue)
+					*((char *)(result)) = *((char *)(valueB));
+				else *((char *)(result)) = (char)*missingvalue;
+				break;
+			}
+			case OPH_LONG:
+			{
+				if (*((long long *)(valueA)) != (long long)*missingvalue)
+				{
+					if (*((long long *)(valueB)) != (long long)*missingvalue)
+						*((long long *)(result)) = *((long long *)(valueA)) + *((long long *)(valueB));
+					else *((long long *)(result)) = *((long long *)(valueA));
+				}
+				else if (*((long long *)(valueB)) != (long long)*missingvalue)
+					*((long long *)(result)) = *((long long *)(valueB));
+				else *((long long *)(result)) = (long long)*missingvalue;
+				break;
+			}
+			case OPH_FLOAT:
+			{
+				if (!isnan(*((float *)(valueA))) && (*((float *)(valueA)) != (float)*missingvalue))
+				{
+					if (!isnan(*((float *)(valueB))) && (*((float *)(valueB)) != (float)*missingvalue))
+						*((float *)(result)) = *((float *)(valueA)) + *((float *)(valueB));
+					else *((float *)(result)) = *((float *)(valueA));
+				}
+				else if (!isnan(*((float *)(valueB))) && (*((float *)(valueB)) != (float)*missingvalue))
+					*((float *)(result)) = *((float *)(valueB));
+				else *((float *)(result)) = missingvalue ? (float)*missingvalue : NAN;
+				break;
+			}
+			case OPH_DOUBLE:
+			{
+				if (!isnan(*((double *)(valueA))) && (*((double *)(valueA)) != (double)*missingvalue))
+				{
+					if (!isnan(*((double *)(valueB))) && (*((double *)(valueB)) != (double)*missingvalue))
+						*((double *)(result)) = *((double *)(valueA)) + *((double *)(valueB));
+					else *((double *)(result)) = *((double *)(valueA));
+				}
+				else if (!isnan(*((double *)(valueB))) && (*((double *)(valueB)) != (double)*missingvalue))
+					*((double *)(result)) = *((double *)(valueB));
+				else *((double *)(result)) = missingvalue ? (double)*missingvalue : NAN;
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		case OPH_SHORT:
+	}
+	else
+	{
+		switch (type)
 		{
-			if (!missingvalue || (*((short *)(valueA)) != (short)*missingvalue))
+			case OPH_INT:
 			{
-				if (!missingvalue || (*((short *)(valueB)) != (short)*missingvalue))
-					*((short *)(result)) = *((short *)(valueA)) + *((short *)(valueB));
-				else *((short *)(result)) = *((short *)(valueA));
+				*((int *)(result)) = *((int *)(valueA)) * *((int *)(valueA)) + *((int *)(valueB)) * *((int *)(valueB));
+				break;
 			}
-			else if (*((short *)(valueB)) != (short)*missingvalue)
-				*((short *)(result)) = *((short *)(valueB));
-			else *((short *)(result)) = (short)*missingvalue;
-			break;
-		}
-		case OPH_BYTE:
-		{
-			if (!missingvalue || (*((char *)(valueA)) != (char)*missingvalue))
+			case OPH_SHORT:
 			{
-				if (!missingvalue || (*((char *)(valueB)) != (char)*missingvalue))
-					*((char *)(result)) = *((char *)(valueA)) + *((char *)(valueB));
-				else *((char *)(result)) = *((char *)(valueA));
+				*((short *)(result)) = *((short *)(valueA)) * *((short *)(valueA)) + *((short *)(valueB)) * *((short *)(valueB));
+				break;
 			}
-			else if (*((char *)(valueB)) != (char)*missingvalue)
-				*((char *)(result)) = *((char *)(valueB));
-			else *((char *)(result)) = (char)*missingvalue;
-			break;
-		}
-		case OPH_LONG:
-		{
-			if (!missingvalue || (*((long long *)(valueA)) != (long long)*missingvalue))
+			case OPH_BYTE:
 			{
-				if (!missingvalue || (*((long long *)(valueB)) != (long long)*missingvalue))
-					*((long long *)(result)) = *((long long *)(valueA)) + *((long long *)(valueB));
-				else *((long long *)(result)) = *((long long *)(valueA));
+				*((char *)(result)) = *((char *)(valueA)) * *((char *)(valueA)) + *((char *)(valueB)) * *((char *)(valueB));
+				break;
 			}
-			else if (*((long long *)(valueB)) != (long long)*missingvalue)
-				*((long long *)(result)) = *((long long *)(valueB));
-			else *((long long *)(result)) = (long long)*missingvalue;
-			break;
-		}
-		case OPH_FLOAT:
-		{
-			if (!isnan(*((float *)(valueA))) && (!missingvalue || (*((float *)(valueA)) != (float)*missingvalue)))
+			case OPH_LONG:
 			{
-				if (!isnan(*((float *)(valueB))) && (!missingvalue || (*((float *)(valueB)) != (float)*missingvalue)))
-					*((float *)(result)) = *((float *)(valueA)) + *((float *)(valueB));
-				else *((float *)(result)) = *((float *)(valueA));
+				*((long long *)(result)) = *((long long *)(valueA)) * *((long long *)(valueA)) + *((long long *)(valueB)) * *((long long *)(valueB));
+				break;
 			}
-			else if (!isnan(*((float *)(valueB))) && (!missingvalue || (*((float *)(valueB)) != (float)*missingvalue)))
-				*((float *)(result)) = *((float *)(valueB));
-			else *((float *)(result)) = missingvalue ? (float)*missingvalue : NAN;
-			break;
-		}
-		case OPH_DOUBLE:
-		{
-			if (!isnan(*((double *)(valueA))) && (!missingvalue || (*((double *)(valueA)) != (double)*missingvalue)))
+			case OPH_FLOAT:
 			{
-				if (!isnan(*((double *)(valueB))) && (!missingvalue || (*((double *)(valueB)) != (double)*missingvalue)))
-					*((double *)(result)) = *((double *)(valueA)) + *((double *)(valueB));
-				else *((double *)(result)) = *((double *)(valueA));
+				if (!isnan(*((float *)(valueA))))
+				{
+					if (!isnan(*((float *)(valueB)))) *((float *)(result)) = *((float *)(valueA)) * *((float *)(valueA)) + *((float *)(valueB)) * *((float *)(valueB));
+					else *((float *)(result)) = *((float *)(valueA)) * *((float *)(valueA));
+				}
+				else *((float *)(result)) = *((float *)(valueB)) * *((float *)(valueB));
+				break;
 			}
-			else if (!isnan(*((double *)(valueB))) && (!missingvalue || (*((double *)(valueB)) != (double)*missingvalue)))
-				*((double *)(result)) = *((double *)(valueB));
-			else *((double *)(result)) = missingvalue ? (double)*missingvalue : NAN;
-			break;
+			case OPH_DOUBLE:
+			{
+				if (!isnan(*((double *)(valueA))))
+				{
+					if (!isnan(*((double *)(valueB)))) *((double *)(result)) = *((double *)(valueA)) * *((double *)(valueA)) + *((double *)(valueB)) * *((double *)(valueB));
+					else *((double *)(result)) = *((double *)(valueA)) * *((double *)(valueA));
+				}
+				else *((double *)(result)) = *((double *)(valueB)) * *((double *)(valueB));
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		default:
-			pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-			return -1;
 	}
 	return 0;
 }
 int core_oph_sum2_array_multi(char* valueA, char* valueB, char* result, oph_type type, double* missingvalue)
 {
-	switch (type)
+	if (missingvalue)
 	{
-		case OPH_INT:
+		switch (type)
 		{
-			if (!missingvalue || (*((int *)(valueA)) != (int)*missingvalue))
+			case OPH_INT:
 			{
-				if (!missingvalue || (*((int *)(valueB)) != (int)*missingvalue))
-					*((int *)(result)) = *((int *)(valueA)) * *((int *)(valueA)) + *((int *)(valueB)) * *((int *)(valueB));
-				else *((int *)(result)) = *((int *)(valueA)) * *((int *)(valueA));
+				if (*((int *)(valueA)) != (int)*missingvalue)
+				{
+					if (*((int *)(valueB)) != (int)*missingvalue)
+						*((int *)(result)) = *((int *)(valueA)) * *((int *)(valueA)) + *((int *)(valueB)) * *((int *)(valueB));
+					else *((int *)(result)) = *((int *)(valueA)) * *((int *)(valueA));
+				}
+				else if (*((int *)(valueB)) != (int)*missingvalue)
+					*((int *)(result)) = *((int *)(valueB)) * *((int *)(valueB));
+				else *((int *)(result)) = (int)*missingvalue;
+				break;
 			}
-			else if (*((int *)(valueB)) != (int)*missingvalue)
-				*((int *)(result)) = *((int *)(valueB)) * *((int *)(valueB));
-			else *((int *)(result)) = (int)*missingvalue;
-			break;
+			case OPH_SHORT:
+			{
+				if (*((short *)(valueA)) != (short)*missingvalue)
+				{
+					if (*((short *)(valueB)) != (short)*missingvalue)
+						*((short *)(result)) = *((short *)(valueA)) * *((short *)(valueA)) + *((short *)(valueB)) * *((short *)(valueB));
+					else *((short *)(result)) = *((short *)(valueA)) * *((short *)(valueA));
+				}
+				else if (*((short *)(valueB)) != (short)*missingvalue)
+					*((short *)(result)) = *((short *)(valueB)) * *((short *)(valueB));
+				else *((short *)(result)) = (short)*missingvalue;
+				break;
+			}
+			case OPH_BYTE:
+			{
+				if (*((char *)(valueA)) != (char)*missingvalue)
+				{
+					if (*((char *)(valueB)) != (char)*missingvalue)
+						*((char *)(result)) = *((char *)(valueA)) * *((char *)(valueA)) + *((char *)(valueB)) * *((char *)(valueB));
+					else *((char *)(result)) = *((char *)(valueA)) * *((char *)(valueA));
+				}
+				else if (*((char *)(valueB)) != (char)*missingvalue)
+					*((char *)(result)) = *((char *)(valueB)) * *((char *)(valueB));
+				else *((char *)(result)) = (char)*missingvalue;
+				break;
+			}
+			case OPH_LONG:
+			{
+				if (*((long long *)(valueA)) != (long long)*missingvalue)
+				{
+					if (*((long long *)(valueB)) != (long long)*missingvalue)
+						*((long long *)(result)) = *((long long *)(valueA)) * *((long long *)(valueA)) + *((long long *)(valueB)) * *((long long *)(valueB));
+					else *((long long *)(result)) = *((long long *)(valueA)) * *((long long *)(valueA));
+				}
+				else if (*((long long *)(valueB)) != (long long)*missingvalue)
+					*((long long *)(result)) = *((long long *)(valueB)) * *((long long *)(valueB));
+				else *((long long *)(result)) = (long long)*missingvalue;
+				break;
+			}
+			case OPH_FLOAT:
+			{
+				if (!isnan(*((float *)(valueA))) && (*((float *)(valueA)) != (float)*missingvalue))
+				{
+					if (!isnan(*((float *)(valueB))) && (*((float *)(valueB)) != (float)*missingvalue))
+						*((float *)(result)) = *((float *)(valueA)) * *((float *)(valueA)) + *((float *)(valueB)) * *((float *)(valueB));
+					else *((float *)(result)) = *((float *)(valueA)) * *((float *)(valueA));
+				}
+				else if (!isnan(*((float *)(valueB))) && (*((float *)(valueB)) != (float)*missingvalue))
+					*((float *)(result)) = *((float *)(valueB)) * *((float *)(valueB));
+				else *((float *)(result)) = missingvalue ? (float)*missingvalue : NAN;
+				break;
+			}
+			case OPH_DOUBLE:
+			{
+				if (!isnan(*((double *)(valueA))) && (*((double *)(valueA)) != (double)*missingvalue))
+				{
+					if (!isnan(*((double *)(valueB))) && (*((double *)(valueB)) != (double)*missingvalue))
+						*((double *)(result)) = *((double *)(valueA)) * *((double *)(valueA)) + *((double *)(valueB)) * *((double *)(valueB));
+					else *((double *)(result)) = *((double *)(valueA)) * *((double *)(valueA));
+				}
+				else if (!isnan(*((double *)(valueB))) && (*((double *)(valueB)) != (double)*missingvalue))
+					*((double *)(result)) = *((double *)(valueB)) * *((double *)(valueB));
+				else *((double *)(result)) = missingvalue ? (double)*missingvalue : NAN;
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		case OPH_SHORT:
+	}
+	else
+	{
+		switch (type)
 		{
-			if (!missingvalue || (*((short *)(valueA)) != (short)*missingvalue))
+			case OPH_INT:
 			{
-				if (!missingvalue || (*((short *)(valueB)) != (short)*missingvalue))
-					*((short *)(result)) = *((short *)(valueA)) * *((short *)(valueA)) + *((short *)(valueB)) * *((short *)(valueB));
-				else *((short *)(result)) = *((short *)(valueA)) * *((short *)(valueA));
+				*((int *)(result)) = *((int *)(valueA)) * *((int *)(valueA)) + *((int *)(valueB)) * *((int *)(valueB));
+				break;
 			}
-			else if (*((short *)(valueB)) != (short)*missingvalue)
-				*((short *)(result)) = *((short *)(valueB)) * *((short *)(valueB));
-			else *((short *)(result)) = (short)*missingvalue;
-			break;
-		}
-		case OPH_BYTE:
-		{
-			if (!missingvalue || (*((char *)(valueA)) != (char)*missingvalue))
+			case OPH_SHORT:
 			{
-				if (!missingvalue || (*((char *)(valueB)) != (char)*missingvalue))
-					*((char *)(result)) = *((char *)(valueA)) * *((char *)(valueA)) + *((char *)(valueB)) * *((char *)(valueB));
-				else *((char *)(result)) = *((char *)(valueA)) * *((char *)(valueA));
+				*((short *)(result)) = *((short *)(valueA)) * *((short *)(valueA)) + *((short *)(valueB)) * *((short *)(valueB));
+				break;
 			}
-			else if (*((char *)(valueB)) != (char)*missingvalue)
-				*((char *)(result)) = *((char *)(valueB)) * *((char *)(valueB));
-			else *((char *)(result)) = (char)*missingvalue;
-			break;
-		}
-		case OPH_LONG:
-		{
-			if (!missingvalue || (*((long long *)(valueA)) != (long long)*missingvalue))
+			case OPH_BYTE:
 			{
-				if (!missingvalue || (*((long long *)(valueB)) != (long long)*missingvalue))
-					*((long long *)(result)) = *((long long *)(valueA)) * *((long long *)(valueA)) + *((long long *)(valueB)) * *((long long *)(valueB));
-				else *((long long *)(result)) = *((long long *)(valueA)) * *((long long *)(valueA));
+				*((char *)(result)) = *((char *)(valueA)) * *((char *)(valueA)) + *((char *)(valueB)) * *((char *)(valueB));
+				break;
 			}
-			else if (*((long long *)(valueB)) != (long long)*missingvalue)
-				*((long long *)(result)) = *((long long *)(valueB)) * *((long long *)(valueB));
-			else *((long long *)(result)) = (long long)*missingvalue;
-			break;
-		}
-		case OPH_FLOAT:
-		{
-			if (!isnan(*((float *)(valueA))) && (!missingvalue || (*((float *)(valueA)) != (float)*missingvalue)))
+			case OPH_LONG:
 			{
-				if (!isnan(*((float *)(valueB))) && (!missingvalue || (*((float *)(valueB)) != (float)*missingvalue)))
-					*((float *)(result)) = *((float *)(valueA)) * *((float *)(valueA)) + *((float *)(valueB)) * *((float *)(valueB));
-				else *((float *)(result)) = *((float *)(valueA)) * *((float *)(valueA));
+				*((long long *)(result)) = *((long long *)(valueA)) * *((long long *)(valueA)) + *((long long *)(valueB)) * *((long long *)(valueB));
+				break;
 			}
-			else if (!isnan(*((float *)(valueB))) && (!missingvalue || (*((float *)(valueB)) != (float)*missingvalue)))
-				*((float *)(result)) = *((float *)(valueB)) * *((float *)(valueB));
-			else *((float *)(result)) = missingvalue ? (float)*missingvalue : NAN;
-			break;
-		}
-		case OPH_DOUBLE:
-		{
-			if (!isnan(*((double *)(valueA))) && (!missingvalue || (*((double *)(valueA)) != (double)*missingvalue)))
+			case OPH_FLOAT:
 			{
-				if (!isnan(*((double *)(valueB))) && (!missingvalue || (*((double *)(valueB)) != (double)*missingvalue)))
-					*((double *)(result)) = *((double *)(valueA)) * *((double *)(valueA)) + *((double *)(valueB)) * *((double *)(valueB));
-				else *((double *)(result)) = *((double *)(valueA)) * *((double *)(valueA));
+				if (!isnan(*((float *)(valueA))))
+				{
+					if (!isnan(*((float *)(valueB)))) *((float *)(result)) = *((float *)(valueA)) * *((float *)(valueA)) + *((float *)(valueB)) * *((float *)(valueB));
+					else *((float *)(result)) = *((float *)(valueA)) * *((float *)(valueA));
+				}
+				else *((float *)(result)) = *((float *)(valueB)) * *((float *)(valueB));
+				break;
 			}
-			else if (!isnan(*((double *)(valueB))) && (!missingvalue || (*((double *)(valueB)) != (double)*missingvalue)))
-				*((double *)(result)) = *((double *)(valueB)) * *((double *)(valueB));
-			else *((double *)(result)) = missingvalue ? (double)*missingvalue : NAN;
-			break;
+			case OPH_DOUBLE:
+			{
+				if (!isnan(*((double *)(valueA))))
+				{
+					if (!isnan(*((double *)(valueB)))) *((double *)(result)) = *((double *)(valueA)) * *((double *)(valueA)) + *((double *)(valueB)) * *((double *)(valueB));
+					else *((double *)(result)) = *((double *)(valueA)) * *((double *)(valueA));
+				}
+				else *((double *)(result)) = *((double *)(valueB)) * *((double *)(valueB));
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		default:
-			pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-			return -1;
 	}
 	return 0;
 }
 int core_oph_sum3_array_multi(char* valueA, char* valueB, char* result, oph_type type, double* missingvalue)
 {
-	switch (type)
+	if (missingvalue)
 	{
-		case OPH_INT:
+		switch (type)
 		{
-			if (!missingvalue || (*((int *)(valueA)) != (int)*missingvalue))
+			case OPH_INT:
 			{
-				if (!missingvalue || (*((int *)(valueB)) != (int)*missingvalue))
-					*((int *)(result)) = *((int *)(valueA)) * *((int *)(valueA)) * *((int *)(valueA)) + *((int *)(valueB)) * *((int *)(valueB)) * *((int *)(valueB));
-				else *((int *)(result)) = *((int *)(valueA)) * *((int *)(valueA)) * *((int *)(valueA));
+				if (*((int *)(valueA)) != (int)*missingvalue)
+				{
+					if (*((int *)(valueB)) != (int)*missingvalue)
+						*((int *)(result)) = *((int *)(valueA)) * *((int *)(valueA)) * *((int *)(valueA)) + *((int *)(valueB)) * *((int *)(valueB)) * *((int *)(valueB));
+					else *((int *)(result)) = *((int *)(valueA)) * *((int *)(valueA)) * *((int *)(valueA));
+				}
+				else if (*((int *)(valueB)) != (int)*missingvalue)
+					*((int *)(result)) = *((int *)(valueB)) * *((int *)(valueB)) * *((int *)(valueB));
+				else *((int *)(result)) = (int)*missingvalue;
+				break;
 			}
-			else if (*((int *)(valueB)) != (int)*missingvalue)
-				*((int *)(result)) = *((int *)(valueB)) * *((int *)(valueB)) * *((int *)(valueB));
-			else *((int *)(result)) = (int)*missingvalue;
-			break;
+			case OPH_SHORT:
+			{
+				if (*((short *)(valueA)) != (short)*missingvalue)
+				{
+					if (*((short *)(valueB)) != (short)*missingvalue)
+						*((short *)(result)) = *((short *)(valueA)) * *((short *)(valueA)) * *((short *)(valueA)) + *((short *)(valueB)) * *((short *)(valueB)) * *((short *)(valueB));
+					else *((short *)(result)) = *((short *)(valueA)) * *((short *)(valueA)) * *((short *)(valueA));
+				}
+				else if (*((short *)(valueB)) != (short)*missingvalue)
+					*((short *)(result)) = *((short *)(valueB)) * *((short *)(valueB)) * *((short *)(valueB));
+				else *((short *)(result)) = (short)*missingvalue;
+				break;
+			}
+			case OPH_BYTE:
+			{
+				if (*((char *)(valueA)) != (char)*missingvalue)
+				{
+					if (*((char *)(valueB)) != (char)*missingvalue)
+						*((char *)(result)) = *((char *)(valueA)) * *((char *)(valueA)) * *((char *)(valueA)) + *((char *)(valueB)) * *((char *)(valueB)) * *((char *)(valueB));
+					else *((char *)(result)) = *((char *)(valueA)) * *((char *)(valueA)) * *((char *)(valueA));
+				}
+				else if (*((char *)(valueB)) != (char)*missingvalue)
+					*((char *)(result)) = *((char *)(valueB)) * *((char *)(valueB)) * *((char *)(valueB));
+				else *((char *)(result)) = (char)*missingvalue;
+				break;
+			}
+			case OPH_LONG:
+			{
+				if (*((long long *)(valueA)) != (long long)*missingvalue)
+				{
+					if (*((long long *)(valueB)) != (long long)*missingvalue)
+						*((long long *)(result)) = *((long long *)(valueA)) * *((long long *)(valueA)) * *((long long *)(valueA)) + *((long long *)(valueB)) * *((long long *)(valueB)) * *((long long *)(valueB));
+					else *((long long *)(result)) = *((long long *)(valueA)) * *((long long *)(valueA)) * *((long long *)(valueA));
+				}
+				else if (*((long long *)(valueB)) != (long long)*missingvalue)
+					*((long long *)(result)) = *((long long *)(valueB)) * *((long long *)(valueB)) * *((long long *)(valueB));
+				else *((long long *)(result)) = (long long)*missingvalue;
+				break;
+			}
+			case OPH_FLOAT:
+			{
+				if (!isnan(*((float *)(valueA))) && (*((float *)(valueA)) != (float)*missingvalue))
+				{
+					if (!isnan(*((float *)(valueB))) && (*((float *)(valueB)) != (float)*missingvalue))
+						*((float *)(result)) = *((float *)(valueA)) * *((float *)(valueA)) * *((float *)(valueA)) + *((float *)(valueB)) * *((float *)(valueB)) * *((float *)(valueB));
+					else *((float *)(result)) = *((float *)(valueA)) * *((float *)(valueA)) * *((float *)(valueA));
+				}
+				else if (!isnan(*((float *)(valueB))) && (*((float *)(valueB)) != (float)*missingvalue))
+					*((float *)(result)) = *((float *)(valueB)) * *((float *)(valueB)) * *((float *)(valueB));
+				else *((float *)(result)) = missingvalue ? (float)*missingvalue : NAN;
+				break;
+			}
+			case OPH_DOUBLE:
+			{
+				if (!isnan(*((double *)(valueA))) && (*((double *)(valueA)) != (double)*missingvalue))
+				{
+					if (!isnan(*((double *)(valueB))) && (*((double *)(valueB)) != (double)*missingvalue))
+						*((double *)(result)) = *((double *)(valueA)) * *((double *)(valueA)) * *((double *)(valueA)) + *((double *)(valueB)) * *((double *)(valueB)) * *((double *)(valueB));
+					else *((double *)(result)) = *((double *)(valueA)) * *((double *)(valueA)) * *((double *)(valueA));
+				}
+				else if (!isnan(*((double *)(valueB))) && (*((double *)(valueB)) != (double)*missingvalue))
+					*((double *)(result)) = *((double *)(valueB)) * *((double *)(valueB)) * *((double *)(valueB));
+				else *((double *)(result)) = missingvalue ? (double)*missingvalue : NAN;
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		case OPH_SHORT:
+	}
+	else
+	{
+		switch (type)
 		{
-			if (!missingvalue || (*((short *)(valueA)) != (short)*missingvalue))
+			case OPH_INT:
 			{
-				if (!missingvalue || (*((short *)(valueB)) != (short)*missingvalue))
-					*((short *)(result)) = *((short *)(valueA)) * *((short *)(valueA)) * *((short *)(valueA)) + *((short *)(valueB)) * *((short *)(valueB)) * *((short *)(valueB));
-				else *((short *)(result)) = *((short *)(valueA)) * *((short *)(valueA)) * *((short *)(valueA));
+				*((int *)(result)) = *((int *)(valueA)) * *((int *)(valueA)) * *((int *)(valueA)) + *((int *)(valueB)) * *((int *)(valueB)) * *((int *)(valueB));
+				break;
 			}
-			else if (*((short *)(valueB)) != (short)*missingvalue)
-				*((short *)(result)) = *((short *)(valueB)) * *((short *)(valueB)) * *((short *)(valueB));
-			else *((short *)(result)) = (short)*missingvalue;
-			break;
-		}
-		case OPH_BYTE:
-		{
-			if (!missingvalue || (*((char *)(valueA)) != (char)*missingvalue))
+			case OPH_SHORT:
 			{
-				if (!missingvalue || (*((char *)(valueB)) != (char)*missingvalue))
-					*((char *)(result)) = *((char *)(valueA)) * *((char *)(valueA)) * *((char *)(valueA)) + *((char *)(valueB)) * *((char *)(valueB)) * *((char *)(valueB));
-				else *((char *)(result)) = *((char *)(valueA)) * *((char *)(valueA)) * *((char *)(valueA));
+				*((short *)(result)) = *((short *)(valueA)) * *((short *)(valueA)) * *((short *)(valueA)) + *((short *)(valueB)) * *((short *)(valueB)) * *((short *)(valueB));
+				break;
 			}
-			else if (*((char *)(valueB)) != (char)*missingvalue)
-				*((char *)(result)) = *((char *)(valueB)) * *((char *)(valueB)) * *((char *)(valueB));
-			else *((char *)(result)) = (char)*missingvalue;
-			break;
-		}
-		case OPH_LONG:
-		{
-			if (!missingvalue || (*((long long *)(valueA)) != (long long)*missingvalue))
+			case OPH_BYTE:
 			{
-				if (!missingvalue || (*((long long *)(valueB)) != (long long)*missingvalue))
-					*((long long *)(result)) = *((long long *)(valueA)) * *((long long *)(valueA)) * *((long long *)(valueA)) + *((long long *)(valueB)) * *((long long *)(valueB)) * *((long long *)(valueB));
-				else *((long long *)(result)) = *((long long *)(valueA)) * *((long long *)(valueA)) * *((long long *)(valueA));
+				*((char *)(result)) = *((char *)(valueA)) * *((char *)(valueA)) * *((char *)(valueA)) + *((char *)(valueB)) * *((char *)(valueB)) * *((char *)(valueB));
+				break;
 			}
-			else if (*((long long *)(valueB)) != (long long)*missingvalue)
-				*((long long *)(result)) = *((long long *)(valueB)) * *((long long *)(valueB)) * *((long long *)(valueB));
-			else *((long long *)(result)) = (long long)*missingvalue;
-			break;
-		}
-		case OPH_FLOAT:
-		{
-			if (!isnan(*((float *)(valueA))) && (!missingvalue || (*((float *)(valueA)) != (float)*missingvalue)))
+			case OPH_LONG:
 			{
-				if (!isnan(*((float *)(valueB))) && (!missingvalue || (*((float *)(valueB)) != (float)*missingvalue)))
-					*((float *)(result)) = *((float *)(valueA)) * *((float *)(valueA)) * *((float *)(valueA)) + *((float *)(valueB)) * *((float *)(valueB)) * *((float *)(valueB));
-				else *((float *)(result)) = *((float *)(valueA)) * *((float *)(valueA)) * *((float *)(valueA));
+				*((long long *)(result)) = *((long long *)(valueA)) * *((long long *)(valueA)) * *((long long *)(valueA)) + *((long long *)(valueB)) * *((long long *)(valueB)) * *((long long *)(valueB));
+				break;
 			}
-			else if (!isnan(*((float *)(valueB))) && (!missingvalue || (*((float *)(valueB)) != (float)*missingvalue)))
-				*((float *)(result)) = *((float *)(valueB)) * *((float *)(valueB)) * *((float *)(valueB));
-			else *((float *)(result)) = missingvalue ? (float)*missingvalue : NAN;
-			break;
-		}
-		case OPH_DOUBLE:
-		{
-			if (!isnan(*((double *)(valueA))) && (!missingvalue || (*((double *)(valueA)) != (double)*missingvalue)))
+			case OPH_FLOAT:
 			{
-				if (!isnan(*((double *)(valueB))) && (!missingvalue || (*((double *)(valueB)) != (double)*missingvalue)))
-					*((double *)(result)) = *((double *)(valueA)) * *((double *)(valueA)) * *((double *)(valueA)) + *((double *)(valueB)) * *((double *)(valueB)) * *((double *)(valueB));
-				else *((double *)(result)) = *((double *)(valueA)) * *((double *)(valueA)) * *((double *)(valueA));
+				if (!isnan(*((float *)(valueA))))
+				{
+					if (!isnan(*((float *)(valueB)))) *((float *)(result)) = *((float *)(valueA)) * *((float *)(valueA)) * *((float *)(valueA)) + *((float *)(valueB)) * *((float *)(valueB)) * *((float *)(valueB));
+					else *((float *)(result)) = *((float *)(valueA)) * *((float *)(valueA)) * *((float *)(valueA));
+				}
+				else *((float *)(result)) = *((float *)(valueB)) * *((float *)(valueB)) * *((float *)(valueB));
+				break;
 			}
-			else if (!isnan(*((double *)(valueB))) && (!missingvalue || (*((double *)(valueB)) != (double)*missingvalue)))
-				*((double *)(result)) = *((double *)(valueB)) * *((double *)(valueB)) * *((double *)(valueB));
-			else *((double *)(result)) = missingvalue ? (double)*missingvalue : NAN;
-			break;
+			case OPH_DOUBLE:
+			{
+				if (!isnan(*((double *)(valueA))))
+				{
+					if (!isnan(*((double *)(valueB)))) *((double *)(result)) = *((double *)(valueA)) * *((double *)(valueA)) * *((double *)(valueA)) + *((double *)(valueB)) * *((double *)(valueB)) * *((double *)(valueB));
+					else *((double *)(result)) = *((double *)(valueA)) * *((double *)(valueA)) * *((double *)(valueA));
+				}
+				else *((double *)(result)) = *((double *)(valueB)) * *((double *)(valueB)) * *((double *)(valueB));
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		default:
-			pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-			return -1;
 	}
 	return 0;
 }
 int core_oph_sum4_array_multi(char* valueA, char* valueB, char* result, oph_type type, double* missingvalue)
 {
-	switch (type)
+	if (missingvalue)
 	{
-		case OPH_INT:
+		switch (type)
 		{
-			int tmp1, tmp2;
-			if (!missingvalue || (*((int *)(valueA)) != (int)*missingvalue))
+			case OPH_INT:
 			{
-				tmp1 = *((int *)(valueA)) * *((int *)(valueA));
-				if (!missingvalue || (*((int *)(valueB)) != (int)*missingvalue))
+				int tmp1, tmp2;
+				if (*((int *)(valueA)) != (int)*missingvalue)
+				{
+					tmp1 = *((int *)(valueA)) * *((int *)(valueA));
+					if (*((int *)(valueB)) != (int)*missingvalue)
+					{
+						tmp2 = *((int *)(valueB)) * *((int *)(valueB));
+						*((int *)(result)) = tmp1 * tmp1 + tmp2 * tmp2;
+					}
+					else *((int *)(result)) = tmp1 * tmp1;
+				}
+				else if (*((int *)(valueB)) != (int)*missingvalue)
 				{
 					tmp2 = *((int *)(valueB)) * *((int *)(valueB));
-					*((int *)(result)) = tmp1 * tmp1 + tmp2 * tmp2;
+					*((int *)(result)) = tmp2 * tmp2;
 				}
-				else *((int *)(result)) = tmp1 * tmp1;
+				else *((int *)(result)) = (int)*missingvalue;
+				break;
 			}
-			else if (*((int *)(valueB)) != (int)*missingvalue)
+			case OPH_SHORT:
 			{
-				tmp2 = *((int *)(valueB)) * *((int *)(valueB));
-				*((int *)(result)) = tmp2 * tmp2;
-			}
-			else *((int *)(result)) = (int)*missingvalue;
-			break;
-		}
-		case OPH_SHORT:
-		{
-			short tmp1, tmp2;
-			if (!missingvalue || (*((short *)(valueA)) != (short)*missingvalue))
-			{
-				tmp1 = *((short *)(valueA)) * *((short *)(valueA));
-				if (!missingvalue || (*((short *)(valueB)) != (short)*missingvalue))
+				short tmp1, tmp2;
+				if (*((short *)(valueA)) != (short)*missingvalue)
+				{
+					tmp1 = *((short *)(valueA)) * *((short *)(valueA));
+					if (*((short *)(valueB)) != (short)*missingvalue)
+					{
+						tmp2 = *((short *)(valueB)) * *((short *)(valueB));
+						*((short *)(result)) = tmp1 * tmp1 + tmp2 * tmp2;
+					}
+					else *((short *)(result)) = tmp1 * tmp1;
+				}
+				else if (*((short *)(valueB)) != (short)*missingvalue)
 				{
 					tmp2 = *((short *)(valueB)) * *((short *)(valueB));
-					*((short *)(result)) = tmp1 * tmp1 + tmp2 * tmp2;
+					*((short *)(result)) = tmp2 * tmp2;
 				}
-				else *((short *)(result)) = tmp1 * tmp1;
+				else *((short *)(result)) = (short)*missingvalue;
+				break;
 			}
-			else if (*((short *)(valueB)) != (short)*missingvalue)
+			case OPH_BYTE:
 			{
-				tmp2 = *((short *)(valueB)) * *((short *)(valueB));
-				*((short *)(result)) = tmp2 * tmp2;
-			}
-			else *((short *)(result)) = (short)*missingvalue;
-			break;
-		}
-		case OPH_BYTE:
-		{
-			char tmp1, tmp2;
-			if (!missingvalue || (*((char *)(valueA)) != (char)*missingvalue))
-			{
-				tmp1 = *((char *)(valueA)) * *((char *)(valueA));
-				if (!missingvalue || (*((char *)(valueB)) != (char)*missingvalue))
+				char tmp1, tmp2;
+				if (*((char *)(valueA)) != (char)*missingvalue)
+				{
+					tmp1 = *((char *)(valueA)) * *((char *)(valueA));
+					if (*((char *)(valueB)) != (char)*missingvalue)
+					{
+						tmp2 = *((char *)(valueB)) * *((char *)(valueB));
+						*((char *)(result)) = tmp1 * tmp1 + tmp2 * tmp2;
+					}
+					else *((char *)(result)) = tmp1 * tmp1;
+				}
+				else if (*((char *)(valueB)) != (char)*missingvalue)
 				{
 					tmp2 = *((char *)(valueB)) * *((char *)(valueB));
-					*((char *)(result)) = tmp1 * tmp1 + tmp2 * tmp2;
+					*((char *)(result)) = tmp2 * tmp2;
 				}
-				else *((char *)(result)) = tmp1 * tmp1;
+				else *((char *)(result)) = (char)*missingvalue;
+				break;
 			}
-			else if (*((char *)(valueB)) != (char)*missingvalue)
+			case OPH_LONG:
 			{
-				tmp2 = *((char *)(valueB)) * *((char *)(valueB));
-				*((char *)(result)) = tmp2 * tmp2;
-			}
-			else *((char *)(result)) = (char)*missingvalue;
-			break;
-		}
-		case OPH_LONG:
-		{
-			long long tmp1, tmp2;
-			if (!missingvalue || (*((long long *)(valueA)) != (long long)*missingvalue))
-			{
-				tmp1 = *((long long *)(valueA)) * *((long long *)(valueA));
-				if (!missingvalue || (*((long long *)(valueB)) != (long long)*missingvalue))
+				long long tmp1, tmp2;
+				if (*((long long *)(valueA)) != (long long)*missingvalue)
+				{
+					tmp1 = *((long long *)(valueA)) * *((long long *)(valueA));
+					if (*((long long *)(valueB)) != (long long)*missingvalue)
+					{
+						tmp2 = *((long long *)(valueB)) * *((long long *)(valueB));
+						*((long long *)(result)) = tmp1 * tmp1 + tmp2 * tmp2;
+					}
+					else *((long long *)(result)) = tmp1 * tmp1;
+				}
+				else if (*((long long *)(valueB)) != (long long)*missingvalue)
 				{
 					tmp2 = *((long long *)(valueB)) * *((long long *)(valueB));
-					*((long long *)(result)) = tmp1 * tmp1 + tmp2 * tmp2;
+					*((long long *)(result)) = tmp2 * tmp2;
 				}
-				else *((long long *)(result)) = tmp1 * tmp1;
+				else *((long long *)(result)) = (long long)*missingvalue;
+				break;
 			}
-			else if (*((long long *)(valueB)) != (long long)*missingvalue)
+			case OPH_FLOAT:
 			{
-				tmp2 = *((long long *)(valueB)) * *((long long *)(valueB));
-				*((long long *)(result)) = tmp2 * tmp2;
-			}
-			else *((long long *)(result)) = (long long)*missingvalue;
-			break;
-		}
-		case OPH_FLOAT:
-		{
-			float tmp1, tmp2;
-			if (!isnan(*((float *)(valueA))) && (!missingvalue || (*((float *)(valueA)) != (float)*missingvalue)))
-			{
-				tmp1 = *((float *)(valueA)) * *((float *)(valueA));
-				if (!missingvalue || (*((float *)(valueB)) != (float)*missingvalue))
+				float tmp1, tmp2;
+				if (!isnan(*((float *)(valueA))) && (*((float *)(valueA)) != (float)*missingvalue))
+				{
+					tmp1 = *((float *)(valueA)) * *((float *)(valueA));
+					if (*((float *)(valueB)) != (float)*missingvalue)
+					{
+						tmp2 = *((float *)(valueB)) * *((float *)(valueB));
+						*((float *)(result)) = tmp1 * tmp1 + tmp2 * tmp2;
+					}
+					else *((float *)(result)) = tmp1 * tmp1;
+				}
+				else if (!isnan(*((float *)(valueB))) && (*((float *)(valueB)) != (float)*missingvalue))
 				{
 					tmp2 = *((float *)(valueB)) * *((float *)(valueB));
-					*((float *)(result)) = tmp1 * tmp1 + tmp2 * tmp2;
+					*((float *)(result)) = tmp2 * tmp2;
 				}
-				else *((float *)(result)) = tmp1 * tmp1;
+				else *((float *)(result)) = missingvalue ? (float)*missingvalue : NAN;
+				break;
 			}
-			else if (!isnan(*((float *)(valueB))) && (!missingvalue || (*((float *)(valueB)) != (float)*missingvalue)))
+			case OPH_DOUBLE:
 			{
-				tmp2 = *((float *)(valueB)) * *((float *)(valueB));
-				*((float *)(result)) = tmp2 * tmp2;
-			}
-			else *((float *)(result)) = missingvalue ? (float)*missingvalue : NAN;
-			break;
-		}
-		case OPH_DOUBLE:
-		{
-			double tmp1, tmp2;
-			if (!isnan(*((double *)(valueA))) && (!missingvalue || (*((double *)(valueA)) != (double)*missingvalue)))
-			{
-				tmp1 = *((double *)(valueA)) * *((double *)(valueA));
-				if (!missingvalue || (*((double *)(valueB)) != (double)*missingvalue))
+				double tmp1, tmp2;
+				if (!isnan(*((double *)(valueA))) && (*((double *)(valueA)) != (double)*missingvalue))
+				{
+					tmp1 = *((double *)(valueA)) * *((double *)(valueA));
+					if (*((double *)(valueB)) != (double)*missingvalue)
+					{
+						tmp2 = *((double *)(valueB)) * *((double *)(valueB));
+						*((double *)(result)) = tmp1 * tmp1 + tmp2 * tmp2;
+					}
+					else *((double *)(result)) = tmp1 * tmp1;
+				}
+				else if (!isnan(*((double *)(valueB))) && (*((double *)(valueB)) != (double)*missingvalue))
 				{
 					tmp2 = *((double *)(valueB)) * *((double *)(valueB));
-					*((double *)(result)) = tmp1 * tmp1 + tmp2 * tmp2;
+					*((double *)(result)) = tmp2 * tmp2;
 				}
-				else *((double *)(result)) = tmp1 * tmp1;
+				else *((double *)(result)) = missingvalue ? (double)*missingvalue : NAN;
+				break;
 			}
-			else if (!isnan(*((double *)(valueB))) && (!missingvalue || (*((double *)(valueB)) != (double)*missingvalue)))
-			{
-				tmp2 = *((double *)(valueB)) * *((double *)(valueB));
-				*((double *)(result)) = tmp2 * tmp2;
-			}
-			else *((double *)(result)) = missingvalue ? (double)*missingvalue : NAN;
-			break;
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		default:
-			pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-			return -1;
+	}
+	else
+	{
+		switch (type)
+		{
+			case OPH_INT:
+			{
+				int tmp1 = *((int *)(valueA)) * *((int *)(valueA)), tmp2 = *((int *)(valueB)) * *((int *)(valueB));
+				*((int *)(result)) = tmp1 * tmp1 + tmp2 * tmp2;
+				break;
+			}
+			case OPH_SHORT:
+			{
+				short tmp1 = *((short *)(valueA)) * *((short *)(valueA)), tmp2 = *((short *)(valueB)) * *((short *)(valueB));
+				*((short *)(result)) = tmp1 * tmp1 + tmp2 * tmp2;
+				break;
+			}
+			case OPH_BYTE:
+			{
+				char tmp1 = *((char *)(valueA)) * *((char *)(valueA)), tmp2 = *((char *)(valueB)) * *((char *)(valueB));
+				*((char *)(result)) = tmp1 * tmp1 + tmp2 * tmp2;
+				break;
+			}
+			case OPH_LONG:
+			{
+				long long tmp1 = *((long long *)(valueA)) * *((long long *)(valueA)), tmp2 = *((long long *)(valueB)) * *((long long *)(valueB));
+				*((long long *)(result)) = tmp1 * tmp1 + tmp2 * tmp2;
+				break;
+			}
+			case OPH_FLOAT:
+			{
+				if (!isnan(*((float *)(valueA))))
+				{
+					float tmp1 = *((float *)(valueA)) * *((float *)(valueA));
+					if (!isnan(*((float *)(valueB))))
+					{
+						float tmp2 = *((float *)(valueB)) * *((float *)(valueB));
+						*((float *)(result)) = tmp1 * tmp1 + tmp2 * tmp2;
+					}
+					else *((float *)(result)) = tmp1 * tmp1;
+				}
+				else
+				{
+					float tmp2 = *((float *)(valueB)) * *((float *)(valueB));
+					*((float *)(result)) = tmp2 * tmp2;
+				}
+				break;
+			}
+			case OPH_DOUBLE:
+			{
+				if (!isnan(*((double *)(valueA))))
+				{
+					double tmp1 = *((double *)(valueA)) * *((double *)(valueA));
+					if (!isnan(*((double *)(valueB))))
+					{
+						double tmp2 = *((double *)(valueB)) * *((double *)(valueB));
+						*((double *)(result)) = tmp1 * tmp1 + tmp2 * tmp2;
+					}
+					else *((double *)(result)) = tmp1 * tmp1;
+				}
+				else
+				{
+					double tmp2 = *((double *)(valueB)) * *((double *)(valueB));
+					*((double *)(result)) = tmp2 * tmp2;
+				}
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
 	}
 	return 0;
 }
 int core_oph_mul_array_multi(char* valueA, char* valueB, char* result, oph_type type, double* missingvalue)
 {
-	switch (type)
+	if (missingvalue)
 	{
-		case OPH_INT:
+		switch (type)
 		{
-			if (!missingvalue || (*((int *)(valueA)) != (int)*missingvalue))
+			case OPH_INT:
 			{
-				if (!missingvalue || (*((int *)(valueB)) != (int)*missingvalue))
-					*((int *)(result)) = *((int *)(valueA)) * *((int *)(valueB));
-				else *((int *)(result)) = *((int *)(valueA));
+				if (*((int *)(valueA)) != (int)*missingvalue)
+				{
+					if (*((int *)(valueB)) != (int)*missingvalue)
+						*((int *)(result)) = *((int *)(valueA)) * *((int *)(valueB));
+					else *((int *)(result)) = *((int *)(valueA));
+				}
+				else if (*((int *)(valueB)) != (int)*missingvalue)
+					*((int *)(result)) = *((int *)(valueB));
+				else *((int *)(result)) = (int)*missingvalue;
+				break;
 			}
-			else if (*((int *)(valueB)) != (int)*missingvalue)
-				*((int *)(result)) = *((int *)(valueB));
-			else *((int *)(result)) = (int)*missingvalue;
-			break;
+			case OPH_SHORT:
+			{
+				if (*((short *)(valueA)) != (short)*missingvalue)
+				{
+					if (*((short *)(valueB)) != (short)*missingvalue)
+						*((short *)(result)) = *((short *)(valueA)) * *((short *)(valueB));
+					else *((short *)(result)) = *((short *)(valueA));
+				}
+				else if (*((short *)(valueB)) != (short)*missingvalue)
+					*((short *)(result)) = *((short *)(valueB));
+				else *((short *)(result)) = (short)*missingvalue;
+				break;
+			}
+			case OPH_BYTE:
+			{
+				if (*((char *)(valueA)) != (char)*missingvalue)
+				{
+					if (*((char *)(valueB)) != (char)*missingvalue)
+						*((char *)(result)) = *((char *)(valueA)) * *((char *)(valueB));
+					else *((char *)(result)) = *((char *)(valueA));
+				}
+				else if (*((char *)(valueB)) != (char)*missingvalue)
+					*((char *)(result)) = *((char *)(valueB));
+				else *((char *)(result)) = (char)*missingvalue;
+				break;
+			}
+			case OPH_LONG:
+			{
+				if (*((long long *)(valueA)) != (long long)*missingvalue)
+				{
+					if (*((long long *)(valueB)) != (long long)*missingvalue)
+						*((long long *)(result)) = *((long long *)(valueA)) * *((long long *)(valueB));
+					else *((long long *)(result)) = *((long long *)(valueA));
+				}
+				else if (*((long long *)(valueB)) != (long long)*missingvalue)
+					*((long long *)(result)) = *((long long *)(valueB));
+				else *((long long *)(result)) = (long long)*missingvalue;
+				break;
+			}
+			case OPH_FLOAT:
+			{
+				if (!isnan(*((float *)(valueA))) && (*((float *)(valueA)) != (float)*missingvalue))
+				{
+					if (!isnan(*((float *)(valueB))) && (*((float *)(valueB)) != (float)*missingvalue))
+						*((float *)(result)) = *((float *)(valueA)) * *((float *)(valueB));
+					else *((float *)(result)) = *((float *)(valueA));
+				}
+				else if (!isnan(*((float *)(valueB))) && (*((float *)(valueB)) != (float)*missingvalue))
+					*((float *)(result)) = *((float *)(valueB));
+				else *((float *)(result)) = missingvalue ? (float)*missingvalue : NAN;
+				break;
+			}
+			case OPH_DOUBLE:
+			{
+				if (!isnan(*((double *)(valueA))) && (*((double *)(valueA)) != (double)*missingvalue))
+				{
+					if (!isnan(*((double *)(valueB))) && (*((double *)(valueB)) != (double)*missingvalue))
+						*((double *)(result)) = *((double *)(valueA)) * *((double *)(valueB));
+					else *((double *)(result)) = *((double *)(valueA));
+				}
+				else if (!isnan(*((double *)(valueB))) && (*((double *)(valueB)) != (double)*missingvalue))
+					*((double *)(result)) = *((double *)(valueB));
+				else *((double *)(result)) = missingvalue ? (double)*missingvalue : NAN;
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		case OPH_SHORT:
+	}
+	else
+	{
+		switch (type)
 		{
-			if (!missingvalue || (*((short *)(valueA)) != (short)*missingvalue))
+			case OPH_INT:
 			{
-				if (!missingvalue || (*((short *)(valueB)) != (short)*missingvalue))
-					*((short *)(result)) = *((short *)(valueA)) * *((short *)(valueB));
-				else *((short *)(result)) = *((short *)(valueA));
+				*((int *)(result)) = *((int *)(valueA)) * *((int *)(valueB));
+				break;
 			}
-			else if (*((short *)(valueB)) != (short)*missingvalue)
-				*((short *)(result)) = *((short *)(valueB));
-			else *((short *)(result)) = (short)*missingvalue;
-			break;
-		}
-		case OPH_BYTE:
-		{
-			if (!missingvalue || (*((char *)(valueA)) != (char)*missingvalue))
+			case OPH_SHORT:
 			{
-				if (!missingvalue || (*((char *)(valueB)) != (char)*missingvalue))
-					*((char *)(result)) = *((char *)(valueA)) * *((char *)(valueB));
-				else *((char *)(result)) = *((char *)(valueA));
+				*((short *)(result)) = *((short *)(valueA)) * *((short *)(valueB));
+				break;
 			}
-			else if (*((char *)(valueB)) != (char)*missingvalue)
-				*((char *)(result)) = *((char *)(valueB));
-			else *((char *)(result)) = (char)*missingvalue;
-			break;
-		}
-		case OPH_LONG:
-		{
-			if (!missingvalue || (*((long long *)(valueA)) != (long long)*missingvalue))
+			case OPH_BYTE:
 			{
-				if (!missingvalue || (*((long long *)(valueB)) != (long long)*missingvalue))
-					*((long long *)(result)) = *((long long *)(valueA)) * *((long long *)(valueB));
-				else *((long long *)(result)) = *((long long *)(valueA));
+				*((char *)(result)) = *((char *)(valueA)) * *((char *)(valueB));
+				break;
 			}
-			else if (*((long long *)(valueB)) != (long long)*missingvalue)
-				*((long long *)(result)) = *((long long *)(valueB));
-			else *((long long *)(result)) = (long long)*missingvalue;
-			break;
-		}
-		case OPH_FLOAT:
-		{
-			if (!isnan(*((float *)(valueA))) && (!missingvalue || (*((float *)(valueA)) != (float)*missingvalue)))
+			case OPH_LONG:
 			{
-				if (!isnan(*((float *)(valueB))) && (!missingvalue || (*((float *)(valueB)) != (float)*missingvalue)))
-					*((float *)(result)) = *((float *)(valueA)) * *((float *)(valueB));
-				else *((float *)(result)) = *((float *)(valueA));
+				*((long long *)(result)) = *((long long *)(valueA)) * *((long long *)(valueB));
+				break;
 			}
-			else if (!isnan(*((float *)(valueB))) && (!missingvalue || (*((float *)(valueB)) != (float)*missingvalue)))
-				*((float *)(result)) = *((float *)(valueB));
-			else *((float *)(result)) = missingvalue ? (float)*missingvalue : NAN;
-			break;
-		}
-		case OPH_DOUBLE:
-		{
-			if (!isnan(*((double *)(valueA))) && (!missingvalue || (*((double *)(valueA)) != (double)*missingvalue)))
+			case OPH_FLOAT:
 			{
-				if (!isnan(*((double *)(valueB))) && (!missingvalue || (*((double *)(valueB)) != (double)*missingvalue)))
-					*((double *)(result)) = *((double *)(valueA)) * *((double *)(valueB));
-				else *((double *)(result)) = *((double *)(valueA));
+				if (!isnan(*((float *)(valueA))))
+				{
+					if (!isnan(*((float *)(valueB)))) *((float *)(result)) = *((float *)(valueA)) * *((float *)(valueB));
+					else *((float *)(result)) = *((float *)(valueA));
+				}
+				else *((float *)(result)) = *((float *)(valueB));
+				break;
 			}
-			else if (!isnan(*((double *)(valueB))) && (!missingvalue || (*((double *)(valueB)) != (double)*missingvalue)))
-				*((double *)(result)) = *((double *)(valueB));
-			else *((double *)(result)) = missingvalue ? (double)*missingvalue : NAN;
-			break;
+			case OPH_DOUBLE:
+			{
+				if (!isnan(*((double *)(valueA))))
+				{
+					if (!isnan(*((double *)(valueB)))) *((double *)(result)) = *((double *)(valueA)) * *((double *)(valueB));
+					else *((double *)(result)) = *((double *)(valueA));
+				}
+				else *((double *)(result)) = *((double *)(valueB));
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		default:
-			pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-			return -1;
 	}
 	return 0;
 }
 int core_oph_mask_array_multi(char* valueA, char* valueB, char* result, oph_type type, double* missingvalue)
 {
-	switch (type)
+	if (missingvalue)
 	{
-		case OPH_INT:
+		switch (type)
 		{
-			*((int *)(result)) = *((int *)(valueB)) && (!missingvalue || (*((int *)(valueB)) != (int)*missingvalue)) ? *((int *)(valueA)) : (missingvalue ? (float)*missingvalue : (int)0);
-			break;
+			case OPH_INT:
+			{
+				*((int *)(result)) = *((int *)(valueB)) && (*((int *)(valueB)) != (int)*missingvalue) ? *((int *)(valueA)) : (missingvalue ? (float)*missingvalue : (int)0);
+				break;
+			}
+			case OPH_SHORT:
+			{
+				*((short *)(result)) = *((short *)(valueB)) && (*((short *)(valueB)) != (short)*missingvalue) ? *((short *)(valueA)) : (missingvalue ? (short)*missingvalue : (short)0);
+				break;
+			}
+			case OPH_BYTE:
+			{
+				*((char *)(result)) = *((char *)(valueB)) && (*((char *)(valueB)) != (char)*missingvalue) ? *((char *)(valueA)) : (missingvalue ? (char)*missingvalue : (char)0);
+				break;
+			}
+			case OPH_LONG:
+			{
+				*((long long *)(result)) = *((long long *)(valueB)) && (*((long long *)(valueB)) != (long long)*missingvalue) ? *((long long *)(valueA)) : (missingvalue ? (long long)*missingvalue : (long long)0);
+				break;
+			}
+			case OPH_FLOAT:
+			{
+				if (isnan(*((float *)(valueA))) || isnan(*((float *)(valueB)))) *((float *)(result)) = missingvalue ? (float)*missingvalue : NAN;
+				else *((float *)(result)) = *((float *)(valueB)) && (*((float *)(valueB)) != (float)*missingvalue) ? *((float *)(valueA)) : (missingvalue ? (float)*missingvalue : NAN);
+				break;
+			}
+			case OPH_DOUBLE:
+			{
+				if (isnan(*((double *)(valueA))) || isnan(*((double *)(valueB)))) *((double *)(result)) = missingvalue ? (double)*missingvalue : NAN;
+				else *((double *)(result)) = *((double *)(valueB)) && (*((double *)(valueB)) != (double)*missingvalue) ? *((double *)(valueA)) : (missingvalue ? (double)*missingvalue : NAN);
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		case OPH_SHORT:
+	}
+	else
+	{
+		switch (type)
 		{
-			*((short *)(result)) = *((short *)(valueB)) && (!missingvalue || (*((short *)(valueB)) != (short)*missingvalue)) ? *((short *)(valueA)) : (missingvalue ? (short)*missingvalue : (short)0);
-			break;
+			case OPH_INT:
+			{
+				*((int *)(result)) = *((int *)(valueB)) ? *((int *)(valueA)) : (int)0;
+				break;
+			}
+			case OPH_SHORT:
+			{
+				*((short *)(result)) = *((short *)(valueB)) ? *((short *)(valueA)) : (short)0;
+				break;
+			}
+			case OPH_BYTE:
+			{
+				*((char *)(result)) = *((char *)(valueB)) ? *((char *)(valueA)) : (char)0;
+				break;
+			}
+			case OPH_LONG:
+			{
+				*((long long *)(result)) = *((long long *)(valueB)) ? *((long long *)(valueA)) : (long long)0;
+				break;
+			}
+			case OPH_FLOAT:
+			{
+				if (isnan(*((float *)(valueA))) || isnan(*((float *)(valueB)))) *((float *)(result)) = NAN;
+				else *((float *)(result)) = *((float *)(valueB)) ? *((float *)(valueA)) : NAN;
+				break;
+			}
+			case OPH_DOUBLE:
+			{
+				if (isnan(*((double *)(valueA))) || isnan(*((double *)(valueB)))) *((double *)(result)) = NAN;
+				else *((double *)(result)) = *((double *)(valueB)) ? *((double *)(valueA)) : NAN;
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		case OPH_BYTE:
-		{
-			*((char *)(result)) = *((char *)(valueB)) && (!missingvalue || (*((char *)(valueB)) != (char)*missingvalue)) ? *((char *)(valueA)) : (missingvalue ? (char)*missingvalue : (char)0);
-			break;
-		}
-		case OPH_LONG:
-		{
-			*((long long *)(result)) = *((long long *)(valueB)) && (!missingvalue || (*((long long *)(valueB)) != (long long)*missingvalue)) ? *((long long *)(valueA)) : (missingvalue ? (long long)*missingvalue : (long long)0);
-			break;
-		}
-		case OPH_FLOAT:
-		{
-			if (isnan(*((float *)(valueA))) || isnan(*((float *)(valueB)))) *((float *)(result)) = missingvalue ? (float)*missingvalue : NAN;
-			else *((float *)(result)) = *((float *)(valueB)) && (!missingvalue || (*((float *)(valueB)) != (float)*missingvalue)) ? *((float *)(valueA)) : (missingvalue ? (float)*missingvalue : NAN);
-			break;
-		}
-		case OPH_DOUBLE:
-		{
-			if (isnan(*((double *)(valueA))) || isnan(*((double *)(valueB)))) *((double *)(result)) = missingvalue ? (double)*missingvalue : NAN;
-			else *((double *)(result)) = *((double *)(valueB)) && (!missingvalue || (*((double *)(valueB)) != (double)*missingvalue)) ? *((double *)(valueA)) : (missingvalue ? (double)*missingvalue : NAN);
-			break;
-		}
-		default:
-			pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-			return -1;
 	}
 	return 0;
 }
 int core_oph_sub_array_multi(char* valueA, char* valueB, char* result, oph_type type, double* missingvalue)
 {
-	switch (type)
+	if (missingvalue)
 	{
-		case OPH_INT:
+		switch (type)
 		{
-			if (!missingvalue || (*((int *)(valueA)) != (int)*missingvalue))
+			case OPH_INT:
 			{
-				if (!missingvalue || (*((int *)(valueB)) != (int)*missingvalue))
-					*((int *)(result)) = *((int *)(valueA)) - *((int *)(valueB));
-				else *((int *)(result)) = *((int *)(valueA));
+				if (*((int *)(valueA)) != (int)*missingvalue)
+				{
+					if (*((int *)(valueB)) != (int)*missingvalue)
+						*((int *)(result)) = *((int *)(valueA)) - *((int *)(valueB));
+					else *((int *)(result)) = *((int *)(valueA));
+				}
+				else if (*((int *)(valueB)) != (int)*missingvalue)
+					*((int *)(result)) = - *((int *)(valueB));
+				else *((int *)(result)) = (int)*missingvalue;
+				break;
 			}
-			else if (*((int *)(valueB)) != (int)*missingvalue)
-				*((int *)(result)) = - *((int *)(valueB));
-			else *((int *)(result)) = (int)*missingvalue;
-			break;
+			case OPH_SHORT:
+			{
+				if (*((short *)(valueA)) != (short)*missingvalue)
+				{
+					if (*((short *)(valueB)) != (short)*missingvalue)
+						*((short *)(result)) = *((short *)(valueA)) - *((short *)(valueB));
+					else *((short *)(result)) = *((short *)(valueA));
+				}
+				else if (*((short *)(valueB)) != (short)*missingvalue)
+					*((short *)(result)) = - *((short *)(valueB));
+				else *((short *)(result)) = (short)*missingvalue;
+				break;
+			}
+			case OPH_BYTE:
+			{
+				if (*((char *)(valueA)) != (char)*missingvalue)
+				{
+					if (*((char *)(valueB)) != (char)*missingvalue)
+						*((char *)(result)) = *((char *)(valueA)) - *((char *)(valueB));
+					else *((char *)(result)) = *((char *)(valueA));
+				}
+				else if (*((char *)(valueB)) != (char)*missingvalue)
+					*((char *)(result)) = - *((char *)(valueB));
+				else *((char *)(result)) = (char)*missingvalue;
+				break;
+			}
+			case OPH_LONG:
+			{
+				if (*((long long *)(valueA)) != (long long)*missingvalue)
+				{
+					if (*((long long *)(valueB)) != (long long)*missingvalue)
+						*((long long *)(result)) = *((long long *)(valueA)) - *((long long *)(valueB));
+					else *((long long *)(result)) = *((long long *)(valueA));
+				}
+				else if (*((long long *)(valueB)) != (long long)*missingvalue)
+					*((long long *)(result)) = - *((long long *)(valueB));
+				else *((long long *)(result)) = (long long)*missingvalue;
+				break;
+			}
+			case OPH_FLOAT:
+			{
+				if (!isnan(*((float *)(valueA))) && (*((float *)(valueA)) != (float)*missingvalue))
+				{
+					if (!isnan(*((float *)(valueB))) && (*((float *)(valueB)) != (float)*missingvalue))
+						*((float *)(result)) = *((float *)(valueA)) - *((float *)(valueB));
+					else *((float *)(result)) = *((float *)(valueA));
+				}
+				else if (!isnan(*((float *)(valueB))) && (*((float *)(valueB)) != (float)*missingvalue))
+					*((float *)(result)) = - *((float *)(valueB));
+				else *((float *)(result)) = missingvalue ? (float)*missingvalue : NAN;
+				break;
+			}
+			case OPH_DOUBLE:
+			{
+				if (!isnan(*((double *)(valueA))) && (*((double *)(valueA)) != (double)*missingvalue))
+				{
+					if (!isnan(*((double *)(valueB))) && (*((double *)(valueB)) != (double)*missingvalue))
+						*((double *)(result)) = *((double *)(valueA)) - *((double *)(valueB));
+					else *((double *)(result)) = *((double *)(valueA));
+				}
+				else if (!isnan(*((double *)(valueB))) && (*((double *)(valueB)) != (double)*missingvalue))
+					*((double *)(result)) = - *((double *)(valueB));
+				else *((double *)(result)) = missingvalue ? (double)*missingvalue : NAN;
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		case OPH_SHORT:
+	}
+	else
+	{
+		switch (type)
 		{
-			if (!missingvalue || (*((short *)(valueA)) != (short)*missingvalue))
+			case OPH_INT:
 			{
-				if (!missingvalue || (*((short *)(valueB)) != (short)*missingvalue))
-					*((short *)(result)) = *((short *)(valueA)) - *((short *)(valueB));
-				else *((short *)(result)) = *((short *)(valueA));
+				*((int *)(result)) = *((int *)(valueA)) - *((int *)(valueB));
+				break;
 			}
-			else if (*((short *)(valueB)) != (short)*missingvalue)
-				*((short *)(result)) = - *((short *)(valueB));
-			else *((short *)(result)) = (short)*missingvalue;
-			break;
-		}
-		case OPH_BYTE:
-		{
-			if (!missingvalue || (*((char *)(valueA)) != (char)*missingvalue))
+			case OPH_SHORT:
 			{
-				if (!missingvalue || (*((char *)(valueB)) != (char)*missingvalue))
-					*((char *)(result)) = *((char *)(valueA)) - *((char *)(valueB));
-				else *((char *)(result)) = *((char *)(valueA));
+				*((short *)(result)) = *((short *)(valueA)) - *((short *)(valueB));
+				break;
 			}
-			else if (*((char *)(valueB)) != (char)*missingvalue)
-				*((char *)(result)) = - *((char *)(valueB));
-			else *((char *)(result)) = (char)*missingvalue;
-			break;
-		}
-		case OPH_LONG:
-		{
-			if (!missingvalue || (*((long long *)(valueA)) != (long long)*missingvalue))
+			case OPH_BYTE:
 			{
-				if (!missingvalue || (*((long long *)(valueB)) != (long long)*missingvalue))
-					*((long long *)(result)) = *((long long *)(valueA)) - *((long long *)(valueB));
-				else *((long long *)(result)) = *((long long *)(valueA));
+				*((char *)(result)) = *((char *)(valueA)) - *((char *)(valueB));
+				break;
 			}
-			else if (*((long long *)(valueB)) != (long long)*missingvalue)
-				*((long long *)(result)) = - *((long long *)(valueB));
-			else *((long long *)(result)) = (long long)*missingvalue;
-			break;
-		}
-		case OPH_FLOAT:
-		{
-			if (!isnan(*((float *)(valueA))) && (!missingvalue || (*((float *)(valueA)) != (float)*missingvalue)))
+			case OPH_LONG:
 			{
-				if (!isnan(*((float *)(valueB))) && (!missingvalue || (*((float *)(valueB)) != (float)*missingvalue)))
-					*((float *)(result)) = *((float *)(valueA)) - *((float *)(valueB));
-				else *((float *)(result)) = *((float *)(valueA));
+				*((long long *)(result)) = *((long long *)(valueA)) - *((long long *)(valueB));
+				break;
 			}
-			else if (!isnan(*((float *)(valueB))) && (!missingvalue || (*((float *)(valueB)) != (float)*missingvalue)))
-				*((float *)(result)) = - *((float *)(valueB));
-			else *((float *)(result)) = missingvalue ? (float)*missingvalue : NAN;
-			break;
-		}
-		case OPH_DOUBLE:
-		{
-			if (!isnan(*((double *)(valueA))) && (!missingvalue || (*((double *)(valueA)) != (double)*missingvalue)))
+			case OPH_FLOAT:
 			{
-				if (!isnan(*((double *)(valueB))) && (!missingvalue || (*((double *)(valueB)) != (double)*missingvalue)))
-					*((double *)(result)) = *((double *)(valueA)) - *((double *)(valueB));
-				else *((double *)(result)) = *((double *)(valueA));
+				if (!isnan(*((float *)(valueA))))
+				{
+					if (!isnan(*((float *)(valueB)))) *((float *)(result)) = *((float *)(valueA)) - *((float *)(valueB));
+					else *((float *)(result)) = - *((float *)(valueA));
+				}
+				else *((float *)(result)) = - *((float *)(valueB));
+				break;
 			}
-			else if (!isnan(*((double *)(valueB))) && (!missingvalue || (*((double *)(valueB)) != (double)*missingvalue)))
-				*((double *)(result)) = - *((double *)(valueB));
-			else *((double *)(result)) = missingvalue ? (double)*missingvalue : NAN;
-			break;
+			case OPH_DOUBLE:
+			{
+				if (!isnan(*((double *)(valueA))))
+				{
+					if (!isnan(*((double *)(valueB)))) *((double *)(result)) = *((double *)(valueA)) - *((double *)(valueB));
+					else *((double *)(result)) = - *((double *)(valueA));
+				}
+				else *((double *)(result)) = - *((double *)(valueB));
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		default:
-			pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-			return -1;
 	}
 	return 0;
 }
 int core_oph_div_array_multi(char* valueA, char* valueB, char* result, oph_type type, double* missingvalue)
 {
-	switch (type)
+	if (missingvalue)
 	{
-		case OPH_INT:
+		switch (type)
 		{
-			if (!missingvalue || (*((int *)(valueA)) != (int)*missingvalue))
+			case OPH_INT:
 			{
-				if (!missingvalue || (*((int *)(valueB)) != (int)*missingvalue))
-					*((int *)(result)) = *((int *)(valueA)) / *((int *)(valueB));
-				else *((int *)(result)) = *((int *)(valueA));
+				if (*((int *)(valueA)) != (int)*missingvalue)
+				{
+					if (*((int *)(valueB)) != (int)*missingvalue)
+						*((int *)(result)) = *((int *)(valueA)) / *((int *)(valueB));
+					else *((int *)(result)) = *((int *)(valueA));
+				}
+				else if (*((int *)(valueB)) != (int)*missingvalue)
+					*((int *)(result)) = 1 / *((int *)(valueB));
+				else *((int *)(result)) = (int)*missingvalue;
+				break;
 			}
-			else if (*((int *)(valueB)) != (int)*missingvalue)
-				*((int *)(result)) = 1 / *((int *)(valueB));
-			else *((int *)(result)) = (int)*missingvalue;
-			break;
+			case OPH_SHORT:
+			{
+				if (*((short *)(valueA)) != (short)*missingvalue)
+				{
+					if (*((short *)(valueB)) != (short)*missingvalue)
+						*((short *)(result)) = *((short *)(valueA)) / *((short *)(valueB));
+					else *((short *)(result)) = *((short *)(valueA));
+				}
+				else if (*((short *)(valueB)) != (short)*missingvalue)
+					*((short *)(result)) = 1 / *((short *)(valueB));
+				else *((short *)(result)) = (short)*missingvalue;
+				break;
+			}
+			case OPH_BYTE:
+			{
+				if (*((char *)(valueA)) != (char)*missingvalue)
+				{
+					if (*((char *)(valueB)) != (char)*missingvalue)
+						*((char *)(result)) = *((char *)(valueA)) / *((char *)(valueB));
+					else *((char *)(result)) = *((char *)(valueA));
+				}
+				else if (*((char *)(valueB)) != (char)*missingvalue)
+					*((char *)(result)) = 1 / *((char *)(valueB));
+				else *((char *)(result)) = (char)*missingvalue;
+				break;
+			}
+			case OPH_LONG:
+			{
+				if (*((long long *)(valueA)) != (long long)*missingvalue)
+				{
+					if (*((long long *)(valueB)) != (long long)*missingvalue)
+						*((long long *)(result)) = *((long long *)(valueA)) / *((long long *)(valueB));
+					else *((long long *)(result)) = *((long long *)(valueA));
+				}
+				else if (*((long long *)(valueB)) != (long long)*missingvalue)
+					*((long long *)(result)) = 1 / *((long long *)(valueB));
+				else *((long long *)(result)) = (long long)*missingvalue;
+				break;
+			}
+			case OPH_FLOAT:
+			{
+				if (!isnan(*((float *)(valueA))) && (*((float *)(valueA)) != (float)*missingvalue))
+				{
+					if (!isnan(*((float *)(valueB))) && (*((float *)(valueB)) != (float)*missingvalue))
+						*((float *)(result)) = *((float *)(valueA)) / *((float *)(valueB));
+					else *((float *)(result)) = *((float *)(valueA));
+				}
+				else if (!isnan(*((float *)(valueB))) && (*((float *)(valueB)) != (float)*missingvalue))
+					*((float *)(result)) = 1.0 / *((float *)(valueB));
+				else *((float *)(result)) = missingvalue ? (float)*missingvalue : NAN;
+				break;
+			}
+			case OPH_DOUBLE:
+			{
+				if (!isnan(*((double *)(valueA))) && (*((double *)(valueA)) != (double)*missingvalue))
+				{
+					if (!isnan(*((double *)(valueB))) && (*((double *)(valueB)) != (double)*missingvalue))
+						*((double *)(result)) = *((double *)(valueA)) / *((double *)(valueB));
+					else *((double *)(result)) = *((double *)(valueA));
+				}
+				else if (!isnan(*((double *)(valueB))) && (*((double *)(valueB)) != (double)*missingvalue))
+					*((double *)(result)) = 1.0 / *((double *)(valueB));
+				else *((double *)(result)) = missingvalue ? (double)*missingvalue : NAN;
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		case OPH_SHORT:
+	}
+	else
+	{
+		switch (type)
 		{
-			if (!missingvalue || (*((short *)(valueA)) != (short)*missingvalue))
+			case OPH_INT:
 			{
-				if (!missingvalue || (*((short *)(valueB)) != (short)*missingvalue))
-					*((short *)(result)) = *((short *)(valueA)) / *((short *)(valueB));
-				else *((short *)(result)) = *((short *)(valueA));
+				*((int *)(result)) = *((int *)(valueA)) / *((int *)(valueB));
+				break;
 			}
-			else if (*((short *)(valueB)) != (short)*missingvalue)
-				*((short *)(result)) = 1 / *((short *)(valueB));
-			else *((short *)(result)) = (short)*missingvalue;
-			break;
-		}
-		case OPH_BYTE:
-		{
-			if (!missingvalue || (*((char *)(valueA)) != (char)*missingvalue))
+			case OPH_SHORT:
 			{
-				if (!missingvalue || (*((char *)(valueB)) != (char)*missingvalue))
-					*((char *)(result)) = *((char *)(valueA)) / *((char *)(valueB));
-				else *((char *)(result)) = *((char *)(valueA));
+				*((short *)(result)) = *((short *)(valueA)) / *((short *)(valueB));
+				break;
 			}
-			else if (*((char *)(valueB)) != (char)*missingvalue)
-				*((char *)(result)) = 1 / *((char *)(valueB));
-			else *((char *)(result)) = (char)*missingvalue;
-			break;
-		}
-		case OPH_LONG:
-		{
-			if (!missingvalue || (*((long long *)(valueA)) != (long long)*missingvalue))
+			case OPH_BYTE:
 			{
-				if (!missingvalue || (*((long long *)(valueB)) != (long long)*missingvalue))
-					*((long long *)(result)) = *((long long *)(valueA)) / *((long long *)(valueB));
-				else *((long long *)(result)) = *((long long *)(valueA));
+				*((char *)(result)) = *((char *)(valueA)) / *((char *)(valueB));
+				break;
 			}
-			else if (*((long long *)(valueB)) != (long long)*missingvalue)
-				*((long long *)(result)) = 1 / *((long long *)(valueB));
-			else *((long long *)(result)) = (long long)*missingvalue;
-			break;
-		}
-		case OPH_FLOAT:
-		{
-			if (!isnan(*((float *)(valueA))) && (!missingvalue || (*((float *)(valueA)) != (float)*missingvalue)))
+			case OPH_LONG:
 			{
-				if (!isnan(*((float *)(valueB))) && (!missingvalue || (*((float *)(valueB)) != (float)*missingvalue)))
-					*((float *)(result)) = *((float *)(valueA)) / *((float *)(valueB));
-				else *((float *)(result)) = *((float *)(valueA));
+				*((long long *)(result)) = *((long long *)(valueA)) / *((long long *)(valueB));
+				break;
 			}
-			else if (!isnan(*((float *)(valueB))) && (!missingvalue || (*((float *)(valueB)) != (float)*missingvalue)))
-				*((float *)(result)) = 1.0 / *((float *)(valueB));
-			else *((float *)(result)) = missingvalue ? (float)*missingvalue : NAN;
-			break;
-		}
-		case OPH_DOUBLE:
-		{
-			if (!isnan(*((double *)(valueA))) && (!missingvalue || (*((double *)(valueA)) != (double)*missingvalue)))
+			case OPH_FLOAT:
 			{
-				if (!isnan(*((double *)(valueB))) && (!missingvalue || (*((double *)(valueB)) != (double)*missingvalue)))
-					*((double *)(result)) = *((double *)(valueA)) / *((double *)(valueB));
-				else *((double *)(result)) = *((double *)(valueA));
+				if (!isnan(*((float *)(valueA))))
+				{
+					if (!isnan(*((float *)(valueB)))) *((float *)(result)) = *((float *)(valueA)) / *((float *)(valueB));
+					else *((float *)(result)) = 1.0/ *((float *)(valueA));
+				}
+				else *((float *)(result)) = 1.0/ *((float *)(valueB));
+				break;
 			}
-			else if (!isnan(*((double *)(valueB))) && (!missingvalue || (*((double *)(valueB)) != (double)*missingvalue)))
-				*((double *)(result)) = 1.0 / *((double *)(valueB));
-			else *((double *)(result)) = missingvalue ? (double)*missingvalue : NAN;
-			break;
+			case OPH_DOUBLE:
+			{
+				if (!isnan(*((double *)(valueA))))
+				{
+					if (!isnan(*((double *)(valueB)))) *((double *)(result)) = *((double *)(valueA)) / *((double *)(valueB));
+					else *((double *)(result)) = 1.0/ *((double *)(valueA));
+				}
+				else *((double *)(result)) = 1.0/ *((double *)(valueB));
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		default:
-			pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-			return -1;
 	}
 	return 0;
 }
 int core_oph_abs_array_multi(char* valueA, char* valueB, char* result, oph_type type, double* missingvalue)
 {
-	switch (type)
+	if (missingvalue)
 	{
-		case OPH_INT:
+		switch (type)
 		{
-			if (missingvalue && ((*((int *)(valueA)) == (int)*missingvalue) || (*((int *)(valueB)) == (int)*missingvalue))) *((int *)(result)) = (int)*missingvalue;
-			else *((int *)(result)) = (int)sqrtf(fabsf( *((int *)(valueA)) * *((int *)(valueA)) + *((int *)(valueB)) * *((int *)(valueB))) );
-			break;
+			case OPH_INT:
+			{
+				if ((*((int *)(valueA)) == (int)*missingvalue) || (*((int *)(valueB)) == (int)*missingvalue)) *((int *)(result)) = (int)*missingvalue;
+				else *((int *)(result)) = (int)sqrtf(fabsf( *((int *)(valueA)) * *((int *)(valueA)) + *((int *)(valueB)) * *((int *)(valueB))) );
+				break;
+			}
+			case OPH_SHORT:
+			{
+				if ((*((short *)(valueA)) == (short)*missingvalue) || (*((short *)(valueB)) == (short)*missingvalue)) *((short *)(result)) = (short)*missingvalue;
+				else *((short *)(result)) = (short)sqrtf(fabsf( *((short *)(valueA)) * *((short *)(valueA)) + *((short *)(valueB)) * *((short *)(valueB))) );
+				break;
+			}
+			case OPH_BYTE:
+			{
+				if ((*((char *)(valueA)) == (char)*missingvalue) || (*((char *)(valueB)) == (char)*missingvalue)) *((char *)(result)) = (char)*missingvalue;
+				else *((char *)(result)) = (char)sqrtf(fabsf( *((char *)(valueA)) * *((char *)(valueA)) + *((char *)(valueB)) * *((char *)(valueB))) );
+				break;
+			}
+			case OPH_LONG:
+			{
+				if ((*((long long *)(valueA)) == (long long)*missingvalue) || (*((long long *)(valueB)) == (long long)*missingvalue)) *((long long *)(result)) = (long long)*missingvalue;
+				else *((long long *)(result)) = (long long)sqrt(fabs( *((long long *)(valueA)) * *((long long *)(valueA)) + *((long long *)(valueB)) * *((long long *)(valueB))) );
+				break;
+			}
+			case OPH_FLOAT:
+			{
+				if (isnan(*((float *)(valueA))) || isnan(*((float *)(valueB)))) *((float *)(result)) = missingvalue ? (float)*missingvalue : NAN;
+				else if ((*((float *)(valueA)) == (float)*missingvalue) || (*((float *)(valueB)) == (float)*missingvalue)) *((float *)(result)) = (float)*missingvalue;
+				else *((float *)(result)) = (float)sqrtf(fabsf( *((float *)(valueA)) * *((float *)(valueA)) + *((float *)(valueB)) * *((float *)(valueB))) );
+				break;
+			}
+			case OPH_DOUBLE:
+			{
+				if (isnan(*((double *)(valueA))) || isnan(*((double *)(valueB)))) *((double *)(result)) = missingvalue ? (double)*missingvalue : NAN;
+				else if ((*((double *)(valueA)) == (double)*missingvalue) || (*((double *)(valueB)) == (double)*missingvalue)) *((double *)(result)) = (double)*missingvalue;
+				else *((double *)(result)) = (double)sqrt(fabs( *((double *)(valueA)) * *((double *)(valueA)) + *((double *)(valueB)) * *((double *)(valueB))) );
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		case OPH_SHORT:
+	}
+	else
+	{
+		switch (type)
 		{
-			if (missingvalue && ((*((short *)(valueA)) == (short)*missingvalue) || (*((short *)(valueB)) == (short)*missingvalue))) *((short *)(result)) = (short)*missingvalue;
-			else *((short *)(result)) = (short)sqrtf(fabsf( *((short *)(valueA)) * *((short *)(valueA)) + *((short *)(valueB)) * *((short *)(valueB))) );
-			break;
+			case OPH_INT:
+			{
+				*((int *)(result)) = (int)sqrt(fabs( *((int *)(valueA)) * *((int *)(valueA)) + *((int *)(valueB)) * *((int *)(valueB))) );
+				break;
+			}
+			case OPH_SHORT:
+			{
+				*((short *)(result)) = (short)sqrt(fabs( *((short *)(valueA)) * *((short *)(valueA)) + *((short *)(valueB)) * *((short *)(valueB))) );
+				break;
+			}
+			case OPH_BYTE:
+			{
+				*((char *)(result)) = (char)sqrt(fabs( *((char *)(valueA)) * *((char *)(valueA)) + *((char *)(valueB)) * *((char *)(valueB))) );
+				break;
+			}
+			case OPH_LONG:
+			{
+				*((long long *)(result)) = (long long)sqrt(fabs( *((long long *)(valueA)) * *((long long *)(valueA)) + *((long long *)(valueB)) * *((long long *)(valueB))) );
+				break;
+			}
+			case OPH_FLOAT:
+			{
+				if (isnan(*((float *)(valueA))) || isnan(*((float *)(valueB)))) *((float *)(result)) = NAN;
+				else *((float *)(result)) = (float)sqrt(fabs( *((float *)(valueA)) * *((float *)(valueA)) + *((float *)(valueB)) * *((float *)(valueB))) );
+				break;
+			}
+			case OPH_DOUBLE:
+			{
+				if (isnan(*((double *)(valueA))) || isnan(*((double *)(valueB)))) *((double *)(result)) = NAN;
+				else *((double *)(result)) = (double)sqrt(fabs( *((double *)(valueA)) * *((double *)(valueA)) + *((double *)(valueB)) * *((double *)(valueB))) );
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		case OPH_BYTE:
-		{
-			if (missingvalue && ((*((char *)(valueA)) == (char)*missingvalue) || (*((char *)(valueB)) == (char)*missingvalue))) *((char *)(result)) = (char)*missingvalue;
-			else *((char *)(result)) = (char)sqrtf(fabsf( *((char *)(valueA)) * *((char *)(valueA)) + *((char *)(valueB)) * *((char *)(valueB))) );
-			break;
-		}
-		case OPH_LONG:
-		{
-			if (missingvalue && ((*((long long *)(valueA)) == (long long)*missingvalue) || (*((long long *)(valueB)) == (long long)*missingvalue))) *((long long *)(result)) = (long long)*missingvalue;
-			else *((long long *)(result)) = (long long)sqrt(fabs( *((long long *)(valueA)) * *((long long *)(valueA)) + *((long long *)(valueB)) * *((long long *)(valueB))) );
-			break;
-		}
-		case OPH_FLOAT:
-		{
-			if (isnan(*((float *)(valueA))) || isnan(*((float *)(valueB)))) *((float *)(result)) = missingvalue ? (float)*missingvalue : NAN;
-			else if (missingvalue && ((*((float *)(valueA)) == (float)*missingvalue) || (*((float *)(valueB)) == (float)*missingvalue))) *((float *)(result)) = (float)*missingvalue;
-			else *((float *)(result)) = (float)sqrtf(fabsf( *((float *)(valueA)) * *((float *)(valueA)) + *((float *)(valueB)) * *((float *)(valueB))) );
-			break;
-		}
-		case OPH_DOUBLE:
-		{
-			if (isnan(*((double *)(valueA))) || isnan(*((double *)(valueB)))) *((float *)(result)) = missingvalue ? (double)*missingvalue : NAN;
-			else if (missingvalue && ((*((double *)(valueA)) == (double)*missingvalue) || (*((double *)(valueB)) == (double)*missingvalue))) *((double *)(result)) = (double)*missingvalue;
-			else *((double *)(result)) = (double)sqrt(fabs( *((double *)(valueA)) * *((double *)(valueA)) + *((double *)(valueB)) * *((double *)(valueB))) );
-			break;
-		}
-		default:
-			pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-			return -1;
 	}
 	return 0;
 }
 int core_oph_arg_array_multi(char* valueA, char* valueB, char* result, oph_type type, double* missingvalue)
 {
-	switch (type)
+	if (missingvalue)
 	{
-		case OPH_INT:
+		switch (type)
 		{
-			if (missingvalue && ((*((int *)(valueA)) == (int)*missingvalue) || (*((int *)(valueB)) == (int)*missingvalue))) *((int *)(result)) = (int)*missingvalue;
-			else *((int *)(result)) = (int)atan2( *((int *)(valueA)), *((int *)(valueB)));
-			break;
+			case OPH_INT:
+			{
+				if ((*((int *)(valueA)) == (int)*missingvalue) || (*((int *)(valueB)) == (int)*missingvalue)) *((int *)(result)) = (int)*missingvalue;
+				else *((int *)(result)) = (int)atan2( *((int *)(valueA)), *((int *)(valueB)));
+				break;
+			}
+			case OPH_SHORT:
+			{
+				if ((*((short *)(valueA)) == (short)*missingvalue) || (*((short *)(valueB)) == (short)*missingvalue)) *((short *)(result)) = (short)*missingvalue;
+				else *((short *)(result)) = (short)atan2( *((short *)(valueA)), *((short *)(valueB)));
+				break;
+			}
+			case OPH_BYTE:
+			{
+				if ((*((char *)(valueA)) == (char)*missingvalue) || (*((char *)(valueB)) == (char)*missingvalue)) *((char *)(result)) = (char)*missingvalue;
+				else *((char *)(result)) = (char)atan2( *((char *)(valueA)), *((char *)(valueB)));
+				break;
+			}
+			case OPH_LONG:
+			{
+				if ((*((long long *)(valueA)) == (long long)*missingvalue) || (*((long long *)(valueB)) == (long long)*missingvalue)) *((long long *)(result)) = (long long)*missingvalue;
+				else *((long long *)(result)) = (long long)atan2( *((long long *)(valueA)), *((long long *)(valueB)) );
+				break;
+			}
+			case OPH_FLOAT:
+			{
+				if (isnan(*((float *)(valueA))) || isnan(*((float *)(valueB)))) *((float *)(result)) = missingvalue ? (float)*missingvalue : NAN;
+				else if ((*((float *)(valueA)) == (float)*missingvalue) || (*((float *)(valueB)) == (float)*missingvalue)) *((float *)(result)) = (float)*missingvalue;
+				else *((float *)(result)) = (float)atan2( *((float *)(valueA)), *((float *)(valueB)));
+				break;
+			}
+			case OPH_DOUBLE:
+			{
+				if (isnan(*((double *)(valueA))) || isnan(*((double *)(valueB)))) *((double *)(result)) = missingvalue ? (double)*missingvalue : NAN;
+				else if ((*((double *)(valueA)) == (double)*missingvalue) || (*((double *)(valueB)) == (double)*missingvalue)) *((double *)(result)) = (double)*missingvalue;
+				else *((double *)(result)) = (double)atan2( *((double *)(valueA)), *((double *)(valueB)));
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		case OPH_SHORT:
+	}
+	else
+	{
+		switch (type)
 		{
-			if (missingvalue && ((*((short *)(valueA)) == (short)*missingvalue) || (*((short *)(valueB)) == (short)*missingvalue))) *((short *)(result)) = (short)*missingvalue;
-			else *((short *)(result)) = (short)atan2( *((short *)(valueA)), *((short *)(valueB)));
-			break;
+			case OPH_INT:
+			{
+				*((int *)(result)) = (int)atan2( *((int *)(valueA)), *((int *)(valueB)));
+				break;
+			}
+			case OPH_SHORT:
+			{
+				*((short *)(result)) = (short)atan2( *((short *)(valueA)), *((short *)(valueB)));
+				break;
+			}
+			case OPH_BYTE:
+			{
+				*((char *)(result)) = (char)atan2( *((char *)(valueA)), *((char *)(valueB)));
+				break;
+			}
+			case OPH_LONG:
+			{
+				*((long long *)(result)) = (long long)atan2( *((long long *)(valueA)), *((long long *)(valueB)) );
+				break;
+			}
+			case OPH_FLOAT:
+			{
+				if (isnan(*((float *)(valueA))) || isnan(*((float *)(valueB)))) *((float *)(result)) = NAN;
+				else *((float *)(result)) = (float)atan2( *((float *)(valueA)), *((float *)(valueB)));
+				break;
+			}
+			case OPH_DOUBLE:
+			{
+				if (isnan(*((double *)(valueA))) || isnan(*((double *)(valueB)))) *((double *)(result)) = NAN;
+				else *((double *)(result)) = (double)atan2( *((double *)(valueA)), *((double *)(valueB)));
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		case OPH_BYTE:
-		{
-			if (missingvalue && ((*((char *)(valueA)) == (char)*missingvalue) || (*((char *)(valueB)) == (char)*missingvalue))) *((char *)(result)) = (char)*missingvalue;
-			else *((char *)(result)) = (char)atan2( *((char *)(valueA)), *((char *)(valueB)));
-			break;
-		}
-		case OPH_LONG:
-		{
-			if (missingvalue && ((*((long long *)(valueA)) == (long long)*missingvalue) || (*((long long *)(valueB)) == (long long)*missingvalue))) *((long long *)(result)) = (long long)*missingvalue;
-			else *((long long *)(result)) = (long long)atan2( *((long long *)(valueA)), *((long long *)(valueB)) );
-			break;
-		}
-		case OPH_FLOAT:
-		{
-			if (isnan(*((float *)(valueA))) || isnan(*((float *)(valueB)))) *((float *)(result)) = missingvalue ? (float)*missingvalue : NAN;
-			else if (missingvalue && ((*((float *)(valueA)) == (float)*missingvalue) || (*((float *)(valueB)) == (float)*missingvalue))) *((float *)(result)) = (float)*missingvalue;
-			else *((float *)(result)) = (float)atan2( *((float *)(valueA)), *((float *)(valueB)));
-			break;
-		}
-		case OPH_DOUBLE:
-		{
-			if (isnan(*((double *)(valueA))) || isnan(*((double *)(valueB)))) *((double *)(result)) = missingvalue ? (double)*missingvalue : NAN;
-			else if (missingvalue && ((*((double *)(valueA)) == (double)*missingvalue) || (*((double *)(valueB)) == (double)*missingvalue))) *((double *)(result)) = (double)*missingvalue;
-			else *((double *)(result)) = (double)atan2( *((double *)(valueA)), *((double *)(valueB)));
-			break;
-		}
-		default:
-			pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-			return -1;
 	}
 	return 0;
 }
 int core_oph_max_array_multi(char* valueA, char* valueB, char* result, oph_type type, double* missingvalue)
 {
-	switch (type)
+	if (missingvalue)
 	{
-		case OPH_INT:
+		switch (type)
 		{
-			if (!missingvalue || (*((int *)(valueA)) != (int)*missingvalue))
+			case OPH_INT:
 			{
-				if (!missingvalue || (*((int *)(valueB)) != (int)*missingvalue)) *((int *)(result)) = *((int *)(valueA)) > *((int *)(valueB)) ? *((int *)(valueA)) : *((int *)(valueB));
-				else *((int *)(result)) = *((int *)(valueA));
+				if (*((int *)(valueA)) != (int)*missingvalue)
+				{
+					if (*((int *)(valueB)) != (int)*missingvalue) *((int *)(result)) = *((int *)(valueA)) > *((int *)(valueB)) ? *((int *)(valueA)) : *((int *)(valueB));
+					else *((int *)(result)) = *((int *)(valueA));
+				}
+				else *((int *)(result)) = *((int *)(valueB));
+				break;
 			}
-			else *((int *)(result)) = *((int *)(valueB));
-			break;
+			case OPH_SHORT:
+			{
+				if (*((short *)(valueA)) != (short)*missingvalue)
+				{
+					if (*((short *)(valueB)) != (short)*missingvalue) *((short *)(result)) = *((short *)(valueA)) > *((short *)(valueB)) ? *((short *)(valueA)) : *((short *)(valueB));
+					else *((short *)(result)) = *((short *)(valueA));
+				}
+				else *((short *)(result)) = *((short *)(valueB));
+				break;
+			}
+			case OPH_BYTE:
+			{
+				if (*((char *)(valueA)) != (char)*missingvalue)
+				{
+					if (*((char *)(valueB)) != (char)*missingvalue) *((char *)(result)) = *((char *)(valueA)) > *((char *)(valueB)) ? *((char *)(valueA)) : *((char *)(valueB));
+					else *((char *)(result)) = *((char *)(valueA));
+				}
+				else *((char *)(result)) = *((char *)(valueB));
+				break;
+			}
+			case OPH_LONG:
+			{
+				if (*((long long *)(valueA)) != (long long)*missingvalue)
+				{
+					if (*((long long *)(valueB)) != (long long)*missingvalue) *((long long *)(result)) = *((long long *)(valueA)) > *((long long *)(valueB)) ? *((long long *)(valueA)) : *((long long *)(valueB));
+					else *((long long *)(result)) = *((long long *)(valueA));
+				}
+				else *((long long *)(result)) = *((long long *)(valueB));
+				break;
+			}
+			case OPH_FLOAT:
+			{
+				if (!isnan(*((float *)(valueA))) && (*((float *)(valueA)) != (float)*missingvalue))
+				{
+					if (!isnan(*((float *)(valueB))) && (*((float *)(valueB)) != (float)*missingvalue)) *((float *)(result)) = *((float *)(valueA)) > *((float *)(valueB)) ? *((float *)(valueA)) : *((float *)(valueB));
+					else *((float *)(result)) = *((float *)(valueA));
+				}
+				else *((float *)(result)) = *((float *)(valueB));
+				break;
+			}
+			case OPH_DOUBLE:
+			{
+				if (!isnan(*((double *)(valueA))))
+				{
+					if (!isnan(*((double *)(valueB))) && (*((double *)(valueA)) != (double)*missingvalue)) *((double *)(result)) = *((double *)(valueA)) > *((double *)(valueB)) ? *((double *)(valueA)) : *((double *)(valueB));
+					else *((double *)(result)) = *((double *)(valueA));
+				}
+				else *((double *)(result)) = *((double *)(valueB));
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		case OPH_SHORT:
+	}
+	else
+	{
+		switch (type)
 		{
-			if (!missingvalue || (*((short *)(valueA)) != (short)*missingvalue))
+			case OPH_INT:
 			{
-				if (!missingvalue || (*((short *)(valueB)) != (short)*missingvalue)) *((short *)(result)) = *((short *)(valueA)) > *((short *)(valueB)) ? *((short *)(valueA)) : *((short *)(valueB));
-				else *((short *)(result)) = *((short *)(valueA));
+				*((int *)(result)) = *((int *)(valueA)) > *((int *)(valueB)) ? *((int *)(valueA)) : *((int *)(valueB));
+				break;
 			}
-			else *((short *)(result)) = *((short *)(valueB));
-			break;
-		}
-		case OPH_BYTE:
-		{
-			if (!missingvalue || (*((char *)(valueA)) != (char)*missingvalue))
+			case OPH_SHORT:
 			{
-				if (!missingvalue || (*((char *)(valueB)) != (char)*missingvalue)) *((char *)(result)) = *((char *)(valueA)) > *((char *)(valueB)) ? *((char *)(valueA)) : *((char *)(valueB));
-				else *((char *)(result)) = *((char *)(valueA));
+				*((short *)(result)) = *((short *)(valueA)) > *((short *)(valueB)) ? *((short *)(valueA)) : *((short *)(valueB));
+				break;
 			}
-			else *((char *)(result)) = *((char *)(valueB));
-			break;
-		}
-		case OPH_LONG:
-		{
-			if (!missingvalue || (*((long long *)(valueA)) != (long long)*missingvalue))
+			case OPH_BYTE:
 			{
-				if (!missingvalue || (*((long long *)(valueB)) != (long long)*missingvalue)) *((long long *)(result)) = *((long long *)(valueA)) > *((long long *)(valueB)) ? *((long long *)(valueA)) : *((long long *)(valueB));
-				else *((long long *)(result)) = *((long long *)(valueA));
+				*((int *)(result)) = *((char *)(valueA)) > *((char *)(valueB)) ? *((char *)(valueA)) : *((char *)(valueB));
+				break;
 			}
-			else *((long long *)(result)) = *((long long *)(valueB));
-			break;
-		}
-		case OPH_FLOAT:
-		{
-			if (!isnan(*((float *)(valueA))) && (!missingvalue || (*((float *)(valueA)) != (float)*missingvalue)))
+			case OPH_LONG:
 			{
-				if (!isnan(*((float *)(valueB))) && (!missingvalue || (*((float *)(valueB)) != (float)*missingvalue))) *((float *)(result)) = *((float *)(valueA)) > *((float *)(valueB)) ? *((float *)(valueA)) : *((float *)(valueB));
-				else *((float *)(result)) = *((float *)(valueA));
+				*((long long *)(result)) = *((long long *)(valueA)) > *((long long *)(valueB)) ? *((long long *)(valueA)) : *((long long *)(valueB));
+				break;
 			}
-			else *((float *)(result)) = *((float *)(valueB));
-			break;
-		}
-		case OPH_DOUBLE:
-		{
-			if (!isnan(*((double *)(valueA))))
+			case OPH_FLOAT:
 			{
-				if (!isnan(*((double *)(valueB))) && (!missingvalue || (*((double *)(valueA)) != (double)*missingvalue))) *((double *)(result)) = *((double *)(valueA)) > *((double *)(valueB)) ? *((double *)(valueA)) : *((double *)(valueB));
-				else *((double *)(result)) = *((double *)(valueA));
+				if (!isnan(*((float *)(valueA))))
+				{
+					if (!isnan(*((float *)(valueB)))) *((float *)(result)) = *((float *)(valueA)) > *((float *)(valueB)) ? *((float *)(valueA)) : *((float *)(valueB));
+					else *((float *)(result)) = *((float *)(valueA));
+				}
+				else *((float *)(result)) = *((float *)(valueB));
+				break;
 			}
-			else *((double *)(result)) = *((double *)(valueB));
-			break;
+			case OPH_DOUBLE:
+			{
+				if (!isnan(*((double *)(valueA))))
+				{
+					if (!isnan(*((double *)(valueB)))) *((double *)(result)) = *((double *)(valueA)) > *((double *)(valueB)) ? *((double *)(valueA)) : *((double *)(valueB));
+					else *((double *)(result)) = *((double *)(valueA));
+				}
+				else *((double *)(result)) = *((double *)(valueB));
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		default:
-			pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-			return -1;
 	}
 	return 0;
 }
 int core_oph_min_array_multi(char* valueA, char* valueB, char* result, oph_type type, double* missingvalue)
 {
-	switch (type)
+	if (missingvalue)
 	{
-		case OPH_INT:
+		switch (type)
 		{
-			if (!missingvalue || (*((int *)(valueA)) != (int)*missingvalue))
+			case OPH_INT:
 			{
-				if (!missingvalue || (*((int *)(valueB)) != (int)*missingvalue)) *((int *)(result)) = *((int *)(valueA)) < *((int *)(valueB)) ? *((int *)(valueA)) : *((int *)(valueB));
-				else *((int *)(result)) = *((int *)(valueA));
+				if (*((int *)(valueA)) != (int)*missingvalue)
+				{
+					if (*((int *)(valueB)) != (int)*missingvalue) *((int *)(result)) = *((int *)(valueA)) < *((int *)(valueB)) ? *((int *)(valueA)) : *((int *)(valueB));
+					else *((int *)(result)) = *((int *)(valueA));
+				}
+				else *((int *)(result)) = *((int *)(valueB));
+				break;
 			}
-			else *((int *)(result)) = *((int *)(valueB));
-			break;
+			case OPH_SHORT:
+			{
+				if (*((short *)(valueA)) != (short)*missingvalue)
+				{
+					if (*((short *)(valueB)) != (short)*missingvalue) *((short *)(result)) = *((short *)(valueA)) < *((short *)(valueB)) ? *((short *)(valueA)) : *((short *)(valueB));
+					else *((short *)(result)) = *((short *)(valueA));
+				}
+				else *((short *)(result)) = *((short *)(valueB));
+				break;
+			}
+			case OPH_BYTE:
+			{
+				if (*((char *)(valueA)) != (char)*missingvalue)
+				{
+					if (*((char *)(valueB)) != (char)*missingvalue) *((char *)(result)) = *((char *)(valueA)) < *((char *)(valueB)) ? *((char *)(valueA)) : *((char *)(valueB));
+					else *((char *)(result)) = *((char *)(valueA));
+				}
+				else *((char *)(result)) = *((char *)(valueB));
+				break;
+			}
+			case OPH_LONG:
+			{
+				if (*((long long *)(valueA)) != (long long)*missingvalue)
+				{
+					if (*((long long *)(valueB)) != (long long)*missingvalue) *((long long *)(result)) = *((long long *)(valueA)) < *((long long *)(valueB)) ? *((long long *)(valueA)) : *((long long *)(valueB));
+					else *((long long *)(result)) = *((long long *)(valueA));
+				}
+				else *((long long *)(result)) = *((long long *)(valueB));
+				break;
+			}
+			case OPH_FLOAT:
+			{
+				if (!isnan(*((float *)(valueA))) && (*((float *)(valueA)) != (float)*missingvalue))
+				{
+					if (!isnan(*((float *)(valueB))) && (*((float *)(valueB)) != (float)*missingvalue)) *((float *)(result)) = *((float *)(valueA)) < *((float *)(valueB)) ? *((float *)(valueA)) : *((float *)(valueB));
+					else *((float *)(result)) = *((float *)(valueA));
+				}
+				else *((float *)(result)) = *((float *)(valueB));
+				break;
+			}
+			case OPH_DOUBLE:
+			{
+				if (!isnan(*((double *)(valueA))) && (*((double *)(valueA)) != (double)*missingvalue))
+				{
+					if (!isnan(*((double *)(valueB))) && (*((double *)(valueA)) != (double)*missingvalue)) *((double *)(result)) = *((double *)(valueA)) < *((double *)(valueB)) ? *((double *)(valueA)) : *((double *)(valueB));
+					else *((double *)(result)) = *((double *)(valueA));
+				}
+				else *((double *)(result)) = *((double *)(valueB));
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		case OPH_SHORT:
+	}
+	else
+	{
+		switch (type)
 		{
-			if (!missingvalue || (*((short *)(valueA)) != (short)*missingvalue))
+			case OPH_INT:
 			{
-				if (!missingvalue || (*((short *)(valueB)) != (short)*missingvalue)) *((short *)(result)) = *((short *)(valueA)) < *((short *)(valueB)) ? *((short *)(valueA)) : *((short *)(valueB));
-				else *((short *)(result)) = *((short *)(valueA));
+				*((int *)(result)) = *((int *)(valueA)) < *((int *)(valueB)) ? *((int *)(valueA)) : *((int *)(valueB));
+				break;
 			}
-			else *((short *)(result)) = *((short *)(valueB));
-			break;
-		}
-		case OPH_BYTE:
-		{
-			if (!missingvalue || (*((char *)(valueA)) != (char)*missingvalue))
+			case OPH_SHORT:
 			{
-				if (!missingvalue || (*((char *)(valueB)) != (char)*missingvalue)) *((char *)(result)) = *((char *)(valueA)) < *((char *)(valueB)) ? *((char *)(valueA)) : *((char *)(valueB));
-				else *((char *)(result)) = *((char *)(valueA));
+				*((short *)(result)) = *((short *)(valueA)) < *((short *)(valueB)) ? *((short *)(valueA)) : *((short *)(valueB));
+				break;
 			}
-			else *((char *)(result)) = *((char *)(valueB));
-			break;
-		}
-		case OPH_LONG:
-		{
-			if (!missingvalue || (*((long long *)(valueA)) != (long long)*missingvalue))
+			case OPH_BYTE:
 			{
-				if (!missingvalue || (*((long long *)(valueB)) != (long long)*missingvalue)) *((long long *)(result)) = *((long long *)(valueA)) < *((long long *)(valueB)) ? *((long long *)(valueA)) : *((long long *)(valueB));
-				else *((long long *)(result)) = *((long long *)(valueA));
+				*((char *)(result)) = *((char *)(valueA)) < *((char *)(valueB)) ? *((char *)(valueA)) : *((char *)(valueB));
+				break;
 			}
-			else *((long long *)(result)) = *((long long *)(valueB));
-			break;
-		}
-		case OPH_FLOAT:
-		{
-			if (!isnan(*((float *)(valueA))) && (!missingvalue || (*((float *)(valueA)) != (float)*missingvalue)))
+			case OPH_LONG:
 			{
-				if (!isnan(*((float *)(valueB))) && (!missingvalue || (*((float *)(valueB)) != (float)*missingvalue))) *((float *)(result)) = *((float *)(valueA)) < *((float *)(valueB)) ? *((float *)(valueA)) : *((float *)(valueB));
-				else *((float *)(result)) = *((float *)(valueA));
+				*((long long *)(result)) = *((long long *)(valueA)) < *((long long *)(valueB)) ? *((long long *)(valueA)) : *((long long *)(valueB));
+				break;
 			}
-			else *((float *)(result)) = *((float *)(valueB));
-			break;
-		}
-		case OPH_DOUBLE:
-		{
-			if (!isnan(*((double *)(valueA))))
+			case OPH_FLOAT:
 			{
-				if (!isnan(*((double *)(valueB))) && (!missingvalue || (*((double *)(valueA)) != (double)*missingvalue))) *((double *)(result)) = *((double *)(valueA)) < *((double *)(valueB)) ? *((double *)(valueA)) : *((double *)(valueB));
-				else *((double *)(result)) = *((double *)(valueA));
+				if (!isnan(*((float *)(valueA))))
+				{
+					if (!isnan(*((float *)(valueB)))) *((float *)(result)) = *((float *)(valueA)) < *((float *)(valueB)) ? *((float *)(valueA)) : *((float *)(valueB));
+					else *((float *)(result)) = *((float *)(valueA));
+				}
+				else *((float *)(result)) = *((float *)(valueB));
+				break;
 			}
-			else *((double *)(result)) = *((double *)(valueB));
-			break;
+			case OPH_DOUBLE:
+			{
+				if (!isnan(*((double *)(valueA))))
+				{
+					if (!isnan(*((double *)(valueB)))) *((double *)(result)) = *((double *)(valueA)) < *((double *)(valueB)) ? *((double *)(valueA)) : *((double *)(valueB));
+					else *((double *)(result)) = *((double *)(valueA));
+				}
+				else *((double *)(result)) = *((double *)(valueB));
+				break;
+			}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
 		}
-		default:
-			pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
-			return -1;
 	}
 	return 0;
 }
