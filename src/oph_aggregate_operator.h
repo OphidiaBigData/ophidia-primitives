@@ -26,17 +26,17 @@
 #include "oph_core.h"
 
 /* MySQL headers  */
-#include <mysql.h> // It contains UDF-related symbols and data structures
+#include <mysql.h>		// It contains UDF-related symbols and data structures
 
-typedef struct oph_agg_oper_data{
-        oph_request result;
-        //Function pointer
-        int (*core_oph_oper) (oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char *res);
+typedef struct oph_agg_oper_data {
+	oph_request result;
+	//Function pointer
+	int (*core_oph_oper) (oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char *res);
 	char first;
-        int *count;
+	int *count;
 
 	// Effective result
-	char* result_data;
+	char *result_data;
 	unsigned long result_length;
 	size_t result_size;
 	oph_type result_type;
@@ -47,12 +47,12 @@ typedef struct oph_agg_oper_data{
 |------------------------------------------------------------------*/
 
 /* These must be right or mysqld will not find the symbol! */
-my_bool oph_aggregate_operator_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void oph_aggregate_operator_deinit(UDF_INIT *initid);
-char* oph_aggregate_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error);
-void oph_aggregate_operator_reset( UDF_INIT* initid, UDF_ARGS* args, char* is_null, char* error );
-void oph_aggregate_operator_clear( UDF_INIT* initid, char* is_null, char* error );
-void oph_aggregate_operator_add( UDF_INIT* initid, UDF_ARGS* args, char* is_null, char* error );
+my_bool oph_aggregate_operator_init(UDF_INIT * initid, UDF_ARGS * args, char *message);
+void oph_aggregate_operator_deinit(UDF_INIT * initid);
+char *oph_aggregate_operator(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error);
+void oph_aggregate_operator_reset(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error);
+void oph_aggregate_operator_clear(UDF_INIT * initid, char *is_null, char *error);
+void oph_aggregate_operator_add(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error);
 
 /*------------------------------------------------------------------|
 |               Functions' declarations (END)                       |

@@ -23,16 +23,16 @@
 #include <ctype.h>
 
 /* MySQL headers  */
-#include <mysql.h> // It contains UDF-related symbols and data structures
+#include <mysql.h>		// It contains UDF-related symbols and data structures
 
 /*------------------------------------------------------------------|
 |		Functions' declarations (BEGIN)			    |
 |------------------------------------------------------------------*/
 
 /* These must be right or mysqld will not find the symbol! */
-my_bool oph_compare_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void oph_compare_deinit(UDF_INIT *initid);
-long long oph_compare(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
+my_bool oph_compare_init(UDF_INIT * initid, UDF_ARGS * args, char *message);
+void oph_compare_deinit(UDF_INIT * initid);
+long long oph_compare(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error);
 
 /*------------------------------------------------------------------|
 |               Functions' declarations (END)                       |

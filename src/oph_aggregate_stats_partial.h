@@ -30,7 +30,7 @@
 #include "oph_core.h"
 
 /* MySQL headers  */
-#include <mysql.h> // It contains UDF-related symbols and data structures
+#include <mysql.h>		// It contains UDF-related symbols and data structures
 
 /* stats mask */
 // 7-bit mask for different operators combinations
@@ -47,18 +47,18 @@
 #define MASK_LEN     7
 #define DEFAULT_MASK "1111111"
 
-typedef struct oph_agg_stats_partial_data{
-		oph_string result;
-        oph_string mask;
-        oph_string measure;
-        oph_stringPtr partials; // array of partial results arrays
-        int sum1; // 1 if sum{x_i} needed
-        int sum2; // 1 if sum{(x_i)^2} needed
-        int sum3; // 1 if sum{(x_i)^3} needed
-        int sum4; // 1 if sum{(x_i)^4} needed
-        int max;  // 1 if array of max values needed
-        int min;  // 1 if array of min values needed
-        int count; // number of aggregated rows
+typedef struct oph_agg_stats_partial_data {
+	oph_string result;	// final result
+	oph_string mask;
+	oph_string measure;
+	oph_stringPtr partials;	// array of partial results arrays
+	int sum1;		// 1 if sum{x_i} needed
+	int sum2;		// 1 if sum{(x_i)^2} needed
+	int sum3;		// 1 if sum{(x_i)^3} needed
+	int sum4;		// 1 if sum{(x_i)^4} needed
+	int max;		// 1 if array of max values needed
+	int min;		// 1 if array of min values needed
+	int count;		// number of aggregated rows
 } oph_agg_stats_partial_data;
 
 /*------------------------------------------------------------------|
@@ -66,12 +66,12 @@ typedef struct oph_agg_stats_partial_data{
 |------------------------------------------------------------------*/
 
 /* These must be right or mysqld will not find the symbol! */
-my_bool oph_aggregate_stats_partial_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void oph_aggregate_stats_partial_deinit(UDF_INIT *initid);
-char* oph_aggregate_stats_partial(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error);
-void oph_aggregate_stats_partial_reset( UDF_INIT* initid, UDF_ARGS* args, char* is_null, char* error );
-void oph_aggregate_stats_partial_clear( UDF_INIT* initid, char* is_null, char* error );
-void oph_aggregate_stats_partial_add( UDF_INIT* initid, UDF_ARGS* args, char* is_null, char* error );
+my_bool oph_aggregate_stats_partial_init(UDF_INIT * initid, UDF_ARGS * args, char *message);
+void oph_aggregate_stats_partial_deinit(UDF_INIT * initid);
+char *oph_aggregate_stats_partial(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error);
+void oph_aggregate_stats_partial_reset(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error);
+void oph_aggregate_stats_partial_clear(UDF_INIT * initid, char *is_null, char *error);
+void oph_aggregate_stats_partial_add(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error);
 
 /*------------------------------------------------------------------|
 |               Functions' declarations (END)                       |

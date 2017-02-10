@@ -30,13 +30,12 @@
 #endif
 
 /* MySQL headers  */
-#include <mysql.h> // It contains UDF-related symbols and data structures
+#include <mysql.h>		// It contains UDF-related symbols and data structures
 
-typedef struct
-{
-	char* result;
-	char* temp;
-	char* temp2;
+typedef struct {
+	char *result;
+	char *temp;
+	char *temp2;
 } oph_reduce2_param;
 
 /*------------------------------------------------------------------|
@@ -44,9 +43,9 @@ typedef struct
 |------------------------------------------------------------------*/
 
 /* These must be right or mysqld will not find the symbol! */
-my_bool oph_reduce2_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void oph_reduce2_deinit(UDF_INIT *initid);
-char* oph_reduce2(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error);
+my_bool oph_reduce2_init(UDF_INIT * initid, UDF_ARGS * args, char *message);
+void oph_reduce2_deinit(UDF_INIT * initid);
+char *oph_reduce2(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error);
 
 /*------------------------------------------------------------------|
 |               Functions' declarations (END)                       |

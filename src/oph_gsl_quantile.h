@@ -29,7 +29,7 @@
 #include "oph_core_gsl.h"
 
 /* MySQL headers  */
-#include <mysql.h> // It contains UDF-related symbols and data structures
+#include <mysql.h>		// It contains UDF-related symbols and data structures
 
 /* GSL STATS headers  */
 #include <math.h>
@@ -38,7 +38,7 @@
 #include <gsl/gsl_sort.h>
 
 /* ORDER_FLAG values */
-#define ORDER_FLAG_SET      1 // input not ordered, sort it!
+#define ORDER_FLAG_SET      1	// input not ordered, sort it!
 #define ORDER_FLAG_UNSET    0
 #define DEFAULT_ORDER_FLAG  ORDER_FLAG_SET
 
@@ -47,14 +47,13 @@
 |       Functions' declarations (BEGIN)             |
 |------------------------------------------------------------------*/
 /* Compute requested quantiles */
-int oph_gsl_quantile_produce(const void *sorted_data, const size_t data_len, oph_type data_type, const double quantiles[],const int qnum,char *output_data, oph_type out_data_type);
+int oph_gsl_quantile_produce(const void *sorted_data, const size_t data_len, oph_type data_type, const double quantiles[], const int qnum, char *output_data, oph_type out_data_type);
 
 /* These must be right or mysqld will not find the symbol! */
-my_bool oph_gsl_quantile_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void oph_gsl_quantile_deinit(UDF_INIT *initid);
-char* oph_gsl_quantile(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error);
+my_bool oph_gsl_quantile_init(UDF_INIT * initid, UDF_ARGS * args, char *message);
+void oph_gsl_quantile_deinit(UDF_INIT * initid);
+char *oph_gsl_quantile(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error);
 
 /*------------------------------------------------------------------|
 |               Functions' declarations (END)                       |
 |------------------------------------------------------------------*/
-

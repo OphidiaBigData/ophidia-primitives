@@ -26,16 +26,16 @@
 #include "oph_core.h"
 
 /* MySQL headers  */
-#include <mysql.h> // It contains UDF-related symbols and data structures
+#include <mysql.h>		// It contains UDF-related symbols and data structures
 
 /*------------------------------------------------------------------|
 |		Functions' declarations (BEGIN)			    |
 |------------------------------------------------------------------*/
 
 /* These must be right or mysqld will not find the symbol! */
-my_bool oph_sum_scalar_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void oph_sum_scalar_deinit(UDF_INIT *initid);
-char* oph_sum_scalar(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error);
+my_bool oph_sum_scalar_init(UDF_INIT * initid, UDF_ARGS * args, char *message);
+void oph_sum_scalar_deinit(UDF_INIT * initid);
+char *oph_sum_scalar(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error);
 
 /*------------------------------------------------------------------|
 |               Functions' declarations (END)                       |

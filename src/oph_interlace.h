@@ -26,18 +26,17 @@
 #include "oph_core.h"
 
 /* MySQL headers  */
-#include <mysql.h> // It contains UDF-related symbols and data structures
+#include <mysql.h>		// It contains UDF-related symbols and data structures
 
 /*------------------------------------------------------------------|
 |		Functions' declarations (BEGIN)			    |
 |------------------------------------------------------------------*/
 
 /* These must be right or mysqld will not find the symbol! */
-my_bool oph_interlace_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void oph_interlace_deinit(UDF_INIT *initid);
-char* oph_interlace(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error);
+my_bool oph_interlace_init(UDF_INIT * initid, UDF_ARGS * args, char *message);
+void oph_interlace_deinit(UDF_INIT * initid);
+char *oph_interlace(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error);
 
 /*------------------------------------------------------------------|
 |               Functions' declarations (END)                       |
 |------------------------------------------------------------------*/
-

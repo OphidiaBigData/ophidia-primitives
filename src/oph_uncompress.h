@@ -26,15 +26,15 @@
 #include "oph_core.h"
 
 /* MySQL headers  */
-#include <mysql.h> // It contains UDF-related symbols and data structures
+#include <mysql.h>		// It contains UDF-related symbols and data structures
 
 /*------------------------------------------------------------------|
 |		Functions' declarations (BEGIN)			    |
 |------------------------------------------------------------------*/
 
-my_bool oph_uncompress_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void oph_uncompress_deinit(UDF_INIT *initid);
-char* oph_uncompress(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error);
+my_bool oph_uncompress_init(UDF_INIT * initid, UDF_ARGS * args, char *message);
+void oph_uncompress_deinit(UDF_INIT * initid);
+char *oph_uncompress(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error);
 
 /*------------------------------------------------------------------|
 |               Functions' declarations (END)                       |

@@ -29,7 +29,7 @@
 #include "oph_core_gsl.h"
 
 /* MySQL headers  */
-#include <mysql.h> // It contains UDF-related symbols and data structures
+#include <mysql.h>		// It contains UDF-related symbols and data structures
 
 /* GSL HISTOGRAMS headers  */
 #include <math.h>
@@ -54,10 +54,10 @@
 
 /* Extraspace */
 typedef struct oph_gsl_histogram_extraspace {
-    int mode;
-    int flag;
-    oph_type intype;
-    gsl_histogram *hist;
+	int mode;
+	int flag;
+	oph_type intype;
+	gsl_histogram *hist;
 } oph_gsl_histogram_extraspace;
 
 /*------------------------------------------------------------------|
@@ -65,11 +65,10 @@ typedef struct oph_gsl_histogram_extraspace {
 |------------------------------------------------------------------*/
 
 /* These must be right or mysqld will not find the symbol! */
-my_bool oph_gsl_histogram_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void oph_gsl_histogram_deinit(UDF_INIT *initid);
-char* oph_gsl_histogram(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error);
+my_bool oph_gsl_histogram_init(UDF_INIT * initid, UDF_ARGS * args, char *message);
+void oph_gsl_histogram_deinit(UDF_INIT * initid);
+char *oph_gsl_histogram(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error);
 
 /*------------------------------------------------------------------|
 |               Functions' declarations (END)                       |
 |------------------------------------------------------------------*/
-

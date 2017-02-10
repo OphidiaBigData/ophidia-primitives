@@ -23,117 +23,113 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_convert_d_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool oph_convert_d_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
-        int i = 0;
-        if(args->arg_count != 3){
-                strcpy(message, "ERROR: Wrong arguments! oph_convert_d(input_OPH_TYPE, output_OPH_TYPE, measure)");
-                return 1;
-        }
-        
-        for(i = 0; i < args->arg_count; i++){
-                if(args->arg_type[i] != STRING_RESULT){
-                        strcpy(message, "ERROR: Wrong arguments to oph_convert_d function");
-                        return 1;
-                }
-        }
+	int i = 0;
+	if (args->arg_count != 3) {
+		strcpy(message, "ERROR: Wrong arguments! oph_convert_d(input_OPH_TYPE, output_OPH_TYPE, measure)");
+		return 1;
+	}
+
+	for (i = 0; i < args->arg_count; i++) {
+		if (args->arg_type[i] != STRING_RESULT) {
+			strcpy(message, "ERROR: Wrong arguments to oph_convert_d function");
+			return 1;
+		}
+	}
 	initid->ptr = NULL;
 	return 0;
 }
 
-void oph_convert_d_deinit(UDF_INIT *initid)
+void oph_convert_d_deinit(UDF_INIT * initid)
 {
-	if(initid->ptr){
+	if (initid->ptr) {
 		free(initid->ptr);
 		initid->ptr = NULL;
 	}
 }
 
-double oph_convert_d(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
+double oph_convert_d(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error)
 {
-        oph_string *measure;
+	oph_string *measure;
 
-       if (*error)
-        {
-                *is_null=0;
-                *error=1;
-                return -1;
-        }
-        if (*is_null)
-        {
-                *is_null=1;
-                *error=0;
-                return -1;
-        }
-
-
-        double result;
-
-	if(!initid->ptr){
-		initid->ptr = (void *)malloc(sizeof(oph_string));
-		measure = (oph_string *)initid->ptr;
-        	core_set_type(measure, args->args[0], &(args->lengths[0]));
-
-		if(!measure->type || (measure->type != OPH_DOUBLE && measure->type != OPH_FLOAT)){
-			pmesg(1,  __FILE__, __LINE__, "Invalid type\n");
-			*is_null=1;
-                	*error=1;
-                	return -1;
-		}
-
-        	if(core_set_elemsize(measure)){
-                	pmesg(1,  __FILE__, __LINE__, "Error on setting elements size\n");
-			*is_null=1;
-                	*error=1;
-                	return -1;
-		}
+	if (*error) {
+		*is_null = 0;
+		*error = 1;
+		return -1;
 	}
-	else
-		measure = (oph_string *)initid->ptr;
-		
-        measure->content = args->args[2];
-        measure->length = &(args->lengths[2]);
-        if(core_set_numelem(measure)){
-                pmesg(1,  __FILE__, __LINE__, "Error on counting elements\n");
-		*is_null=1;
-                *error=1;
-                return -1;
+	if (*is_null) {
+		*is_null = 1;
+		*error = 0;
+		return -1;
 	}
 
 
-        if(measure->numelem > 1){
-                pmesg(1,  __FILE__, __LINE__, "Allowed only one numeric value or wrong input type\n");
-                *is_null=1;
-                *error=1;
-                return -1;
-        }
+	double result;
 
-	switch(measure->type){
+	if (!initid->ptr) {
+		initid->ptr = (void *) malloc(sizeof(oph_string));
+		measure = (oph_string *) initid->ptr;
+		core_set_type(measure, args->args[0], &(args->lengths[0]));
+
+		if (!measure->type || (measure->type != OPH_DOUBLE && measure->type != OPH_FLOAT)) {
+			pmesg(1, __FILE__, __LINE__, "Invalid type\n");
+			*is_null = 1;
+			*error = 1;
+			return -1;
+		}
+
+		if (core_set_elemsize(measure)) {
+			pmesg(1, __FILE__, __LINE__, "Error on setting elements size\n");
+			*is_null = 1;
+			*error = 1;
+			return -1;
+		}
+	} else
+		measure = (oph_string *) initid->ptr;
+
+	measure->content = args->args[2];
+	measure->length = &(args->lengths[2]);
+	if (core_set_numelem(measure)) {
+		pmesg(1, __FILE__, __LINE__, "Error on counting elements\n");
+		*is_null = 1;
+		*error = 1;
+		return -1;
+	}
+
+
+	if (measure->numelem > 1) {
+		pmesg(1, __FILE__, __LINE__, "Allowed only one numeric value or wrong input type\n");
+		*is_null = 1;
+		*error = 1;
+		return -1;
+	}
+
+	switch (measure->type) {
 		case OPH_DOUBLE:{
-			double tmp;
-			core_oph_convert(measure, (void*)(&tmp));
-			result = (double) tmp;
-			break;
-		}
+				double tmp;
+				core_oph_convert(measure, (void *) (&tmp));
+				result = (double) tmp;
+				break;
+			}
 		case OPH_FLOAT:{
-			float tmp;
-			core_oph_convert(measure, (void*)(&tmp));
-			result = (double) tmp;
-			break;
-		}
+				float tmp;
+				core_oph_convert(measure, (void *) (&tmp));
+				result = (double) tmp;
+				break;
+			}
 		default:
-			pmesg(1,  __FILE__, __LINE__, "Invalid type\n");
-			*is_null=1;
-                	*error=1;
-                	return -1;
+			pmesg(1, __FILE__, __LINE__, "Invalid type\n");
+			*is_null = 1;
+			*error = 1;
+			return -1;
 	}
 
-        *error=0;
-        *is_null=0;
-        return (double)result;
+	*error = 0;
+	*is_null = 0;
+	return (double) result;
 }
 
 /*------------------------------------------------------------------|
 |               Functions' implementation (END)                     |
 |------------------------------------------------------------------*/
-
