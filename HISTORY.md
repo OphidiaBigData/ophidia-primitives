@@ -1,4 +1,20 @@
 
+## v0.11.0 - 2017-01-31
+
+### Fixed:
+
+- Bug in oph_sub_array and oph_div_array
+- Bug in oph_dump when using base64-encoding
+- Bug in oph_to_bin argument usage
+
+### Added:
+
+- Support for missing values in several primitives
+
+### Changed:
+
+- Cast functions to handle missing values
+
 ## v0.10.6 - 2016-10-20
 
 ### Fixed:

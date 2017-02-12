@@ -26,7 +26,7 @@
 #include "oph_core.h"
 
 /* MySQL headers  */
-#include <mysql.h> // It contains UDF-related symbols and data structures
+#include <mysql.h>		// It contains UDF-related symbols and data structures
 
 /*Pthread and add-on header */
 #include <pthread.h>
@@ -34,12 +34,12 @@
 
 #define NTHREAD 4
 
-typedef struct th_data{
-        pthread_t thread[NTHREAD];
-        barrier_t barr_start;
-        barrier_t barr_end;
-        void *curr_args;
-        unsigned int exit_flag;
+typedef struct th_data {
+	pthread_t thread[NTHREAD];
+	barrier_t barr_start;
+	barrier_t barr_end;
+	void *curr_args;
+	unsigned int exit_flag;
 } th_data;
 
 /*------------------------------------------------------------------|
@@ -47,9 +47,9 @@ typedef struct th_data{
 |------------------------------------------------------------------*/
 
 /* These must be right or mysqld will not find the symbol! */
-my_bool oph_sum_array_init_r(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void oph_sum_array_deinit_r(UDF_INIT *initid);
-char* oph_sum_array_r(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error);
+my_bool oph_sum_array_init_r(UDF_INIT * initid, UDF_ARGS * args, char *message);
+void oph_sum_array_deinit_r(UDF_INIT * initid);
+char *oph_sum_array_r(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error);
 void *sum_array_r(void *data_str);
 
 /*------------------------------------------------------------------|

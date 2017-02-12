@@ -27,15 +27,15 @@
 #include "oph_debug.h"
 
 /* MySQL headers  */
-#include <mysql.h> // It contains UDF-related symbols and data structures
+#include <mysql.h>		// It contains UDF-related symbols and data structures
 
 /*------------------------------------------------------------------|
 |		Functions' declarations (BEGIN)			    |
 |------------------------------------------------------------------*/
 /* These must be right or mysqld will not find the symbol! */
-my_bool oph_count_array_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void oph_count_array_deinit(UDF_INIT *initid);
-long long oph_count_array(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error);
+my_bool oph_count_array_init(UDF_INIT * initid, UDF_ARGS * args, char *message);
+void oph_count_array_deinit(UDF_INIT * initid);
+long long oph_count_array(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error);
 /*------------------------------------------------------------------|
 |               Functions' declarations (END)                       |
 |------------------------------------------------------------------*/

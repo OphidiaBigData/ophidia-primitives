@@ -34,5 +34,4 @@ void pmesg(int level, char *source, long int line_number, char *format, ...);
       Adapted from [K&R2], p. 174 */
 #endif
 
-#endif /* DEBUG_H */
-
+#endif				/* DEBUG_H */

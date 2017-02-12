@@ -29,7 +29,7 @@
 #include "oph_core_gsl.h"
 
 /* MySQL headers  */
-#include <mysql.h> // It contains UDF-related symbols and data structures
+#include <mysql.h>		// It contains UDF-related symbols and data structures
 
 /* GSL FFT headers  */
 #include <math.h>
@@ -38,8 +38,8 @@
 
 /* Struct to contain wavetable and workspace*/
 typedef struct {
-    gsl_fft_complex_wavetable *wt;
-    gsl_fft_complex_workspace *ws;
+	gsl_fft_complex_wavetable *wt;
+	gsl_fft_complex_workspace *ws;
 } oph_gsl_fft_extraspace;
 
 
@@ -48,11 +48,10 @@ typedef struct {
 |------------------------------------------------------------------*/
 
 /* These must be right or mysqld will not find the symbol! */
-my_bool oph_gsl_fft_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void oph_gsl_fft_deinit(UDF_INIT *initid);
-char* oph_gsl_fft(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error);
+my_bool oph_gsl_fft_init(UDF_INIT * initid, UDF_ARGS * args, char *message);
+void oph_gsl_fft_deinit(UDF_INIT * initid);
+char *oph_gsl_fft(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error);
 
 /*------------------------------------------------------------------|
 |               Functions' declarations (END)                       |
 |------------------------------------------------------------------*/
-
