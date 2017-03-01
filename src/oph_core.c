@@ -269,6 +269,7 @@ int core_set_oph_multistring2(oph_multistring ** str, char *type, unsigned long 
 	//We must set the oph_string2.content, length, numelem value yet
 	return 0;
 }
+
 int core_set_oph_multistring(oph_multistring ** str, char *type, unsigned long *len)
 {
 	return core_set_oph_multistring2(str, type, len, 0);
