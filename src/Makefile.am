@@ -328,6 +328,13 @@ liboph_extend_la_SOURCES = oph_extend.c oph_extend.h oph_debug.c oph_debug.h oph
 liboph_extend_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
 liboph_extend_la_LDFLAGS = -avoid-version -shared $(LIBS)
 
+if OPENSSL_SUPPORT
+lib_LTLIBRARIES += liboph_encrypt.la
+liboph_encrypt_la_SOURCES = oph_encrypt.c oph_encrypt.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_encrypt_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(LIBSSL_INCLUDE)
+liboph_encrypt_la_LDFLAGS = -avoid-version -shared $(LIBS) -lm -lz $(LIBSSL_LIB)
+endif
+
 if MATHEVAL_SUPPORT
 lib_LTLIBRARIES += liboph_predicate.la
 liboph_predicate_la_SOURCES = oph_predicate.c oph_predicate.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_matheval.c oph_core_matheval.h

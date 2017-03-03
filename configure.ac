@@ -118,6 +118,42 @@ else
 fi
 AM_CONDITIONAL([MATHEVAL_SUPPORT], [test "x$matheval_support" = "xyes"])
 
+AC_ARG_ENABLE(libopenssl,
+	   [  --enable-libopenssl	Enable openssl. (Disabled by default)],
+	   [
+		openssl_support=yes
+	   ],
+           [
+		openssl_support=no
+	   ]
+	   )
+if test "x${openssl_support}" = "xyes"; then
+	PKG_CHECK_MODULES(OPENSSL, openssl >= 1.0.0)
+	AC_ARG_WITH(libopenssl_header_path,
+		   [  --with-libopenssl-header-path=PATH		Location of openssl includes directory],
+		   [
+			libopenssl_header_path="$withval"
+		   ],
+		   [
+			libopenssl_header_path="$OPENSSL_CFLAGS"
+		   ]
+	)
+	LIBSSL_INCLUDE="$libopenssl_header_path"
+	AC_SUBST(LIBSSL_INCLUDE)
+	AC_ARG_WITH(libopenssl_lib_path,
+		   [  --with-libopenssl-lib-path=PATH		Location of openssl lib directory],
+		   [
+			libopenssl_lib_path="$withval"
+		   ],
+		   [
+			libopenssl_lib_path="$OPENSSL_LIBS"
+		   ]
+	)
+	LIBSSL_LIB="$libopenssl_lib_path"
+	AC_SUBST(LIBSSL_LIB)
+fi
+AM_CONDITIONAL([OPENSSL_SUPPORT], [test "x$openssl_support" = "xyes"])
+
 OPT=""
 AC_ARG_ENABLE(debug,
 	   [  --enable-debug	Enable debug. (Disabled by default)],

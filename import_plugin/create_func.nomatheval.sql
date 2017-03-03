@@ -59,8 +59,6 @@ DROP FUNCTION IF EXISTS oph_get_subarray2;
 DROP FUNCTION IF EXISTS oph_get_subarray3;
 DROP FUNCTION IF EXISTS oph_permute;
 DROP FUNCTION IF EXISTS oph_aggregate_stats;
-DROP FUNCTION IF EXISTS oph_compress2;
-DROP FUNCTION IF EXISTS oph_uncompress2;
 DROP FUNCTION IF EXISTS oph_gsl_complex_get_abs;
 DROP FUNCTION IF EXISTS oph_gsl_complex_get_arg;
 DROP FUNCTION IF EXISTS oph_gsl_complex_get_imag;
@@ -105,6 +103,7 @@ DROP FUNCTION IF EXISTS oph_accumulate;
 DROP FUNCTION IF EXISTS oph_deaccumulate;
 DROP FUNCTION IF EXISTS oph_expand;
 DROP FUNCTION IF EXISTS oph_extend;
+DROP FUNCTION IF EXISTS oph_encrypt;
 
 DELIMITER //
 CREATE PROCEDURE mysql.oph_drill_down(IN table_in VARCHAR(100), IN outer_size INT, IN inner_size INT, IN oph_type VARCHAR(30), IN table_out VARCHAR(100), IN compressed INT)
@@ -230,4 +229,5 @@ CREATE FUNCTION oph_accumulate RETURNS STRING SONAME 'liboph_accumulate.so';
 CREATE FUNCTION oph_deaccumulate RETURNS STRING SONAME 'liboph_deaccumulate.so';
 CREATE FUNCTION oph_expand RETURNS STRING SONAME 'liboph_expand.so';
 CREATE FUNCTION oph_extend RETURNS STRING SONAME 'liboph_extend.so';
+CREATE FUNCTION oph_encrypt RETURNS STRING SONAME 'liboph_encrypt.so';
 
