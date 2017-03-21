@@ -1,4 +1,11 @@
 
+## v1.0.0 - 2017-03-21
+
+### Changed:
+
+- N-ary primitives interface to optionally use a single input type in case inputs have same type
+- Code indentation style
+
 ## v0.11.0 - 2017-01-31
 
 ### Fixed:
