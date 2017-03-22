@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2016 CMCC Foundation
+    Copyright (C) 2012-2017 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,42 +19,43 @@
 #include "oph_debug.h"
 #include <stdio.h>
 
-extern int msglevel; /* the higher, the more messages... */
+extern int msglevel;		/* the higher, the more messages... */
 
 #if defined(NDEBUG) && defined(__GNUC__)
 /* Nothing. pmesg has been "defined away" in debug.h already. */
 #else
-void pmesg(int level, char* source, long int line_number, char* format, ...) {
+void pmesg(int level, char *source, long int line_number, char *format, ...)
+{
 #ifdef NDEBUG
 	/* Empty body, so a good compiler will optimise calls
 	   to pmesg away */
 #else
-        va_list args;
+	va_list args;
 	char log_type[10];
 
-        if (level>msglevel)
-                return;
-		
-	switch ( level ) {
-		case 1:
-		  sprintf(log_type,"ERROR");
-		  break;
-		case 2:
-		  sprintf(log_type,"WARNING");
-		  break;
-		case 3:
-		  sprintf(log_type,"DEBUG");
-		  break;
-		default:
-		  sprintf(log_type,"UNKNOWN");
-		  break;
-		}
-	
-	fprintf(stderr,"[%s][%s][%ld] ",log_type, source,line_number);
+	if (level > msglevel)
+		return;
 
-        va_start(args, format);
-        vfprintf(stderr, format, args);
-        va_end(args);
-#endif /* NDEBUG */
+	switch (level) {
+		case 1:
+			sprintf(log_type, "ERROR");
+			break;
+		case 2:
+			sprintf(log_type, "WARNING");
+			break;
+		case 3:
+			sprintf(log_type, "DEBUG");
+			break;
+		default:
+			sprintf(log_type, "UNKNOWN");
+			break;
+	}
+
+	fprintf(stderr, "[%s][%s][%ld] ", log_type, source, line_number);
+
+	va_start(args, format);
+	vfprintf(stderr, format, args);
+	va_end(args);
+#endif				/* NDEBUG */
 }
-#endif /* NDEBUG && __GNUC__ */        
+#endif				/* NDEBUG && __GNUC__ */

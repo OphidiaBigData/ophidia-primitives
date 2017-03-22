@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2016 CMCC Foundation
+    Copyright (C) 2012-2017 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,27 +20,26 @@
 
 int msglevel = 1;
 
-int core_oph_interlace_multi(oph_generic_param_multi* param)
+int core_oph_interlace_multi(oph_generic_param_multi * param)
 {
-	int i,j,k,h;
+	int i, j, k, h;
 	oph_multistring *measure = param->measure, *result = param->result;
 	char *ic, *oc = result->content, output_format = measure->num_measure == result->num_measure;
-	for (j=0;j<measure->numelem;++j) // Loop on elements
+	for (j = 0; j < measure->numelem; ++j)	// Loop on elements
 	{
-		k=h=0;
-		do // Loop on input measures
+		k = h = 0;
+		do		// Loop on input measures
 		{
-			measure = param->measure+k;
+			measure = param->measure + k;
 			ic = measure->content;
-			for (i=0;i<measure->num_measure;++i) // Loop on data types
+			for (i = 0; i < measure->num_measure; ++i)	// Loop on data types
 			{
-				if(core_oph_type_cast(ic + j*measure->blocksize, oc, measure->type[i], result->type[output_format ? h%result->num_measure : h]))
-				{
+				if (core_oph_type_cast(ic + j * measure->blocksize, oc, measure->type[i], result->type[output_format ? h % result->num_measure : h], NULL)) {
 					pmesg(1, __FILE__, __LINE__, "Error in compute array\n");
 					return 1;
 				}
 				ic += measure->elemsize[i];
-				oc += result->elemsize[output_format ? h%result->num_measure : h];
+				oc += result->elemsize[output_format ? h % result->num_measure : h];
 				h++;
 			}
 			k++;
@@ -53,76 +52,68 @@ int core_oph_interlace_multi(oph_generic_param_multi* param)
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_interlace_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool oph_interlace_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
-        if(args->arg_count < 3)
-	{
-                strcpy(message, "ERROR: Wrong arguments! oph_interlace(input_OPH_TYPE, output_OPH_TYPE, measure, ...)");
-                return 1;
-        }
-        
+	if (args->arg_count < 3) {
+		strcpy(message, "ERROR: Wrong arguments! oph_interlace(input_OPH_TYPE, output_OPH_TYPE, measure, ...)");
+		return 1;
+	}
+
 	int i;
-        for(i = 0; i < args->arg_count; i++){
-                if(args->arg_type[i] != STRING_RESULT){
-                        strcpy(message, "ERROR: Wrong arguments to oph_interlace function");
-                        return 1;
-                }
-        }
+	for (i = 0; i < args->arg_count; i++) {
+		if (args->arg_type[i] != STRING_RESULT) {
+			strcpy(message, "ERROR: Wrong arguments to oph_interlace function");
+			return 1;
+		}
+	}
 
 	initid->ptr = NULL;
 
 	return 0;
 }
 
-void oph_interlace_deinit(UDF_INIT *initid)
+void oph_interlace_deinit(UDF_INIT * initid)
 {
-        //Free allocated space
-	if(initid->ptr)
-	{
-		free_oph_generic_param_multi((oph_generic_param_multi*)initid->ptr);
-                initid->ptr = NULL;
-        }
+	//Free allocated space
+	if (initid->ptr) {
+		free_oph_generic_param_multi((oph_generic_param_multi *) initid->ptr);
+		initid->ptr = NULL;
+	}
 }
 
-char* oph_interlace(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_interlace(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	int i;
 
-	if (*error)
-	{
-	        *length=0;
-	        *is_null=0;
-	        *error=1;
-	        return NULL;
+	if (*error) {
+		*length = 0;
+		*is_null = 0;
+		*error = 1;
+		return NULL;
 	}
-	if (*is_null)
-	{
-	        *length=0;
-	        *is_null=1;
-	        *error=0;
-	        return NULL;
+	if (*is_null) {
+		*length = 0;
+		*is_null = 1;
+		*error = 0;
+		return NULL;
 	}
-	for (i=2;i<args->arg_count;++i)
-	{
-		if (!args->lengths[i])
-		{
-			*length=0;
-			*is_null=1;
-			*error=0;
+	for (i = 2; i < args->arg_count; ++i) {
+		if (!args->lengths[i]) {
+			*length = 0;
+			*is_null = 1;
+			*error = 0;
 			return NULL;
 		}
 	}
 
-	oph_generic_param_multi* param;
-	if (!initid->ptr)
-	{
-		param = (oph_generic_param_multi*)malloc(sizeof(oph_generic_param_multi));
-		if (!param)
-		{
+	oph_generic_param_multi *param;
+	if (!initid->ptr) {
+		param = (oph_generic_param_multi *) malloc(sizeof(oph_generic_param_multi));
+		if (!param) {
 			pmesg(1, __FILE__, __LINE__, "Error in allocating parameters\n");
-			*length=0;
-			*is_null=0;
-			*error=1;
+			*length = 0;
+			*is_null = 0;
+			*error = 1;
 			return NULL;
 		}
 		param->measure = NULL;
@@ -130,139 +121,133 @@ char* oph_interlace(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lon
 		param->error = 0;
 		param->core_oph_oper = NULL;
 
-		initid->ptr = (char*)param;
-	}
-	else param = (oph_generic_param_multi*)initid->ptr;
+		initid->ptr = (char *) param;
+	} else
+		param = (oph_generic_param_multi *) initid->ptr;
 
-	if (param->error)
-	{
-		*length=0;
-		*is_null=0;
-		*error=1;
+	if (param->error) {
+		*length = 0;
+		*is_null = 0;
+		*error = 1;
 		return NULL;
 	}
 
 	size_t num_measure_total = 0;
-	oph_multistring* measure;
-	if (!param->error && !param->measure)
-	{
-		if(core_set_oph_multistring(&measure, args->args[0], &(args->lengths[0])))
-		{
+	oph_multistring *measure;
+	if (!param->error && !param->measure) {
+		if (core_set_oph_multistring2(&measure, args->args[0], &args->lengths[0], args->arg_count - 2)) {
 			param->error = 1;
 			pmesg(1, __FILE__, __LINE__, "Error setting measure structure\n");
-			*length=0;
-			*is_null=0;
-			*error=1;
+			*length = 0;
+			*is_null = 0;
+			*error = 1;
 			return NULL;
 		}
-		for (i=0;i<args->arg_count-2;++i)
-		{
-			measure[i].length = args->lengths[2+i];
-			if(measure[i].length % measure[i].blocksize)
-			{
+		for (i = 0; i < args->arg_count - 2; ++i) {
+			measure[i].length = args->lengths[2 + i];
+			if (measure[i].length % measure[i].blocksize) {
 				param->error = 1;
 				pmesg(1, __FILE__, __LINE__, "Wrong input type or data corrupted\n");
-				*length=0;
-				*is_null=0;
-				*error=1;
+				*length = 0;
+				*is_null = 0;
+				*error = 1;
 				return NULL;
 			}
 			measure[i].numelem = measure[i].length / measure[i].blocksize;
 			num_measure_total += measure[i].num_measure;
-			if (measure->numelem != measure[i].numelem)
-			{
+			if (measure->numelem != measure[i].numelem) {
 				param->error = 1;
 				pmesg(1, __FILE__, __LINE__, "Measures have different number of elements\n");
-				*length=0;
-				*is_null=0;
-				*error=1;
+				*length = 0;
+				*is_null = 0;
+				*error = 1;
 				return NULL;
 			}
 		}
 
 		param->measure = measure;
-	}
-	else measure = param->measure;
+	} else
+		measure = param->measure;
 
-	for (i=0;i<args->arg_count-2;++i) measure[i].content = args->args[2+i];
+	for (i = 0; i < args->arg_count - 2; ++i)
+		measure[i].content = args->args[2 + i];
 
-	oph_multistring* output;
-	if (!param->error && !param->result)
-	{
-		if(core_set_oph_multistring(&output, args->args[1], &(args->lengths[1])))
-		{
+	oph_multistring *output;
+	if (!param->error && !param->result) {
+		if (core_set_oph_multistring(&output, args->args[1], &(args->lengths[1]))) {
 			param->error = 1;
 			pmesg(1, __FILE__, __LINE__, "Error setting measure structure\n");
-			*length=0;
-			*is_null=0;
-			*error=1;
+			*length = 0;
+			*is_null = 0;
+			*error = 1;
 			return NULL;
 		}
-		if (output->num_measure != num_measure_total)
-		{
-			param->error = output->num_measure != measure->num_measure; // Simple case when all the measures are the same data type
-			if (!param->error)
-			{
+		if (output->num_measure != num_measure_total) {
+			param->error = output->num_measure != measure->num_measure;	// Simple case when all the measures are the same data type
+			if (!param->error) {
 				int j;
-				for (i=0;i<args->arg_count-2;++i)
-				{
-					if (measure[i].num_measure != measure->num_measure) { param->error = 1; break; }
-					for (j=0;j<measure->num_measure;++j) if (measure[i].type[j] != measure->type[j]) { param->error = 1; break; }
-					if (param->error) break;
+				for (i = 0; i < args->arg_count - 2; ++i) {
+					if (measure[i].num_measure != measure->num_measure) {
+						param->error = 1;
+						break;
+					}
+					for (j = 0; j < measure->num_measure; ++j)
+						if (measure[i].type[j] != measure->type[j]) {
+							param->error = 1;
+							break;
+						}
+					if (param->error)
+						break;
 				}
-				if (!param->error) output->blocksize *= args->arg_count-2; // Number of input measures
+				if (!param->error)
+					output->blocksize *= args->arg_count - 2;	// Number of input measures
 			}
-			if (param->error)
-			{
+			if (param->error) {
 				pmesg(1, __FILE__, __LINE__, "Output data type has a different number of fields from the set of input data types\n");
-				*length=0;
-				*is_null=0;
-				*error=1;
+				*length = 0;
+				*is_null = 0;
+				*error = 1;
 				return NULL;
 			}
 		}
 		output->numelem = measure->numelem;
 		output->length = output->numelem * output->blocksize;
-		if(!output->length)
-		{
-			*length=0;
-			*is_null=1;
-			*error=0;
+		if (!output->length) {
+			*length = 0;
+			*is_null = 1;
+			*error = 0;
 			return NULL;
 		}
-		output->content = (char *)malloc(output->length);
-		if(!output->content)
-		{
+		output->content = (char *) malloc(output->length);
+		if (!output->content) {
 			param->error = 1;
-			pmesg(1,  __FILE__, __LINE__, "Error allocating measures string\n");
-			*length=0;
-			*is_null=0;
-			*error=1;
+			pmesg(1, __FILE__, __LINE__, "Error allocating measures string\n");
+			*length = 0;
+			*is_null = 0;
+			*error = 1;
 			return NULL;
 		}
 
 		param->result = output;
-	}
-	else output = param->result;
+	} else
+		output = param->result;
 
-	if(!param->error && core_oph_interlace_multi(param))
-	{
+	if (!param->error && core_oph_interlace_multi(param)) {
 		param->error = 1;
-		pmesg(1,  __FILE__, __LINE__, "Unable to compute result\n");
-		*length=0;
-		*is_null=0;
-		*error=1;
+		pmesg(1, __FILE__, __LINE__, "Unable to compute result\n");
+		*length = 0;
+		*is_null = 0;
+		*error = 1;
 		return NULL;
-        }
+	}
 
-	*length=output->length;
-        *error=0;
-        *is_null=0;
+	*length = output->length;
+	*error = 0;
+	*is_null = 0;
 
-        return (result = output->content);
+	return (result = output->content);
 }
 
 /*------------------------------------------------------------------|
 |               Functions' implementation (END)                     |
 |------------------------------------------------------------------*/
-

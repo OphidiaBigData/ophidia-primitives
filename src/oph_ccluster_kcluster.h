@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2016 CMCC Foundation
+    Copyright (C) 2012-2017 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 #include "oph_core.h"
 
 /* MySQL headers  */
-#include <mysql.h> // It contains UDF-related symbols and data structures
+#include <mysql.h>		// It contains UDF-related symbols and data structures
 
 /* The C Clustering Library */
 #include "cluster.h"
@@ -38,17 +38,17 @@
 #define OPH_CCLUSTER_KCLUSTER_ALL 2
 
 typedef struct {
-    int k;
-    int method;
-    int level;
-    int npass;
-    oph_type type;
-    int npoints;
-    double **data;
-    int **mask;
-    int *clusterid;
-    double **cdata;
-    int **cmask;
+	int k;
+	int method;
+	int level;
+	int npass;
+	oph_type type;
+	int npoints;
+	double **data;
+	int **mask;
+	int *clusterid;
+	double **cdata;
+	int **cmask;
 } oph_ccluster_kcluster_extra;
 
 /*------------------------------------------------------------------|
@@ -56,9 +56,9 @@ typedef struct {
 |------------------------------------------------------------------*/
 
 /* These must be right or mysqld will not find the symbol! */
-my_bool oph_ccluster_kcluster_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void oph_ccluster_kcluster_deinit(UDF_INIT *initid);
-char* oph_ccluster_kcluster(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error);
+my_bool oph_ccluster_kcluster_init(UDF_INIT * initid, UDF_ARGS * args, char *message);
+void oph_ccluster_kcluster_deinit(UDF_INIT * initid);
+char *oph_ccluster_kcluster(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error);
 
 /*------------------------------------------------------------------|
 |               Functions' declarations (END)                       |

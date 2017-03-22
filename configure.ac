@@ -1,6 +1,6 @@
 #
 #    Ophidia Primitives
-#    Copyright (C) 2012-2016 CMCC Foundation
+#    Copyright (C) 2012-2017 CMCC Foundation
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #
 
 AC_PREREQ([2.60])
-AC_INIT([ophidia-primitives], [0.10.6], [ophidia-info@lists.cmcc.it])
+AC_INIT([ophidia-primitives], [0.11.0], [ophidia-info@lists.cmcc.it])
 # AC_CONFIG_SRCDIR([src/mpiTest.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])

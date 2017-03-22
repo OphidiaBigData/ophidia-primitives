@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2016 CMCC Foundation
+    Copyright (C) 2012-2017 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,22 +26,22 @@
 #include "oph_core_subset.h"
 
 /* MySQL headers  */
-#include <mysql.h> // It contains UDF-related symbols and data structures
+#include <mysql.h>		// It contains UDF-related symbols and data structures
 
 typedef struct {
 	char error;
-	oph_string* measure;
-	oph_subset** subset;
-	int number; // Number of dimensions
-	char* flags;
-	char* result;
+	oph_string *measure;
+	oph_subset **subset;
+	int number;		// Number of dimensions
+	char *flags;
+	char *result;
 	unsigned long long length;
 	size_t result_elemsize;
 	oph_type result_type;
 } oph_get_subarray3_param;
 
 typedef struct {
-	char* subset_string;
+	char *subset_string;
 	unsigned long subset_strings_length;
 	unsigned long block_size;
 	unsigned long max;
@@ -52,11 +52,10 @@ typedef struct {
 |------------------------------------------------------------------*/
 
 /* These must be right or mysqld will not find the symbol! */
-my_bool oph_get_subarray3_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void oph_get_subarray3_deinit(UDF_INIT *initid);
-char* oph_get_subarray3(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error);
+my_bool oph_get_subarray3_init(UDF_INIT * initid, UDF_ARGS * args, char *message);
+void oph_get_subarray3_deinit(UDF_INIT * initid);
+char *oph_get_subarray3(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error);
 
 /*------------------------------------------------------------------|
 |               Functions' declarations (END)                       |
 |------------------------------------------------------------------*/
-

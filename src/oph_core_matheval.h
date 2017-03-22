@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2016 CMCC Foundation
+    Copyright (C) 2012-2017 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,14 +25,13 @@
 /* libmatheval headers */
 #include <matheval.h>
 
-typedef enum {INVALID_COMP, OPH_GREATER_THAN_ZERO, OPH_LESS_THAN_ZERO, OPH_GREATER_OR_EQUAL_TO_ZERO, OPH_LESS_OR_EQUAL_TO_ZERO, OPH_EQUAL_TO_ZERO, OPH_NOT_EQUAL_TO_ZERO, OPH_NULL} oph_comp;
+typedef enum { INVALID_COMP, OPH_GREATER_THAN_ZERO, OPH_LESS_THAN_ZERO, OPH_GREATER_OR_EQUAL_TO_ZERO, OPH_LESS_OR_EQUAL_TO_ZERO, OPH_EQUAL_TO_ZERO, OPH_NOT_EQUAL_TO_ZERO, OPH_NULL } oph_comp;
 
 #define DEFAULT_COMP OPH_NOT_EQUAL_TO_ZERO
 
-typedef struct
-{
-	void* f[4]; // measure and expressions
-	oph_comp op; // comparison operator
+typedef struct {
+	void *f[4];		// measure and expressions
+	oph_comp op;		// comparison operator
 	unsigned long length;	// size in bytes
 	oph_type result_type;
 	size_t result_elemsize;
@@ -40,11 +39,10 @@ typedef struct
 
 
 // Set/Get the operator in enum oph_comp form
-int core_set_comp(oph_comp* op, char* oper, unsigned long *len);
-oph_comp core_get_comp (char* type, unsigned long *len);
+int core_set_comp(oph_comp * op, char *oper, unsigned long *len);
+oph_comp core_get_comp(char *type, unsigned long *len);
 
 // oph_predicate: the result depends on the expressions stored in result
-int core_oph_predicate(oph_stringPtr byte_array, char* result);
+int core_oph_predicate(oph_stringPtr byte_array, char *result);
 
 #endif
-
