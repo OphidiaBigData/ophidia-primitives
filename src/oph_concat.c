@@ -135,7 +135,7 @@ char *oph_concat(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long
 	unsigned long numelem_total = 0;
 	oph_multistring *measure;
 	if (!param->error && !param->measure) {
-		if (core_set_oph_multistring2(&measure, args->args[0], &args->lengths[0], args->arg_count - 2)) {
+		if (core_set_oph_multistring(&measure, args->args[0], &(args->lengths[0]))) {
 			param->error = 1;
 			pmesg(1, __FILE__, __LINE__, "Error setting measure structure\n");
 			*length = 0;

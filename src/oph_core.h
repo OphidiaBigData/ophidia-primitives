@@ -143,7 +143,6 @@ size_t core_sizeof(oph_type type);
 int core_set_hier(oph_requestPtr req, char *hier, unsigned long *len);
 int core_set_type(oph_stringPtr str, char *type, unsigned long *len);
 int core_set_oph_multistring(oph_multistring ** str, char *type, unsigned long *len);
-int core_set_oph_multistring2(oph_multistring ** str, char *type, unsigned long *len, int num_measure);
 void free_oph_multistring(oph_multistring * str);
 int core_set_oper(oph_requestPtr req, char *oper, unsigned long *len);
 int core_set_oper_multi(oph_request_multi * req, char *oper, unsigned long *len);
