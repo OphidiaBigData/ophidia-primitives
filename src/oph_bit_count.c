@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2016 CMCC Foundation
+    Copyright (C) 2012-2017 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,116 +23,112 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_bit_count_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool oph_bit_count_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
-        if((args->arg_count < 3) || (args->arg_count > 4))
-	{
-                strcpy(message, "ERROR: Wrong arguments! oph_bit_count(input_OPH_TYPE, output_OPH_TYPE, bit_measure, [value])");
-                return 1;
-        }
-        
-	int i;
-        for(i = 0; i < 3; i++){
-                if(args->arg_type[i] != STRING_RESULT){
-                        strcpy(message, "ERROR: Wrong arguments to oph_bit_count function");
-                        return 1;
-                }
-        }
-
-	if(args->arg_count > 3)
-	{
-        	if(args->arg_type[3] != INT_RESULT)
-		{
-        		strcpy(message, "ERROR: Wrong arguments to oph_bit_count function");
-        		return 1;
-        	}
+	if ((args->arg_count < 3) || (args->arg_count > 4)) {
+		strcpy(message, "ERROR: Wrong arguments! oph_bit_count(input_OPH_TYPE, output_OPH_TYPE, bit_measure, [value])");
+		return 1;
 	}
-        
+
+	int i;
+	for (i = 0; i < 3; i++) {
+		if (args->arg_type[i] != STRING_RESULT) {
+			strcpy(message, "ERROR: Wrong arguments to oph_bit_count function");
+			return 1;
+		}
+	}
+
+	if (args->arg_count > 3) {
+		if (args->arg_type[3] != INT_RESULT) {
+			strcpy(message, "ERROR: Wrong arguments to oph_bit_count function");
+			return 1;
+		}
+	}
+
 	initid->ptr = NULL;
 
 	return 0;
 }
 
-void oph_bit_count_deinit(UDF_INIT *initid)
+void oph_bit_count_deinit(UDF_INIT * initid)
 {
-        //Free allocated space
-        if(initid->ptr)
-	{
-		oph_bit_param* param = (oph_bit_param*)initid->ptr;
-		if (param->measure) { free(param->measure); param->measure=NULL; }
-		if (param->result) { free(param->result); param->result=NULL; }
-                free(initid->ptr);
-                initid->ptr=NULL;
-        }
+	//Free allocated space
+	if (initid->ptr) {
+		oph_bit_param *param = (oph_bit_param *) initid->ptr;
+		if (param->measure) {
+			free(param->measure);
+			param->measure = NULL;
+		}
+		if (param->result) {
+			free(param->result);
+			param->result = NULL;
+		}
+		free(initid->ptr);
+		initid->ptr = NULL;
+	}
 }
 
 // Current implementation does not consider any padding
-long long oph_bit_count(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
+long long oph_bit_count(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error)
 {
-        int res = 0;
-	oph_bit_param* param;
-	oph_bit_string* measure;
+	int res = 0;
+	oph_bit_param *param;
+	oph_bit_string *measure;
 
 	unsigned char value = OPH_BIT_BLOCK_MAX;
 	long long result;
 
-	if(!initid->ptr)
-	{
-		initid->ptr=(char*)malloc(sizeof(oph_bit_param));
-		if(!initid->ptr)
-		{
+	if (!initid->ptr) {
+		initid->ptr = (char *) malloc(sizeof(oph_bit_param));
+		if (!initid->ptr) {
 			pmesg(1, __FILE__, __LINE__, "Error allocating oph_bit_param\n");
-        	        *is_null=0;
-                	*error=1;
-	                return 0;
-        	}
-		param = (oph_bit_param*)initid->ptr;
+			*is_null = 0;
+			*error = 1;
+			return 0;
+		}
+		param = (oph_bit_param *) initid->ptr;
 		param->measure = NULL;
 		param->result = NULL;
-	}
-	else param = (oph_bit_param*)initid->ptr;
+	} else
+		param = (oph_bit_param *) initid->ptr;
 
-	if (!param->measure)
-	{
+	if (!param->measure) {
 		param->measure = malloc(sizeof(oph_bit_string));
-		if(!param->measure)
-		{
+		if (!param->measure) {
 			pmesg(1, __FILE__, __LINE__, "Error allocating oph_bit_string\n");
-        	        *is_null=0;
-                	*error=1;
-	                return 0;
-        	}
-		
-		measure = (oph_bit_string*)param->measure;
-		measure->numelem = core_oph_bit_numelem(args->lengths[0]); // Const
+			*is_null = 0;
+			*error = 1;
+			return 0;
+		}
+
+		measure = (oph_bit_string *) param->measure;
+		measure->numelem = core_oph_bit_numelem(args->lengths[0]);	// Const
+	} else
+		measure = (oph_bit_string *) param->measure;
+
+	measure->content = args->args[2];	// Input
+	if (!measure->content) {
+		*is_null = 1;
+		*error = 0;
+		return 0;
 	}
-	else measure = (oph_bit_string*)param->measure;
 
-        measure->content = args->args[2]; // Input
-	if (!measure->content)
-	{
-                *is_null=1;
-                *error=0;
-                return 0;
-        }
+	if (args->arg_count > 3)
+		value = *((long long *) args->args[3]) ? OPH_BIT_BLOCK_MAX : 0;
 
-	if (args->arg_count > 3) value = *((long long*)args->args[3]) ? OPH_BIT_BLOCK_MAX : 0;
+	res = core_oph_bit_count(param, value, &result);
+	if (res) {
+		pmesg(1, __FILE__, __LINE__, "Unable to compute result\n");
+		*is_null = 0;
+		*error = 1;
+		return 0;
+	}
 
-        res = core_oph_bit_count(param, value, &result);
-        if(res)
-	{
-                pmesg(1, __FILE__, __LINE__, "Unable to compute result\n");
-                *is_null=0;
-                *error=1;
-                return 0;
-        }
-
-	*is_null=0;
-        *error=0;
+	*is_null = 0;
+	*error = 0;
 	return result;
 }
 
 /*------------------------------------------------------------------|
 |               Functions' implementation (END)                     |
 |------------------------------------------------------------------*/
-
