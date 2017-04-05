@@ -59,8 +59,6 @@ DROP FUNCTION IF EXISTS oph_get_subarray2;
 DROP FUNCTION IF EXISTS oph_get_subarray3;
 DROP FUNCTION IF EXISTS oph_permute;
 DROP FUNCTION IF EXISTS oph_aggregate_stats;
-DROP FUNCTION IF EXISTS oph_compress2;
-DROP FUNCTION IF EXISTS oph_uncompress2;
 DROP FUNCTION IF EXISTS oph_gsl_complex_get_abs;
 DROP FUNCTION IF EXISTS oph_gsl_complex_get_arg;
 DROP FUNCTION IF EXISTS oph_gsl_complex_get_imag;

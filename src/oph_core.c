@@ -142,8 +142,9 @@ int core_oph_multistring_cast(oph_multistring * input, oph_multistring * output,
 	return 0;
 }
 
-int core_set_oph_multistring2(oph_multistring ** str, char *type, unsigned long *len, int num_measure)
+int core_set_oph_multistring(oph_multistring ** str, char *type, unsigned long *len)
 {
+
 	if (!type || !str || !len) {
 		pmesg(1, __FILE__, __LINE__, "Null input parameter\n");
 		return -1;
@@ -162,11 +163,7 @@ int core_set_oph_multistring2(oph_multistring ** str, char *type, unsigned long 
 		if (tmp_type[i] == '|')
 			str_num++;
 
-	char extend = (num_measure > 0) && (str_num < num_measure);
-	if (extend)
-		str_num = num_measure;
-
-	(*str) = (oph_multistring *) calloc(str_num, sizeof(oph_multistring));
+	(*str) = (oph_multistring *) calloc((str_num), sizeof(oph_multistring));
 	if (!*str) {
 		pmesg(1, __FILE__, __LINE__, "Memory allocation error\n");
 		return -1;
@@ -189,26 +186,18 @@ int core_set_oph_multistring2(oph_multistring ** str, char *type, unsigned long 
 
 	char *ptr1;
 	char *mytype;
-	char *ptr_s1 = NULL;
-	char *ptr_s2 = NULL;
-	char *ptr_s3 = NULL;
+	char *ptr_s1;
+	char *ptr_s2;
+	char *ptr_s3;
 	oph_type mytype2;
 	char tmp_ptr[BUFF_LEN];
 	char *tmp_ptr1;
-	char first_type[BUFF_LEN];
 
-	for (i = 0; i < str_num; i++, tmp_type = NULL) {
+	for (i = 0;; i++, tmp_type = NULL) {
 
 		ptr1 = strtok_r(tmp_type, OPH_MULTISTRING_HARD_SEPARATOR, &ptr_s1);
-		if (!ptr1) {
-			if (extend)
-				ptr1 = first_type;
-			else
-				break;
-		}
-
-		if (!i && extend)
-			strncpy(first_type, ptr1, BUFF_LEN);
+		if (ptr1 == NULL)
+			break;
 
 		//First tokenize used only for counting the number of basic type
 		tmp_ptr1 = tmp_ptr;
@@ -268,10 +257,6 @@ int core_set_oph_multistring2(oph_multistring ** str, char *type, unsigned long 
 	}
 	//We must set the oph_string2.content, length, numelem value yet
 	return 0;
-}
-int core_set_oph_multistring(oph_multistring ** str, char *type, unsigned long *len)
-{
-	return core_set_oph_multistring2(str, type, len, 0);
 }
 
 void free_oph_multistring(oph_multistring * str)
