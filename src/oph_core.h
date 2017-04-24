@@ -29,7 +29,7 @@
 
 typedef enum oph_hier { INVALID_HIER, OPH_ALL, OPH_WEEK, OPH_MONTH, OPH_YEAR } oph_hier;
 typedef enum oph_type { INVALID_TYPE, OPH_INT, OPH_LONG, OPH_SHORT, OPH_BYTE, OPH_FLOAT, OPH_DOUBLE, OPH_COMPLEX_INT, OPH_COMPLEX_LONG, OPH_COMPLEX_FLOAT, OPH_COMPLEX_DOUBLE } oph_type;
-typedef enum oph_oper { INVALID_OPER, OPH_COUNT, OPH_MAX, OPH_MIN, OPH_SUM, OPH_AVG, OPH_STD, OPH_VAR, OPH_CMOMENT, OPH_ACMOMENT, OPH_RMOMENT, OPH_ARMOMENT, OPH_QUANTILE } oph_oper;
+typedef enum oph_oper { INVALID_OPER, OPH_COUNT, OPH_MAX, OPH_MIN, OPH_SUM, OPH_AVG, OPH_STD, OPH_VAR, OPH_CMOMENT, OPH_ACMOMENT, OPH_RMOMENT, OPH_ARMOMENT, OPH_QUANTILE, OPH_ARG_MAX, OPH_ARG_MIN } oph_oper;
 typedef enum oph_ma_oper { INVALID_MA_OPER, OPH_SMA, OPH_EWMA } oph_ma_oper;
 
 #define UNUSED(x) {(void)(x);}
@@ -219,6 +219,14 @@ int core_oph_max_multi(oph_multistring * byte_array, oph_multistring * result);
 // Return the minimum value in an array (as result string)
 int core_oph_min(oph_stringPtr byte_array, char *result);
 int core_oph_min_multi(oph_multistring * byte_array, oph_multistring * result);
+
+// Return the index of the maximum value in an array (as result string)
+int core_oph_arg_max(oph_stringPtr byte_array, char *result);
+int core_oph_arg_max_multi(oph_multistring * byte_array, oph_multistring * result);
+
+// Return the index of the minimum value in an array (as result string)
+int core_oph_arg_min(oph_stringPtr byte_array, char *result);
+int core_oph_arg_min_multi(oph_multistring * byte_array, oph_multistring * result);
 
 // Return the sum of the array values (as result string)
 int core_oph_sum(oph_stringPtr byte_array, char *result);

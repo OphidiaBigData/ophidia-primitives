@@ -352,6 +352,12 @@ char *oph_reduce2(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned lon
 		case OPH_QUANTILE:
 			core_oph_oper = core_oph_quantile;
 			break;
+		case OPH_ARG_MAX:
+			core_oph_oper = core_oph_arg_max;
+			break;
+		case OPH_ARG_MIN:
+			core_oph_oper = core_oph_arg_min;
+			break;
 		default:
 			pmesg(1, __FILE__, __LINE__, "Unable to recognize operator\n");
 			*length = 0;
@@ -361,6 +367,8 @@ char *oph_reduce2(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned lon
 	}
 	switch (inp_req.oper) {
 		case OPH_COUNT:
+		case OPH_ARG_MAX:
+		case OPH_ARG_MIN:
 			result_type = OPH_LONG;
 			result_size = core_sizeof(OPH_LONG);
 			break;
