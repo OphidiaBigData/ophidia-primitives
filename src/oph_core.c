@@ -1678,7 +1678,7 @@ int core_oph_arg_max(oph_stringPtr byte_array, char *result)
 				return -1;
 		}
 	}
-	index++;	// Non 'C'-like indexing
+	index++;		// Non 'C'-like indexing
 	memcpy(result, &index, sizeof(long long));
 	return 0;
 }
@@ -2145,7 +2145,7 @@ int core_oph_arg_min(oph_stringPtr byte_array, char *result)
 				return -1;
 		}
 	}
-	index++;	// Non 'C'-like indexing
+	index++;		// Non 'C'-like indexing
 	memcpy(result, &index, sizeof(long long));
 	return 0;
 }
