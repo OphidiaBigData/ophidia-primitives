@@ -27,7 +27,7 @@ int core_oph_extend_multi(oph_multistring * byte_array, oph_multistring * result
 
 	int i;
 	for (i = 1; i < number; ++i)
-		memcpy(result->content + i * byte_array->length, result->content, byte_array->length);
+		memcpy(result->content + i * result->length, result->content, result->length);
 
 	return 0;
 }
@@ -147,7 +147,7 @@ char *oph_extend(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long
 
 	/* Allocate the right space for the result set */
 	if (!output->content) {
-		output->content = (char *) calloc(1, (output->numelem) * (output->blocksize));
+		output->content = (char *) calloc(output->numelem, output->blocksize);
 		if (!output->content) {
 			pmesg(1, __FILE__, __LINE__, "Error allocating measures string\n");
 			*length = 0;
