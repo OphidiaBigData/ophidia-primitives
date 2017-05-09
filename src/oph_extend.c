@@ -25,24 +25,25 @@ int core_oph_extend_multi(oph_multistring * byte_array, oph_multistring * result
 	if (core_oph_multistring_cast(byte_array, result, byte_array->missingvalue))
 		return -1;
 
-	int i,j;
-	if (mode){
+	int i, j;
+	if (mode) {
 		//Interlace mode
 		// Last position to write
-		int counter = byte_array->numelem * number - 1;
+		unsigned long counter = byte_array->numelem * number - 1;
 		// I write the elements starting from the last one
-		for (j = byte_array->numelem - 1; j > -1; j--){
-			for (i = 0; i < number; ++i){
-				memcpy(result->content+ counter * result->blocksize, result->content + j * result->blocksize, result->blocksize);
+		for (j = byte_array->numelem - 1; j >= 0; j--) {
+			for (i = 0; i < number; ++i) {
+				memcpy(result->content + counter * result->blocksize, result->content + j * result->blocksize, result->blocksize);
 				counter--;
 			}
 		}
-	}
-	else{
+	} else {
 		//Append mode - default
+		unsigned long length = byte_array->numelem * result->blocksize;
 		for (i = 1; i < number; ++i)
-			memcpy(result->content + i * byte_array->length, result->content, byte_array->length);
+			memcpy(result->content + i * length, result->content, length);
 	}
+
 	return 0;
 }
 
@@ -166,18 +167,18 @@ char *oph_extend(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long
 	}
 
 	if (args->arg_count > 4) {
-		if (args->lengths[4] != 1){
+		if (args->lengths[4] != 1) {
 			pmesg(1, __FILE__, __LINE__, "Wrong mode provided. Only 'a' or 'i' are accepted.\n");
 			*length = 0;
 			*is_null = 0;
 			*error = 1;
 			return NULL;
 		}
-		if(*args->args[4] == 'a')
+		if (*args->args[4] == 'a')
 			mode = 0;
 		else if (*args->args[4] == 'i')
 			mode = 1;
-		else{
+		else {
 			pmesg(1, __FILE__, __LINE__, "Wrong mode provided. Only 'a' or 'i' are accepted.\n");
 			*length = 0;
 			*is_null = 0;
@@ -190,7 +191,7 @@ char *oph_extend(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long
 
 	/* Allocate the right space for the result set */
 	if (!output->content) {
-		output->content = (char *) calloc(1, (output->numelem) * (output->blocksize));
+		output->content = (char *) calloc(output->numelem, output->blocksize);
 		if (!output->content) {
 			pmesg(1, __FILE__, __LINE__, "Error allocating measures string\n");
 			*length = 0;
@@ -207,7 +208,7 @@ char *oph_extend(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long
 		*error = 1;
 		return NULL;
 	}
-	*length = (output->numelem) * (output->blocksize);
+	*length = output->numelem * output->blocksize;
 	*error = 0;
 	*is_null = 0;
 	return (result = ((oph_multistring *) initid->ptr)->content);
