@@ -203,7 +203,7 @@ char *oph_reduce(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long
 	oph_multistring *multim;
 	oph_multistring *output;	//I can use a multistring to store information about the output types
 
-	long long block_count = 0;
+	long long block_count = 0, offset = 0;
 	int i = 0;
 	oph_oper myoper = DEFAULT_OPER;
 
@@ -308,16 +308,8 @@ char *oph_reduce(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long
 	} else
 		multim->missingvalue = NULL;
 
-	//Check on the output
-	if ((multim->numelem) % block_count) {
-		pmesg(1, __FILE__, __LINE__, "Wrong input type or reduction block number\n");
-		*length = 0;
-		*is_null = 0;
-		*error = 1;
-		return NULL;
-	}
-
-	output->numelem = (multim->numelem) / block_count;
+	offset = multim->numelem % block_count;
+	output->numelem = (multim->numelem) / block_count + (offset ? 1 : 0);
 	output->length = (output->numelem) * (output->blocksize);
 
 	/* Allocate the right space for the result set */
@@ -334,7 +326,9 @@ char *oph_reduce(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long
 
 	multim->numelem = block_count;
 	char *res_content = output->content;
-	for (i = 0; i < output->numelem; i++) {
+	for (i = 1; i <= output->numelem; i++) {
+		if (offset && (i == output->numelem))
+			multim->numelem = offset;
 		if (((oph_request_multi *) (initid->extension))->core_oph_oper(multim, output)) {
 			pmesg(1, __FILE__, __LINE__, "Unable to compute result\n");
 			*length = 0;
