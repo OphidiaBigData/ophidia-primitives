@@ -133,7 +133,7 @@ char *oph_append(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long
 		return NULL;
 	}
 
-	size_t num_measure_total = 0;
+	size_t num_measure_total = 0, numelem_total = 0;
 	oph_multistring *measure;
 	if (!param->error && !param->measure) {
 		if (core_set_oph_multistring(&measure, args->args[0], &(args->lengths[0]))) {
@@ -155,15 +155,8 @@ char *oph_append(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long
 				return NULL;
 			}
 			measure[i].numelem = measure[i].length / measure[i].blocksize;
+			numelem_total += measure[i].numelem;
 			num_measure_total += measure[i].num_measure;
-			if (measure->numelem != measure[i].numelem) {
-				param->error = 1;
-				pmesg(1, __FILE__, __LINE__, "Measures have different number of elements\n");
-				*length = 0;
-				*is_null = 0;
-				*error = 1;
-				return NULL;
-			}
 		}
 
 		param->measure = measure;
@@ -200,8 +193,6 @@ char *oph_append(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long
 					if (param->error)
 						break;
 				}
-				if (!param->error)
-					output->blocksize *= args->arg_count - 2;	// Number of input measures
 			}
 			if (param->error) {
 				pmesg(1, __FILE__, __LINE__, "Output data type has a different number of fields from the set of input data types\n");
@@ -211,8 +202,18 @@ char *oph_append(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long
 				return NULL;
 			}
 		}
-		output->numelem = measure->numelem;
-		output->length = output->numelem * output->blocksize;
+		for (i = 1; i < output->num_measure; ++i)
+			if (output->type[i] != output->type[0])
+				break;
+		if (i < output->num_measure) {
+			param->error = 1;
+			pmesg(1, __FILE__, __LINE__, "Fields of output data type cannot be different\n");
+			*length = 0;
+			*is_null = 0;
+			*error = 1;
+			return NULL;
+		}
+		output->length = numelem_total * output->elemsize[0];
 		if (!output->length) {
 			*length = 0;
 			*is_null = 1;
