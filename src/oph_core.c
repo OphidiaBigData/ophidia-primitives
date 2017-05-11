@@ -3062,8 +3062,14 @@ int core_oph_std(oph_stringPtr byte_array, char *result)
 		case OPH_LONG:
 		case OPH_DOUBLE:
 			{
-				double *d = (double *) result;
-				double stdev = sqrt(fabs(*d));
+				double *d = (double *) result, stdev;
+				if (byte_array->missingvalue) {
+					if (!isnan(*d) && (*byte_array->missingvalue != *d))
+						stdev = sqrt(fabs(*d));
+					else
+						stdev = *byte_array->missingvalue;
+				} else
+					stdev = sqrt(fabs(*d));
 				memcpy(result, (void *) (&stdev), core_sizeof(OPH_DOUBLE));
 				break;
 			}
@@ -3072,8 +3078,15 @@ int core_oph_std(oph_stringPtr byte_array, char *result)
 		case OPH_INT:
 		case OPH_FLOAT:
 			{
-				float *d = (float *) result;
-				float stdev = sqrtf(fabsf(*d));
+				float *d = (float *) result, stdev;
+				if (byte_array->missingvalue) {
+					float ms = (float) *byte_array->missingvalue;
+					if (!isnan(*d) && (ms != *d))
+						stdev = sqrt(fabs(*d));
+					else
+						stdev = ms;
+				} else
+					stdev = sqrtf(fabsf(*d));
 				memcpy(result, (void *) (&stdev), core_sizeof(OPH_FLOAT));
 				break;
 			}
