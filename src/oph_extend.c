@@ -167,7 +167,7 @@ char *oph_extend(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long
 	}
 
 	if (args->arg_count > 4) {
-		if (args->lengths[4] != 1) {
+		if (args->lengths[4] > 2) {
 			pmesg(1, __FILE__, __LINE__, "Wrong mode provided. Only 'a' or 'i' are accepted.\n");
 			*length = 0;
 			*is_null = 0;
