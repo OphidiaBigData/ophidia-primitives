@@ -20,16 +20,29 @@
 
 int msglevel = 1;
 
-int core_oph_extend_multi(oph_multistring * byte_array, oph_multistring * result, int number)
+int core_oph_extend_multi(oph_multistring * byte_array, oph_multistring * result, int number, short mode)
 {
 	if (core_oph_multistring_cast(byte_array, result, byte_array->missingvalue))
 		return -1;
 
-	unsigned long length = byte_array->numelem * result->blocksize;
-
-	int i;
-	for (i = 1; i < number; ++i)
-		memcpy(result->content + i * length, result->content, length);
+	int i, j;
+	if (mode) {
+		//Interlace mode
+		// Last position to write
+		unsigned long counter = byte_array->numelem * number - 1;
+		// I write the elements starting from the last one
+		for (j = byte_array->numelem - 1; j >= 0; j--) {
+			for (i = 0; i < number; ++i) {
+				memcpy(result->content + counter * result->blocksize, result->content + j * result->blocksize, result->blocksize);
+				counter--;
+			}
+		}
+	} else {
+		//Append mode - default
+		unsigned long length = byte_array->numelem * result->blocksize;
+		for (i = 1; i < number; ++i)
+			memcpy(result->content + i * length, result->content, length);
+	}
 
 	return 0;
 }
@@ -40,8 +53,8 @@ int core_oph_extend_multi(oph_multistring * byte_array, oph_multistring * result
 my_bool oph_extend_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
 	int i = 0;
-	if (args->arg_count < 3 || args->arg_count > 4) {
-		strcpy(message, "ERROR: Wrong arguments! oph_extend(input_OPH_TYPE, output_OPH_TYPE, measure, [number])");
+	if (args->arg_count < 3 || args->arg_count > 5) {
+		strcpy(message, "ERROR: Wrong arguments! oph_extend(input_OPH_TYPE, output_OPH_TYPE, measure, [number], [mode])");
 		return 1;
 	}
 
@@ -58,6 +71,13 @@ my_bool oph_extend_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 			return 1;
 		}
 		args->arg_type[3] = INT_RESULT;
+	}
+
+	if (args->arg_count > 4) {
+		if (args->arg_type[4] != STRING_RESULT) {
+			strcpy(message, "ERROR: Wrong arguments to oph_extend function");
+			return 1;
+		}
 	}
 
 	initid->ptr = NULL;
@@ -91,6 +111,7 @@ char *oph_extend(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long
 	oph_multistring *output;
 
 	int number = 1;
+	short mode = 0;
 
 	if (!initid->extension) {
 		if (core_set_oph_multistring((oph_multistring **) (&(initid->extension)), args->args[0], &(args->lengths[0]))) {
@@ -145,6 +166,27 @@ char *oph_extend(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long
 		}
 	}
 
+	if (args->arg_count > 4) {
+		if (args->lengths[4] > 2) {
+			pmesg(1, __FILE__, __LINE__, "Wrong mode provided. Only 'a' or 'i' are accepted.\n");
+			*length = 0;
+			*is_null = 0;
+			*error = 1;
+			return NULL;
+		}
+		if (*args->args[4] == 'a')
+			mode = 0;
+		else if (*args->args[4] == 'i')
+			mode = 1;
+		else {
+			pmesg(1, __FILE__, __LINE__, "Wrong mode provided. Only 'a' or 'i' are accepted.\n");
+			*length = 0;
+			*is_null = 0;
+			*error = 1;
+			return NULL;
+		}
+	}
+
 	output->numelem = multim->numelem * number;
 
 	/* Allocate the right space for the result set */
@@ -159,7 +201,7 @@ char *oph_extend(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long
 		}
 	}
 
-	if (core_oph_extend_multi(multim, output, number)) {
+	if (core_oph_extend_multi(multim, output, number, mode)) {
 		pmesg(1, __FILE__, __LINE__, "Unable to compute result\n");
 		*length = 0;
 		*is_null = 1;
