@@ -110,7 +110,7 @@ char *oph_dump(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *
 				break;
 			default:;
 		}
-		initid->ptr = (char *) malloc(measure.numelem * space + 2 * (measure.numelem - 1));
+		initid->ptr = (char *) calloc(measure.numelem * space + 2 * (measure.numelem - 1) + 1, sizeof(char));
 		if (!initid->ptr) {
 			pmesg(1, __FILE__, __LINE__, "Error allocating measures string\n");
 			*length = 0;
@@ -143,7 +143,7 @@ char *oph_dump(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *
 		*error = 1;
 		return NULL;
 	}
-	*length = strlen(initid->ptr);
+	*length = strlen(initid->ptr) + 1;
 	*error = 0;
 	*is_null = 0;
 	return initid->ptr;
