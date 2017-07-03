@@ -94,6 +94,7 @@ DROP FUNCTION IF EXISTS oph_aggregate_stats_partial;
 DROP FUNCTION IF EXISTS oph_aggregate_stats_final;
 DROP FUNCTION IF EXISTS oph_mask_array;
 DROP FUNCTION IF EXISTS oph_interlace;
+DROP FUNCTION IF EXISTS oph_append;
 DROP FUNCTION IF EXISTS oph_quantize;
 DROP FUNCTION IF EXISTS oph_gsl_spline;
 DROP FUNCTION IF EXISTS oph_gsl_fit_linear;
@@ -219,6 +220,7 @@ CREATE AGGREGATE FUNCTION oph_aggregate_stats_partial RETURNS STRING SONAME 'lib
 CREATE AGGREGATE FUNCTION oph_aggregate_stats_final RETURNS STRING SONAME 'liboph_aggregate_stats_final.so';
 CREATE FUNCTION oph_mask_array RETURNS STRING SONAME 'liboph_mask_array.so';
 CREATE FUNCTION oph_interlace RETURNS STRING SONAME 'liboph_interlace.so';
+CREATE FUNCTION oph_append RETURNS STRING SONAME 'liboph_append.so';
 CREATE FUNCTION oph_quantize RETURNS STRING SONAME 'liboph_quantize.so';
 CREATE FUNCTION oph_gsl_spline RETURNS STRING SONAME 'liboph_gsl_spline.so';
 CREATE FUNCTION oph_gsl_fit_linear RETURNS STRING SONAME 'liboph_gsl_fit_linear.so';
