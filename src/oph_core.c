@@ -4006,8 +4006,14 @@ int core_oph_std(oph_stringPtr byte_array, char *result)
 		case OPH_LONG:
 		case OPH_DOUBLE:
 			{
-				double *d = (double *) result;
-				double stdev = sqrt(fabs(*d));
+				double *d = (double *) result, stdev;
+				if (byte_array->missingvalue) {
+					if (!isnan(*d) && (*byte_array->missingvalue != *d))
+						stdev = sqrt(fabs(*d));
+					else
+						stdev = *byte_array->missingvalue;
+				} else
+					stdev = sqrt(fabs(*d));
 				memcpy(result, (void *) (&stdev), core_sizeof(OPH_DOUBLE));
 				break;
 			}
@@ -4016,8 +4022,15 @@ int core_oph_std(oph_stringPtr byte_array, char *result)
 		case OPH_INT:
 		case OPH_FLOAT:
 			{
-				float *d = (float *) result;
-				float stdev = sqrtf(fabsf(*d));
+				float *d = (float *) result, stdev;
+				if (byte_array->missingvalue) {
+					float ms = (float) *byte_array->missingvalue;
+					if (!isnan(*d) && (ms != *d))
+						stdev = sqrt(fabs(*d));
+					else
+						stdev = ms;
+				} else
+					stdev = sqrtf(fabsf(*d));
 				memcpy(result, (void *) (&stdev), core_sizeof(OPH_FLOAT));
 				break;
 			}
@@ -10361,44 +10374,44 @@ int core_oph_sum_array_multi(char *valueA, char *valueB, char *result, oph_type 
 		switch (type) {
 			case OPH_INT:
 				{
-					*((int *) (result)) = *((int *) (valueA)) * *((int *) (valueA)) + *((int *) (valueB)) * *((int *) (valueB));
+					*((int *) (result)) = *((int *) (valueA)) + *((int *) (valueB));
 					break;
 				}
 			case OPH_SHORT:
 				{
-					*((short *) (result)) = *((short *) (valueA)) * *((short *) (valueA)) + *((short *) (valueB)) * *((short *) (valueB));
+					*((short *) (result)) = *((short *) (valueA)) + *((short *) (valueB));
 					break;
 				}
 			case OPH_BYTE:
 				{
-					*((char *) (result)) = *((char *) (valueA)) * *((char *) (valueA)) + *((char *) (valueB)) * *((char *) (valueB));
+					*((char *) (result)) = *((char *) (valueA)) + *((char *) (valueB));
 					break;
 				}
 			case OPH_LONG:
 				{
-					*((long long *) (result)) = *((long long *) (valueA)) * *((long long *) (valueA)) + *((long long *) (valueB)) * *((long long *) (valueB));
+					*((long long *) (result)) = *((long long *) (valueA)) + *((long long *) (valueB));
 					break;
 				}
 			case OPH_FLOAT:
 				{
 					if (!isnan(*((float *) (valueA)))) {
 						if (!isnan(*((float *) (valueB))))
-							*((float *) (result)) = *((float *) (valueA)) * *((float *) (valueA)) + *((float *) (valueB)) * *((float *) (valueB));
+							*((float *) (result)) = *((float *) (valueA)) + *((float *) (valueB));
 						else
-							*((float *) (result)) = *((float *) (valueA)) * *((float *) (valueA));
+							*((float *) (result)) = *((float *) (valueA));
 					} else
-						*((float *) (result)) = *((float *) (valueB)) * *((float *) (valueB));
+						*((float *) (result)) = *((float *) (valueB));
 					break;
 				}
 			case OPH_DOUBLE:
 				{
 					if (!isnan(*((double *) (valueA)))) {
 						if (!isnan(*((double *) (valueB))))
-							*((double *) (result)) = *((double *) (valueA)) * *((double *) (valueA)) + *((double *) (valueB)) * *((double *) (valueB));
+							*((double *) (result)) = *((double *) (valueA)) + *((double *) (valueB));
 						else
-							*((double *) (result)) = *((double *) (valueA)) * *((double *) (valueA));
+							*((double *) (result)) = *((double *) (valueA));
 					} else
-						*((double *) (result)) = *((double *) (valueB)) * *((double *) (valueB));
+						*((double *) (result)) = *((double *) (valueB));
 					break;
 				}
 			default:

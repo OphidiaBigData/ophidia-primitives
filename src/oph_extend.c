@@ -25,9 +25,11 @@ int core_oph_extend_multi(oph_multistring * byte_array, oph_multistring * result
 	if (core_oph_multistring_cast(byte_array, result, byte_array->missingvalue))
 		return -1;
 
+	unsigned long length = byte_array->numelem * result->blocksize;
+
 	int i;
 	for (i = 1; i < number; ++i)
-		memcpy(result->content + i * result->length, result->content, result->length);
+		memcpy(result->content + i * length, result->content, length);
 
 	return 0;
 }
@@ -164,7 +166,7 @@ char *oph_extend(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long
 		*error = 1;
 		return NULL;
 	}
-	*length = (output->numelem) * (output->blocksize);
+	*length = output->numelem * output->blocksize;
 	*error = 0;
 	*is_null = 0;
 	return (result = ((oph_multistring *) initid->ptr)->content);
