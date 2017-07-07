@@ -68,6 +68,11 @@ liboph_aggregate_stats_final_la_SOURCES = oph_aggregate_stats_final.c oph_aggreg
 liboph_aggregate_stats_final_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
 liboph_aggregate_stats_final_la_LDFLAGS = -avoid-version -shared $(LIBS) -lm
 
+lib_LTLIBRARIES += liboph_append.la
+liboph_append_la_SOURCES = oph_append.c oph_append.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_append_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_append_la_LDFLAGS = -avoid-version -shared $(LIBS) -lm
+
 lib_LTLIBRARIES += liboph_compress.la
 liboph_compress_la_SOURCES = oph_compress.c oph_compress.h oph_debug.c oph_debug.h oph_core.c oph_core.h
 liboph_compress_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) 
@@ -292,6 +297,11 @@ lib_LTLIBRARIES += liboph_concat.la
 liboph_concat_la_SOURCES = oph_concat.c oph_concat.h oph_debug.c oph_debug.h oph_core.c oph_core.h
 liboph_concat_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
 liboph_concat_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_concat2.la
+liboph_concat2_la_SOURCES = oph_concat2.c oph_concat2.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_concat2_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_concat2_la_LDFLAGS = -avoid-version -shared $(LIBS)
 
 lib_LTLIBRARIES += liboph_moving_avg.la
 liboph_moving_avg_la_SOURCES = oph_moving_avg.c oph_moving_avg.h oph_debug.c oph_debug.h oph_core.c oph_core.h
