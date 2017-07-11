@@ -208,6 +208,8 @@ int core_set_oph_multistring(oph_multistring ** str, char *type, unsigned long *
 			if (mytype == NULL)
 				break;
 			if (core_get_type2(mytype) == INVALID_TYPE) {
+				free_oph_multistring(*str);
+				*str = NULL;
 				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
 				return -1;
 			} else
@@ -239,6 +241,8 @@ int core_set_oph_multistring(oph_multistring ** str, char *type, unsigned long *
 			if (mytype == NULL)
 				break;
 			if ((mytype2 = core_get_type2(mytype)) == INVALID_TYPE) {
+				free_oph_multistring(*str);
+				*str = NULL;
 				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
 				return -1;
 			} else {
@@ -255,7 +259,6 @@ int core_set_oph_multistring(oph_multistring ** str, char *type, unsigned long *
 			}
 		}
 	}
-	//We must set the oph_string2.content, length, numelem value yet
 	return 0;
 }
 
@@ -307,7 +310,6 @@ void free_oph_generic_param_multi(oph_generic_param_multi * param)
 	}
 
 	free(param);
-
 }
 
 int core_set_elemsize(oph_stringPtr str)
