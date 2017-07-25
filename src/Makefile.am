@@ -298,6 +298,11 @@ liboph_concat_la_SOURCES = oph_concat.c oph_concat.h oph_debug.c oph_debug.h oph
 liboph_concat_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
 liboph_concat_la_LDFLAGS = -avoid-version -shared $(LIBS)
 
+lib_LTLIBRARIES += liboph_concat2.la
+liboph_concat2_la_SOURCES = oph_concat2.c oph_concat2.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_concat2_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_concat2_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
 lib_LTLIBRARIES += liboph_moving_avg.la
 liboph_moving_avg_la_SOURCES = oph_moving_avg.c oph_moving_avg.h oph_debug.c oph_debug.h oph_core.c oph_core.h
 liboph_moving_avg_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)

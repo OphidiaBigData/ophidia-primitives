@@ -33,11 +33,11 @@ my_bool oph_moving_avg_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 
 	for (i = 0; i < args->arg_count; i++) {
 		if (i == 3) {
-			if (args->arg_type[i] != INT_RESULT && args->arg_type[i] != DECIMAL_RESULT) {
+			if (args->arg_type[i] == STRING_RESULT) {
 				strcpy(message, "ERROR: Wrong arguments to oph_moving_avg function");
 				return 1;
-			} else
-				args->arg_type[i] = REAL_RESULT;
+			}
+			args->arg_type[i] = REAL_RESULT;
 		} else {
 			if (args->arg_type[i] != STRING_RESULT) {
 				strcpy(message, "ERROR: Wrong arguments to oph_moving_avg function");
