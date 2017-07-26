@@ -1,3 +1,25 @@
+## v1.1.0 - 2017-07-28
+
+### Fixed:
+
+- Bug in init of oph_moving_avg primitive
+- Possible memory leak in core library
+- Bug [\#2](https://github.com/OphidiaBigData/ophidia-primitives/issues/2s)
+- Bug in core STD. Dev. operation 
+- Bug in oph_extend primitive
+- Bug in memory allocation for oph_extend
+
+### Added:
+
+- New primitive oph_append
+- arg_max and arg_min options in reduce primitives
+- New primitive oph_concat2
+
+### Changed:
+
+- oph_dump primitive in order to include string termination char
+- Allow partial reductions with oph_reduce
+- oph_extend primitive to support both append and interlace modalities
 
 ## v1.0.0 - 2017-03-23
 
