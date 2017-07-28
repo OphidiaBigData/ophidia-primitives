@@ -4,7 +4,7 @@
 
 - Bug in init of oph_moving_avg primitive
 - Possible memory leak in core library
-- Bug [\#2](https://github.com/OphidiaBigData/ophidia-primitives/issues/2s)
+- Bug [#2](https://github.com/OphidiaBigData/ophidia-primitives/issues/2)
 - Bug in core STD. Dev. operation 
 - Bug in oph_extend primitive
 - Bug in memory allocation for oph_extend
