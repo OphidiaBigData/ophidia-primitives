@@ -233,6 +233,8 @@ char *oph_padding(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned lon
 			*error = 1;
 			return NULL;
 		}
+		if (args->arg_count > 4)
+			filling = *((double *) args->args[4]);
 	}
 
 	output = (oph_multistring *) (initid->ptr);
