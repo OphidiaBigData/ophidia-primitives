@@ -198,6 +198,11 @@ liboph_math_la_SOURCES = oph_math.c oph_math.h oph_debug.c oph_debug.h oph_core.
 liboph_math_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
 liboph_math_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIB)
 
+lib_LTLIBRARIES += liboph_padding.la
+liboph_padding_la_SOURCES = oph_padding.c oph_padding.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_padding_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_padding_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
 lib_LTLIBRARIES += liboph_permute.la
 liboph_permute_la_SOURCES = oph_permute.c oph_permute.h oph_debug.c oph_debug.h oph_core.c oph_core.h
 liboph_permute_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
