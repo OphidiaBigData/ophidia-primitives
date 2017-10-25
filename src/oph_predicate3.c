@@ -44,7 +44,7 @@ int core_oph_predicate3(oph_stringPtr byte_array, char* result)
 					if (occurrence != occurrence_number) res=0;
 				}
 				temporary = evaluator_evaluate_x (_result->f[res?2:3], *((double*)(byte_array->content+i*byte_array->elemsize)));
-				if(core_oph_type_cast(&temporary, (((char*)_result->f[0])+i*_result->result_elemsize), OPH_DOUBLE, _result->result_type))
+				if(core_oph_type_cast(&temporary, (((char*)_result->f[0])+i*_result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue))
 				{
 				        pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -63,7 +63,7 @@ int core_oph_predicate3(oph_stringPtr byte_array, char* result)
 					if (occurrence != occurrence_number) res=0;
 				}
 				temporary = evaluator_evaluate_x (_result->f[res?2:3], *((float*)(byte_array->content+i*byte_array->elemsize)));
-				if(core_oph_type_cast(&temporary, (((char*)_result->f[0])+i*_result->result_elemsize), OPH_DOUBLE, _result->result_type))
+				if(core_oph_type_cast(&temporary, (((char*)_result->f[0])+i*_result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue))
 				{
 				        pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -82,7 +82,7 @@ int core_oph_predicate3(oph_stringPtr byte_array, char* result)
 					if (occurrence != occurrence_number) res=0;
 				}
 				temporary = evaluator_evaluate_x (_result->f[res?2:3], *((int*)(byte_array->content+i*byte_array->elemsize)));
-				if(core_oph_type_cast(&temporary, (((char*)_result->f[0])+i*_result->result_elemsize), OPH_DOUBLE, _result->result_type))
+				if(core_oph_type_cast(&temporary, (((char*)_result->f[0])+i*_result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue))
 				{
 				        pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -101,7 +101,7 @@ int core_oph_predicate3(oph_stringPtr byte_array, char* result)
 					if (occurrence != occurrence_number) res=0;
 				}
 				temporary = evaluator_evaluate_x (_result->f[res?2:3], *((short*)(byte_array->content+i*byte_array->elemsize)));
-				if(core_oph_type_cast(&temporary, (((char*)_result->f[0])+i*_result->result_elemsize), OPH_DOUBLE, _result->result_type))
+				if(core_oph_type_cast(&temporary, (((char*)_result->f[0])+i*_result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue))
 				{
 				        pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -120,7 +120,7 @@ int core_oph_predicate3(oph_stringPtr byte_array, char* result)
 					if (occurrence != occurrence_number) res=0;
 				}
 				temporary = evaluator_evaluate_x (_result->f[res?2:3], *((char*)(byte_array->content+i*byte_array->elemsize)));
-				if(core_oph_type_cast(&temporary, (((char*)_result->f[0])+i*_result->result_elemsize), OPH_DOUBLE, _result->result_type))
+				if(core_oph_type_cast(&temporary, (((char*)_result->f[0])+i*_result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue))
 				{
 				        pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -139,7 +139,7 @@ int core_oph_predicate3(oph_stringPtr byte_array, char* result)
 					if (occurrence != occurrence_number) res=0;
 				}
 				temporary = evaluator_evaluate_x (_result->f[res?2:3], *((long long*)(byte_array->content+i*byte_array->elemsize)));
-				if(core_oph_type_cast(&temporary, (((char*)_result->f[0])+i*_result->result_elemsize), OPH_DOUBLE, _result->result_type))
+				if(core_oph_type_cast(&temporary, (((char*)_result->f[0])+i*_result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue))
 				{
 				        pmesg(1,  __FILE__, __LINE__, "Unable to find result\n");
 					return 1;
@@ -222,6 +222,7 @@ char* oph_predicate3(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lo
 
         measure.content = args->args[2];
         measure.length = &(args->lengths[2]);
+		measure.missingvalue = NULL;
 
 	core_set_elemsize(&(measure));
 
