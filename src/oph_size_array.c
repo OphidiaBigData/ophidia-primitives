@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2016 CMCC Foundation
+    Copyright (C) 2012-2017 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_size_array_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool oph_size_array_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
 	if (args->arg_count != 3) {
 		strcpy(message, "ERROR! Wrong arguments! oph_size_array(input_OPH_TYPE, output_OPH_TYPE, measure)");
@@ -31,22 +31,22 @@ my_bool oph_size_array_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	}
 
 	int i;
-	for(i = 0; i < args->arg_count; i++){
-                if(args->arg_type[i] != STRING_RESULT){
-                        strcpy(message, "ERROR: Wrong arguments to oph_size_array function");
-                        return 1;
-                }
-        }
+	for (i = 0; i < args->arg_count; i++) {
+		if (args->arg_type[i] != STRING_RESULT) {
+			strcpy(message, "ERROR: Wrong arguments to oph_size_array function");
+			return 1;
+		}
+	}
 
 	return 0;
 }
 
-void oph_size_array_deinit(UDF_INIT *initid __attribute__((unused)))
+void oph_size_array_deinit(UDF_INIT * initid __attribute__ ((unused)))
 {
 
 }
 
-long long oph_size_array(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
+long long oph_size_array(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error)
 {
 	return args->lengths[2];
 }
@@ -54,4 +54,3 @@ long long oph_size_array(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *
 /*------------------------------------------------------------------|
 |               Functions' implementation (END)                     |
 |------------------------------------------------------------------*/
-

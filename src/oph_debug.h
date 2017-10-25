@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2016 CMCC Foundation
+    Copyright (C) 2012-2017 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -34,5 +34,4 @@ void pmesg(int level, char *source, long int line_number, char *format, ...);
       Adapted from [K&R2], p. 174 */
 #endif
 
-#endif /* DEBUG_H */
-
+#endif				/* DEBUG_H */

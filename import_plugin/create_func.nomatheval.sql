@@ -1,6 +1,6 @@
 --
 --    Ophidia Primitives
---    Copyright (C) 2012-2016 CMCC Foundation
+--    Copyright (C) 2012-2017 CMCC Foundation
 --
 --    This program is free software: you can redistribute it and/or modify
 --    it under the terms of the GNU General Public License as published by
@@ -52,6 +52,7 @@ DROP FUNCTION IF EXISTS oph_reverse;
 DROP FUNCTION IF EXISTS oph_math;
 DROP FUNCTION IF EXISTS oph_gsl_boxplot;
 DROP FUNCTION IF EXISTS oph_concat;
+DROP FUNCTION IF EXISTS oph_concat2;
 DROP FUNCTION IF EXISTS oph_to_bin;
 DROP FUNCTION IF EXISTS oph_get_index_array;
 DROP FUNCTION IF EXISTS oph_roll_up;
@@ -59,8 +60,6 @@ DROP FUNCTION IF EXISTS oph_get_subarray2;
 DROP FUNCTION IF EXISTS oph_get_subarray3;
 DROP FUNCTION IF EXISTS oph_permute;
 DROP FUNCTION IF EXISTS oph_aggregate_stats;
-DROP FUNCTION IF EXISTS oph_compress2;
-DROP FUNCTION IF EXISTS oph_uncompress2;
 DROP FUNCTION IF EXISTS oph_gsl_complex_get_abs;
 DROP FUNCTION IF EXISTS oph_gsl_complex_get_arg;
 DROP FUNCTION IF EXISTS oph_gsl_complex_get_imag;
@@ -96,6 +95,7 @@ DROP FUNCTION IF EXISTS oph_aggregate_stats_partial;
 DROP FUNCTION IF EXISTS oph_aggregate_stats_final;
 DROP FUNCTION IF EXISTS oph_mask_array;
 DROP FUNCTION IF EXISTS oph_interlace;
+DROP FUNCTION IF EXISTS oph_append;
 DROP FUNCTION IF EXISTS oph_quantize;
 DROP FUNCTION IF EXISTS oph_gsl_spline;
 DROP FUNCTION IF EXISTS oph_gsl_fit_linear;
@@ -105,6 +105,7 @@ DROP FUNCTION IF EXISTS oph_accumulate;
 DROP FUNCTION IF EXISTS oph_deaccumulate;
 DROP FUNCTION IF EXISTS oph_expand;
 DROP FUNCTION IF EXISTS oph_extend;
+DROP FUNCTION IF EXISTS oph_padding;
 
 DELIMITER //
 CREATE PROCEDURE mysql.oph_drill_down(IN table_in VARCHAR(100), IN outer_size INT, IN inner_size INT, IN oph_type VARCHAR(30), IN table_out VARCHAR(100), IN compressed INT)
@@ -180,6 +181,7 @@ CREATE FUNCTION oph_reverse RETURNS STRING SONAME 'liboph_reverse.so';
 CREATE FUNCTION oph_math RETURNS STRING SONAME 'liboph_math.so';
 CREATE FUNCTION oph_gsl_boxplot RETURNS STRING SONAME 'liboph_gsl_boxplot.so';
 CREATE FUNCTION oph_concat RETURNS STRING SONAME 'liboph_concat.so';
+CREATE FUNCTION oph_concat2 RETURNS STRING SONAME 'liboph_concat2.so';
 CREATE FUNCTION oph_to_bin RETURNS STRING SONAME 'liboph_to_bin.so';
 CREATE FUNCTION oph_get_index_array RETURNS STRING SONAME 'liboph_get_index_array.so';
 CREATE AGGREGATE FUNCTION oph_roll_up RETURNS STRING SONAME 'liboph_roll_up.so';
@@ -221,6 +223,7 @@ CREATE AGGREGATE FUNCTION oph_aggregate_stats_partial RETURNS STRING SONAME 'lib
 CREATE AGGREGATE FUNCTION oph_aggregate_stats_final RETURNS STRING SONAME 'liboph_aggregate_stats_final.so';
 CREATE FUNCTION oph_mask_array RETURNS STRING SONAME 'liboph_mask_array.so';
 CREATE FUNCTION oph_interlace RETURNS STRING SONAME 'liboph_interlace.so';
+CREATE FUNCTION oph_append RETURNS STRING SONAME 'liboph_append.so';
 CREATE FUNCTION oph_quantize RETURNS STRING SONAME 'liboph_quantize.so';
 CREATE FUNCTION oph_gsl_spline RETURNS STRING SONAME 'liboph_gsl_spline.so';
 CREATE FUNCTION oph_gsl_fit_linear RETURNS STRING SONAME 'liboph_gsl_fit_linear.so';
@@ -230,4 +233,5 @@ CREATE FUNCTION oph_accumulate RETURNS STRING SONAME 'liboph_accumulate.so';
 CREATE FUNCTION oph_deaccumulate RETURNS STRING SONAME 'liboph_deaccumulate.so';
 CREATE FUNCTION oph_expand RETURNS STRING SONAME 'liboph_expand.so';
 CREATE FUNCTION oph_extend RETURNS STRING SONAME 'liboph_extend.so';
+CREATE FUNCTION oph_padding RETURNS STRING SONAME 'liboph_padding.so';
 

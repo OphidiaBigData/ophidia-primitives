@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2016 CMCC Foundation
+    Copyright (C) 2012-2017 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,29 +38,29 @@
 typedef enum { OPH_SUBSET_SINGLE, OPH_SUBSET_INTERVAL, OPH_SUBSET_STRIDE } oph_subset_type;
 
 typedef struct {
-	oph_subset_type* type;
-	unsigned long* start;
-	unsigned long* end;
-	unsigned long* stride;
-	unsigned long* count;
+	oph_subset_type *type;
+	unsigned long *start;
+	unsigned long *end;
+	unsigned long *stride;
+	unsigned long *count;
 	unsigned long total;
-	unsigned int number; // Number of intervals
-} oph_subset; // List of subsets in the form <start>:<stride>:<max>
+	unsigned int number;	// Number of intervals
+} oph_subset;			// List of subsets in the form <start>:<stride>:<max>
 
 // Initialization of struct oph_subset
-int oph_subset_init(oph_subset** subset);
+int oph_subset_init(oph_subset ** subset);
 
 // Not implemented yet
-int oph_subset_validate(const char* cond, unsigned long len);
+int oph_subset_validate(const char *cond, unsigned long len);
 
 // Translate non-null-terminated string into an oph_subset struct. Set 'max' to 0 to avoid truncation to 'max' elements
-int oph_subset_parse(const char* cond, unsigned long len, oph_subset* subset, unsigned long max);
+int oph_subset_parse(const char *cond, unsigned long len, oph_subset * subset, unsigned long max);
 
 // Freeing the struct oph_subset
-int oph_subset_free(oph_subset* subset);
+int oph_subset_free(oph_subset * subset);
 
 // Freeing the struct oph_subset
-int oph_subset_vector_free(oph_subset** subset, int number);
+int oph_subset_vector_free(oph_subset ** subset, int number);
 
 // Return 1 if an index is a subset
 int oph_subset_is_in_subset(unsigned long index, unsigned long start, unsigned long stride, unsigned long end);
@@ -71,7 +71,6 @@ unsigned long oph_subset_id_to_index(unsigned long id, unsigned long *sizes, int
 unsigned long oph_subset_id_to_index2(unsigned long id, unsigned long block_size, unsigned long size);
 
 // Translate an oph_subset struct into a flag array
-int oph_subset_set_flags(oph_subset* subset, char* flags, unsigned long size, unsigned long* total, unsigned long* sizes, int size_number);
+int oph_subset_set_flags(oph_subset * subset, char *flags, unsigned long size, unsigned long *total, unsigned long *sizes, int size_number);
 
 #endif
-

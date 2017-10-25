@@ -1,6 +1,6 @@
 #
 #    Ophidia Primitives
-#    Copyright (C) 2012-2016 CMCC Foundation
+#    Copyright (C) 2012-2017 CMCC Foundation
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 #
 
 AC_PREREQ([2.60])
-AC_INIT([ophidia-primitives], [0.9.0], [ophidia-info@lists.cmcc.it])
+AC_INIT([ophidia-primitives], [1.1.0], [ophidia-info@cmcc.it])
 # AC_CONFIG_SRCDIR([src/mpiTest.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -44,7 +44,7 @@ AC_CHECK_LIB([m],[cos])
 # Automake conditionals
 # AM_CONDITIONAL([HAVE_SQLITE3], [test -n "$SQLITE3_CFLAGS"])
 
-AX_LIB_MYSQL([5.4])
+AX_LIB_MYSQL([5.6])
 if test -n $HAVE_MYSQL; then
   AC_MSG_NOTICE([MySQL libraries available])
 else
@@ -91,7 +91,7 @@ AC_ARG_WITH(matheval_path,
            [
                 matheval_path="$withval"
                                 matheval_support=yes
-                                MATHEVAL_CONFIG="${withval}/lib/pkgconfig/libmatheval.pc"
+                                MATHEVAL_CONFIG="${withval}/pkgconfig/libmatheval.pc"
            ],
            [
                         MATHEVAL_CONFIG="/usr/local/lib/pkgconfig/libmatheval.pc"
@@ -126,10 +126,12 @@ AC_ARG_ENABLE(debug,
 	   )
 if test "x$debug" = "xyes"; then
 	AC_MSG_WARN("Debug activated")
-	OPT="-g3"
+	OPT="-g3 -O0"
 else
 	OPT="-O2"
 fi
+
+AC_SUBST(OPT)
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile])

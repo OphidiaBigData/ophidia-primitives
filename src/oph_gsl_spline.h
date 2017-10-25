@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2016 CMCC Foundation
+    Copyright (C) 2012-2017 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 #include "oph_core_gsl.h"
 
 /* MySQL headers  */
-#include <mysql.h> // It contains UDF-related symbols and data structures
+#include <mysql.h>		// It contains UDF-related symbols and data structures
 
 /* GSL STATS headers  */
 #include <gsl/gsl_spline.h>
@@ -45,9 +45,9 @@ typedef struct {
 |------------------------------------------------------------------*/
 
 /* These must be right or mysqld will not find the symbol! */
-my_bool oph_gsl_spline_init(UDF_INIT *initid, UDF_ARGS *args, char *message);
-void oph_gsl_spline_deinit(UDF_INIT *initid);
-char* oph_gsl_spline(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error);
+my_bool oph_gsl_spline_init(UDF_INIT * initid, UDF_ARGS * args, char *message);
+void oph_gsl_spline_deinit(UDF_INIT * initid);
+char *oph_gsl_spline(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error);
 
 /*------------------------------------------------------------------|
 |               Functions' declarations (END)                       |
