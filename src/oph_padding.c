@@ -23,6 +23,7 @@ int msglevel = 1;
 int core_oph_padding_multi(oph_multistring * byte_array, oph_multistring * result, int id, double filling)
 {
 	int i, j, js, je;
+	char *in_string = byte_array->content, *out_string = result->content;
 
 	if (id <= 0) {
 		js = 0;
@@ -33,78 +34,94 @@ int core_oph_padding_multi(oph_multistring * byte_array, oph_multistring * resul
 	} else {
 		js = id - 1;
 		je = id;
+		while (--id > 0) {
+			in_string += byte_array->elemsize[id];
+			out_string += result->elemsize[id];
+		}
 	}
 
 	for (j = js; j < je; ++j) {
 		switch (byte_array->type[j]) {
 			case OPH_DOUBLE:{
-					double tmp = (double)filling;
+					double tmp = (double) filling;
 					for (i = 0; i < byte_array->numelem; i++) {
-						if (core_oph_type_cast((void *) ((byte_array->content) + (i * byte_array->elemsize[j])), (result->content) + (i * result->elemsize[j]), byte_array->type[j], result->type[j], byte_array->missingvalue))
+						if (core_oph_type_cast
+						    ((void *) (in_string + (i * byte_array->blocksize)), out_string + (i * result->blocksize), byte_array->type[j], result->type[j],
+						     byte_array->missingvalue))
 							return -1;
 					}
 					for (; i < result->numelem; i++) {
-						if (core_oph_type_cast((void *) (&tmp), (result->content) + (i * result->elemsize[j]), byte_array->type[j], result->type[j], byte_array->missingvalue))
+						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), byte_array->type[j], result->type[j], byte_array->missingvalue))
 							return -1;
 					}
 					break;
 				}
 			case OPH_FLOAT:{
-					float tmp = (float)filling;
+					float tmp = (float) filling;
 					for (i = 0; i < byte_array->numelem; i++) {
-						if (core_oph_type_cast((void *) ((byte_array->content) + (i * byte_array->elemsize[j])), (result->content) + (i * result->elemsize[j]), byte_array->type[j], result->type[j], byte_array->missingvalue))
+						if (core_oph_type_cast
+						    ((void *) (in_string + (i * byte_array->blocksize)), out_string + (i * result->blocksize), byte_array->type[j], result->type[j],
+						     byte_array->missingvalue))
 							return -1;
 					}
 					for (; i < result->numelem; i++) {
-						if (core_oph_type_cast((void *) (&tmp), (result->content) + (i * result->elemsize[j]), byte_array->type[j], result->type[j], byte_array->missingvalue))
+						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), byte_array->type[j], result->type[j], byte_array->missingvalue))
 							return -1;
 					}
 					break;
 				}
 			case OPH_INT:{
-					int tmp = (int)filling;
+					int tmp = (int) filling;
 					for (i = 0; i < byte_array->numelem; i++) {
-						if (core_oph_type_cast((void *) ((byte_array->content) + (i * byte_array->elemsize[j])), (result->content) + (i * result->elemsize[j]), byte_array->type[j], result->type[j], byte_array->missingvalue))
+						if (core_oph_type_cast
+						    ((void *) (in_string + (i * byte_array->blocksize)), out_string + (i * result->blocksize), byte_array->type[j], result->type[j],
+						     byte_array->missingvalue))
 							return -1;
 					}
 					for (; i < result->numelem; i++) {
-						if (core_oph_type_cast((void *) (&tmp), (result->content) + (i * result->elemsize[j]), byte_array->type[j], result->type[j], byte_array->missingvalue))
+						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), byte_array->type[j], result->type[j], byte_array->missingvalue))
 							return -1;
 					}
 					break;
 				}
 			case OPH_LONG:{
-					long long tmp = (long long)filling;
+					long long tmp = (long long) filling;
 					for (i = 0; i < byte_array->numelem; i++) {
-						if (core_oph_type_cast((void *) ((byte_array->content) + (i * byte_array->elemsize[j])), (result->content) + (i * result->elemsize[j]), byte_array->type[j], result->type[j], byte_array->missingvalue))
+						if (core_oph_type_cast
+						    ((void *) (in_string + (i * byte_array->blocksize)), out_string + (i * result->blocksize), byte_array->type[j], result->type[j],
+						     byte_array->missingvalue))
 							return -1;
 					}
 					for (; i < result->numelem; i++) {
-						if (core_oph_type_cast((void *) (&tmp), (result->content) + (i * result->elemsize[j]), byte_array->type[j], result->type[j], byte_array->missingvalue))
+						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), byte_array->type[j], result->type[j], byte_array->missingvalue))
 							return -1;
 					}
 					break;
 				}
 			case OPH_SHORT:{
-					short tmp = (short)filling;
+					short tmp = (short) filling;
 					for (i = 0; i < byte_array->numelem; i++) {
-						if (core_oph_type_cast((void *) ((byte_array->content) + (i * byte_array->elemsize[j])), (result->content) + (i * result->elemsize[j]), byte_array->type[j], result->type[j], byte_array->missingvalue))
+						if (core_oph_type_cast
+						    ((void *) (in_string + (i * byte_array->blocksize)), out_string + (i * result->blocksize), byte_array->type[j], result->type[j],
+						     byte_array->missingvalue))
 							return -1;
 					}
 					for (; i < result->numelem; i++) {
-						if (core_oph_type_cast((void *) (&tmp), (result->content) + (i * result->elemsize[j]), byte_array->type[j], result->type[j], byte_array->missingvalue))
+						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), byte_array->type[j], result->type[j], byte_array->missingvalue))
 							return -1;
 					}
 					break;
 				}
 			case OPH_BYTE:{
-					char tmp = (char)filling;
+					char tmp = (char) filling;
 					for (i = 0; i < byte_array->numelem; i++) {
-						if (core_oph_type_cast((void *) ((byte_array->content) + (i * byte_array->elemsize[j])), (result->content) + (i * result->elemsize[j]), byte_array->type[j], result->type[j], byte_array->missingvalue))
+						if (core_oph_type_cast
+						    ((void *) (in_string + (i * byte_array->blocksize)), out_string + (i * result->blocksize), byte_array->type[j], result->type[j],
+						     byte_array->missingvalue))
 							return -1;
 					}
 					for (; i < result->numelem; i++) {
-						if (core_oph_type_cast((void *) (&tmp), (result->content) + (i * result->elemsize[j]), byte_array->type[j], result->type[j], byte_array->missingvalue))
+						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), byte_array->type[j], result->type[j], byte_array->missingvalue))
 							return -1;
 					}
 					break;
@@ -113,6 +130,8 @@ int core_oph_padding_multi(oph_multistring * byte_array, oph_multistring * resul
 				pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
 				return -1;
 		}
+		in_string += byte_array->elemsize[j];
+		out_string += result->elemsize[j];
 	}
 	return 0;
 }
@@ -179,7 +198,7 @@ char *oph_padding(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned lon
 	oph_multistring *multim;
 	oph_multistring *output;
 
-	int id = 0;	// Only this value is supported
+	int id = 0;		// Only this value is supported
 	long long size = 0;
 	double filling = 0;
 

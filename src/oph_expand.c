@@ -25,6 +25,7 @@ int core_oph_expand_multi(oph_multistring * byte_array, oph_multistring * result
 	int i, j, k, js, je;
 	double current;
 	char nan[sizeof(double)];
+	char *in_string = byte_array->content, *out_string = result->content;
 
 	oph_expand_param *param = byte_array->extend;
 
@@ -37,6 +38,10 @@ int core_oph_expand_multi(oph_multistring * byte_array, oph_multistring * result
 	} else {
 		js = id - 1;
 		je = id;
+		while (--id > 0) {
+			in_string += byte_array->elemsize[id];
+			out_string += result->elemsize[id];
+		}
 	}
 
 	if (byte_array->type[js] == OPH_DOUBLE) {
@@ -53,8 +58,7 @@ int core_oph_expand_multi(oph_multistring * byte_array, oph_multistring * result
 	for (j = js; j < je; ++j) {
 		if (!param) {
 			for (i = 0; i < result->numelem; i++)
-				if (core_oph_type_cast
-				    (byte_array->content + i * byte_array->elemsize[j], result->content + i * result->elemsize[j], byte_array->type[j], result->type[j], byte_array->missingvalue))
+				if (core_oph_type_cast(in_string + i * byte_array->blocksize, out_string + i * result->blocksize, byte_array->type[j], result->type[j], byte_array->missingvalue))
 					return -1;
 		} else {
 			k = 0;
@@ -68,8 +72,7 @@ int core_oph_expand_multi(oph_multistring * byte_array, oph_multistring * result
 				}
 				if (param->index[k] < current + param->step / 2.0) {
 					if (core_oph_type_cast
-					    (byte_array->content + k * byte_array->elemsize[j], result->content + i * result->elemsize[j], byte_array->type[j], result->type[j],
-					     byte_array->missingvalue))
+					    (in_string + k * byte_array->blocksize, out_string + i * result->blocksize, byte_array->type[j], result->type[j], byte_array->missingvalue))
 						return -1;
 					k++;
 				} else {
@@ -78,15 +81,14 @@ int core_oph_expand_multi(oph_multistring * byte_array, oph_multistring * result
 							case OPH_DOUBLE:
 								{
 									if (core_oph_type_cast
-									    (&current, result->content + i * result->elemsize[j], byte_array->type[j], result->type[j], byte_array->missingvalue))
+									    (&current, out_string + i * result->blocksize, byte_array->type[j], result->type[j], byte_array->missingvalue))
 										return -1;
 									break;
 								}
 							case OPH_FLOAT:
 								{
 									float f = (float) current;
-									if (core_oph_type_cast
-									    (&f, result->content + i * result->elemsize[j], byte_array->type[j], result->type[j], byte_array->missingvalue))
+									if (core_oph_type_cast(&f, out_string + i * result->blocksize, byte_array->type[j], result->type[j], byte_array->missingvalue))
 										return -1;
 									break;
 								}
@@ -94,12 +96,14 @@ int core_oph_expand_multi(oph_multistring * byte_array, oph_multistring * result
 								pmesg(1, __FILE__, __LINE__, "Type not supported\n");
 								return -1;
 						}
-					} else if (core_oph_type_cast(nan, result->content + i * result->elemsize[j], byte_array->type[j], result->type[j], byte_array->missingvalue))
+					} else if (core_oph_type_cast(nan, out_string + i * result->blocksize, byte_array->type[j], result->type[j], byte_array->missingvalue))
 						return -1;
 				}
 				current += param->step;
 			}
 		}
+		in_string += byte_array->elemsize[j];
+		out_string += result->elemsize[j];
 	}
 	return 0;
 }
