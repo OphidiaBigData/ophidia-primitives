@@ -323,6 +323,11 @@ liboph_deaccumulate_la_SOURCES = oph_deaccumulate.c oph_deaccumulate.h oph_debug
 liboph_deaccumulate_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
 liboph_deaccumulate_la_LDFLAGS = -avoid-version -shared $(LIBS)
 
+lib_LTLIBRARIES += liboph_replace.la
+liboph_replace_la_SOURCES = oph_replace.c oph_replace.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_replace_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_replace_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
 lib_LTLIBRARIES += liboph_ccluster_kcluster.la
 liboph_ccluster_kcluster_la_SOURCES = oph_ccluster_kcluster.c oph_ccluster_kcluster.h cluster.c cluster.h oph_debug.c oph_debug.h oph_core.c oph_core.h
 liboph_ccluster_kcluster_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
