@@ -24,6 +24,7 @@ int core_oph_mul_scalar2_multi(oph_multistring * byte_array, double *scalars, op
 {
 	int i, j, js, je;
 	double tmp;
+	char *in_string = byte_array->content, *out_string = result->content;
 
 	if (id <= 0) {
 		js = 0;
@@ -34,54 +35,58 @@ int core_oph_mul_scalar2_multi(oph_multistring * byte_array, double *scalars, op
 	} else {
 		js = id - 1;
 		je = id;
+		while (--id > 0) {
+			in_string += byte_array->elemsize[id];
+			out_string += result->elemsize[id];
+		}
 	}
 
 	for (j = js; j < je; ++j) {
 		switch (byte_array->type[j]) {
 			case OPH_DOUBLE:{
 					for (i = 0; i < byte_array->numelem; i++) {
-						tmp = (*(double *) ((byte_array->content) + (i * byte_array->elemsize[j])) * scalars[0]);
-						if (core_oph_type_cast((void *) (&tmp), (result->content) + (i * result->elemsize[j]), OPH_DOUBLE, result->type[j], byte_array->missingvalue))
+						tmp = (*(double *) (in_string + (i * byte_array->blocksize)) * scalars[0]);
+						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), OPH_DOUBLE, result->type[j], byte_array->missingvalue))
 							return -1;
 					}
 					break;
 				}
 			case OPH_FLOAT:{
 					for (i = 0; i < byte_array->numelem; i++) {
-						tmp = (double) (*(float *) ((byte_array->content) + (i * byte_array->elemsize[j])) * scalars[0]);
-						if (core_oph_type_cast((void *) (&tmp), (result->content) + (i * result->elemsize[j]), OPH_DOUBLE, result->type[j], byte_array->missingvalue))
+						tmp = (double) (*(float *) (in_string + (i * byte_array->blocksize)) * scalars[0]);
+						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), OPH_DOUBLE, result->type[j], byte_array->missingvalue))
 							return -1;
 					}
 					break;
 				}
 			case OPH_INT:{
 					for (i = 0; i < byte_array->numelem; i++) {
-						tmp = (double) (*(int *) ((byte_array->content) + (i * byte_array->elemsize[j])) * scalars[0]);
-						if (core_oph_type_cast((void *) (&tmp), (result->content) + (i * result->elemsize[j]), OPH_DOUBLE, result->type[j], byte_array->missingvalue))
+						tmp = (double) (*(int *) (in_string + (i * byte_array->blocksize)) * scalars[0]);
+						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), OPH_DOUBLE, result->type[j], byte_array->missingvalue))
 							return -1;
 					}
 					break;
 				}
 			case OPH_SHORT:{
 					for (i = 0; i < byte_array->numelem; i++) {
-						tmp = (double) (*(short *) ((byte_array->content) + (i * byte_array->elemsize[j])) * scalars[0]);
-						if (core_oph_type_cast((void *) (&tmp), (result->content) + (i * result->elemsize[j]), OPH_DOUBLE, result->type[j], byte_array->missingvalue))
+						tmp = (double) (*(short *) (in_string + (i * byte_array->blocksize)) * scalars[0]);
+						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), OPH_DOUBLE, result->type[j], byte_array->missingvalue))
 							return -1;
 					}
 					break;
 				}
 			case OPH_BYTE:{
 					for (i = 0; i < byte_array->numelem; i++) {
-						tmp = (double) (*(char *) ((byte_array->content) + (i * byte_array->elemsize[j])) * scalars[0]);
-						if (core_oph_type_cast((void *) (&tmp), (result->content) + (i * result->elemsize[j]), OPH_DOUBLE, result->type[j], byte_array->missingvalue))
+						tmp = (double) (*(char *) (in_string + (i * byte_array->blocksize)) * scalars[0]);
+						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), OPH_DOUBLE, result->type[j], byte_array->missingvalue))
 							return -1;
 					}
 					break;
 				}
 			case OPH_LONG:{
 					for (i = 0; i < byte_array->numelem; i++) {
-						tmp = (double) (*(long long *) ((byte_array->content) + (i * byte_array->elemsize[j])) * scalars[0]);
-						if (core_oph_type_cast((void *) (&tmp), (result->content) + (i * result->elemsize[j]), OPH_DOUBLE, result->type[j], byte_array->missingvalue))
+						tmp = (double) (*(long long *) (in_string + (i * byte_array->blocksize)) * scalars[0]);
+						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), OPH_DOUBLE, result->type[j], byte_array->missingvalue))
 							return -1;
 					}
 					break;
@@ -91,14 +96,14 @@ int core_oph_mul_scalar2_multi(oph_multistring * byte_array, double *scalars, op
 #ifdef GSL_SUPPORTED
 					gsl_complex a, b, c;
 					for (i = 0; i < (byte_array->numelem) * 2; i += 2) {
-						a.dat[0] = (double) ((int *) (byte_array->content))[i];	//real part
-						a.dat[1] = (double) ((int *) (byte_array->content))[i + 1];	//imag part
+						a.dat[0] = (double) ((int *) in_string)[i];	//real part
+						a.dat[1] = (double) ((int *) in_string)[i + 1];	//imag part
 						b.dat[0] = scalars[0];	//real part
 						b.dat[1] = scalars[1];	//imag part
 						c = gsl_complex_mul(a, b);
-						if (core_oph_type_cast(c.dat, (result->content) + (i * result->elemsize[j]), OPH_DOUBLE, result->type[j]))
+						if (core_oph_type_cast(c.dat, out_string + (i * result->blocksize), OPH_DOUBLE, result->type[j]))
 							return -1;
-						if (core_oph_type_cast(c.dat + 1, (result->content) + ((i + 1) * result->elemsize[j]), OPH_DOUBLE, result->type[j]))
+						if (core_oph_type_cast(c.dat + 1, out_string + ((i + 1) * result->blocksize), OPH_DOUBLE, result->type[j]))
 							return -1;
 					}
 #else
@@ -111,14 +116,14 @@ int core_oph_mul_scalar2_multi(oph_multistring * byte_array, double *scalars, op
 #ifdef GSL_SUPPORTED
 					gsl_complex a, b, c;
 					for (i = 0; i < (byte_array->numelem) * 2; i += 2) {
-						a.dat[0] = (double) ((long long *) (byte_array->content))[i];	//real part
-						a.dat[1] = (double) ((long long *) (byte_array->content))[i + 1];	//imag part
+						a.dat[0] = (double) ((long long *) in_string)[i];	//real part
+						a.dat[1] = (double) ((long long *) in_string)[i + 1];	//imag part
 						b.dat[0] = scalars[0];	//real part
 						b.dat[1] = scalars[1];	//imag part
 						c = gsl_complex_mul(a, b);
-						if (core_oph_type_cast(c.dat, (result->content) + (i * result->elemsize[j]), OPH_DOUBLE, result->type[j]))
+						if (core_oph_type_cast(c.dat, out_string + (i * result->blocksize), OPH_DOUBLE, result->type[j]))
 							return -1;
-						if (core_oph_type_cast(c.dat + 1, (result->content) + ((i + 1) * result->elemsize[j]), OPH_DOUBLE, result->type[j]))
+						if (core_oph_type_cast(c.dat + 1, out_string + ((i + 1) * result->blocksize), OPH_DOUBLE, result->type[j]))
 							return -1;
 					}
 #else
@@ -131,14 +136,14 @@ int core_oph_mul_scalar2_multi(oph_multistring * byte_array, double *scalars, op
 #ifdef GSL_SUPPORTED
 					gsl_complex a, b, c;
 					for (i = 0; i < (byte_array->numelem) * 2; i += 2) {
-						a.dat[0] = (double) ((float *) (byte_array->content))[i];	//real part
-						a.dat[1] = (double) ((float *) (byte_array->content))[i + 1];	//imag part
+						a.dat[0] = (double) ((float *) in_string)[i];	//real part
+						a.dat[1] = (double) ((float *) in_string)[i + 1];	//imag part
 						b.dat[0] = scalars[0];	//real part
 						b.dat[1] = scalars[1];	//imag part
 						c = gsl_complex_mul(a, b);
-						if (core_oph_type_cast(c.dat, (result->content) + (i * result->elemsize[j]), OPH_DOUBLE, result->type[j]))
+						if (core_oph_type_cast(c.dat, out_string + (i * result->blocksize), OPH_DOUBLE, result->type[j]))
 							return -1;
-						if (core_oph_type_cast(c.dat + 1, (result->content) + ((i + 1) * result->elemsize[j]), OPH_DOUBLE, result->type[j]))
+						if (core_oph_type_cast(c.dat + 1, out_string + ((i + 1) * result->blocksize), OPH_DOUBLE, result->type[j]))
 							return -1;
 					}
 #else
@@ -151,14 +156,14 @@ int core_oph_mul_scalar2_multi(oph_multistring * byte_array, double *scalars, op
 #ifdef GSL_SUPPORTED
 					gsl_complex a, b, c;
 					for (i = 0; i < (byte_array->numelem) * 2; i += 2) {
-						a.dat[0] = ((double *) (byte_array->content))[i];	//real part
-						a.dat[1] = ((double *) (byte_array->content))[i + 1];	//imag part
+						a.dat[0] = ((double *) in_string)[i];	//real part
+						a.dat[1] = ((double *) in_string)[i + 1];	//imag part
 						b.dat[0] = scalars[0];	//real part
 						b.dat[1] = scalars[1];	//imag part
 						c = gsl_complex_mul(a, b);
-						if (core_oph_type_cast(c.dat, (result->content) + (i * result->elemsize[j]), OPH_DOUBLE, result->type[j]))
+						if (core_oph_type_cast(c.dat, out_string + (i * result->blocksize), OPH_DOUBLE, result->type[j]))
 							return -1;
-						if (core_oph_type_cast(c.dat + 1, (result->content) + ((i + 1) * result->elemsize[j]), OPH_DOUBLE, result->type[j]))
+						if (core_oph_type_cast(c.dat + 1, out_string + ((i + 1) * result->blocksize), OPH_DOUBLE, result->type[j]))
 							return -1;
 					}
 #else
@@ -170,6 +175,8 @@ int core_oph_mul_scalar2_multi(oph_multistring * byte_array, double *scalars, op
 				pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
 				return -1;
 		}
+		in_string += byte_array->elemsize[j];
+		out_string += result->elemsize[j];
 	}
 	return 0;
 }
