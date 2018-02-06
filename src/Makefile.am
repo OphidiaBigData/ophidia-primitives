@@ -88,6 +88,11 @@ liboph_aggregate_operator_la_SOURCES = oph_aggregate_operator.c oph_aggregate_op
 liboph_aggregate_operator_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
 liboph_aggregate_operator_la_LDFLAGS = -avoid-version -shared $(LIBS)
 
+lib_LTLIBRARIES += liboph_normalize.la
+liboph_normalize_la_SOURCES = oph_normalize.c oph_normalize.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_normalize_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_normalize_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
 lib_LTLIBRARIES += liboph_reduce.la
 liboph_reduce_la_SOURCES = oph_reduce.c oph_reduce.h oph_debug.c oph_debug.h oph_core.c oph_core.h
 liboph_reduce_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)

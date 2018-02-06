@@ -107,6 +107,7 @@ DROP FUNCTION IF EXISTS oph_expand;
 DROP FUNCTION IF EXISTS oph_extend;
 DROP FUNCTION IF EXISTS oph_padding;
 DROP FUNCTION IF EXISTS oph_replace;
+DROP FUNCTION IF EXISTS oph_normalize;
 DROP FUNCTION IF EXISTS oph_predicate;
 DROP FUNCTION IF EXISTS oph_predicate2;
 
@@ -238,6 +239,7 @@ CREATE FUNCTION oph_expand RETURNS STRING SONAME 'liboph_expand.so';
 CREATE FUNCTION oph_extend RETURNS STRING SONAME 'liboph_extend.so';
 CREATE FUNCTION oph_padding RETURNS STRING SONAME 'liboph_padding.so';
 CREATE FUNCTION oph_replace RETURNS STRING SONAME 'liboph_replace.so';
+CREATE FUNCTION oph_normalize RETURNS STRING SONAME 'liboph_normalize.so';
 CREATE FUNCTION oph_predicate RETURNS STRING SONAME 'liboph_predicate.so';
 CREATE FUNCTION oph_predicate2 RETURNS STRING SONAME 'liboph_predicate2.so';
 
