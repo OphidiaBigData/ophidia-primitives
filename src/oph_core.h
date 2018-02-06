@@ -197,9 +197,11 @@ int core_oph_convert(oph_stringPtr byte_array, void *result);
 
 // Return (in byte array form) the sum of the scalar number with every element of byte_array. Cast scalar to byte_array elements type
 int core_oph_sum_scalar(oph_stringPtr byte_array, double scalar, char *result);
+int core_oph_sum_scalar_multi(oph_multistring * byte_array, double scalar, oph_multistring * result, int id);
 
 // Return (in byte array form) the multiplication of the scalar number with every element of byte_array. Cast scalar to byte_array elements type
 int core_oph_mul_scalar(oph_stringPtr byte_array, double scalar, char *result);
+int core_oph_mul_scalar_multi(oph_multistring * byte_array, double scalar, oph_multistring * result, int id);
 
 /*------------------------------------------------------------------|
  |               Single element functions (END)                     |
