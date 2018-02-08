@@ -212,22 +212,22 @@ char *oph_normalize(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned l
 		for (j = 0; j < output->num_measure; ++j) {
 			switch (output->type[j]) {
 				case OPH_DOUBLE:
-					scalar = (*(double*) pointer);
+					scalar = (*(double *) pointer);
 					break;
 				case OPH_FLOAT:
-					scalar = (double) (*(float*) pointer);
+					scalar = (double) (*(float *) pointer);
 					break;
 				case OPH_INT:
-					scalar = (double) (*(int*) pointer);
+					scalar = (double) (*(int *) pointer);
 					break;
 				case OPH_SHORT:
-					scalar = (double) (*(short*) pointer);
+					scalar = (double) (*(short *) pointer);
 					break;
 				case OPH_BYTE:
-					scalar = (double) (*(char*) pointer);
+					scalar = (double) (*(char *) pointer);
 					break;
 				case OPH_LONG:
-					scalar = (double) (*(long long*) pointer);
+					scalar = (double) (*(long long *) pointer);
 					break;
 				default:
 					pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
