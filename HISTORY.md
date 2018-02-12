@@ -1,3 +1,15 @@
+## v1.2.0 - 2018-02-12
+
+### Added:
+
+- New primitive oph_replace [#4](https://github.com/OphidiaBigData/ophidia-primitives/pull/4)
+- New primitive oph_normalize [#3](https://github.com/OphidiaBigData/ophidia-primitives/pull/3)
+- New primitive oph_padding
+
+### Fixed:
+
+- Bug in multi-fields primitives [#5](https://github.com/OphidiaBigData/ophidia-primitives/pull/5)
+
 ## v1.1.0 - 2017-07-28
 
 ### Fixed:
