@@ -47,7 +47,7 @@ inline int oph_sequence_update(char type, char value, int index, int max, char *
 				if (value) {
 					if (!*flag) {
 						*flag = 1;
-						*previous = index;
+						*previous = index + 1;	// Non C-like indexing
 						return 1;
 					}
 				} else if (*flag)
@@ -57,7 +57,7 @@ inline int oph_sequence_update(char type, char value, int index, int max, char *
 		case 2:
 			{
 				if (value) {
-					*previous = index;
+					*previous = index + 1;	// Non C-like indexing
 					if (!*flag)
 						*flag = 1;
 					if (index == max - 1)
@@ -73,7 +73,7 @@ inline int oph_sequence_update(char type, char value, int index, int max, char *
 	return 0;
 }
 
-int core_oph_sequence_multi(oph_multistring * byte_array, oph_multistring * result, int id, char type)
+int core_oph_sequence_multi(oph_multistring * byte_array, oph_multistring * result, int id, char type, char padding, double filling)
 {
 	int i, j, js, je, k = 0;
 	char *in_string = byte_array->content, *out_string = result->content, *current_in_string, *current_out_string, flag;
@@ -110,6 +110,13 @@ int core_oph_sequence_multi(oph_multistring * byte_array, oph_multistring * resu
 						if (!type)
 							previous = next;
 					}
+					if (padding) {
+						double tmp = (double) filling;
+						for (; k < result->numelem; k++, current_out_string += result->blocksize) {
+							if (core_oph_type_cast((void *) (&tmp), current_out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
+								return -1;
+						}
+					}
 					break;
 				}
 			case OPH_FLOAT:{
@@ -122,6 +129,13 @@ int core_oph_sequence_multi(oph_multistring * byte_array, oph_multistring * resu
 						}
 						if (!type)
 							previous = next;
+					}
+					if (padding) {
+						float tmp = (float) filling;
+						for (; k < result->numelem; k++, current_out_string += result->blocksize) {
+							if (core_oph_type_cast((void *) (&tmp), current_out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
+								return -1;
+						}
 					}
 					break;
 				}
@@ -136,6 +150,13 @@ int core_oph_sequence_multi(oph_multistring * byte_array, oph_multistring * resu
 						if (!type)
 							previous = next;
 					}
+					if (padding) {
+						int tmp = (int) filling;
+						for (; k < result->numelem; k++, current_out_string += result->blocksize) {
+							if (core_oph_type_cast((void *) (&tmp), current_out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
+								return -1;
+						}
+					}
 					break;
 				}
 			case OPH_LONG:{
@@ -148,6 +169,13 @@ int core_oph_sequence_multi(oph_multistring * byte_array, oph_multistring * resu
 						}
 						if (!type)
 							previous = next;
+					}
+					if (padding) {
+						long long tmp = (long long) filling;
+						for (; k < result->numelem; k++, current_out_string += result->blocksize) {
+							if (core_oph_type_cast((void *) (&tmp), current_out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
+								return -1;
+						}
 					}
 					break;
 				}
@@ -162,6 +190,13 @@ int core_oph_sequence_multi(oph_multistring * byte_array, oph_multistring * resu
 						if (!type)
 							previous = next;
 					}
+					if (padding) {
+						short tmp = (short) filling;
+						for (; k < result->numelem; k++, current_out_string += result->blocksize) {
+							if (core_oph_type_cast((void *) (&tmp), current_out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
+								return -1;
+						}
+					}
 					break;
 				}
 			case OPH_BYTE:{
@@ -174,6 +209,13 @@ int core_oph_sequence_multi(oph_multistring * byte_array, oph_multistring * resu
 						}
 						if (!type)
 							previous = next;
+					}
+					if (padding) {
+						char tmp = (char) filling;
+						for (; k < result->numelem; k++, current_out_string += result->blocksize) {
+							if (core_oph_type_cast((void *) (&tmp), current_out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
+								return -1;
+						}
 					}
 					break;
 				}
@@ -195,8 +237,8 @@ int core_oph_sequence_multi(oph_multistring * byte_array, oph_multistring * resu
 my_bool oph_sequence_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
 	int i = 0;
-	if (args->arg_count < 3 || args->arg_count > 4) {
-		strcpy(message, "ERROR: Wrong arguments! oph_sequence(input_OPH_TYPE, output_OPH_TYPE, measure, [info])");
+	if (args->arg_count < 3 || args->arg_count > 5) {
+		strcpy(message, "ERROR: Wrong arguments! oph_sequence(input_OPH_TYPE, output_OPH_TYPE, measure, [info], [padding])");
 		return 1;
 	}
 
@@ -241,18 +283,12 @@ char *oph_sequence(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned lo
 		*error = 1;
 		return NULL;
 	}
-	if (*is_null) {
-		*length = 0;
-		*is_null = 1;
-		*error = 0;
-		return NULL;
-	}
 
 	oph_multistring *multim;
 	oph_multistring *output;
 
 	int id = 0;		// Only this value is supported
-	char type = 0;
+	char type = 0, padding = 0;
 
 	if (!initid->extension) {
 		if (core_set_oph_multistring((oph_multistring **) (&(initid->extension)), args->args[0], &(args->lengths[0]))) {
@@ -307,6 +343,17 @@ char *oph_sequence(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned lo
 			*error = 1;
 			return NULL;
 		}
+		if ((args->arg_count > 4) && args->args[4] && args->lengths[4]) {
+			if (!strncmp(args->args[4], "yes", args->lengths[4]))
+				padding = 1;
+			else if (strncmp(args->args[4], "no", args->lengths[4])) {
+				pmesg(1, __FILE__, __LINE__, "Wrong padding option\n");
+				*length = 0;
+				*is_null = 0;
+				*error = 1;
+				return NULL;
+			}
+		}
 	}
 
 	output = (oph_multistring *) (initid->ptr);
@@ -324,15 +371,22 @@ char *oph_sequence(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned lo
 		}
 	}
 
-	if (core_oph_sequence_multi(multim, output, id, type)) {
+	if (core_oph_sequence_multi(multim, output, id, type, padding, 0)) {
 		pmesg(1, __FILE__, __LINE__, "Unable to compute result\n");
 		*length = 0;
-		*is_null = 1;
+		*is_null = 0;
 		*error = 1;
 		return NULL;
 	}
 
-	*length = (output->numelem) * (output->blocksize);
+	if (!output->numelem) {
+		*length = 0;
+		*is_null = 1;
+		*error = 0;
+		return NULL;
+	}
+
+	*length = output->numelem * output->blocksize;
 	*error = 0;
 	*is_null = 0;
 
