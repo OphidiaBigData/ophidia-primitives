@@ -228,6 +228,11 @@ liboph_rotate_la_SOURCES = oph_rotate.c oph_rotate.h oph_debug.c oph_debug.h oph
 liboph_rotate_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
 liboph_rotate_la_LDFLAGS = -avoid-version -shared $(LIBS)
 
+lib_LTLIBRARIES += liboph_sequence.la
+liboph_sequence_la_SOURCES = oph_sequence.c oph_sequence.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_sequence_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_sequence_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
 lib_LTLIBRARIES += liboph_size_array.la
 liboph_size_array_la_SOURCES = oph_size_array.c oph_size_array.h oph_debug.c oph_debug.h oph_core.c oph_core.h
 liboph_size_array_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
