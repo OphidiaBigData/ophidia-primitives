@@ -1,3 +1,18 @@
+
+## NEXT RELEASE
+
+### Added:
+
+- New primitive oph_sequence [#7](https://github.com/OphidiaBigData/ophidia-primitives/pull/7)
+
+### Fixed:
+
+- Bug in oph_value_to_bin primitive [#6](https://github.com/OphidiaBigData/ophidia-primitives/issues/6)
+
+### Changed:
+
+- oph_gsl_quantile primitive primitive to return index of the closest item to quantile [#8](https://github.com/OphidiaBigData/ophidia-primitives/pull/8)
+
 ## v1.2.0 - 2018-02-16
 
 ### Added:
