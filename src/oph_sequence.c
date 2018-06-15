@@ -77,7 +77,7 @@ int core_oph_sequence_multi(oph_multistring * byte_array, oph_multistring * resu
 {
 	int i, j, js, je, k = 0;
 	char *in_string = byte_array->content, *out_string = result->content, *current_in_string, *current_out_string, flag;
-	long long previous, next;
+	long long previous, next = 1;
 
 	if (id <= 0) {
 		js = 0;

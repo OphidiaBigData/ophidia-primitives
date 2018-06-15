@@ -95,7 +95,7 @@ char *oph_compress(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned lo
 	}
 
 	if (!initid->ptr) {
-		initid->ptr = (Bytef *) calloc(buffer_length, sizeof(unsigned char));
+		initid->ptr = (char *) calloc(buffer_length, sizeof(unsigned char));
 		if (!initid->ptr) {
 			pmesg(1, __FILE__, __LINE__, "Error allocating compressed string\n");
 			*length = 0;

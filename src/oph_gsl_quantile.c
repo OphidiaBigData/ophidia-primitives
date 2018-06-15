@@ -104,7 +104,6 @@ char *oph_gsl_quantile(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigne
 		return NULL;
 	}
 
-	int qnum;
 	oph_stringPtr measure, quantiles, output;
 
 	if (!initid->ptr) {
