@@ -125,7 +125,7 @@ char *oph_normalize(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned l
 			return NULL;
 		}
 
-		if ((myoper != OPH_MAX) && (myoper != OPH_AVG)) {
+		if ((myoper != OPH_MAX) && (myoper != OPH_AVG) && (myoper != OPH_AVG_REL)) {
 			pmesg(1, __FILE__, __LINE__, "Operator not supported\n");
 			*length = 0;
 			*is_null = 0;
@@ -242,6 +242,9 @@ char *oph_normalize(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned l
 					break;
 				case OPH_AVG:
 					core_oph_sum_scalar_multi(multim, -scalar, output, j);
+					break;
+				case OPH_AVG_REL:
+					core_oph_rel_scalar_multi(multim, scalar, output, j);
 					break;
 				default:
 					pmesg(1, __FILE__, __LINE__, "Operator not supported\n");
