@@ -1,6 +1,6 @@
 --
 --    Ophidia Primitives
---    Copyright (C) 2012-2017 CMCC Foundation
+--    Copyright (C) 2012-2018 CMCC Foundation
 --
 --    This program is free software: you can redistribute it and/or modify
 --    it under the terms of the GNU General Public License as published by
@@ -106,6 +106,9 @@ DROP FUNCTION IF EXISTS oph_deaccumulate;
 DROP FUNCTION IF EXISTS oph_expand;
 DROP FUNCTION IF EXISTS oph_extend;
 DROP FUNCTION IF EXISTS oph_padding;
+DROP FUNCTION IF EXISTS oph_replace;
+DROP FUNCTION IF EXISTS oph_normalize;
+DROP FUNCTION IF EXISTS oph_sequence;
 
 DELIMITER //
 CREATE PROCEDURE mysql.oph_drill_down(IN table_in VARCHAR(100), IN outer_size INT, IN inner_size INT, IN oph_type VARCHAR(30), IN table_out VARCHAR(100), IN compressed INT)
@@ -234,4 +237,7 @@ CREATE FUNCTION oph_deaccumulate RETURNS STRING SONAME 'liboph_deaccumulate.so';
 CREATE FUNCTION oph_expand RETURNS STRING SONAME 'liboph_expand.so';
 CREATE FUNCTION oph_extend RETURNS STRING SONAME 'liboph_extend.so';
 CREATE FUNCTION oph_padding RETURNS STRING SONAME 'liboph_padding.so';
+CREATE FUNCTION oph_replace RETURNS STRING SONAME 'liboph_replace.so';
+CREATE FUNCTION oph_normalize RETURNS STRING SONAME 'liboph_normalize.so';
+CREATE FUNCTION oph_sequence RETURNS STRING SONAME 'liboph_sequence.so';
 

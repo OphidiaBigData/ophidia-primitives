@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2017 CMCC Foundation
+    Copyright (C) 2012-2018 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ int msglevel = 1;
 int core_oph_deaccumulate_multi(oph_multistring * byte_array, oph_multistring * result, int id)
 {
 	int i, j, js, je;
+	char *in_string = byte_array->content, *out_string = result->content;
 
 	if (id <= 0) {
 		js = 0;
@@ -33,6 +34,10 @@ int core_oph_deaccumulate_multi(oph_multistring * byte_array, oph_multistring * 
 	} else {
 		js = id - 1;
 		je = id;
+		while (--id > 0) {
+			in_string += byte_array->elemsize[id];
+			out_string += result->elemsize[id];
+		}
 	}
 
 	for (j = js; j < je; ++j) {
@@ -40,9 +45,9 @@ int core_oph_deaccumulate_multi(oph_multistring * byte_array, oph_multistring * 
 			case OPH_DOUBLE:{
 					double tmp = 0, tmp2;
 					for (i = 0; i < byte_array->numelem; i++) {
-						tmp2 = *(double *) ((byte_array->content) + (i * byte_array->elemsize[j]));
+						tmp2 = *(double *) (in_string + (i * byte_array->blocksize));
 						tmp = tmp2 - tmp;
-						if (core_oph_type_cast((void *) (&tmp), (result->content) + (i * result->elemsize[j]), byte_array->type[j], result->type[j], byte_array->missingvalue))
+						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), byte_array->type[j], result->type[j], byte_array->missingvalue))
 							return -1;
 						tmp = tmp2;
 					}
@@ -51,9 +56,9 @@ int core_oph_deaccumulate_multi(oph_multistring * byte_array, oph_multistring * 
 			case OPH_FLOAT:{
 					float tmp = 0, tmp2;
 					for (i = 0; i < byte_array->numelem; i++) {
-						tmp2 = *(float *) ((byte_array->content) + (i * byte_array->elemsize[j]));
+						tmp2 = *(float *) (in_string + (i * byte_array->blocksize));
 						tmp = tmp2 - tmp;
-						if (core_oph_type_cast((void *) (&tmp), (result->content) + (i * result->elemsize[j]), byte_array->type[j], result->type[j], byte_array->missingvalue))
+						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), byte_array->type[j], result->type[j], byte_array->missingvalue))
 							return -1;
 						tmp = tmp2;
 					}
@@ -62,9 +67,9 @@ int core_oph_deaccumulate_multi(oph_multistring * byte_array, oph_multistring * 
 			case OPH_INT:{
 					int tmp = 0, tmp2;
 					for (i = 0; i < byte_array->numelem; i++) {
-						tmp2 = *(int *) ((byte_array->content) + (i * byte_array->elemsize[j]));
+						tmp2 = *(int *) (in_string + (i * byte_array->blocksize));
 						tmp = tmp2 - tmp;
-						if (core_oph_type_cast((void *) (&tmp), (result->content) + (i * result->elemsize[j]), byte_array->type[j], result->type[j], byte_array->missingvalue))
+						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), byte_array->type[j], result->type[j], byte_array->missingvalue))
 							return -1;
 						tmp = tmp2;
 					}
@@ -73,9 +78,9 @@ int core_oph_deaccumulate_multi(oph_multistring * byte_array, oph_multistring * 
 			case OPH_SHORT:{
 					short tmp = 0, tmp2;
 					for (i = 0; i < byte_array->numelem; i++) {
-						tmp2 = *(short *) ((byte_array->content) + (i * byte_array->elemsize[j]));
+						tmp2 = *(short *) (in_string + (i * byte_array->blocksize));
 						tmp = tmp2 - tmp;
-						if (core_oph_type_cast((void *) (&tmp), (result->content) + (i * result->elemsize[j]), byte_array->type[j], result->type[j], byte_array->missingvalue))
+						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), byte_array->type[j], result->type[j], byte_array->missingvalue))
 							return -1;
 						tmp = tmp2;
 					}
@@ -84,9 +89,9 @@ int core_oph_deaccumulate_multi(oph_multistring * byte_array, oph_multistring * 
 			case OPH_BYTE:{
 					char tmp = 0, tmp2;
 					for (i = 0; i < byte_array->numelem; i++) {
-						tmp2 = *(char *) ((byte_array->content) + (i * byte_array->elemsize[j]));
+						tmp2 = *(char *) (in_string + (i * byte_array->blocksize));
 						tmp = tmp2 - tmp;
-						if (core_oph_type_cast((void *) (&tmp), (result->content) + (i * result->elemsize[j]), byte_array->type[j], result->type[j], byte_array->missingvalue))
+						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), byte_array->type[j], result->type[j], byte_array->missingvalue))
 							return -1;
 						tmp = tmp2;
 					}
@@ -95,9 +100,9 @@ int core_oph_deaccumulate_multi(oph_multistring * byte_array, oph_multistring * 
 			case OPH_LONG:{
 					long long tmp = 0, tmp2;
 					for (i = 0; i < byte_array->numelem; i++) {
-						tmp2 = *(long long *) ((byte_array->content) + (i * byte_array->elemsize[j]));
+						tmp2 = *(long long *) (in_string + (i * byte_array->blocksize));
 						tmp = tmp2 - tmp;
-						if (core_oph_type_cast((void *) (&tmp), (result->content) + (i * result->elemsize[j]), byte_array->type[j], result->type[j], byte_array->missingvalue))
+						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), byte_array->type[j], result->type[j], byte_array->missingvalue))
 							return -1;
 						tmp = tmp2;
 					}
@@ -107,6 +112,8 @@ int core_oph_deaccumulate_multi(oph_multistring * byte_array, oph_multistring * 
 				pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
 				return -1;
 		}
+		in_string += byte_array->elemsize[j];
+		out_string += result->elemsize[j];
 	}
 	return 0;
 }

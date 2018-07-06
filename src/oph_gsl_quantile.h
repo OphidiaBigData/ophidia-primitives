@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2017 CMCC Foundation
+    Copyright (C) 2012-2018 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -48,6 +48,7 @@
 |------------------------------------------------------------------*/
 /* Compute requested quantiles */
 int oph_gsl_quantile_produce(const void *sorted_data, const size_t data_len, oph_type data_type, const double quantiles[], const int qnum, char *output_data, oph_type out_data_type);
+int oph_gsl_quantile_to_index(char *in_data, unsigned long in_data_len, oph_type in_data_type, char *out_data, unsigned long out_data_len, oph_type out_data_type);
 
 /* These must be right or mysqld will not find the symbol! */
 my_bool oph_gsl_quantile_init(UDF_INIT * initid, UDF_ARGS * args, char *message);

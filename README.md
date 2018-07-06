@@ -43,4 +43,4 @@ $ cp prefix/liboph_*.so $(mysql_config --plugindir)
 $ mysql -u user -p -H hostname -P port mysql < prefix/etc/create_func.sql
 ```
 
-Further information can be found at [http://ophidia.cmcc.it/documentation](http://ophidia.cmcc.it/documentation).
+Further information can be found at [http://ophidia.cmcc.it/documentation/admin/](http://ophidia.cmcc.it/documentation/admin/).

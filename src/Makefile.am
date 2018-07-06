@@ -1,6 +1,6 @@
 #
 #    Ophidia Primitives
-#    Copyright (C) 2012-2017 CMCC Foundation
+#    Copyright (C) 2012-2018 CMCC Foundation
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -87,6 +87,11 @@ lib_LTLIBRARIES += liboph_aggregate_operator.la
 liboph_aggregate_operator_la_SOURCES = oph_aggregate_operator.c oph_aggregate_operator.h oph_debug.c oph_debug.h oph_core.c oph_core.h
 liboph_aggregate_operator_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
 liboph_aggregate_operator_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_normalize.la
+liboph_normalize_la_SOURCES = oph_normalize.c oph_normalize.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_normalize_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_normalize_la_LDFLAGS = -avoid-version -shared $(LIBS)
 
 lib_LTLIBRARIES += liboph_reduce.la
 liboph_reduce_la_SOURCES = oph_reduce.c oph_reduce.h oph_debug.c oph_debug.h oph_core.c oph_core.h
@@ -223,6 +228,11 @@ liboph_rotate_la_SOURCES = oph_rotate.c oph_rotate.h oph_debug.c oph_debug.h oph
 liboph_rotate_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
 liboph_rotate_la_LDFLAGS = -avoid-version -shared $(LIBS)
 
+lib_LTLIBRARIES += liboph_sequence.la
+liboph_sequence_la_SOURCES = oph_sequence.c oph_sequence.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_sequence_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_sequence_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
 lib_LTLIBRARIES += liboph_size_array.la
 liboph_size_array_la_SOURCES = oph_size_array.c oph_size_array.h oph_debug.c oph_debug.h oph_core.c oph_core.h
 liboph_size_array_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
@@ -322,6 +332,11 @@ lib_LTLIBRARIES += liboph_deaccumulate.la
 liboph_deaccumulate_la_SOURCES = oph_deaccumulate.c oph_deaccumulate.h oph_debug.c oph_debug.h oph_core.c oph_core.h
 liboph_deaccumulate_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
 liboph_deaccumulate_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
+lib_LTLIBRARIES += liboph_replace.la
+liboph_replace_la_SOURCES = oph_replace.c oph_replace.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_replace_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_replace_la_LDFLAGS = -avoid-version -shared $(LIBS)
 
 lib_LTLIBRARIES += liboph_ccluster_kcluster.la
 liboph_ccluster_kcluster_la_SOURCES = oph_ccluster_kcluster.c oph_ccluster_kcluster.h cluster.c cluster.h oph_debug.c oph_debug.h oph_core.c oph_core.h
