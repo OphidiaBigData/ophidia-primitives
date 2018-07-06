@@ -40,17 +40,20 @@ oph_comp core_get_comp(char *type, unsigned long *len)
 		return INVALID_COMP;
 	}
 	//Case insensitive comparison
-	if (!strcasecmp(type_buff, "OPH_GREATER_THAN_ZERO") || !strcasecmp(type_buff, "OPH_POSITIVE") || !strcasecmp(type_buff, ">0"))
+	if (!strcasecmp(type_buff, "OPH_GREATER_THAN_ZERO") || strcasecmp(type_buff, "OPH_MORE_THAN_ZERO") || !strcasecmp(type_buff, "OPH_POSITIVE") || !strcasecmp(type_buff, ">0")
+	    || !strcasecmp(type_buff, ">"))
 		return OPH_GREATER_THAN_ZERO;
-	if (!strcasecmp(type_buff, "OPH_LESS_THAN_ZERO") || !strcasecmp(type_buff, "OPH_NEGATIVE") || !strcasecmp(type_buff, "<0"))
+	if (!strcasecmp(type_buff, "OPH_LESS_THAN_ZERO") || !strcasecmp(type_buff, "OPH_NEGATIVE") || !strcasecmp(type_buff, "<0") || !strcasecmp(type_buff, "<"))
 		return OPH_LESS_THAN_ZERO;
-	if (!strcasecmp(type_buff, "OPH_EQUAL_TO_ZERO") || !strcasecmp(type_buff, "OPH_ZERO") || !strcasecmp(type_buff, "==0"))
+	if (!strcasecmp(type_buff, "OPH_EQUAL_TO_ZERO") || !strcasecmp(type_buff, "OPH_ZERO") || !strcasecmp(type_buff, "==0") || !strcasecmp(type_buff, "0"))
 		return OPH_EQUAL_TO_ZERO;
-	if (!strcasecmp(type_buff, "OPH_GREATER_OR_EQUAL_TO_ZERO") || !strcasecmp(type_buff, "OPH_NOT_NEGATIVE") || !strcasecmp(type_buff, ">=0"))
+	if (!strcasecmp(type_buff, "OPH_GREATER_OR_EQUAL_TO_ZERO") || strcasecmp(type_buff, "OPH_MORE_OR_EQUAL_TO_ZERO") || !strcasecmp(type_buff, "OPH_NOT_NEGATIVE") || !strcasecmp(type_buff, ">=0")
+	    || !strcasecmp(type_buff, ">="))
 		return OPH_GREATER_OR_EQUAL_TO_ZERO;
-	if (!strcasecmp(type_buff, "OPH_LESS_OR_EQUAL_TO_ZERO") || !strcasecmp(type_buff, "OPH_NOT_POSITIVE") || !strcasecmp(type_buff, "<=0"))
+	if (!strcasecmp(type_buff, "OPH_LESS_OR_EQUAL_TO_ZERO") || !strcasecmp(type_buff, "OPH_NOT_POSITIVE") || !strcasecmp(type_buff, "<=0") || !strcasecmp(type_buff, "<="))
 		return OPH_LESS_OR_EQUAL_TO_ZERO;
-	if (!strcasecmp(type_buff, "OPH_NOT_EQUAL_TO_ZERO") || !strcasecmp(type_buff, "OPH_NOT_ZERO") || !strcasecmp(type_buff, "!=0"))
+	if (!strcasecmp(type_buff, "OPH_NOT_EQUAL_TO_ZERO") || !strcasecmp(type_buff, "OPH_NOT_ZERO") || !strcasecmp(type_buff, "!=0") || !strcasecmp(type_buff, "!=") || !strcasecmp(type_buff, "<>0")
+	    || !strcasecmp(type_buff, "<>"))
 		return OPH_NOT_EQUAL_TO_ZERO;
 	if (!strcasecmp(type_buff, "OPH_NULL") || !strcasecmp(type_buff, "NULL") || !strcasecmp(type_buff, "NAN") || !strcasecmp(type_buff, "MISSED") || !strcasecmp(type_buff, "MISS")
 	    || !strcasecmp(type_buff, "ISNULL") || !strcasecmp(type_buff, "ISNAN") || !strcasecmp(type_buff, "ISMISSED"))
