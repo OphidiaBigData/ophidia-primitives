@@ -361,6 +361,7 @@ int core_set_oper_multi(oph_request_multi * req, char *oper, unsigned long *len)
 			req->core_oph_oper = core_oph_count_multi;
 			break;
 		case OPH_MAX:
+		case OPH_MAX_MIN:
 			req->core_oph_oper = core_oph_max_multi;
 			break;
 		case OPH_MIN:
@@ -370,6 +371,7 @@ int core_set_oper_multi(oph_request_multi * req, char *oper, unsigned long *len)
 			req->core_oph_oper = core_oph_sum_multi;
 			break;
 		case OPH_AVG:
+		case OPH_AVG_REL:
 			req->core_oph_oper = core_oph_avg_multi;
 			break;
 		case OPH_STD:
@@ -399,8 +401,8 @@ int core_set_oper_multi(oph_request_multi * req, char *oper, unsigned long *len)
 		case OPH_ARG_MIN:
 			req->core_oph_oper = core_oph_arg_min_multi;
 			break;
-		case OPH_AVG_REL:
-			req->core_oph_oper = core_oph_avg_multi;
+		case OPH_MAX_ABS:
+			req->core_oph_oper = core_oph_max_abs_multi;
 			break;
 		default:
 			pmesg(1, __FILE__, __LINE__, "Unable to recognize operator\n");
@@ -523,6 +525,10 @@ oph_oper core_get_oper(char *oper, unsigned long *len)
 		return OPH_ARG_MAX;
 	else if (!strcasecmp(oper_buff, "OPH_ARG_MIN"))
 		return OPH_ARG_MIN;
+	else if (!strcasecmp(oper_buff, "OPH_MAX_ABS"))
+		return OPH_MAX_ABS;
+	else if (!strcasecmp(oper_buff, "OPH_MAX_MIN"))
+		return OPH_MAX_MIN;
 	else if (!strcasecmp(oper_buff, "OPH_AVG_REL"))
 		return OPH_AVG_REL;
 	pmesg(1, __FILE__, __LINE__, "Invalid operator\n");
@@ -2837,6 +2843,289 @@ int core_oph_max_multi(oph_multistring * byte_array, oph_multistring * result)
 								max = d;
 						}
 						if (!max || core_oph_type_cast((void *) max, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
+							return -1;
+						}
+						break;
+					}
+				default:
+					pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+					return -1;
+			}
+			in_string += byte_array->elemsize[j];
+			out_string += result->elemsize[j];
+		}
+	}
+	return 0;
+}
+
+int core_oph_max_abs_multi(oph_multistring * byte_array, oph_multistring * result)
+{
+	int i, j;
+	char *in_string = byte_array->content, *current, *out_string = result->content, found;
+	if (byte_array->missingvalue) {
+		for (j = 0; j < byte_array->num_measure; j++) {
+			current = in_string;
+			found = 0;
+			switch (byte_array->type[j]) {
+				case OPH_DOUBLE:
+					{
+						double *d, absd, max;
+						for (i = 0; i < byte_array->numelem; i++, current += byte_array->blocksize) {
+							d = (double *) current;
+							if (!isnan(*d) && (*byte_array->missingvalue != *d)) {
+								absd = fabs(*d);
+								if (found) {
+									if (max < absd)
+										max = absd;
+								} else {
+									found = 1;
+									max = absd;
+								}
+							}
+						}
+						if (core_oph_type_cast(found ? &max : byte_array->missingvalue, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
+							return -1;
+						break;
+					}
+				case OPH_FLOAT:{
+						float *d, absd, max, ms = (float) *byte_array->missingvalue;
+						for (i = 0; i < byte_array->numelem; i++, current += byte_array->blocksize) {
+							d = (float *) current;
+							if (!isnan(*d) && (ms != *d)) {
+								absd = fabs(*d);
+								if (found) {
+									if (max < absd)
+										max = absd;
+								} else {
+									found = 1;
+									max = absd;
+								}
+							}
+						}
+						if (core_oph_type_cast(found ? &max : &ms, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
+							return -1;
+						break;
+					}
+				case OPH_INT:{
+						int *d, absd, max, ms = (int) *byte_array->missingvalue;
+						for (i = 0; i < byte_array->numelem; i++, current += byte_array->blocksize) {
+							d = (int *) current;
+							if (ms != *d) {
+								absd = abs(*d);
+								if (found) {
+									if (max < absd)
+										max = absd;
+								} else {
+									found = 1;
+									max = absd;
+								}
+							}
+						}
+						if (core_oph_type_cast(found ? &max : &ms, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
+							return -1;
+						break;
+					}
+				case OPH_SHORT:{
+						short *d, absd, max, ms = (short) *byte_array->missingvalue;
+						for (i = 0; i < byte_array->numelem; i++, current += byte_array->blocksize) {
+							d = (short *) current;
+							if (ms != *d) {
+								absd = abs(*d);
+								if (found) {
+									if (max < absd)
+										max = absd;
+								} else {
+									found = 1;
+									max = absd;
+								}
+							}
+						}
+						if (core_oph_type_cast(found ? &max : &ms, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
+							return -1;
+						break;
+					}
+				case OPH_BYTE:{
+						char *d, absd, max, ms = (char) *byte_array->missingvalue;
+						for (i = 0; i < byte_array->numelem; i++, current += byte_array->blocksize) {
+							d = (char *) current;
+							if (ms != *d) {
+								absd = abs(*d);
+								if (found) {
+									if (max < absd)
+										max = absd;
+								} else {
+									found = 1;
+									max = absd;
+								}
+							}
+						}
+						if (core_oph_type_cast(found ? &max : &ms, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
+							return -1;
+						break;
+					}
+				case OPH_LONG:{
+						long long *d, absd, max, ms = (long long) *byte_array->missingvalue;
+						for (i = 0; i < byte_array->numelem; i++, current += byte_array->blocksize) {
+							d = (long long *) current;
+							if (ms != *d) {
+								absd = labs(*d);
+								if (found) {
+									if (max < absd)
+										max = absd;
+								} else {
+									found = 1;
+									max = absd;
+								}
+							}
+						}
+						if (core_oph_type_cast(found ? &max : &ms, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
+							return -1;
+						break;
+					}
+				default:
+					pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+					return -1;
+			}
+			in_string += byte_array->elemsize[j];
+			out_string += result->elemsize[j];
+		}
+	} else {
+		for (j = 0; j < byte_array->num_measure; j++) {
+			current = in_string;
+			switch (byte_array->type[j]) {
+				case OPH_DOUBLE:
+					{
+						double *d, absd, max;
+						for (i = 0; i < byte_array->numelem; i++, current += byte_array->blocksize) {
+							d = (double *) current;
+							if (!isnan(*d)) {
+								absd = fabs(*d);
+								if (found) {
+									if (max < absd)
+										max = absd;
+								} else {
+									found = 1;
+									max = absd;
+								}
+							}
+						}
+						if (found) {
+							//Cast of the output
+							if (core_oph_type_cast((void *) &max, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
+								return -1;
+						} else {
+							double value = NAN;
+							if (core_oph_type_cast((void *) (&value), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
+								return -1;
+						}
+						break;
+					}
+				case OPH_FLOAT:{
+						float *d, absd, max;
+						for (i = 0; i < byte_array->numelem; i++, current += byte_array->blocksize) {
+							d = (float *) current;
+							if (!isnan(*d)) {
+								absd = fabs(*d);
+								if (found) {
+									if (max < absd)
+										max = absd;
+								} else {
+									found = 1;
+									max = absd;
+								}
+							}
+						}
+						if (found) {
+							//Cast of the output
+							if (core_oph_type_cast((void *) &max, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
+								return -1;
+						} else {
+							float value = NAN;
+							if (core_oph_type_cast((void *) (&value), out_string, byte_array->type[j], result->type[j], byte_array->missingvalue))
+								return -1;
+						}
+						break;
+					}
+				case OPH_INT:{
+						int *d, absd, max;
+						for (i = 0; i < byte_array->numelem; i++, current += byte_array->blocksize) {
+							d = (int *) current;
+							if (!isnan(*d)) {
+								absd = abs(*d);
+								if (found) {
+									if (max < absd)
+										max = absd;
+								} else {
+									found = 1;
+									max = absd;
+								}
+							}
+						}
+						if (!found || core_oph_type_cast((void *) &max, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
+							return -1;
+						}
+						break;
+					}
+				case OPH_SHORT:{
+						short *d, absd, max;
+						for (i = 0; i < byte_array->numelem; i++, current += byte_array->blocksize) {
+							d = (short *) current;
+							if (!isnan(*d)) {
+								absd = abs(*d);
+								if (found) {
+									if (max < absd)
+										max = absd;
+								} else {
+									found = 1;
+									max = absd;
+								}
+							}
+						}
+						if (!found || core_oph_type_cast((void *) &max, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
+							return -1;
+						}
+						break;
+					}
+				case OPH_BYTE:{
+						char *d, absd, max;
+						for (i = 0; i < byte_array->numelem; i++, current += byte_array->blocksize) {
+							d = (char *) current;
+							if (!isnan(*d)) {
+								absd = abs(*d);
+								if (found) {
+									if (max < absd)
+										max = absd;
+								} else {
+									found = 1;
+									max = absd;
+								}
+							}
+						}
+						if (!found || core_oph_type_cast((void *) &max, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
+							return -1;
+						}
+						break;
+					}
+				case OPH_LONG:{
+						long long *d, absd, max;
+						for (i = 0; i < byte_array->numelem; i++, current += byte_array->blocksize) {
+							d = (long long *) current;
+							if (!isnan(*d)) {
+								absd = labs(*d);
+								if (found) {
+									if (max < absd)
+										max = absd;
+								} else {
+									found = 1;
+									max = absd;
+								}
+							}
+						}
+						if (!found || core_oph_type_cast((void *) &max, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) {
 							pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
 							return -1;
 						}
@@ -12034,7 +12323,7 @@ int core_oph_mul_scalar_multi(oph_multistring * byte_array, double scalar, oph_m
 	return 0;
 }
 
-int core_oph_rel_scalar_multi(oph_multistring * byte_array, double scalar, oph_multistring * result, int id)
+int core_oph_affine_multi(oph_multistring * byte_array, double scalar, double translation, oph_multistring * result, int id)
 {
 	int i, j, js, je;
 	double tmp;
@@ -12059,7 +12348,7 @@ int core_oph_rel_scalar_multi(oph_multistring * byte_array, double scalar, oph_m
 		switch (byte_array->type[j]) {
 			case OPH_DOUBLE:{
 					for (i = 0; i < byte_array->numelem; i++) {
-						tmp = (*(double *) (in_string + (i * byte_array->blocksize)) / scalar - 1.0);
+						tmp = (*(double *) (in_string + (i * byte_array->blocksize)) * scalar + translation);
 						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), OPH_DOUBLE, result->type[j], byte_array->missingvalue))
 							return -1;
 					}
@@ -12067,7 +12356,7 @@ int core_oph_rel_scalar_multi(oph_multistring * byte_array, double scalar, oph_m
 				}
 			case OPH_FLOAT:{
 					for (i = 0; i < byte_array->numelem; i++) {
-						tmp = (double) (*(float *) (in_string + (i * byte_array->blocksize)) / scalar - 1.0);
+						tmp = (double) (*(float *) (in_string + (i * byte_array->blocksize)) * scalar + translation);
 						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), OPH_DOUBLE, result->type[j], byte_array->missingvalue))
 							return -1;
 					}
@@ -12075,7 +12364,7 @@ int core_oph_rel_scalar_multi(oph_multistring * byte_array, double scalar, oph_m
 				}
 			case OPH_INT:{
 					for (i = 0; i < byte_array->numelem; i++) {
-						tmp = (double) (*(int *) (in_string + (i * byte_array->blocksize)) / scalar - 1.0);
+						tmp = (double) (*(int *) (in_string + (i * byte_array->blocksize)) * scalar + translation);
 						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), OPH_DOUBLE, result->type[j], byte_array->missingvalue))
 							return -1;
 					}
@@ -12083,7 +12372,7 @@ int core_oph_rel_scalar_multi(oph_multistring * byte_array, double scalar, oph_m
 				}
 			case OPH_SHORT:{
 					for (i = 0; i < byte_array->numelem; i++) {
-						tmp = (double) (*(short *) (in_string + (i * byte_array->blocksize)) / scalar - 1.0);
+						tmp = (double) (*(short *) (in_string + (i * byte_array->blocksize)) * scalar + translation);
 						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), OPH_DOUBLE, result->type[j], byte_array->missingvalue))
 							return -1;
 					}
@@ -12091,7 +12380,7 @@ int core_oph_rel_scalar_multi(oph_multistring * byte_array, double scalar, oph_m
 				}
 			case OPH_BYTE:{
 					for (i = 0; i < byte_array->numelem; i++) {
-						tmp = (double) (*(char *) (in_string + (i * byte_array->blocksize)) / scalar - 1.0);
+						tmp = (double) (*(char *) (in_string + (i * byte_array->blocksize)) * scalar + translation);
 						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), OPH_DOUBLE, result->type[j], byte_array->missingvalue))
 							return -1;
 					}
@@ -12099,7 +12388,7 @@ int core_oph_rel_scalar_multi(oph_multistring * byte_array, double scalar, oph_m
 				}
 			case OPH_LONG:{
 					for (i = 0; i < byte_array->numelem; i++) {
-						tmp = (double) (*(long long *) (in_string + (i * byte_array->blocksize)) / scalar - 1.0);
+						tmp = (double) (*(long long *) (in_string + (i * byte_array->blocksize)) * scalar + translation);
 						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), OPH_DOUBLE, result->type[j], byte_array->missingvalue))
 							return -1;
 					}

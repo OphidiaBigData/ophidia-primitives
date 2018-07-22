@@ -125,7 +125,7 @@ char *oph_normalize(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned l
 			return NULL;
 		}
 
-		if ((myoper != OPH_MAX) && (myoper != OPH_AVG) && (myoper != OPH_AVG_REL)) {
+		if ((myoper != OPH_MAX) && (myoper != OPH_MAX_ABS) && (myoper != OPH_MAX_MIN) && (myoper != OPH_AVG) && (myoper != OPH_AVG_REL)) {
 			pmesg(1, __FILE__, __LINE__, "Operator not supported\n");
 			*length = 0;
 			*is_null = 0;
@@ -197,10 +197,51 @@ char *oph_normalize(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned l
 
 	multim->numelem = block_count;
 	char *res_content = output->content, *pointer;
-	double scalar;
+	double scalar, translation[multim->num_measure];
 	for (i = 1; i <= numelem; i++) {
 		if (offset && (i == numelem))
 			multim->numelem = offset;
+
+		if (myoper == OPH_MAX_MIN) {	// Routine to pre-evaluate minimum values
+			if (core_oph_min_multi(multim, output)) {
+				pmesg(1, __FILE__, __LINE__, "Unable to compute result\n");
+				*length = 0;
+				*is_null = 0;
+				*error = 1;
+				return NULL;
+			}
+			pointer = output->content;
+			for (j = 0; j < output->num_measure; ++j) {
+				switch (output->type[j]) {
+					case OPH_DOUBLE:
+						translation[j] = (*(double *) pointer);
+						break;
+					case OPH_FLOAT:
+						translation[j] = (double) (*(float *) pointer);
+						break;
+					case OPH_INT:
+						translation[j] = (double) (*(int *) pointer);
+						break;
+					case OPH_SHORT:
+						translation[j] = (double) (*(short *) pointer);
+						break;
+					case OPH_BYTE:
+						translation[j] = (double) (*(char *) pointer);
+						break;
+					case OPH_LONG:
+						translation[j] = (double) (*(long long *) pointer);
+						break;
+					default:
+						pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+						*length = 0;
+						*is_null = 0;
+						*error = 1;
+						return NULL;
+				}
+				pointer += output->elemsize[j];
+			}
+		}
+
 		if (((oph_request_multi *) (initid->extension))->core_oph_oper(multim, output)) {
 			pmesg(1, __FILE__, __LINE__, "Unable to compute result\n");
 			*length = 0;
@@ -240,11 +281,19 @@ char *oph_normalize(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned l
 				case OPH_MAX:
 					core_oph_mul_scalar_multi(multim, 1.0 / scalar, output, j);
 					break;
+				case OPH_MAX_ABS:
+					core_oph_mul_scalar_multi(multim, 1.0 / scalar, output, j);
+					break;
+				case OPH_MAX_MIN:{
+						double factor = 1.0 / (scalar - translation[j]);
+						core_oph_affine_multi(multim, factor, -translation[j] * factor, output, j);
+						break;
+					}
 				case OPH_AVG:
 					core_oph_sum_scalar_multi(multim, -scalar, output, j);
 					break;
 				case OPH_AVG_REL:
-					core_oph_rel_scalar_multi(multim, scalar, output, j);
+					core_oph_affine_multi(multim, 1.0 / scalar, -1.0, output, j);
 					break;
 				default:
 					pmesg(1, __FILE__, __LINE__, "Operator not supported\n");
@@ -258,6 +307,7 @@ char *oph_normalize(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned l
 		multim->content = (multim->content) + ((multim->blocksize) * (block_count));
 		output->content = (output->content) + ((output->blocksize) * (block_count));
 	}
+
 	*length = output->length;
 	*is_null = 0;
 	*error = 0;
