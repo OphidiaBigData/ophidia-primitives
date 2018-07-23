@@ -1,7 +1,7 @@
 
-## New features
+## Next release
 
-## Changed:
+### Changed:
 
 - Extend operators associated with of oph_normalize
 - Extend values of argument 'comparison' of oph_predicate [#9](https://github.com/OphidiaBigData/ophidia-primitives/pull/9)
