@@ -20,5 +20,5 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS=. src
 
-sysconf_DATA = import_plugin/create_func.sql import_plugin/create_func.nomatheval.sql
+sysconf_DATA = import_plugin/create_func.sql import_plugin/create_func.nomatheval.sql import_plugin/create_func.fdi.sql
 
