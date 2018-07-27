@@ -118,6 +118,16 @@ else
 fi
 AM_CONDITIONAL([MATHEVAL_SUPPORT], [test "x$matheval_support" = "xyes"])
 
+FDI_SUPPORT=
+AC_ARG_ENABLE(fdi,
+	[ --enable-fdi
+		Enable FDI. (Disabled by default)],
+	[ fdi="yes"
+		AC_MSG_NOTICE("FDI support enabled")],
+	[ fdi="no" ]
+)
+AM_CONDITIONAL([FDI_SUPPORT], [test "x$fdi" = "xyes"])
+
 OPT=""
 AC_ARG_ENABLE(debug,
 	   [  --enable-debug	Enable debug. (Disabled by default)],

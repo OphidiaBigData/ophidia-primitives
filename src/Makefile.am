@@ -472,3 +472,20 @@ liboph_gsl_correlation_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
 liboph_gsl_correlation_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS)
 endif
 
+if FDI_SUPPORT
+lib_LTLIBRARIES += liboph_fdi_fwi.la
+liboph_fdi_fwi_la_SOURCES = oph_fdi_fwi.c oph_fdi_fwi.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_fdi.c oph_core_fdi.h
+liboph_fdi_fwi_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_fdi_fwi_la_LDFLAGS = -avoid-version -shared $(LIBS) -lm
+
+lib_LTLIBRARIES += liboph_fdi_ffwi.la
+liboph_fdi_ffwi_la_SOURCES = oph_fdi_ffwi.c oph_fdi_ffwi.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_fdi.c oph_core_fdi.h
+liboph_fdi_ffwi_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_fdi_ffwi_la_LDFLAGS = -avoid-version -shared $(LIBS) -lm
+
+lib_LTLIBRARIES += liboph_fdi_ifi.la
+liboph_fdi_ifi_la_SOURCES = oph_fdi_ifi.c oph_fdi_ifi.h oph_debug.c oph_debug.h oph_core.c oph_core.h oph_core_fdi.c oph_core_fdi.h
+liboph_fdi_ifi_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_fdi_ifi_la_LDFLAGS = -avoid-version -shared $(LIBS) -lm
+endif
+
