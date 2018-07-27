@@ -89,9 +89,9 @@ char *oph_fdi_ffwi(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned lo
 		param->error = 0;
 		param->extend = NULL;
 
-		initid->ptr = (char *)param;
+		initid->ptr = (char *) param;
 	} else
-		param = (oph_generic_param_multi *)initid->ptr;
+		param = (oph_generic_param_multi *) initid->ptr;
 
 	if (param->error) {
 		*length = 0;

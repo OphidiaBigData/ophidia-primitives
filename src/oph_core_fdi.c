@@ -337,9 +337,8 @@ int oph_fdi_fwi_ffmc(double rain, double temperature, double humidity, double wi
 		m_o = m_r;
 	}
 
-	double E_d =
-	    conf->fwi_13 * pow(humidity,
-			       conf->fwi_14) + conf->fwi_15 * exp((humidity - conf->fwi_16) / conf->fwi_17) + conf->fwi_18 * (conf->fwi_19 - temperature) * (1 - exp(conf->fwi_20 * humidity));
+	double E_d = conf->fwi_13 * pow(humidity,
+					conf->fwi_14) + conf->fwi_15 * exp((humidity - conf->fwi_16) / conf->fwi_17) + conf->fwi_18 * (conf->fwi_19 - temperature) * (1 - exp(conf->fwi_20 * humidity));
 	double m;
 
 	if (m_o > E_d) {
@@ -347,9 +346,10 @@ int oph_fdi_fwi_ffmc(double rain, double temperature, double humidity, double wi
 		double k_d = k_o * conf->fwi_29 * exp(conf->fwi_30 * temperature);
 		m = E_d + (m_o - E_d) * pow(10, -k_d);
 	} else if (m_o < E_d) {
-		double E_w =
-		    conf->fwi_21 * pow(humidity,
-				       conf->fwi_22) + conf->fwi_23 * exp((humidity - conf->fwi_16) / conf->fwi_17) + conf->fwi_18 * (conf->fwi_19 - temperature) * (1 - exp(conf->fwi_20 * humidity));
+		double E_w = conf->fwi_21 * pow(humidity,
+						conf->fwi_22) + conf->fwi_23 * exp((humidity - conf->fwi_16) / conf->fwi_17) + conf->fwi_18 * (conf->fwi_19 - temperature) * (1 -
+																					      exp(conf->fwi_20 *
+																						  humidity));
 		if (m_o < E_w) {
 			double k_l = conf->fwi_24 * (1 - pow((100 - humidity) / 100, conf->fwi_25)) + conf->fwi_26 * pow(wind, conf->fwi_27) * (1 - pow((100 - humidity) / 100, conf->fwi_28));
 			double k_w = k_l * conf->fwi_29 * exp(conf->fwi_30 * temperature);
@@ -564,7 +564,7 @@ int oph_fdi_fwi_from_isi_and_bui(double isi, double bui, oph_fdi_configuration *
 }
 
 int oph_fdi_fwi_main(int day, int month, int year, double lat, double rain, double temperature, double humidity, double wind, double prev_ffmc, double prev_dmc, double prev_dc,
-		oph_fdi_configuration * conf, double *fwi)
+		     oph_fdi_configuration * conf, double *fwi)
 {
 	if (!conf || !fwi) {
 		fprintf(stderr, "Unable to compute fwi: null input value\n");
@@ -616,7 +616,7 @@ int oph_fdi_fwi_dsr(int day, int month, int year, double lat, double rain, doubl
 	}
 
 	double fwi;
-	if (oph_fdi_fwi(day, month, year, lat, rain, temperature, humidity, wind, prev_ffmc, prev_dmc, prev_dc, conf, &fwi))
+	if (oph_fdi_fwi_main(day, month, year, lat, rain, temperature, humidity, wind, prev_ffmc, prev_dmc, prev_dc, conf, &fwi))
 		return OPH_FDI_ERROR_GENERIC;
 
 	return oph_fdi_fwi_dsr_from_fwi(fwi, conf, dsr);
@@ -873,7 +873,7 @@ int oph_fdi_ifi_from_dc_mc_r_fc(double dc, double mc, double r, double fc, doubl
 }
 
 int oph_fdi_ifi_main(double radiation_mean, double radiation_max, double temperature_mean, double temperature_max, double rain, double wind_mean, double humidity_mean, double humidity_min,
-		oph_fdi_configuration * conf, double *ifi)
+		     oph_fdi_configuration * conf, double *ifi)
 {
 	if (!conf || !ifi) {
 		fprintf(stderr, "Unable to compute ifi: null input value\n");

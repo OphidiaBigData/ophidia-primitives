@@ -721,7 +721,7 @@ int oph_fdi_fwi_from_isi_and_bui(double isi, double bui, oph_fdi_configuration *
  * @return 0 on success
  */
 int oph_fdi_fwi_main(int day, int month, int year, double lat, double rain, double temperature, double humidity, double wind, double prev_ffmc, double prev_dmc, double prev_dc,
-		oph_fdi_configuration * conf, double *fwi);
+		     oph_fdi_configuration * conf, double *fwi);
 
 /**
  * @brief Compute the Daily Severity Rating (DSR). (from FWI)
@@ -883,7 +883,7 @@ int oph_fdi_ifi_from_dc_mc_r_fc(double dc, double mc, double r, double fc, doubl
  * @return 0 on success
  */
 int oph_fdi_ifi_main(double radiation_mean, double radiation_max, double temperature_mean, double temperature_max, double rain, double wind_mean, double humidity_mean, double humidity_min,
-		oph_fdi_configuration * conf, double *ifi);
+		     oph_fdi_configuration * conf, double *ifi);
 /*@}*/
 
 #endif
