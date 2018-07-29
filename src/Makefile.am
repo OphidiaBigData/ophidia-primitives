@@ -168,6 +168,11 @@ liboph_mul_scalar2_la_SOURCES = oph_mul_scalar2.c oph_mul_scalar2.h oph_debug.c 
 liboph_mul_scalar2_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
 liboph_mul_scalar2_la_LDFLAGS = -avoid-version -shared $(LIBS)
 
+lib_LTLIBRARIES += liboph_affine.la
+liboph_affine_la_SOURCES = oph_affine.c oph_affine.h oph_debug.c oph_debug.h oph_core.c oph_core.h
+liboph_affine_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_affine_la_LDFLAGS = -avoid-version -shared $(LIBS)
+
 lib_LTLIBRARIES += liboph_get_index_array.la
 liboph_get_index_array_la_SOURCES = oph_get_index_array.c oph_get_index_array.h oph_debug.c oph_debug.h oph_core.c oph_core.h
 liboph_get_index_array_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
