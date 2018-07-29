@@ -84,7 +84,7 @@ char *oph_mul_scalar(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned 
 	oph_multistring *output;
 
 	int id = 0;
-	double scalar = 0;
+	double scalar = 1;
 	if (args->arg_count > 3)
 		scalar = *((double *) args->args[3]);
 
