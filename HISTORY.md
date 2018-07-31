@@ -1,6 +1,10 @@
 
 ## New features
 
+### Changed:
+
+- Improve core function of predicate primitives
+
 ### Fixed:
 
 - Bug [#10](https://github.com/OphidiaBigData/ophidia-primitives/issues/10)
