@@ -1,6 +1,10 @@
 
 ## New features
 
+### Changed:
+
+- Makefile to speed up building phase
+
 ### Fixed:
 
 - Bug [#10](https://github.com/OphidiaBigData/ophidia-primitives/issues/10)
