@@ -253,7 +253,7 @@ char *oph_mul_scalar2(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned
 
 	int id = 0;
 	double scalars[2];
-	scalars[0] = 0;
+	scalars[0] = 1;
 	scalars[1] = 0;
 	if (args->arg_count > 3)
 		scalars[0] = *((double *) args->args[3]);

@@ -1,4 +1,21 @@
 
+## New features
+
+### Changed:
+
+- Improve core function of predicate primitives
+
+### Fixed:
+
+- Bug [#10](https://github.com/OphidiaBigData/ophidia-primitives/issues/10)
+
+## v1.4.0 - 2018-07-27
+
+### Changed:
+
+- Extend operators associated with oph_normalize
+- Extend values of argument 'comparison' in oph_predicate [#9](https://github.com/OphidiaBigData/ophidia-primitives/pull/9)
+
 ## v1.3.0 - 2018-06-18
 
 ### Added:

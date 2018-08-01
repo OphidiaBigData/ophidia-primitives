@@ -27,6 +27,15 @@
 /* MySQL headers  */
 #include <mysql.h>		// It contains UDF-related symbols and data structures
 
+typedef struct {
+	void *f[4];		// measure and expressions
+	char is_index[3];	// is_index
+	oph_comp op;		// comparison operator
+	unsigned long length;	// size in bytes
+	oph_type result_type;
+	size_t result_elemsize;
+} oph_predicate_param;
+
 /*------------------------------------------------------------------|
 |		Functions' declarations (BEGIN)			    |
 |------------------------------------------------------------------*/

@@ -17,7 +17,7 @@
 #
 
 AC_PREREQ([2.60])
-AC_INIT([ophidia-primitives], [1.3.0], [ophidia-info@cmcc.it])
+AC_INIT([ophidia-primitives], [1.4.0], [ophidia-info@cmcc.it])
 # AC_CONFIG_SRCDIR([src/mpiTest.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])

@@ -30,7 +30,7 @@
 typedef enum oph_hier { INVALID_HIER, OPH_ALL, OPH_WEEK, OPH_MONTH, OPH_YEAR } oph_hier;
 typedef enum oph_type { INVALID_TYPE, OPH_INT, OPH_LONG, OPH_SHORT, OPH_BYTE, OPH_FLOAT, OPH_DOUBLE, OPH_COMPLEX_INT, OPH_COMPLEX_LONG, OPH_COMPLEX_FLOAT, OPH_COMPLEX_DOUBLE } oph_type;
 typedef enum oph_oper { INVALID_OPER, OPH_COUNT, OPH_MAX, OPH_MIN, OPH_SUM, OPH_AVG, OPH_STD, OPH_VAR, OPH_CMOMENT, OPH_ACMOMENT, OPH_RMOMENT, OPH_ARMOMENT, OPH_QUANTILE, OPH_ARG_MAX,
-	OPH_ARG_MIN, OPH_AVG_REL
+	OPH_ARG_MIN, OPH_MAX_ABS, OPH_MAX_MIN, OPH_AVG_REL
 } oph_oper;
 typedef enum oph_ma_oper { INVALID_MA_OPER, OPH_SMA, OPH_EWMA } oph_ma_oper;
 
@@ -203,7 +203,7 @@ int core_oph_sum_scalar_multi(oph_multistring * byte_array, double scalar, oph_m
 int core_oph_mul_scalar(oph_stringPtr byte_array, double scalar, char *result);
 int core_oph_mul_scalar_multi(oph_multistring * byte_array, double scalar, oph_multistring * result, int id);
 
-int core_oph_rel_scalar_multi(oph_multistring * byte_array, double scalar, oph_multistring * result, int id);
+int core_oph_affine_multi(oph_multistring * byte_array, double scalar, double translation, oph_multistring * result, int id);
 
 /*------------------------------------------------------------------|
  |               Single element functions (END)                     |
@@ -221,6 +221,9 @@ int core_oph_count_multi(oph_multistring * byte_array, oph_multistring * result)
 // Return the maximum value in an array (as result string)
 int core_oph_max(oph_stringPtr byte_array, char *result);
 int core_oph_max_multi(oph_multistring * byte_array, oph_multistring * result);
+
+// Return the maximum of absolute values in an array (as result string)
+int core_oph_max_abs_multi(oph_multistring * byte_array, oph_multistring * result);
 
 // Return the minimum value in an array (as result string)
 int core_oph_min(oph_stringPtr byte_array, char *result);

@@ -36,347 +36,811 @@ int core_oph_predicate2(oph_stringPtr byte_array, char *result)
 		occurrence = (unsigned long) _result->occurrence;
 	switch (byte_array->type) {
 		case OPH_DOUBLE:
-			{
-				for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
-					res = evaluator_evaluate_x(_result->f[1], *((double *) (byte_array->content + i * byte_array->elemsize)));
-					switch (_result->op) {
-						case OPH_GREATER_THAN_ZERO:
-							{
-								r = res > 0.0;
-								break;
-							}
-						case OPH_LESS_THAN_ZERO:
-							{
-								r = res < 0.0;
-								break;
-							}
-						case OPH_EQUAL_TO_ZERO:
-							{
-								r = res == 0.0;
-								break;
-							}
-						case OPH_GREATER_OR_EQUAL_TO_ZERO:
-							{
-								r = res >= 0.0;
-								break;
-							}
-						case OPH_LESS_OR_EQUAL_TO_ZERO:
-							{
-								r = res <= 0.0;
-								break;
-							}
-						case OPH_NOT_EQUAL_TO_ZERO:
-							{
-								r = res != 0.0;
-								break;
-							}
-						case OPH_NULL:
-							{
-								r = isnan(res);
-								break;
-							}
-						default:
-							pmesg(1, __FILE__, __LINE__, "Comparison value non recognized\n");
-							return -1;
+			switch (_result->op) {
+				case OPH_GREATER_THAN_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((double *) (byte_array->content + i * byte_array->elemsize)));
+						r = res > 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((double *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
 					}
-					if (occurrence && r) {
-						occurrence_number++;
-						if (occurrence != occurrence_number)
-							r = 0;
+					break;
+				case OPH_LESS_THAN_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((double *) (byte_array->content + i * byte_array->elemsize)));
+						r = res < 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((double *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
 					}
-					temporary = evaluator_evaluate_x(_result->f[r ? 2 : 3], *((double *) (byte_array->content + i * byte_array->elemsize)));
-					if (core_oph_type_cast(&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
-						pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
-						return 1;
+					break;
+				case OPH_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((double *) (byte_array->content + i * byte_array->elemsize)));
+						r = res == 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((double *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
 					}
-				}
-				break;
+					break;
+				case OPH_GREATER_OR_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((double *) (byte_array->content + i * byte_array->elemsize)));
+						r = res >= 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((double *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				case OPH_LESS_OR_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((double *) (byte_array->content + i * byte_array->elemsize)));
+						r = res <= 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((double *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				case OPH_NOT_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((double *) (byte_array->content + i * byte_array->elemsize)));
+						r = res != 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((double *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				case OPH_NULL:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((double *) (byte_array->content + i * byte_array->elemsize)));
+						r = isnan(res);
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((double *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				default:
+					pmesg(1, __FILE__, __LINE__, "Comparison value non recognized\n");
+					return -1;
 			}
+			break;
 		case OPH_FLOAT:
-			{
-				for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
-					res = evaluator_evaluate_x(_result->f[1], *((float *) (byte_array->content + i * byte_array->elemsize)));
-					switch (_result->op) {
-						case OPH_GREATER_THAN_ZERO:
-							{
-								r = res > 0.0;
-								break;
-							}
-						case OPH_LESS_THAN_ZERO:
-							{
-								r = res < 0.0;
-								break;
-							}
-						case OPH_EQUAL_TO_ZERO:
-							{
-								r = res == 0.0;
-								break;
-							}
-						case OPH_GREATER_OR_EQUAL_TO_ZERO:
-							{
-								r = res >= 0.0;
-								break;
-							}
-						case OPH_LESS_OR_EQUAL_TO_ZERO:
-							{
-								r = res <= 0.0;
-								break;
-							}
-						case OPH_NOT_EQUAL_TO_ZERO:
-							{
-								r = res != 0.0;
-								break;
-							}
-						case OPH_NULL:
-							{
-								r = isnan(res);
-								break;
-							}
-						default:
-							pmesg(1, __FILE__, __LINE__, "Comparison value non recognized\n");
-							return -1;
+			switch (_result->op) {
+				case OPH_GREATER_THAN_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((float *) (byte_array->content + i * byte_array->elemsize)));
+						r = res > 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((float *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
 					}
-					if (occurrence && r) {
-						occurrence_number++;
-						if (occurrence != occurrence_number)
-							r = 0;
+					break;
+				case OPH_LESS_THAN_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((float *) (byte_array->content + i * byte_array->elemsize)));
+						r = res < 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((float *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
 					}
-					temporary = evaluator_evaluate_x(_result->f[r ? 2 : 3], *((float *) (byte_array->content + i * byte_array->elemsize)));
-					if (core_oph_type_cast(&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
-						pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
-						return 1;
+					break;
+				case OPH_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((float *) (byte_array->content + i * byte_array->elemsize)));
+						r = res == 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((float *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
 					}
-				}
-				break;
+					break;
+				case OPH_GREATER_OR_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((float *) (byte_array->content + i * byte_array->elemsize)));
+						r = res >= 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((float *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				case OPH_LESS_OR_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((float *) (byte_array->content + i * byte_array->elemsize)));
+						r = res <= 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((float *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				case OPH_NOT_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((float *) (byte_array->content + i * byte_array->elemsize)));
+						r = res != 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((float *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				case OPH_NULL:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((float *) (byte_array->content + i * byte_array->elemsize)));
+						r = isnan(res);
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((float *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				default:
+					pmesg(1, __FILE__, __LINE__, "Comparison value non recognized\n");
+					return -1;
 			}
+			break;
 		case OPH_INT:
-			{
-				for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
-					res = evaluator_evaluate_x(_result->f[1], *((int *) (byte_array->content + i * byte_array->elemsize)));
-					switch (_result->op) {
-						case OPH_GREATER_THAN_ZERO:
-							{
-								r = res > 0.0;
-								break;
-							}
-						case OPH_LESS_THAN_ZERO:
-							{
-								r = res < 0.0;
-								break;
-							}
-						case OPH_EQUAL_TO_ZERO:
-							{
-								r = res == 0.0;
-								break;
-							}
-						case OPH_GREATER_OR_EQUAL_TO_ZERO:
-							{
-								r = res >= 0.0;
-								break;
-							}
-						case OPH_LESS_OR_EQUAL_TO_ZERO:
-							{
-								r = res <= 0.0;
-								break;
-							}
-						case OPH_NOT_EQUAL_TO_ZERO:
-							{
-								r = res != 0.0;
-								break;
-							}
-						case OPH_NULL:
-							{
-								r = isnan(res);
-								break;
-							}
-						default:
-							pmesg(1, __FILE__, __LINE__, "Comparison value non recognized\n");
-							return -1;
+			switch (_result->op) {
+				case OPH_GREATER_THAN_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((int *) (byte_array->content + i * byte_array->elemsize)));
+						r = res > 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((int *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
 					}
-					if (occurrence && r) {
-						occurrence_number++;
-						if (occurrence != occurrence_number)
-							r = 0;
+					break;
+				case OPH_LESS_THAN_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((int *) (byte_array->content + i * byte_array->elemsize)));
+						r = res < 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((int *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
 					}
-					temporary = evaluator_evaluate_x(_result->f[r ? 2 : 3], *((int *) (byte_array->content + i * byte_array->elemsize)));
-					if (core_oph_type_cast(&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
-						pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
-						return 1;
+					break;
+				case OPH_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((int *) (byte_array->content + i * byte_array->elemsize)));
+						r = res == 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((int *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
 					}
-				}
-				break;
+					break;
+				case OPH_GREATER_OR_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((int *) (byte_array->content + i * byte_array->elemsize)));
+						r = res >= 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((int *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				case OPH_LESS_OR_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((int *) (byte_array->content + i * byte_array->elemsize)));
+						r = res <= 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((int *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				case OPH_NOT_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((int *) (byte_array->content + i * byte_array->elemsize)));
+						r = res != 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((int *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				case OPH_NULL:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((int *) (byte_array->content + i * byte_array->elemsize)));
+						r = isnan(res);
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((int *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				default:
+					pmesg(1, __FILE__, __LINE__, "Comparison value non recognized\n");
+					return -1;
 			}
+			break;
 		case OPH_SHORT:
-			{
-				for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
-					res = evaluator_evaluate_x(_result->f[1], *((short *) (byte_array->content + i * byte_array->elemsize)));
-					switch (_result->op) {
-						case OPH_GREATER_THAN_ZERO:
-							{
-								r = res > 0.0;
-								break;
-							}
-						case OPH_LESS_THAN_ZERO:
-							{
-								r = res < 0.0;
-								break;
-							}
-						case OPH_EQUAL_TO_ZERO:
-							{
-								r = res == 0.0;
-								break;
-							}
-						case OPH_GREATER_OR_EQUAL_TO_ZERO:
-							{
-								r = res >= 0.0;
-								break;
-							}
-						case OPH_LESS_OR_EQUAL_TO_ZERO:
-							{
-								r = res <= 0.0;
-								break;
-							}
-						case OPH_NOT_EQUAL_TO_ZERO:
-							{
-								r = res != 0.0;
-								break;
-							}
-						case OPH_NULL:
-							{
-								r = isnan(res);
-								break;
-							}
-						default:
-							pmesg(1, __FILE__, __LINE__, "Comparison value non recognized\n");
-							return -1;
+			switch (_result->op) {
+				case OPH_GREATER_THAN_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((short *) (byte_array->content + i * byte_array->elemsize)));
+						r = res > 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((short *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
 					}
-					if (occurrence && r) {
-						occurrence_number++;
-						if (occurrence != occurrence_number)
-							r = 0;
+					break;
+				case OPH_LESS_THAN_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((short *) (byte_array->content + i * byte_array->elemsize)));
+						r = res < 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((short *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
 					}
-					temporary = evaluator_evaluate_x(_result->f[r ? 2 : 3], *((short *) (byte_array->content + i * byte_array->elemsize)));
-					if (core_oph_type_cast(&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
-						pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
-						return 1;
+					break;
+				case OPH_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((short *) (byte_array->content + i * byte_array->elemsize)));
+						r = res == 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((short *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
 					}
-				}
-				break;
+					break;
+				case OPH_GREATER_OR_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((short *) (byte_array->content + i * byte_array->elemsize)));
+						r = res >= 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((short *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				case OPH_LESS_OR_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((short *) (byte_array->content + i * byte_array->elemsize)));
+						r = res <= 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((short *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				case OPH_NOT_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((short *) (byte_array->content + i * byte_array->elemsize)));
+						r = res != 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((short *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				case OPH_NULL:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((short *) (byte_array->content + i * byte_array->elemsize)));
+						r = isnan(res);
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((short *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				default:
+					pmesg(1, __FILE__, __LINE__, "Comparison value non recognized\n");
+					return -1;
 			}
+			break;
 		case OPH_BYTE:
-			{
-				for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
-					res = evaluator_evaluate_x(_result->f[1], *((char *) (byte_array->content + i * byte_array->elemsize)));
-					switch (_result->op) {
-						case OPH_GREATER_THAN_ZERO:
-							{
-								r = res > 0.0;
-								break;
-							}
-						case OPH_LESS_THAN_ZERO:
-							{
-								r = res < 0.0;
-								break;
-							}
-						case OPH_EQUAL_TO_ZERO:
-							{
-								r = res == 0.0;
-								break;
-							}
-						case OPH_GREATER_OR_EQUAL_TO_ZERO:
-							{
-								r = res >= 0.0;
-								break;
-							}
-						case OPH_LESS_OR_EQUAL_TO_ZERO:
-							{
-								r = res <= 0.0;
-								break;
-							}
-						case OPH_NOT_EQUAL_TO_ZERO:
-							{
-								r = res != 0.0;
-								break;
-							}
-						case OPH_NULL:
-							{
-								r = isnan(res);
-								break;
-							}
-						default:
-							pmesg(1, __FILE__, __LINE__, "Comparison value non recognized\n");
-							return -1;
+			switch (_result->op) {
+				case OPH_GREATER_THAN_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((char *) (byte_array->content + i * byte_array->elemsize)));
+						r = res > 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((char *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
 					}
-					if (occurrence && r) {
-						occurrence_number++;
-						if (occurrence != occurrence_number)
-							r = 0;
+					break;
+				case OPH_LESS_THAN_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((char *) (byte_array->content + i * byte_array->elemsize)));
+						r = res < 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((char *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
 					}
-					temporary = evaluator_evaluate_x(_result->f[r ? 2 : 3], *((char *) (byte_array->content + i * byte_array->elemsize)));
-					if (core_oph_type_cast(&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
-						pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
-						return 1;
+					break;
+				case OPH_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((char *) (byte_array->content + i * byte_array->elemsize)));
+						r = res == 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((char *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
 					}
-				}
-				break;
+					break;
+				case OPH_GREATER_OR_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((char *) (byte_array->content + i * byte_array->elemsize)));
+						r = res >= 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((char *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				case OPH_LESS_OR_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((char *) (byte_array->content + i * byte_array->elemsize)));
+						r = res <= 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((char *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				case OPH_NOT_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((char *) (byte_array->content + i * byte_array->elemsize)));
+						r = res != 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((char *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				case OPH_NULL:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((char *) (byte_array->content + i * byte_array->elemsize)));
+						r = isnan(res);
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3], *((char *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				default:
+					pmesg(1, __FILE__, __LINE__, "Comparison value non recognized\n");
+					return -1;
+
 			}
+			break;
 		case OPH_LONG:
-			{
-				for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
-					res = evaluator_evaluate_x(_result->f[1], *((long long *) (byte_array->content + i * byte_array->elemsize)));
-					switch (_result->op) {
-						case OPH_GREATER_THAN_ZERO:
-							{
-								r = res > 0.0;
-								break;
-							}
-						case OPH_LESS_THAN_ZERO:
-							{
-								r = res < 0.0;
-								break;
-							}
-						case OPH_EQUAL_TO_ZERO:
-							{
-								r = res == 0.0;
-								break;
-							}
-						case OPH_GREATER_OR_EQUAL_TO_ZERO:
-							{
-								r = res >= 0.0;
-								break;
-							}
-						case OPH_LESS_OR_EQUAL_TO_ZERO:
-							{
-								r = res <= 0.0;
-								break;
-							}
-						case OPH_NOT_EQUAL_TO_ZERO:
-							{
-								r = res != 0.0;
-								break;
-							}
-						case OPH_NULL:
-							{
-								r = isnan(res);
-								break;
-							}
-						default:
-							pmesg(1, __FILE__, __LINE__, "Comparison value non recognized\n");
-							return -1;
+			switch (_result->op) {
+				case OPH_GREATER_THAN_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((long long *) (byte_array->content + i * byte_array->elemsize)));
+						r = res > 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3],
+														*((long long *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
 					}
-					if (occurrence && r) {
-						occurrence_number++;
-						if (occurrence != occurrence_number)
-							r = 0;
+					break;
+				case OPH_LESS_THAN_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((long long *) (byte_array->content + i * byte_array->elemsize)));
+						r = res < 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3],
+														*((long long *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
 					}
-					temporary = evaluator_evaluate_x(_result->f[r ? 2 : 3], *((long long *) (byte_array->content + i * byte_array->elemsize)));
-					if (core_oph_type_cast(&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
-						pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
-						return 1;
+					break;
+				case OPH_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((long long *) (byte_array->content + i * byte_array->elemsize)));
+						r = res == 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3],
+														*((long long *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
 					}
-				}
-				break;
+					break;
+				case OPH_GREATER_OR_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((long long *) (byte_array->content + i * byte_array->elemsize)));
+						r = res >= 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3],
+														*((long long *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				case OPH_LESS_OR_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((long long *) (byte_array->content + i * byte_array->elemsize)));
+						r = res <= 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3],
+														*((long long *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				case OPH_NOT_EQUAL_TO_ZERO:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((long long *) (byte_array->content + i * byte_array->elemsize)));
+						r = res != 0.0;
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3],
+														*((long long *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				case OPH_NULL:
+					for (i = _result->occurrence < 0 ? byte_array->numelem - 1 : 0; (0 <= i) && (i < byte_array->numelem); _result->occurrence < 0 ? --i : ++i) {
+						res = _result->is_index[0] ? i + 1 : evaluator_evaluate_x(_result->f[1], *((long long *) (byte_array->content + i * byte_array->elemsize)));
+						r = isnan(res);
+						if (occurrence && r) {
+							occurrence_number++;
+							if (occurrence != occurrence_number)
+								r = 0;
+						}
+						temporary =
+						    _result->is_index[r ? 1 : 2] ? i + 1 : evaluator_evaluate_x(_result->f[r ? 2 : 3],
+														*((long long *) (byte_array->content + i * byte_array->elemsize)));
+						if (core_oph_type_cast
+						    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
+							pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+							return 1;
+						}
+					}
+					break;
+				default:
+					pmesg(1, __FILE__, __LINE__, "Comparison value non recognized\n");
+					return -1;
 			}
+			break;
 		default:
 			pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
 			return -1;
@@ -475,29 +939,38 @@ char *oph_predicate2(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned 
 		for (i = 0; i < 4; ++i)
 			param->f[i] = NULL;
 		param->occurrence = 0;	// ALL
+		for (i = 0; i < 3; ++i)
+			param->is_index[i] = 0;
 
 		buffer = (char *) malloc(1 + args->lengths[3]);
 		strncpy(buffer, args->args[3], args->lengths[3]);
 		buffer[args->lengths[3]] = '\0';
-		pthread_rwlock_wrlock(&lock);
-		param->f[1] = evaluator_create(buffer);
-		pthread_rwlock_unlock(&lock);
-		free(buffer);
-		if (!param->f[1]) {
-			pmesg(1, __FILE__, __LINE__, "Error allocating evaluator\n");
-			*length = 0;
-			*is_null = 0;
-			*error = 1;
-			return NULL;
+
+		if (strcasecmp(buffer, "INDEX")) {
+			pthread_rwlock_wrlock(&lock);
+			param->f[1] = evaluator_create(buffer);
+			pthread_rwlock_unlock(&lock);
+			free(buffer);
+			if (!param->f[1]) {
+				pmesg(1, __FILE__, __LINE__, "Error allocating evaluator\n");
+				*length = 0;
+				*is_null = 0;
+				*error = 1;
+				return NULL;
+			}
+			evaluator_get_variables(param->f[1], &names, &count);
+			if (count > 1) {
+				pmesg(1, __FILE__, __LINE__, "Too variables in expression\n");
+				*length = 0;
+				*is_null = 0;
+				*error = 1;
+				return NULL;
+			}
+		} else {
+			param->is_index[0] = 1;
+			free(buffer);
 		}
-		evaluator_get_variables(param->f[1], &names, &count);
-		if (count > 1) {
-			pmesg(1, __FILE__, __LINE__, "Too variables in expression\n");
-			*length = 0;
-			*is_null = 0;
-			*error = 1;
-			return NULL;
-		}
+
 		// Comparison operator
 		if (core_set_comp(&param->op, args->args[4], &(args->lengths[4]))) {
 			pmesg(1, __FILE__, __LINE__, "Comparison operator not recognized\n");
@@ -514,24 +987,30 @@ char *oph_predicate2(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned 
 				sprintf(buffer, "0/0");
 		} else
 			buffer = strdup("0/0");
-		pthread_rwlock_wrlock(&lock);
-		param->f[2] = evaluator_create(buffer);
-		pthread_rwlock_unlock(&lock);
-		free(buffer);
-		if (!param->f[2]) {
-			pmesg(1, __FILE__, __LINE__, "Error allocating evaluator\n");
-			*length = 0;
-			*is_null = 0;
-			*error = 1;
-			return NULL;
-		}
-		evaluator_get_variables(param->f[2], &names, &count);
-		if (count > 1) {
-			pmesg(1, __FILE__, __LINE__, "Too variables in expression\n");
-			*length = 0;
-			*is_null = 0;
-			*error = 1;
-			return NULL;
+
+		if (strcasecmp(buffer, "INDEX")) {
+			pthread_rwlock_wrlock(&lock);
+			param->f[2] = evaluator_create(buffer);
+			pthread_rwlock_unlock(&lock);
+			free(buffer);
+			if (!param->f[2]) {
+				pmesg(1, __FILE__, __LINE__, "Error allocating evaluator\n");
+				*length = 0;
+				*is_null = 0;
+				*error = 1;
+				return NULL;
+			}
+			evaluator_get_variables(param->f[2], &names, &count);
+			if (count > 1) {
+				pmesg(1, __FILE__, __LINE__, "Too variables in expression\n");
+				*length = 0;
+				*is_null = 0;
+				*error = 1;
+				return NULL;
+			}
+		} else {
+			param->is_index[1] = 1;
+			free(buffer);
 		}
 
 		if (args->args[6] && args->lengths[6]) {
@@ -541,24 +1020,30 @@ char *oph_predicate2(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned 
 				sprintf(buffer, "0/0");
 		} else
 			buffer = strdup("0/0");
-		pthread_rwlock_wrlock(&lock);
-		param->f[3] = evaluator_create(buffer);
-		pthread_rwlock_unlock(&lock);
-		free(buffer);
-		if (!param->f[3]) {
-			pmesg(1, __FILE__, __LINE__, "Error allocating evaluator\n");
-			*length = 0;
-			*is_null = 0;
-			*error = 1;
-			return NULL;
-		}
-		evaluator_get_variables(param->f[3], &names, &count);
-		if (count > 1) {
-			pmesg(1, __FILE__, __LINE__, "Too variables in expression\n");
-			*length = 0;
-			*is_null = 0;
-			*error = 1;
-			return NULL;
+
+		if (strcasecmp(buffer, "INDEX")) {
+			pthread_rwlock_wrlock(&lock);
+			param->f[3] = evaluator_create(buffer);
+			pthread_rwlock_unlock(&lock);
+			free(buffer);
+			if (!param->f[3]) {
+				pmesg(1, __FILE__, __LINE__, "Error allocating evaluator\n");
+				*length = 0;
+				*is_null = 0;
+				*error = 1;
+				return NULL;
+			}
+			evaluator_get_variables(param->f[3], &names, &count);
+			if (count > 1) {
+				pmesg(1, __FILE__, __LINE__, "Too variables in expression\n");
+				*length = 0;
+				*is_null = 0;
+				*error = 1;
+				return NULL;
+			}
+		} else {
+			param->is_index[2] = 1;
+			free(buffer);
 		}
 
 		oph_string output_array;
