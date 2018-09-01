@@ -142,7 +142,7 @@ int core_oph_multistring_cast(oph_multistring * input, oph_multistring * output,
 	return 0;
 }
 
-int core_set_oph_multistring(oph_multistring ** str, char *type, unsigned long *len)
+int core_set_oph_multistring2(oph_multistring ** str, char *type, unsigned long *len, int num_measure)
 {
 
 	if (!type || !str || !len) {
@@ -160,10 +160,14 @@ int core_set_oph_multistring(oph_multistring ** str, char *type, unsigned long *
 
 	int i = 0, j = 0, subtype_num = 0;
 	for (i = 0; i < *len; i++)
-		if (tmp_type[i] == '|')
+		if (tmp_type[i] == OPH_MULTISTRING_HARD_SEPARATOR[0])
 			str_num++;
 
-	(*str) = (oph_multistring *) calloc((str_num), sizeof(oph_multistring));
+	char extend = (num_measure > 0) && (str_num < num_measure);
+	if (extend)
+		str_num = num_measure;
+
+	(*str) = (oph_multistring *) calloc(str_num, sizeof(oph_multistring));
 	if (!*str) {
 		pmesg(1, __FILE__, __LINE__, "Memory allocation error\n");
 		return -1;
@@ -186,22 +190,28 @@ int core_set_oph_multistring(oph_multistring ** str, char *type, unsigned long *
 
 	char *ptr1;
 	char *mytype;
-	char *ptr_s1;
-	char *ptr_s2;
-	char *ptr_s3;
+	char *ptr_s1 = NULL;
+	char *ptr_s2 = NULL;
+	char *ptr_s3 = NULL;
 	oph_type mytype2;
 	char tmp_ptr[BUFF_LEN];
 	char *tmp_ptr1;
+	char *first_type = tmp_type;
 
-	for (i = 0;; i++, tmp_type = NULL) {
+	for (i = 0; i < str_num; i++, tmp_type = NULL) {
 
 		ptr1 = strtok_r(tmp_type, OPH_MULTISTRING_HARD_SEPARATOR, &ptr_s1);
-		if (ptr1 == NULL)
-			break;
+		if (!ptr1) {
+			if (extend)
+				ptr1 = first_type;
+			else
+				break;
+		}
 
 		//First tokenize used only for counting the number of basic type
+		strncpy(tmp_ptr, ptr1, BUFF_LEN);
+		tmp_ptr[BUFF_LEN - 1] = 0;
 		tmp_ptr1 = tmp_ptr;
-		strncpy(tmp_ptr1, ptr1, BUFF_LEN);
 		subtype_num = 0;
 		for (;; tmp_ptr1 = NULL) {
 			mytype = strtok_r(tmp_ptr1, OPH_MULTISTRING_SOFT_SEPARATORS, &ptr_s2);
@@ -232,9 +242,11 @@ int core_set_oph_multistring(oph_multistring ** str, char *type, unsigned long *
 			pmesg(1, __FILE__, __LINE__, "Memory allocation error\n");
 			return -1;
 		}
+
 		//Second tokenize used for setting the oph_type variable inside each oph_string structure
+		strncpy(tmp_ptr, ptr1, BUFF_LEN);
+		tmp_ptr[BUFF_LEN - 1] = 0;
 		tmp_ptr1 = tmp_ptr;
-		strncpy(tmp_ptr1, ptr1, BUFF_LEN);
 		j = 0;
 		for (;; tmp_ptr1 = NULL) {
 			mytype = strtok_r(tmp_ptr1, OPH_MULTISTRING_SOFT_SEPARATORS, &ptr_s3);
@@ -260,6 +272,11 @@ int core_set_oph_multistring(oph_multistring ** str, char *type, unsigned long *
 		}
 	}
 	return 0;
+}
+
+int core_set_oph_multistring(oph_multistring ** str, char *type, unsigned long *len)
+{
+	return core_set_oph_multistring2(str, type, len, 0);
 }
 
 void free_oph_multistring(oph_multistring * str)

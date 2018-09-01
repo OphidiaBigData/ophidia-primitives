@@ -135,7 +135,7 @@ char *oph_interlace(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned l
 	size_t num_measure_total = 0;
 	oph_multistring *measure;
 	if (!param->error && !param->measure) {
-		if (core_set_oph_multistring(&measure, args->args[0], &(args->lengths[0]))) {
+		if (core_set_oph_multistring2(&measure, args->args[0], &(args->lengths[0]), args->arg_count)) {
 			param->error = 1;
 			pmesg(1, __FILE__, __LINE__, "Error setting measure structure\n");
 			*length = 0;
