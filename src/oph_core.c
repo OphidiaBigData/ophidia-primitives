@@ -207,7 +207,6 @@ int core_set_oph_multistring2(oph_multistring ** str, char *type, unsigned long 
 			else
 				break;
 		}
-
 		//First tokenize used only for counting the number of basic type
 		strncpy(tmp_ptr, ptr1, BUFF_LEN);
 		tmp_ptr[BUFF_LEN - 1] = 0;
@@ -242,7 +241,6 @@ int core_set_oph_multistring2(oph_multistring ** str, char *type, unsigned long 
 			pmesg(1, __FILE__, __LINE__, "Memory allocation error\n");
 			return -1;
 		}
-
 		//Second tokenize used for setting the oph_type variable inside each oph_string structure
 		strncpy(tmp_ptr, ptr1, BUFF_LEN);
 		tmp_ptr[BUFF_LEN - 1] = 0;
