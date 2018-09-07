@@ -7,6 +7,7 @@
 
 ### Fixed:
 
+- Bug [#11](https://github.com/OphidiaBigData/ophidia-primitives/issues/11)
 - Bug [#10](https://github.com/OphidiaBigData/ophidia-primitives/issues/10)
 
 ## v1.4.0 - 2018-07-27
