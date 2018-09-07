@@ -759,6 +759,11 @@ int core_base64decode(const char *query, char **new_query)
 
 int core_oph_dump(oph_stringPtr byte_array, char *result, int encoding)
 {
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	char *tmp;
 	char measure[INT_DIGIT + PRECISION + 2];
 
@@ -1028,6 +1033,11 @@ int core_oph_dump(oph_stringPtr byte_array, char *result, int encoding)
 
 int core_oph_convert(oph_stringPtr byte_array, void *result)
 {
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	memcpy(result, (void *) (byte_array->content), byte_array->elemsize);
 	return 0;
 }
@@ -1264,6 +1274,16 @@ int core_oph_count(oph_stringPtr byte_array, char *result)
 {
 	long long count = 0;
 
+	if (!result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
+	if (!byte_array || !byte_array->content) {
+		memcpy(result, (void *) (&count), core_sizeof(OPH_LONG));
+		return 0;
+	}
+
 	int i;
 	if (byte_array->missingvalue) {
 		switch (byte_array->type) {
@@ -1348,6 +1368,11 @@ int core_oph_count(oph_stringPtr byte_array, char *result)
 int core_oph_count_multi(oph_multistring * byte_array, oph_multistring * result)
 {
 	long long count;
+
+	if (!byte_array || !byte_array->content || !result || !result->content) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
 
 	int i, j;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
@@ -1480,6 +1505,11 @@ int core_oph_count_multi(oph_multistring * byte_array, oph_multistring * result)
 
 int core_oph_arg_max(oph_stringPtr byte_array, char *result)
 {
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	int i;
 	long long index = -1;
 	if (byte_array->missingvalue) {
@@ -1698,6 +1728,11 @@ int core_oph_arg_max(oph_stringPtr byte_array, char *result)
 
 int core_oph_arg_max_multi(oph_multistring * byte_array, oph_multistring * result)
 {
+	if (!byte_array || !byte_array->content || !result || !result->content) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	int i, j;
 	long long index;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
@@ -1947,6 +1982,11 @@ int core_oph_arg_max_multi(oph_multistring * byte_array, oph_multistring * resul
 
 int core_oph_arg_min(oph_stringPtr byte_array, char *result)
 {
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	int i;
 	long long index = -1;
 	if (byte_array->missingvalue) {
@@ -2165,6 +2205,11 @@ int core_oph_arg_min(oph_stringPtr byte_array, char *result)
 
 int core_oph_arg_min_multi(oph_multistring * byte_array, oph_multistring * result)
 {
+	if (!byte_array || !byte_array->content || !result || !result->content) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	int i, j;
 	long long index;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
@@ -2414,6 +2459,11 @@ int core_oph_arg_min_multi(oph_multistring * byte_array, oph_multistring * resul
 
 int core_oph_max(oph_stringPtr byte_array, char *result)
 {
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	int i;
 	if (byte_array->missingvalue) {
 		switch (byte_array->type) {
@@ -2623,6 +2673,11 @@ int core_oph_max(oph_stringPtr byte_array, char *result)
 
 int core_oph_max_multi(oph_multistring * byte_array, oph_multistring * result)
 {
+	if (!byte_array || !byte_array->content || !result || !result->content) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	int i, j;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
 	if (byte_array->missingvalue) {
@@ -2861,6 +2916,11 @@ int core_oph_max_multi(oph_multistring * byte_array, oph_multistring * result)
 
 int core_oph_max_abs_multi(oph_multistring * byte_array, oph_multistring * result)
 {
+	if (!byte_array || !byte_array->content || !result || !result->content) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	int i, j;
 	char *in_string = byte_array->content, *current, *out_string = result->content, found;
 	if (byte_array->missingvalue) {
@@ -3144,6 +3204,11 @@ int core_oph_max_abs_multi(oph_multistring * byte_array, oph_multistring * resul
 
 int core_oph_min(oph_stringPtr byte_array, char *result)
 {
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	int i;
 	if (byte_array->missingvalue) {
 		switch (byte_array->type) {
@@ -3353,6 +3418,11 @@ int core_oph_min(oph_stringPtr byte_array, char *result)
 
 int core_oph_min_multi(oph_multistring * byte_array, oph_multistring * result)
 {
+	if (!byte_array || !byte_array->content || !result || !result->content) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	int i, j;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
 
@@ -3592,6 +3662,11 @@ int core_oph_min_multi(oph_multistring * byte_array, oph_multistring * result)
 
 int core_oph_sum(oph_stringPtr byte_array, char *result)
 {
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	int i;
 	if (byte_array->missingvalue) {
 		char nan = 1;
@@ -3600,7 +3675,7 @@ int core_oph_sum(oph_stringPtr byte_array, char *result)
 					double *d = (double *) byte_array->content, sum = 0.0;
 					for (i = 0; i < byte_array->numelem; i++, d++)
 						if (!isnan(*d) && (*byte_array->missingvalue != *d)) {
-							sum = sum + *d;
+							sum += *d;
 							nan = 0;
 						}
 					memcpy(result, nan ? byte_array->missingvalue : &sum, byte_array->elemsize);
@@ -3610,7 +3685,7 @@ int core_oph_sum(oph_stringPtr byte_array, char *result)
 					float *d = (float *) byte_array->content, sum = 0.0, ms = (float) *byte_array->missingvalue;
 					for (i = 0; i < byte_array->numelem; i++, d++)
 						if (!isnan(*d) && (ms != *d)) {
-							sum = sum + *d;
+							sum += *d;
 							nan = 0;
 						}
 					memcpy(result, nan ? &ms : &sum, byte_array->elemsize);
@@ -3620,7 +3695,7 @@ int core_oph_sum(oph_stringPtr byte_array, char *result)
 					int *d = (int *) byte_array->content, sum = 0, ms = (int) *byte_array->missingvalue;
 					for (i = 0; i < byte_array->numelem; i++, d++)
 						if (ms != *d) {
-							sum = sum + *d;
+							sum += *d;
 							nan = 0;
 						}
 					memcpy(result, nan ? &ms : &sum, byte_array->elemsize);
@@ -3630,7 +3705,7 @@ int core_oph_sum(oph_stringPtr byte_array, char *result)
 					short *d = (short *) byte_array->content, sum = 0, ms = (short) *byte_array->missingvalue;
 					for (i = 0; i < byte_array->numelem; i++, d++)
 						if (ms != *d) {
-							sum = sum + *d;
+							sum += *d;
 							nan = 0;
 						}
 					memcpy(result, nan ? &ms : &sum, byte_array->elemsize);
@@ -3640,7 +3715,7 @@ int core_oph_sum(oph_stringPtr byte_array, char *result)
 					char *d = (char *) byte_array->content, sum = 0, ms = (char) *byte_array->missingvalue;
 					for (i = 0; i < byte_array->numelem; i++, d++)
 						if (ms != *d) {
-							sum = sum + *d;
+							sum += *d;
 							nan = 0;
 						}
 					memcpy(result, nan ? &ms : &sum, byte_array->elemsize);
@@ -3650,7 +3725,7 @@ int core_oph_sum(oph_stringPtr byte_array, char *result)
 					long long *d = (long long *) byte_array->content, sum = 0, ms = (long long) *byte_array->missingvalue;
 					for (i = 0; i < byte_array->numelem; i++, d++)
 						if (ms != *d) {
-							sum = sum + *d;
+							sum += *d;
 							nan = 0;
 						}
 					memcpy(result, nan ? &ms : &sum, byte_array->elemsize);
@@ -3667,7 +3742,7 @@ int core_oph_sum(oph_stringPtr byte_array, char *result)
 					double *d = (double *) byte_array->content, sum = 0.0;
 					for (i = 0; i < byte_array->numelem; i++, d++)
 						if (!isnan(*d)) {
-							sum = sum + *d;
+							sum += *d;
 							nan = 0;
 						}
 					if (nan)
@@ -3680,7 +3755,7 @@ int core_oph_sum(oph_stringPtr byte_array, char *result)
 					float *d = (float *) byte_array->content, sum = 0.0;
 					for (i = 0; i < byte_array->numelem; i++, d++)
 						if (!isnan(*d)) {
-							sum = sum + *d;
+							sum += *d;
 							nan = 0;
 						}
 					if (nan)
@@ -3690,29 +3765,29 @@ int core_oph_sum(oph_stringPtr byte_array, char *result)
 				}
 			case OPH_INT:{
 					int *d = (int *) byte_array->content, sum = 0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum = sum + *d;
+					for (i = 0; i < byte_array->numelem; i++)
+						sum += d[i];
 					memcpy(result, (void *) (&sum), byte_array->elemsize);
 					break;
 				}
 			case OPH_SHORT:{
 					short *d = (short *) byte_array->content, sum = 0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum = sum + *d;
+					for (i = 0; i < byte_array->numelem; i++)
+						sum += d[i];
 					memcpy(result, (void *) (&sum), byte_array->elemsize);
 					break;
 				}
 			case OPH_BYTE:{
 					char *d = (char *) byte_array->content, sum = 0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum = sum + *d;
+					for (i = 0; i < byte_array->numelem; i++)
+						sum += d[i];
 					memcpy(result, (void *) (&sum), byte_array->elemsize);
 					break;
 				}
 			case OPH_LONG:{
 					long long *d = (long long *) byte_array->content, sum = 0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum = sum + *d;
+					for (i = 0; i < byte_array->numelem; i++)
+						sum += d[i];
 					memcpy(result, (void *) (&sum), byte_array->elemsize);
 					break;
 				}
@@ -3726,6 +3801,11 @@ int core_oph_sum(oph_stringPtr byte_array, char *result)
 
 int core_oph_sum_multi(oph_multistring * byte_array, oph_multistring * result)
 {
+	if (!byte_array || !byte_array->content || !result || !result->content) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	int i, j;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
 	if (byte_array->missingvalue) {
@@ -3896,6 +3976,11 @@ int core_oph_sum_multi(oph_multistring * byte_array, oph_multistring * result)
 
 int core_oph_avg(oph_stringPtr byte_array, char *result)
 {
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	int i;
 	unsigned long numelem = 0;
 	if (byte_array->missingvalue) {
@@ -3904,7 +3989,7 @@ int core_oph_avg(oph_stringPtr byte_array, char *result)
 					double *d = (double *) byte_array->content, sum = 0.0;
 					for (i = 0; i < byte_array->numelem; i++, d++) {
 						if (!isnan(*d) && (*byte_array->missingvalue != *d)) {
-							sum = sum + *d;
+							sum += *d;
 							numelem++;
 						}
 					}
@@ -3919,7 +4004,7 @@ int core_oph_avg(oph_stringPtr byte_array, char *result)
 					float *d = (float *) byte_array->content, sum = 0.0, ms = (float) *byte_array->missingvalue;
 					for (i = 0; i < byte_array->numelem; i++, d++) {
 						if (!isnan(*d) && (ms != *d)) {
-							sum = sum + *d;
+							sum += *d;
 							numelem++;
 						}
 					}
@@ -3936,7 +4021,7 @@ int core_oph_avg(oph_stringPtr byte_array, char *result)
 					float sum = 0;
 					for (i = 0; i < byte_array->numelem; i++, d++) {
 						if (ms != *d) {
-							sum = sum + *d;
+							sum += *d;
 							numelem++;
 						}
 					}
@@ -3953,7 +4038,7 @@ int core_oph_avg(oph_stringPtr byte_array, char *result)
 					float sum = 0;
 					for (i = 0; i < byte_array->numelem; i++, d++) {
 						if (ms != *d) {
-							sum = sum + *d;
+							sum += *d;
 							numelem++;
 						}
 					}
@@ -3970,7 +4055,7 @@ int core_oph_avg(oph_stringPtr byte_array, char *result)
 					float sum = 0;
 					for (i = 0; i < byte_array->numelem; i++, d++) {
 						if (ms != *d) {
-							sum = sum + *d;
+							sum += *d;
 							numelem++;
 						}
 					}
@@ -3987,7 +4072,7 @@ int core_oph_avg(oph_stringPtr byte_array, char *result)
 					double sum = 0;
 					for (i = 0; i < byte_array->numelem; i++, d++) {
 						if (ms != *d) {
-							sum = sum + *d;
+							sum += *d;
 							numelem++;
 						}
 					}
@@ -4008,7 +4093,7 @@ int core_oph_avg(oph_stringPtr byte_array, char *result)
 					double *d = (double *) byte_array->content, sum = 0.0;
 					for (i = 0; i < byte_array->numelem; i++, d++) {
 						if (!isnan(*d)) {
-							sum = sum + *d;
+							sum += *d;
 							numelem++;
 						}
 					}
@@ -4023,7 +4108,7 @@ int core_oph_avg(oph_stringPtr byte_array, char *result)
 					float *d = (float *) byte_array->content, sum = 0.0;
 					for (i = 0; i < byte_array->numelem; i++, d++) {
 						if (!isnan(*d)) {
-							sum = sum + *d;
+							sum += *d;
 							numelem++;
 						}
 					}
@@ -4038,8 +4123,8 @@ int core_oph_avg(oph_stringPtr byte_array, char *result)
 					//The average is a float number
 					int *d = (int *) byte_array->content;
 					float sum = 0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum = sum + *d;
+					for (i = 0; i < byte_array->numelem; i++)
+						sum += d[i];
 					sum /= (float) byte_array->numelem;
 					memcpy(result, (void *) (&sum), core_sizeof(OPH_FLOAT));
 					break;
@@ -4048,8 +4133,8 @@ int core_oph_avg(oph_stringPtr byte_array, char *result)
 					//The average is a float number
 					short *d = (short *) byte_array->content;
 					float sum = 0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum = sum + *d;
+					for (i = 0; i < byte_array->numelem; i++)
+						sum += d[i];
 					sum /= (float) byte_array->numelem;
 					memcpy(result, (void *) (&sum), core_sizeof(OPH_FLOAT));
 					break;
@@ -4058,8 +4143,8 @@ int core_oph_avg(oph_stringPtr byte_array, char *result)
 					//The average is a float number
 					char *d = (char *) byte_array->content;
 					float sum = 0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum = sum + *d;
+					for (i = 0; i < byte_array->numelem; i++)
+						sum += d[i];
 					sum /= (float) byte_array->numelem;
 					memcpy(result, (void *) (&sum), core_sizeof(OPH_FLOAT));
 					break;
@@ -4068,8 +4153,8 @@ int core_oph_avg(oph_stringPtr byte_array, char *result)
 					//The average is a float number
 					long long *d = (long long *) byte_array->content;
 					double sum = 0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum = sum + *d;
+					for (i = 0; i < byte_array->numelem; i++)
+						sum += d[i];
 					sum /= (double) byte_array->numelem;
 					memcpy(result, (void *) (&sum), core_sizeof(OPH_DOUBLE));
 					break;
@@ -4084,6 +4169,11 @@ int core_oph_avg(oph_stringPtr byte_array, char *result)
 
 int core_oph_avg_multi(oph_multistring * byte_array, oph_multistring * result)
 {
+	if (!byte_array || !byte_array->content || !result || !result->content) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	int i, j;
 	unsigned long numelem;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
@@ -4295,6 +4385,11 @@ int core_oph_avg_multi(oph_multistring * byte_array, oph_multistring * result)
 
 int core_oph_std(oph_stringPtr byte_array, char *result)
 {
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	if (core_oph_var(byte_array, result))
 		return -1;
 
@@ -4340,6 +4435,11 @@ int core_oph_std(oph_stringPtr byte_array, char *result)
 
 int core_oph_std_multi(oph_multistring * byte_array, oph_multistring * result)
 {
+	if (!byte_array || !byte_array->content || !result || !result->content) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	int i, j;
 	unsigned long numelem;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
@@ -4646,6 +4746,11 @@ int core_oph_var(oph_stringPtr byte_array, char *result)
 	int i;
 	unsigned long numelem = 0;
 
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	if (byte_array->missingvalue) {
 		switch (byte_array->type) {
 			case OPH_DOUBLE:{
@@ -4834,9 +4939,9 @@ int core_oph_var(oph_stringPtr byte_array, char *result)
 					//The standard deviation is a float number
 					int *d = (int *) byte_array->content;
 					float sum = 0, sum2 = 0.0;
-					for (i = 0; i < byte_array->numelem; i++, d++) {
-						sum += *d;
-						sum2 += ((float) (*d)) * ((float) (*d));
+					for (i = 0; i < byte_array->numelem; i++) {
+						sum += d[i];
+						sum2 += ((float) d[i]) * ((float) d[i]);
 					}
 					sum /= (float) byte_array->numelem;
 					sum2 /= (float) byte_array->numelem;
@@ -4850,9 +4955,9 @@ int core_oph_var(oph_stringPtr byte_array, char *result)
 					//The standard deviation is a float number
 					short *d = (short *) byte_array->content;
 					float sum = 0, sum2 = 0.0;
-					for (i = 0; i < byte_array->numelem; i++, d++) {
-						sum += *d;
-						sum2 += ((float) (*d)) * ((float) (*d));
+					for (i = 0; i < byte_array->numelem; i++) {
+						sum += d[i];
+						sum2 += ((float) d[i]) * ((float) d[i]);
 					}
 					sum /= (float) byte_array->numelem;
 					sum2 /= (float) byte_array->numelem;
@@ -4866,9 +4971,9 @@ int core_oph_var(oph_stringPtr byte_array, char *result)
 					//The standard deviation is a float number
 					char *d = (char *) byte_array->content;
 					float sum = 0, sum2 = 0.0;
-					for (i = 0; i < byte_array->numelem; i++, d++) {
-						sum += *d;
-						sum2 += ((float) (*d)) * ((float) (*d));
+					for (i = 0; i < byte_array->numelem; i++) {
+						sum += d[i];
+						sum2 += ((float) d[i]) * ((float) d[i]);
 					}
 					sum /= (float) byte_array->numelem;
 					sum2 /= (float) byte_array->numelem;
@@ -4882,9 +4987,9 @@ int core_oph_var(oph_stringPtr byte_array, char *result)
 					//The standard deviation is a double number
 					long long *d = (long long *) byte_array->content;
 					double sum = 0, sum2 = 0.0;
-					for (i = 0; i < byte_array->numelem; i++, d++) {
-						sum += *d;
-						sum2 += ((double) (*d)) * ((double) (*d));
+					for (i = 0; i < byte_array->numelem; i++) {
+						sum += d[i];
+						sum2 += ((double) d[i]) * ((double) d[i]);
 					}
 					sum /= (double) byte_array->numelem;
 					sum2 /= (double) byte_array->numelem;
@@ -4904,6 +5009,11 @@ int core_oph_var(oph_stringPtr byte_array, char *result)
 
 int core_oph_var_multi(oph_multistring * byte_array, oph_multistring * result)
 {
+	if (!byte_array || !byte_array->content || !result || !result->content) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	int i, j;
 	unsigned long numelem;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
@@ -5196,10 +5306,16 @@ int core_oph_var_multi(oph_multistring * byte_array, oph_multistring * result)
 
 int core_oph_cmoment(oph_stringPtr byte_array, char *result)
 {
-	if (!byte_array || (byte_array->param < 0.0)) {
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
+	if (byte_array->param < 0.0) {
 		pmesg(1, __FILE__, __LINE__, "Wrong parameter\n");
 		return -1;
 	}
+
 	int i;
 	unsigned long numelem = 0;
 	if (byte_array->missingvalue) {
@@ -5390,12 +5506,12 @@ int core_oph_cmoment(oph_stringPtr byte_array, char *result)
 					//The standard deviation is a float number
 					int *d = (int *) byte_array->content;
 					float sum = 0, sum2 = 0.0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum += *d;
+					for (i = 0; i < byte_array->numelem; i++)
+						sum += d[i];
 					sum /= (float) byte_array->numelem;
 					d = (int *) byte_array->content;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum2 += powf((*d) - sum, (float) byte_array->param);
+					for (i = 0; i < byte_array->numelem; i++)
+						sum2 += powf(d[i] - sum, (float) byte_array->param);
 					sum2 /= (float) byte_array->numelem;
 					memcpy(result, (void *) (&sum2), core_sizeof(OPH_FLOAT));
 					break;
@@ -5404,12 +5520,12 @@ int core_oph_cmoment(oph_stringPtr byte_array, char *result)
 					//The standard deviation is a float number
 					short *d = (short *) byte_array->content;
 					float sum = 0, sum2 = 0.0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum += *d;
+					for (i = 0; i < byte_array->numelem; i++)
+						sum += d[i];
 					sum /= (float) byte_array->numelem;
 					d = (short *) byte_array->content;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum2 += powf((*d) - sum, (float) byte_array->param);
+					for (i = 0; i < byte_array->numelem; i++)
+						sum2 += powf(d[i] - sum, (float) byte_array->param);
 					sum2 /= (float) byte_array->numelem;
 					memcpy(result, (void *) (&sum2), core_sizeof(OPH_FLOAT));
 					break;
@@ -5418,12 +5534,12 @@ int core_oph_cmoment(oph_stringPtr byte_array, char *result)
 					//The standard deviation is a float number
 					char *d = (char *) byte_array->content;
 					float sum = 0, sum2 = 0.0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum += *d;
+					for (i = 0; i < byte_array->numelem; i++)
+						sum += d[i];
 					sum /= (float) byte_array->numelem;
 					d = (char *) byte_array->content;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum2 += powf((*d) - sum, (float) byte_array->param);
+					for (i = 0; i < byte_array->numelem; i++)
+						sum2 += powf(d[i] - sum, (float) byte_array->param);
 					sum2 /= (float) byte_array->numelem;
 					memcpy(result, (void *) (&sum2), core_sizeof(OPH_FLOAT));
 					break;
@@ -5432,12 +5548,12 @@ int core_oph_cmoment(oph_stringPtr byte_array, char *result)
 					//The standard deviation is a double number
 					long long *d = (long long *) byte_array->content;
 					double sum = 0, sum2 = 0.0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum += *d;
+					for (i = 0; i < byte_array->numelem; i++)
+						sum += d[i];
 					sum /= (double) byte_array->numelem;
 					d = (long long *) byte_array->content;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum2 += pow((*d) - sum, byte_array->param);
+					for (i = 0; i < byte_array->numelem; i++)
+						sum2 += pow(d[i] - sum, byte_array->param);
 					sum2 /= (double) byte_array->numelem;
 					memcpy(result, (void *) (&sum2), core_sizeof(OPH_DOUBLE));
 					break;
@@ -5452,10 +5568,16 @@ int core_oph_cmoment(oph_stringPtr byte_array, char *result)
 
 int core_oph_cmoment_multi(oph_multistring * byte_array, oph_multistring * result)
 {
-	if (!byte_array || (byte_array->param < 0.0)) {
+	if (!byte_array || !byte_array->content || !result || !result->content) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
+	if (byte_array->param < 0.0) {
 		pmesg(1, __FILE__, __LINE__, "Wrong parameter\n");
 		return -1;
 	}
+
 	int i, j;
 	unsigned long numelem;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
@@ -5768,10 +5890,16 @@ int core_oph_cmoment_multi(oph_multistring * byte_array, oph_multistring * resul
 
 int core_oph_acmoment(oph_stringPtr byte_array, char *result)
 {
-	if (!byte_array || (byte_array->param < 0.0)) {
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
+	if (byte_array->param < 0.0) {
 		pmesg(1, __FILE__, __LINE__, "Wrong parameter\n");
 		return -1;
 	}
+
 	int i;
 	unsigned long numelem = 0;
 	if (byte_array->missingvalue) {
@@ -5962,12 +6090,12 @@ int core_oph_acmoment(oph_stringPtr byte_array, char *result)
 					//The standard deviation is a float number
 					int *d = (int *) byte_array->content;
 					float sum = 0, sum2 = 0.0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum += *d;
+					for (i = 0; i < byte_array->numelem; i++)
+						sum += d[i];
 					sum /= (float) byte_array->numelem;
 					d = (int *) byte_array->content;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum2 += powf(fabsf((*d) - sum), (float) byte_array->param);
+					for (i = 0; i < byte_array->numelem; i++)
+						sum2 += powf(fabsf(d[i] - sum), (float) byte_array->param);
 					sum2 /= (float) byte_array->numelem;
 					memcpy(result, (void *) (&sum2), core_sizeof(OPH_FLOAT));
 					break;
@@ -5976,12 +6104,12 @@ int core_oph_acmoment(oph_stringPtr byte_array, char *result)
 					//The standard deviation is a float number
 					short *d = (short *) byte_array->content;
 					float sum = 0, sum2 = 0.0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum += *d;
+					for (i = 0; i < byte_array->numelem; i++)
+						sum += d[i];
 					sum /= (float) byte_array->numelem;
 					d = (short *) byte_array->content;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum2 += powf(fabsf((*d) - sum), (float) byte_array->param);
+					for (i = 0; i < byte_array->numelem; i++)
+						sum2 += powf(fabsf(d[i] - sum), (float) byte_array->param);
 					sum2 /= (float) byte_array->numelem;
 					memcpy(result, (void *) (&sum2), core_sizeof(OPH_FLOAT));
 					break;
@@ -5990,12 +6118,12 @@ int core_oph_acmoment(oph_stringPtr byte_array, char *result)
 					//The standard deviation is a float number
 					char *d = (char *) byte_array->content;
 					float sum = 0, sum2 = 0.0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum += *d;
+					for (i = 0; i < byte_array->numelem; i++)
+						sum += d[i];
 					sum /= (float) byte_array->numelem;
 					d = (char *) byte_array->content;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum2 += powf(fabsf((*d) - sum), (float) byte_array->param);
+					for (i = 0; i < byte_array->numelem; i++)
+						sum2 += powf(fabsf(d[i] - sum), (float) byte_array->param);
 					sum2 /= (float) byte_array->numelem;
 					memcpy(result, (void *) (&sum2), core_sizeof(OPH_FLOAT));
 					break;
@@ -6004,12 +6132,12 @@ int core_oph_acmoment(oph_stringPtr byte_array, char *result)
 					//The standard deviation is a double number
 					long long *d = (long long *) byte_array->content;
 					double sum = 0, sum2 = 0.0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum += *d;
+					for (i = 0; i < byte_array->numelem; i++)
+						sum += d[i];
 					sum /= (double) byte_array->numelem;
 					d = (long long *) byte_array->content;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum2 += pow(fabs((*d) - sum), byte_array->param);
+					for (i = 0; i < byte_array->numelem; i++)
+						sum2 += pow(fabs(d[i] - sum), byte_array->param);
 					sum2 /= (double) byte_array->numelem;
 					memcpy(result, (void *) (&sum2), core_sizeof(OPH_DOUBLE));
 					break;
@@ -6024,10 +6152,16 @@ int core_oph_acmoment(oph_stringPtr byte_array, char *result)
 
 int core_oph_acmoment_multi(oph_multistring * byte_array, oph_multistring * result)
 {
-	if (!byte_array || (byte_array->param < 0.0)) {
+	if (!byte_array || !byte_array->content || !result || !result->content) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
+	if (byte_array->param < 0.0) {
 		pmesg(1, __FILE__, __LINE__, "Wrong parameter\n");
 		return -1;
 	}
+
 	int i, j;
 	unsigned long numelem;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
@@ -6340,10 +6474,16 @@ int core_oph_acmoment_multi(oph_multistring * byte_array, oph_multistring * resu
 
 int core_oph_rmoment(oph_stringPtr byte_array, char *result)
 {
-	if (!byte_array || (byte_array->param < 0.0)) {
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
+	if (byte_array->param < 0.0) {
 		pmesg(1, __FILE__, __LINE__, "Wrong parameter\n");
 		return -1;
 	}
+
 	int i;
 	unsigned long numelem = 0;
 	if (byte_array->missingvalue) {
@@ -6486,8 +6626,8 @@ int core_oph_rmoment(oph_stringPtr byte_array, char *result)
 					//The standard deviation is a float number
 					int *d = (int *) byte_array->content;
 					float sum2 = 0.0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum2 += powf(*d, (float) byte_array->param);
+					for (i = 0; i < byte_array->numelem; i++)
+						sum2 += powf(d[i], (float) byte_array->param);
 					sum2 /= (float) byte_array->numelem;
 					memcpy(result, (void *) (&sum2), core_sizeof(OPH_FLOAT));
 					break;
@@ -6496,8 +6636,8 @@ int core_oph_rmoment(oph_stringPtr byte_array, char *result)
 					//The standard deviation is a float number
 					short *d = (short *) byte_array->content;
 					float sum2 = 0.0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum2 += powf(*d, (float) byte_array->param);
+					for (i = 0; i < byte_array->numelem; i++)
+						sum2 += powf(d[i], (float) byte_array->param);
 					sum2 /= (float) byte_array->numelem;
 					memcpy(result, (void *) (&sum2), core_sizeof(OPH_FLOAT));
 					break;
@@ -6506,8 +6646,8 @@ int core_oph_rmoment(oph_stringPtr byte_array, char *result)
 					//The standard deviation is a float number
 					char *d = (char *) byte_array->content;
 					float sum2 = 0.0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum2 += powf(*d, (float) byte_array->param);
+					for (i = 0; i < byte_array->numelem; i++)
+						sum2 += powf(d[i], (float) byte_array->param);
 					sum2 /= (float) byte_array->numelem;
 					memcpy(result, (void *) (&sum2), core_sizeof(OPH_FLOAT));
 					break;
@@ -6516,8 +6656,8 @@ int core_oph_rmoment(oph_stringPtr byte_array, char *result)
 					//The standard deviation is a double number
 					long long *d = (long long *) byte_array->content;
 					double sum2 = 0.0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum2 += pow(*d, byte_array->param);
+					for (i = 0; i < byte_array->numelem; i++)
+						sum2 += pow(d[i], byte_array->param);
 					sum2 /= (double) byte_array->numelem;
 					memcpy(result, (void *) (&sum2), core_sizeof(OPH_DOUBLE));
 					break;
@@ -6532,10 +6672,16 @@ int core_oph_rmoment(oph_stringPtr byte_array, char *result)
 
 int core_oph_rmoment_multi(oph_multistring * byte_array, oph_multistring * result)
 {
-	if (!byte_array || (byte_array->param < 0.0)) {
+	if (!byte_array || !byte_array->content || !result || !result->content) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
+	if (byte_array->param < 0.0) {
 		pmesg(1, __FILE__, __LINE__, "Wrong parameter\n");
 		return -1;
 	}
+
 	int i, j;
 	unsigned long numelem;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
@@ -6760,10 +6906,16 @@ int core_oph_rmoment_multi(oph_multistring * byte_array, oph_multistring * resul
 
 int core_oph_armoment(oph_stringPtr byte_array, char *result)
 {
-	if (!byte_array || (byte_array->param < 0.0)) {
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
+	if (byte_array->param < 0.0) {
 		pmesg(1, __FILE__, __LINE__, "Wrong parameter\n");
 		return -1;
 	}
+
 	int i;
 	unsigned long numelem = 0;
 	if (byte_array->missingvalue) {
@@ -6906,8 +7058,8 @@ int core_oph_armoment(oph_stringPtr byte_array, char *result)
 					//The standard deviation is a float number
 					int *d = (int *) byte_array->content;
 					float sum2 = 0.0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum2 += powf(fabsf(*d), (float) byte_array->param);
+					for (i = 0; i < byte_array->numelem; i++)
+						sum2 += powf(fabsf(d[i]), (float) byte_array->param);
 					sum2 /= (float) byte_array->numelem;
 					memcpy(result, (void *) (&sum2), core_sizeof(OPH_FLOAT));
 					break;
@@ -6916,8 +7068,8 @@ int core_oph_armoment(oph_stringPtr byte_array, char *result)
 					//The standard deviation is a float number
 					short *d = (short *) byte_array->content;
 					float sum2 = 0.0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum2 += powf(fabsf(*d), (float) byte_array->param);
+					for (i = 0; i < byte_array->numelem; i++)
+						sum2 += powf(fabsf(d[i]), (float) byte_array->param);
 					sum2 /= (float) byte_array->numelem;
 					memcpy(result, (void *) (&sum2), core_sizeof(OPH_FLOAT));
 					break;
@@ -6926,8 +7078,8 @@ int core_oph_armoment(oph_stringPtr byte_array, char *result)
 					//The standard deviation is a float number
 					char *d = (char *) byte_array->content;
 					float sum2 = 0.0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum2 += powf(fabsf(*d), (float) byte_array->param);
+					for (i = 0; i < byte_array->numelem; i++)
+						sum2 += powf(fabsf(d[i]), (float) byte_array->param);
 					sum2 /= (float) byte_array->numelem;
 					memcpy(result, (void *) (&sum2), core_sizeof(OPH_FLOAT));
 					break;
@@ -6936,8 +7088,8 @@ int core_oph_armoment(oph_stringPtr byte_array, char *result)
 					//The standard deviation is a double number
 					long long *d = (long long *) byte_array->content;
 					double sum2 = 0.0;
-					for (i = 0; i < byte_array->numelem; i++, d++)
-						sum2 += pow(fabs(*d), byte_array->param);
+					for (i = 0; i < byte_array->numelem; i++)
+						sum2 += pow(fabs(d[i]), byte_array->param);
 					sum2 /= (double) byte_array->numelem;
 					memcpy(result, (void *) (&sum2), core_sizeof(OPH_DOUBLE));
 					break;
@@ -6952,10 +7104,16 @@ int core_oph_armoment(oph_stringPtr byte_array, char *result)
 
 int core_oph_armoment_multi(oph_multistring * byte_array, oph_multistring * result)
 {
-	if (!byte_array || (byte_array->param < 0.0)) {
+	if (!byte_array || !byte_array->content || !result || !result->content) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
+	if (byte_array->param < 0.0) {
 		pmesg(1, __FILE__, __LINE__, "Wrong parameter\n");
 		return -1;
 	}
+
 	int i, j;
 	unsigned long numelem;
 	char *in_string = byte_array->content, *current, *out_string = result->content;
@@ -7181,13 +7339,18 @@ int core_oph_armoment_multi(oph_multistring * byte_array, oph_multistring * resu
 // Not modified
 int core_oph_get_subarray(oph_stringPtr byte_array, char *result, long long start, long long size)
 {
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	if (byte_array->numelem < start + size) {
 		pmesg(1, __FILE__, __LINE__, "Subarray size over array limits\n");
 		return -1;
 	}
+
 	memcpy(result, (void *) ((byte_array->content) + (start * byte_array->elemsize)), size * byte_array->elemsize);
 	return 0;
-
 }
 
 int core_oph_sum_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char *result)
@@ -9475,8 +9638,12 @@ int core_oph_min_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, cha
 
 int core_oph_sum_scalar(oph_stringPtr byte_array, double scalar, char *result)
 {
-	int i;
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
 
+	int i;
 	switch (byte_array->type) {
 		case OPH_DOUBLE:{
 				double d;
@@ -9537,8 +9704,12 @@ int core_oph_sum_scalar(oph_stringPtr byte_array, double scalar, char *result)
 
 int core_oph_mul_scalar(oph_stringPtr byte_array, double scalar, char *result)
 {
-	int i;
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
 
+	int i;
 	switch (byte_array->type) {
 		case OPH_DOUBLE:{
 				double d;
@@ -9599,8 +9770,12 @@ int core_oph_mul_scalar(oph_stringPtr byte_array, double scalar, char *result)
 
 int core_oph_find(oph_stringPtr byte_array, double value, double distance, long *count)
 {
-	int i;
+	if (!byte_array || !byte_array->content || !count) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
 
+	int i;
 	switch (byte_array->type) {
 		case OPH_DOUBLE:{
 				for (i = 0; i < byte_array->numelem; i++) {
@@ -9663,6 +9838,11 @@ int core_oph_shift(oph_generic_param * param, long long offset, double filling, 
 {
 	oph_string *byte_array = (oph_string *) param->measure;
 	char *result = param->result;
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	long long part1, part2, i, j, opart1, opart2;
 	if (offset > 0) {
 		opart2 = offset * byte_array->elemsize;
@@ -9881,6 +10061,11 @@ int core_oph_simple_moving_avg(oph_generic_param * param, long long k)
 {
 	oph_stringPtr byte_array = param->measure;
 	char *result = param->result;
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	long long i;
 	//Used to count not NaN values (for float and double types)
 	long long count = 0;
@@ -10069,6 +10254,11 @@ int core_oph_simple_moving_avg(oph_generic_param * param, long long k)
 
 int core_oph_simple_moving_avg_multi(oph_multistring * byte_array, oph_multistring * result, void *kk)
 {
+	if (!byte_array || !byte_array->content || !result || !result->content) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	long long i;
 	//Used to count not NaN values (for float and double types)
 	long long count = 0;
@@ -10274,6 +10464,11 @@ int core_oph_exponential_moving_avg(oph_generic_param * param, double a)
 {
 	oph_stringPtr byte_array = param->measure;
 	char *result = param->result;
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	long long i;
 	switch (byte_array->type) {
 		case OPH_DOUBLE:{
@@ -10406,6 +10601,11 @@ int core_oph_exponential_moving_avg(oph_generic_param * param, double a)
 
 int core_oph_exponential_moving_avg_multi(oph_multistring * byte_array, oph_multistring * result, void *aa)
 {
+	if (!byte_array || !byte_array->content || !result || !result->content || !aa) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	long long i;
 
 	double a = (*(double *) aa);
@@ -12163,6 +12363,11 @@ int core_oph_min_array_multi(char *valueA, char *valueB, char *result, oph_type 
 
 int core_oph_sum_scalar_multi(oph_multistring * byte_array, double scalar, oph_multistring * result, int id)
 {
+	if (!byte_array || !byte_array->content || !result || !result->content) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	int i, j, js, je;
 	double tmp;
 	char *in_string = byte_array->content, *out_string = result->content;
@@ -12244,6 +12449,11 @@ int core_oph_sum_scalar_multi(oph_multistring * byte_array, double scalar, oph_m
 
 int core_oph_mul_scalar_multi(oph_multistring * byte_array, double scalar, oph_multistring * result, int id)
 {
+	if (!byte_array || !byte_array->content || !result || !result->content) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	int i, j, js, je;
 	double tmp;
 	char *in_string = byte_array->content, *out_string = result->content;
@@ -12325,6 +12535,11 @@ int core_oph_mul_scalar_multi(oph_multistring * byte_array, double scalar, oph_m
 
 int core_oph_affine_multi(oph_multistring * byte_array, double scalar, double translation, oph_multistring * result, int id)
 {
+	if (!byte_array || !byte_array->content || !result || !result->content) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
 	int i, j, js, je;
 	double tmp;
 	char *in_string = byte_array->content, *out_string = result->content;
