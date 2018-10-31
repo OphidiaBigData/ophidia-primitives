@@ -1,6 +1,10 @@
 
 ## New features
 
+### Added:
+
+- New primitives oph_arg_max_array and oph_arg_min_array
+
 ### Changed:
 
 - Makefile to speed up building phase

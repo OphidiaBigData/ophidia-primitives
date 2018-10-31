@@ -9261,7 +9261,7 @@ int core_oph_max_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, cha
 					for (j = 0; j < byte_arraya->numelem; j++) {
 						if (ms != ((int *) (byte_arraya->content))[j]) {
 							if (ms != ((int *) (byte_arrayb->content))[j]) {
-								if (((int *) (byte_arraya->content))[j] >= ((int *) (byte_arrayb->content))[j]) {
+								if (((int *) (byte_arraya->content))[j] > ((int *) (byte_arrayb->content))[j]) {
 									((int *) (result))[j] = ((int *) (byte_arraya->content))[j];
 								} else {
 									((int *) (result))[j] = ((int *) (byte_arrayb->content))[j];
@@ -9279,7 +9279,7 @@ int core_oph_max_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, cha
 					for (j = 0; j < byte_arraya->numelem; j++) {
 						if (ms != ((short *) (byte_arraya->content))[j]) {
 							if (ms != ((short *) (byte_arrayb->content))[j]) {
-								if (((short *) (byte_arraya->content))[j] >= ((short *) (byte_arrayb->content))[j]) {
+								if (((short *) (byte_arraya->content))[j] > ((short *) (byte_arrayb->content))[j]) {
 									((short *) (result))[j] = ((short *) (byte_arraya->content))[j];
 								} else {
 									((short *) (result))[j] = ((short *) (byte_arrayb->content))[j];
@@ -9297,7 +9297,7 @@ int core_oph_max_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, cha
 					for (j = 0; j < byte_arraya->numelem; j++) {
 						if (ms != ((char *) (byte_arraya->content))[j]) {
 							if (ms != ((char *) (byte_arrayb->content))[j]) {
-								if (((char *) (byte_arraya->content))[j] >= ((char *) (byte_arrayb->content))[j]) {
+								if (((char *) (byte_arraya->content))[j] > ((char *) (byte_arrayb->content))[j]) {
 									((char *) (result))[j] = ((char *) (byte_arraya->content))[j];
 								} else {
 									((char *) (result))[j] = ((char *) (byte_arrayb->content))[j];
@@ -9315,7 +9315,7 @@ int core_oph_max_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, cha
 					for (j = 0; j < byte_arraya->numelem; j++) {
 						if (ms != ((long long *) (byte_arraya->content))[j]) {
 							if (ms != ((long long *) (byte_arrayb->content))[j]) {
-								if (((long long *) (byte_arraya->content))[j] >= ((long long *) (byte_arrayb->content))[j]) {
+								if (((long long *) (byte_arraya->content))[j] > ((long long *) (byte_arrayb->content))[j]) {
 									((long long *) (result))[j] = ((long long *) (byte_arraya->content))[j];
 								} else {
 									((long long *) (result))[j] = ((long long *) (byte_arrayb->content))[j];
@@ -9333,7 +9333,7 @@ int core_oph_max_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, cha
 					for (j = 0; j < byte_arraya->numelem; j++) {
 						if (!isnan(((float *) (byte_arraya->content))[j]) && (ms != ((float *) (byte_arraya->content))[j])) {
 							if (!isnan(((float *) (byte_arrayb->content))[j]) && (ms != ((float *) (byte_arrayb->content))[j])) {
-								if (((float *) (byte_arraya->content))[j] >= ((float *) (byte_arrayb->content))[j]) {
+								if (((float *) (byte_arraya->content))[j] > ((float *) (byte_arrayb->content))[j]) {
 									((float *) (result))[j] = ((float *) (byte_arraya->content))[j];
 								} else {
 									((float *) (result))[j] = ((float *) (byte_arrayb->content))[j];
@@ -9351,7 +9351,7 @@ int core_oph_max_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, cha
 					for (j = 0; j < byte_arraya->numelem; j++) {
 						if (!isnan(((double *) (byte_arraya->content))[j]) && (ms != ((double *) (byte_arraya->content))[j])) {
 							if (!isnan(((double *) (byte_arrayb->content))[j]) && (ms != ((double *) (byte_arrayb->content))[j])) {
-								if (((double *) (byte_arraya->content))[j] >= ((double *) (byte_arrayb->content))[j]) {
+								if (((double *) (byte_arraya->content))[j] > ((double *) (byte_arrayb->content))[j]) {
 									((double *) (result))[j] = ((double *) (byte_arraya->content))[j];
 								} else {
 									((double *) (result))[j] = ((double *) (byte_arrayb->content))[j];
@@ -9371,7 +9371,7 @@ int core_oph_max_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, cha
 		switch (byte_arraya->type) {
 			case OPH_INT:
 				for (j = 0; j < byte_arraya->numelem; j++) {
-					if (((int *) (byte_arraya->content))[j] >= ((int *) (byte_arrayb->content))[j]) {
+					if (((int *) (byte_arraya->content))[j] > ((int *) (byte_arrayb->content))[j]) {
 						((int *) (result))[j] = ((int *) (byte_arraya->content))[j];
 					} else {
 						((int *) (result))[j] = ((int *) (byte_arrayb->content))[j];
@@ -9380,7 +9380,7 @@ int core_oph_max_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, cha
 				break;
 			case OPH_SHORT:
 				for (j = 0; j < byte_arraya->numelem; j++) {
-					if (((short *) (byte_arraya->content))[j] >= ((short *) (byte_arrayb->content))[j]) {
+					if (((short *) (byte_arraya->content))[j] > ((short *) (byte_arrayb->content))[j]) {
 						((short *) (result))[j] = ((short *) (byte_arraya->content))[j];
 					} else {
 						((short *) (result))[j] = ((short *) (byte_arrayb->content))[j];
@@ -9389,7 +9389,7 @@ int core_oph_max_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, cha
 				break;
 			case OPH_BYTE:
 				for (j = 0; j < byte_arraya->numelem; j++) {
-					if (((char *) (byte_arraya->content))[j] >= ((char *) (byte_arrayb->content))[j]) {
+					if (((char *) (byte_arraya->content))[j] > ((char *) (byte_arrayb->content))[j]) {
 						((char *) (result))[j] = ((char *) (byte_arraya->content))[j];
 					} else {
 						((char *) (result))[j] = ((char *) (byte_arrayb->content))[j];
@@ -9398,7 +9398,7 @@ int core_oph_max_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, cha
 				break;
 			case OPH_LONG:
 				for (j = 0; j < byte_arraya->numelem; j++) {
-					if (((long long *) (byte_arraya->content))[j] >= ((long long *) (byte_arrayb->content))[j]) {
+					if (((long long *) (byte_arraya->content))[j] > ((long long *) (byte_arrayb->content))[j]) {
 						((long long *) (result))[j] = ((long long *) (byte_arraya->content))[j];
 					} else {
 						((long long *) (result))[j] = ((long long *) (byte_arrayb->content))[j];
@@ -9409,7 +9409,7 @@ int core_oph_max_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, cha
 				for (j = 0; j < byte_arraya->numelem; j++) {
 					if (!isnan(((float *) (byte_arraya->content))[j])) {
 						if (!isnan(((float *) (byte_arrayb->content))[j])) {
-							if (((float *) (byte_arraya->content))[j] >= ((float *) (byte_arrayb->content))[j]) {
+							if (((float *) (byte_arraya->content))[j] > ((float *) (byte_arrayb->content))[j]) {
 								((float *) (result))[j] = ((float *) (byte_arraya->content))[j];
 							} else {
 								((float *) (result))[j] = ((float *) (byte_arrayb->content))[j];
@@ -9424,7 +9424,7 @@ int core_oph_max_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, cha
 				for (j = 0; j < byte_arraya->numelem; j++) {
 					if (!isnan(((double *) (byte_arraya->content))[j])) {
 						if (!isnan(((double *) (byte_arrayb->content))[j])) {
-							if (((double *) (byte_arraya->content))[j] >= ((double *) (byte_arrayb->content))[j]) {
+							if (((double *) (byte_arraya->content))[j] > ((double *) (byte_arrayb->content))[j]) {
 								((double *) (result))[j] = ((double *) (byte_arraya->content))[j];
 							} else {
 								((double *) (result))[j] = ((double *) (byte_arrayb->content))[j];
@@ -9626,6 +9626,392 @@ int core_oph_min_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, cha
 							((double *) (result))[j] = ((double *) (byte_arraya->content))[j];
 					} else
 						((double *) (result))[j] = ((double *) (byte_arrayb->content))[j];
+				}
+				break;
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	}
+	return 0;
+}
+
+int core_oph_arg_max_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char *result)
+{
+	int j;
+	if (byte_arraya->missingvalue) {
+		switch (byte_arraya->type) {
+			case OPH_INT:
+				{
+					int ms = (int) *byte_arraya->missingvalue;
+					for (j = 0; j < byte_arraya->numelem; j++) {
+						if (ms != ((int *) (byte_arraya->content))[j]) {
+							if (ms != ((int *) (byte_arrayb->content))[j]) {
+								if (((int *) (byte_arraya->content))[j] > ((int *) (byte_arrayb->content))[j]) {
+									((int *) (result))[j] = 1;
+								} else {
+									((int *) (result))[j] = 2;
+								}
+							} else
+								((int *) (result))[j] = 1;
+						} else
+							((int *) (result))[j] = 2;
+					}
+					break;
+				}
+			case OPH_SHORT:
+				{
+					short ms = (short) *byte_arraya->missingvalue;
+					for (j = 0; j < byte_arraya->numelem; j++) {
+						if (ms != ((short *) (byte_arraya->content))[j]) {
+							if (ms != ((short *) (byte_arrayb->content))[j]) {
+								if (((short *) (byte_arraya->content))[j] > ((short *) (byte_arrayb->content))[j]) {
+									((short *) (result))[j] = 1;
+								} else {
+									((short *) (result))[j] = 2;
+								}
+							} else
+								((short *) (result))[j] = 1;
+						} else
+							((short *) (result))[j] = 2;
+					}
+					break;
+				}
+			case OPH_BYTE:
+				{
+					char ms = (char) *byte_arraya->missingvalue;
+					for (j = 0; j < byte_arraya->numelem; j++) {
+						if (ms != ((char *) (byte_arraya->content))[j]) {
+							if (ms != ((char *) (byte_arrayb->content))[j]) {
+								if (((char *) (byte_arraya->content))[j] > ((char *) (byte_arrayb->content))[j]) {
+									((char *) (result))[j] = 1;
+								} else {
+									((char *) (result))[j] = 2;
+								}
+							} else
+								((char *) (result))[j] = 1;
+						} else
+							((char *) (result))[j] = 2;
+					}
+					break;
+				}
+			case OPH_LONG:
+				{
+					long long ms = (long long) *byte_arraya->missingvalue;
+					for (j = 0; j < byte_arraya->numelem; j++) {
+						if (ms != ((long long *) (byte_arraya->content))[j]) {
+							if (ms != ((long long *) (byte_arrayb->content))[j]) {
+								if (((long long *) (byte_arraya->content))[j] > ((long long *) (byte_arrayb->content))[j]) {
+									((long long *) (result))[j] = 1L;
+								} else {
+									((long long *) (result))[j] = 2L;
+								}
+							} else
+								((long long *) (result))[j] = 1L;
+						} else
+							((long long *) (result))[j] = 2L;
+					}
+					break;
+				}
+			case OPH_FLOAT:
+				{
+					float ms = (float) *byte_arraya->missingvalue;
+					for (j = 0; j < byte_arraya->numelem; j++) {
+						if (!isnan(((float *) (byte_arraya->content))[j]) && (ms != ((float *) (byte_arraya->content))[j])) {
+							if (!isnan(((float *) (byte_arrayb->content))[j]) && (ms != ((float *) (byte_arrayb->content))[j])) {
+								if (((float *) (byte_arraya->content))[j] > ((float *) (byte_arrayb->content))[j]) {
+									((float *) (result))[j] = 1.0;
+								} else {
+									((float *) (result))[j] = 2.0;
+								}
+							} else
+								((float *) (result))[j] = 1.0;
+						} else
+							((float *) (result))[j] = 2.0;
+					}
+					break;
+				}
+			case OPH_DOUBLE:
+				{
+					double ms = (double) *byte_arraya->missingvalue;
+					for (j = 0; j < byte_arraya->numelem; j++) {
+						if (!isnan(((double *) (byte_arraya->content))[j]) && (ms != ((double *) (byte_arraya->content))[j])) {
+							if (!isnan(((double *) (byte_arrayb->content))[j]) && (ms != ((double *) (byte_arrayb->content))[j])) {
+								if (((double *) (byte_arraya->content))[j] > ((double *) (byte_arrayb->content))[j]) {
+									((double *) (result))[j] = 1.0;
+								} else {
+									((double *) (result))[j] = 2.0;
+								}
+							} else
+								((double *) (result))[j] = 1.0;
+						} else
+							((double *) (result))[j] = 2.0;
+					}
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	} else {
+		switch (byte_arraya->type) {
+			case OPH_INT:
+				for (j = 0; j < byte_arraya->numelem; j++) {
+					if (((int *) (byte_arraya->content))[j] > ((int *) (byte_arrayb->content))[j]) {
+						((int *) (result))[j] = 1;
+					} else {
+						((int *) (result))[j] = 2;
+					}
+				}
+				break;
+			case OPH_SHORT:
+				for (j = 0; j < byte_arraya->numelem; j++) {
+					if (((short *) (byte_arraya->content))[j] > ((short *) (byte_arrayb->content))[j]) {
+						((short *) (result))[j] = 1;
+					} else {
+						((short *) (result))[j] = 2;
+					}
+				}
+				break;
+			case OPH_BYTE:
+				for (j = 0; j < byte_arraya->numelem; j++) {
+					if (((char *) (byte_arraya->content))[j] > ((char *) (byte_arrayb->content))[j]) {
+						((char *) (result))[j] = 1;
+					} else {
+						((char *) (result))[j] = 2;
+					}
+				}
+				break;
+			case OPH_LONG:
+				for (j = 0; j < byte_arraya->numelem; j++) {
+					if (((long long *) (byte_arraya->content))[j] > ((long long *) (byte_arrayb->content))[j]) {
+						((long long *) (result))[j] = 1L;
+					} else {
+						((long long *) (result))[j] = 2L;
+					}
+				}
+				break;
+			case OPH_FLOAT:
+				for (j = 0; j < byte_arraya->numelem; j++) {
+					if (!isnan(((float *) (byte_arraya->content))[j])) {
+						if (!isnan(((float *) (byte_arrayb->content))[j])) {
+							if (((float *) (byte_arraya->content))[j] > ((float *) (byte_arrayb->content))[j]) {
+								((float *) (result))[j] = 1.0;
+							} else {
+								((float *) (result))[j] = 2.0;
+							}
+						} else
+							((float *) (result))[j] = 1.0;
+					} else
+						((float *) (result))[j] = 2.0;
+				}
+				break;
+			case OPH_DOUBLE:
+				for (j = 0; j < byte_arraya->numelem; j++) {
+					if (!isnan(((double *) (byte_arraya->content))[j])) {
+						if (!isnan(((double *) (byte_arrayb->content))[j])) {
+							if (((double *) (byte_arraya->content))[j] > ((double *) (byte_arrayb->content))[j]) {
+								((double *) (result))[j] = 1.0;
+							} else {
+								((double *) (result))[j] = 2.0;
+							}
+						} else
+							((double *) (result))[j] = 1.0;
+					} else
+						((double *) (result))[j] = 2.0;
+				}
+				break;
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	}
+	return 0;
+}
+
+int core_oph_arg_min_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char *result)
+{
+	int j;
+	if (byte_arraya->missingvalue) {
+		switch (byte_arraya->type) {
+			case OPH_INT:
+				{
+					int ms = (int) *byte_arraya->missingvalue;
+					for (j = 0; j < byte_arraya->numelem; j++) {
+						if (ms != ((int *) (byte_arraya->content))[j]) {
+							if (ms != ((int *) (byte_arrayb->content))[j]) {
+								if (((int *) (byte_arraya->content))[j] < ((int *) (byte_arrayb->content))[j]) {
+									((int *) (result))[j] = 1;
+								} else {
+									((int *) (result))[j] = 2;
+								}
+							} else
+								((int *) (result))[j] = 1;
+						} else
+							((int *) (result))[j] = 2;
+					}
+					break;
+				}
+			case OPH_SHORT:
+				{
+					short ms = (short) *byte_arraya->missingvalue;
+					for (j = 0; j < byte_arraya->numelem; j++) {
+						if (ms != ((short *) (byte_arraya->content))[j]) {
+							if (ms != ((short *) (byte_arrayb->content))[j]) {
+								if (((short *) (byte_arraya->content))[j] < ((short *) (byte_arrayb->content))[j]) {
+									((short *) (result))[j] = 1;
+								} else {
+									((short *) (result))[j] = 2;
+								}
+							} else
+								((short *) (result))[j] = 1;
+						} else
+							((short *) (result))[j] = 2;
+					}
+					break;
+				}
+			case OPH_BYTE:
+				{
+					char ms = (char) *byte_arraya->missingvalue;
+					for (j = 0; j < byte_arraya->numelem; j++) {
+						if (ms != ((char *) (byte_arraya->content))[j]) {
+							if (ms != ((char *) (byte_arrayb->content))[j]) {
+								if (((char *) (byte_arraya->content))[j] < ((char *) (byte_arrayb->content))[j]) {
+									((char *) (result))[j] = 1;
+								} else {
+									((char *) (result))[j] = 2;
+								}
+							} else
+								((char *) (result))[j] = 1;
+						} else
+							((char *) (result))[j] = 2;
+					}
+					break;
+				}
+			case OPH_LONG:
+				{
+					long long ms = (long long) *byte_arraya->missingvalue;
+					for (j = 0; j < byte_arraya->numelem; j++) {
+						if (ms != ((long long *) (byte_arraya->content))[j]) {
+							if (ms != ((long long *) (byte_arrayb->content))[j]) {
+								if (((long long *) (byte_arraya->content))[j] < ((long long *) (byte_arrayb->content))[j]) {
+									((long long *) (result))[j] = 1L;
+								} else {
+									((long long *) (result))[j] = 2L;
+								}
+							} else
+								((long long *) (result))[j] = 1L;
+						} else
+							((long long *) (result))[j] = 2L;
+					}
+					break;
+				}
+			case OPH_FLOAT:
+				{
+					float ms = (float) *byte_arraya->missingvalue;
+					for (j = 0; j < byte_arraya->numelem; j++) {
+						if (!isnan(((float *) (byte_arraya->content))[j]) && (ms != ((float *) (byte_arraya->content))[j])) {
+							if (!isnan(((float *) (byte_arrayb->content))[j]) && (ms != ((float *) (byte_arrayb->content))[j])) {
+								if (((float *) (byte_arraya->content))[j] < ((float *) (byte_arrayb->content))[j]) {
+									((float *) (result))[j] = 1.0;
+								} else {
+									((float *) (result))[j] = 2.0;
+								}
+							} else
+								((float *) (result))[j] = 1.0;
+						} else
+							((float *) (result))[j] = 2.0;
+					}
+					break;
+				}
+			case OPH_DOUBLE:
+				{
+					double ms = (double) *byte_arraya->missingvalue;
+					for (j = 0; j < byte_arraya->numelem; j++) {
+						if (!isnan(((double *) (byte_arraya->content))[j]) && (ms != ((double *) (byte_arraya->content))[j])) {
+							if (!isnan(((double *) (byte_arrayb->content))[j]) && (ms != ((double *) (byte_arrayb->content))[j])) {
+								if (((double *) (byte_arraya->content))[j] < ((double *) (byte_arrayb->content))[j]) {
+									((double *) (result))[j] = 1.0;
+								} else {
+									((double *) (result))[j] = 2.0;
+								}
+							} else
+								((double *) (result))[j] = 1.0;
+						} else
+							((double *) (result))[j] = 2.0;
+					}
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	} else {
+		switch (byte_arraya->type) {
+			case OPH_INT:
+				for (j = 0; j < byte_arraya->numelem; j++) {
+					if (((int *) (byte_arraya->content))[j] < ((int *) (byte_arrayb->content))[j]) {
+						((int *) (result))[j] = 1;
+					} else {
+						((int *) (result))[j] = 2;
+					}
+				}
+				break;
+			case OPH_SHORT:
+				for (j = 0; j < byte_arraya->numelem; j++) {
+					if (((short *) (byte_arraya->content))[j] < ((short *) (byte_arrayb->content))[j]) {
+						((short *) (result))[j] = 1;
+					} else {
+						((short *) (result))[j] = 2;
+					}
+				}
+				break;
+			case OPH_BYTE:
+				for (j = 0; j < byte_arraya->numelem; j++) {
+					if (((char *) (byte_arraya->content))[j] < ((char *) (byte_arrayb->content))[j]) {
+						((char *) (result))[j] = 1;
+					} else {
+						((char *) (result))[j] = 2;
+					}
+				}
+				break;
+			case OPH_LONG:
+				for (j = 0; j < byte_arraya->numelem; j++) {
+					if (((long long *) (byte_arraya->content))[j] < ((long long *) (byte_arrayb->content))[j]) {
+						((long long *) (result))[j] = 1L;
+					} else {
+						((long long *) (result))[j] = 2L;
+					}
+				}
+				break;
+			case OPH_FLOAT:
+				for (j = 0; j < byte_arraya->numelem; j++) {
+					if (!isnan(((float *) (byte_arraya->content))[j])) {
+						if (!isnan(((float *) (byte_arrayb->content))[j])) {
+							if (((float *) (byte_arraya->content))[j] < ((float *) (byte_arrayb->content))[j]) {
+								((float *) (result))[j] = 1.0;
+							} else {
+								((float *) (result))[j] = 2.0;
+							}
+						} else
+							((float *) (result))[j] = 1.0;
+					} else
+						((float *) (result))[j] = 2.0;
+				}
+				break;
+			case OPH_DOUBLE:
+				for (j = 0; j < byte_arraya->numelem; j++) {
+					if (!isnan(((double *) (byte_arraya->content))[j])) {
+						if (!isnan(((double *) (byte_arrayb->content))[j])) {
+							if (((double *) (byte_arraya->content))[j] < ((double *) (byte_arrayb->content))[j]) {
+								((double *) (result))[j] = 1.0;
+							} else {
+								((double *) (result))[j] = 2.0;
+							}
+						} else
+							((double *) (result))[j] = 1.0;
+					} else
+						((double *) (result))[j] = 2.0;
 				}
 				break;
 			default:
@@ -12117,7 +12503,7 @@ int core_oph_max_array_multi(char *valueA, char *valueB, char *result, oph_type 
 				{
 					if (*((int *) (valueA)) != (int) *missingvalue) {
 						if (*((int *) (valueB)) != (int) *missingvalue)
-							*((int *) (result)) = *((int *) (valueA)) > *((int *) (valueB)) ? *((int *) (valueA)) : *((int *) (valueB));
+							*((int *) (result)) = *((int *) (valueA)) >= *((int *) (valueB)) ? *((int *) (valueA)) : *((int *) (valueB));
 						else
 							*((int *) (result)) = *((int *) (valueA));
 					} else
@@ -12128,7 +12514,7 @@ int core_oph_max_array_multi(char *valueA, char *valueB, char *result, oph_type 
 				{
 					if (*((short *) (valueA)) != (short) *missingvalue) {
 						if (*((short *) (valueB)) != (short) *missingvalue)
-							*((short *) (result)) = *((short *) (valueA)) > *((short *) (valueB)) ? *((short *) (valueA)) : *((short *) (valueB));
+							*((short *) (result)) = *((short *) (valueA)) >= *((short *) (valueB)) ? *((short *) (valueA)) : *((short *) (valueB));
 						else
 							*((short *) (result)) = *((short *) (valueA));
 					} else
@@ -12139,7 +12525,7 @@ int core_oph_max_array_multi(char *valueA, char *valueB, char *result, oph_type 
 				{
 					if (*((char *) (valueA)) != (char) *missingvalue) {
 						if (*((char *) (valueB)) != (char) *missingvalue)
-							*((char *) (result)) = *((char *) (valueA)) > *((char *) (valueB)) ? *((char *) (valueA)) : *((char *) (valueB));
+							*((char *) (result)) = *((char *) (valueA)) >= *((char *) (valueB)) ? *((char *) (valueA)) : *((char *) (valueB));
 						else
 							*((char *) (result)) = *((char *) (valueA));
 					} else
@@ -12150,7 +12536,7 @@ int core_oph_max_array_multi(char *valueA, char *valueB, char *result, oph_type 
 				{
 					if (*((long long *) (valueA)) != (long long) *missingvalue) {
 						if (*((long long *) (valueB)) != (long long) *missingvalue)
-							*((long long *) (result)) = *((long long *) (valueA)) > *((long long *) (valueB)) ? *((long long *) (valueA)) : *((long long *) (valueB));
+							*((long long *) (result)) = *((long long *) (valueA)) >= *((long long *) (valueB)) ? *((long long *) (valueA)) : *((long long *) (valueB));
 						else
 							*((long long *) (result)) = *((long long *) (valueA));
 					} else
@@ -12161,7 +12547,7 @@ int core_oph_max_array_multi(char *valueA, char *valueB, char *result, oph_type 
 				{
 					if (!isnan(*((float *) (valueA))) && (*((float *) (valueA)) != (float) *missingvalue)) {
 						if (!isnan(*((float *) (valueB))) && (*((float *) (valueB)) != (float) *missingvalue))
-							*((float *) (result)) = *((float *) (valueA)) > *((float *) (valueB)) ? *((float *) (valueA)) : *((float *) (valueB));
+							*((float *) (result)) = *((float *) (valueA)) >= *((float *) (valueB)) ? *((float *) (valueA)) : *((float *) (valueB));
 						else
 							*((float *) (result)) = *((float *) (valueA));
 					} else
@@ -12172,7 +12558,7 @@ int core_oph_max_array_multi(char *valueA, char *valueB, char *result, oph_type 
 				{
 					if (!isnan(*((double *) (valueA)))) {
 						if (!isnan(*((double *) (valueB))) && (*((double *) (valueA)) != (double) *missingvalue))
-							*((double *) (result)) = *((double *) (valueA)) > *((double *) (valueB)) ? *((double *) (valueA)) : *((double *) (valueB));
+							*((double *) (result)) = *((double *) (valueA)) >= *((double *) (valueB)) ? *((double *) (valueA)) : *((double *) (valueB));
 						else
 							*((double *) (result)) = *((double *) (valueA));
 					} else
@@ -12187,29 +12573,29 @@ int core_oph_max_array_multi(char *valueA, char *valueB, char *result, oph_type 
 		switch (type) {
 			case OPH_INT:
 				{
-					*((int *) (result)) = *((int *) (valueA)) > *((int *) (valueB)) ? *((int *) (valueA)) : *((int *) (valueB));
+					*((int *) (result)) = *((int *) (valueA)) >= *((int *) (valueB)) ? *((int *) (valueA)) : *((int *) (valueB));
 					break;
 				}
 			case OPH_SHORT:
 				{
-					*((short *) (result)) = *((short *) (valueA)) > *((short *) (valueB)) ? *((short *) (valueA)) : *((short *) (valueB));
+					*((short *) (result)) = *((short *) (valueA)) >= *((short *) (valueB)) ? *((short *) (valueA)) : *((short *) (valueB));
 					break;
 				}
 			case OPH_BYTE:
 				{
-					*((int *) (result)) = *((char *) (valueA)) > *((char *) (valueB)) ? *((char *) (valueA)) : *((char *) (valueB));
+					*((int *) (result)) = *((char *) (valueA)) >= *((char *) (valueB)) ? *((char *) (valueA)) : *((char *) (valueB));
 					break;
 				}
 			case OPH_LONG:
 				{
-					*((long long *) (result)) = *((long long *) (valueA)) > *((long long *) (valueB)) ? *((long long *) (valueA)) : *((long long *) (valueB));
+					*((long long *) (result)) = *((long long *) (valueA)) >= *((long long *) (valueB)) ? *((long long *) (valueA)) : *((long long *) (valueB));
 					break;
 				}
 			case OPH_FLOAT:
 				{
 					if (!isnan(*((float *) (valueA)))) {
 						if (!isnan(*((float *) (valueB))))
-							*((float *) (result)) = *((float *) (valueA)) > *((float *) (valueB)) ? *((float *) (valueA)) : *((float *) (valueB));
+							*((float *) (result)) = *((float *) (valueA)) >= *((float *) (valueB)) ? *((float *) (valueA)) : *((float *) (valueB));
 						else
 							*((float *) (result)) = *((float *) (valueA));
 					} else
@@ -12220,7 +12606,7 @@ int core_oph_max_array_multi(char *valueA, char *valueB, char *result, oph_type 
 				{
 					if (!isnan(*((double *) (valueA)))) {
 						if (!isnan(*((double *) (valueB))))
-							*((double *) (result)) = *((double *) (valueA)) > *((double *) (valueB)) ? *((double *) (valueA)) : *((double *) (valueB));
+							*((double *) (result)) = *((double *) (valueA)) >= *((double *) (valueB)) ? *((double *) (valueA)) : *((double *) (valueB));
 						else
 							*((double *) (result)) = *((double *) (valueA));
 					} else
@@ -12351,6 +12737,258 @@ int core_oph_min_array_multi(char *valueA, char *valueB, char *result, oph_type 
 							*((double *) (result)) = *((double *) (valueA));
 					} else
 						*((double *) (result)) = *((double *) (valueB));
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	}
+	return 0;
+}
+
+int core_oph_arg_max_array_multi(char *valueA, char *valueB, char *result, oph_type type, double *missingvalue)
+{
+	if (missingvalue) {
+		switch (type) {
+			case OPH_INT:
+				{
+					if (*((int *) (valueA)) != (int) *missingvalue) {
+						if (*((int *) (valueB)) != (int) *missingvalue)
+							*((int *) (result)) = *((int *) (valueA)) > *((int *) (valueB)) ? 1 : 2;
+						else
+							*((int *) (result)) = 1;
+					} else
+						*((int *) (result)) = 2;
+					break;
+				}
+			case OPH_SHORT:
+				{
+					if (*((short *) (valueA)) != (short) *missingvalue) {
+						if (*((short *) (valueB)) != (short) *missingvalue)
+							*((short *) (result)) = *((short *) (valueA)) > *((short *) (valueB)) ? 1 : 2;
+						else
+							*((short *) (result)) = 1;
+					} else
+						*((short *) (result)) = 2;
+					break;
+				}
+			case OPH_BYTE:
+				{
+					if (*((char *) (valueA)) != (char) *missingvalue) {
+						if (*((char *) (valueB)) != (char) *missingvalue)
+							*((char *) (result)) = *((char *) (valueA)) > *((char *) (valueB)) ? 1 : 2;
+						else
+							*((char *) (result)) = 1;
+					} else
+						*((char *) (result)) = 2;
+					break;
+				}
+			case OPH_LONG:
+				{
+					if (*((long long *) (valueA)) != (long long) *missingvalue) {
+						if (*((long long *) (valueB)) != (long long) *missingvalue)
+							*((long long *) (result)) = *((long long *) (valueA)) > *((long long *) (valueB)) ? 1L : 2L;
+						else
+							*((long long *) (result)) = 1L;
+					} else
+						*((long long *) (result)) = 2L;
+					break;
+				}
+			case OPH_FLOAT:
+				{
+					if (!isnan(*((float *) (valueA))) && (*((float *) (valueA)) != (float) *missingvalue)) {
+						if (!isnan(*((float *) (valueB))) && (*((float *) (valueB)) != (float) *missingvalue))
+							*((float *) (result)) = *((float *) (valueA)) > *((float *) (valueB)) ? 1.0 : 2.0;
+						else
+							*((float *) (result)) = 1.0;
+					} else
+						*((float *) (result)) = 2.0;
+					break;
+				}
+			case OPH_DOUBLE:
+				{
+					if (!isnan(*((double *) (valueA)))) {
+						if (!isnan(*((double *) (valueB))) && (*((double *) (valueA)) != (double) *missingvalue))
+							*((double *) (result)) = *((double *) (valueA)) > *((double *) (valueB)) ? 1.0 : 2.0;
+						else
+							*((double *) (result)) = 1.0;
+					} else
+						*((double *) (result)) = 2.0;
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	} else {
+		switch (type) {
+			case OPH_INT:
+				{
+					*((int *) (result)) = *((int *) (valueA)) > *((int *) (valueB)) ? 1 : 2;
+					break;
+				}
+			case OPH_SHORT:
+				{
+					*((short *) (result)) = *((short *) (valueA)) > *((short *) (valueB)) ? 1 : 2;
+					break;
+				}
+			case OPH_BYTE:
+				{
+					*((int *) (result)) = *((char *) (valueA)) > *((char *) (valueB)) ? 1 : 2;
+					break;
+				}
+			case OPH_LONG:
+				{
+					*((long long *) (result)) = *((long long *) (valueA)) > *((long long *) (valueB)) ? 1L : 2L;
+					break;
+				}
+			case OPH_FLOAT:
+				{
+					if (!isnan(*((float *) (valueA)))) {
+						if (!isnan(*((float *) (valueB))))
+							*((float *) (result)) = *((float *) (valueA)) > *((float *) (valueB)) ? 1.0 : 2.0;
+						else
+							*((float *) (result)) = 1.0;
+					} else
+						*((float *) (result)) = 2.0;
+					break;
+				}
+			case OPH_DOUBLE:
+				{
+					if (!isnan(*((double *) (valueA)))) {
+						if (!isnan(*((double *) (valueB))))
+							*((double *) (result)) = *((double *) (valueA)) > *((double *) (valueB)) ? 1.0 : 2.0;
+						else
+							*((double *) (result)) = 1.0;
+					} else
+						*((double *) (result)) = 2.0;
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	}
+	return 0;
+}
+
+int core_oph_arg_min_array_multi(char *valueA, char *valueB, char *result, oph_type type, double *missingvalue)
+{
+	if (missingvalue) {
+		switch (type) {
+			case OPH_INT:
+				{
+					if (*((int *) (valueA)) != (int) *missingvalue) {
+						if (*((int *) (valueB)) != (int) *missingvalue)
+							*((int *) (result)) = *((int *) (valueA)) < *((int *) (valueB)) ? 1 : 2;
+						else
+							*((int *) (result)) = 1;
+					} else
+						*((int *) (result)) = 2;
+					break;
+				}
+			case OPH_SHORT:
+				{
+					if (*((short *) (valueA)) != (short) *missingvalue) {
+						if (*((short *) (valueB)) != (short) *missingvalue)
+							*((short *) (result)) = *((short *) (valueA)) < *((short *) (valueB)) ? 1 : 2;
+						else
+							*((short *) (result)) = 1;
+					} else
+						*((short *) (result)) = 2;
+					break;
+				}
+			case OPH_BYTE:
+				{
+					if (*((char *) (valueA)) != (char) *missingvalue) {
+						if (*((char *) (valueB)) != (char) *missingvalue)
+							*((char *) (result)) = *((char *) (valueA)) < *((char *) (valueB)) ? 1 : 2;
+						else
+							*((char *) (result)) = 1;
+					} else
+						*((char *) (result)) = 2;
+					break;
+				}
+			case OPH_LONG:
+				{
+					if (*((long long *) (valueA)) != (long long) *missingvalue) {
+						if (*((long long *) (valueB)) != (long long) *missingvalue)
+							*((long long *) (result)) = *((long long *) (valueA)) < *((long long *) (valueB)) ? 1L : 2L;
+						else
+							*((long long *) (result)) = 1L;
+					} else
+						*((long long *) (result)) = 2L;
+					break;
+				}
+			case OPH_FLOAT:
+				{
+					if (!isnan(*((float *) (valueA))) && (*((float *) (valueA)) != (float) *missingvalue)) {
+						if (!isnan(*((float *) (valueB))) && (*((float *) (valueB)) != (float) *missingvalue))
+							*((float *) (result)) = *((float *) (valueA)) < *((float *) (valueB)) ? 1.0 : 2.0;
+						else
+							*((float *) (result)) = 1.0;
+					} else
+						*((float *) (result)) = 2.0;
+					break;
+				}
+			case OPH_DOUBLE:
+				{
+					if (!isnan(*((double *) (valueA)))) {
+						if (!isnan(*((double *) (valueB))) && (*((double *) (valueA)) != (double) *missingvalue))
+							*((double *) (result)) = *((double *) (valueA)) < *((double *) (valueB)) ? 1.0 : 2.0;
+						else
+							*((double *) (result)) = 1.0;
+					} else
+						*((double *) (result)) = 2.0;
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	} else {
+		switch (type) {
+			case OPH_INT:
+				{
+					*((int *) (result)) = *((int *) (valueA)) < *((int *) (valueB)) ? 1 : 2;
+					break;
+				}
+			case OPH_SHORT:
+				{
+					*((short *) (result)) = *((short *) (valueA)) < *((short *) (valueB)) ? 1 : 2;
+					break;
+				}
+			case OPH_BYTE:
+				{
+					*((int *) (result)) = *((char *) (valueA)) < *((char *) (valueB)) ? 1 : 2;
+					break;
+				}
+			case OPH_LONG:
+				{
+					*((long long *) (result)) = *((long long *) (valueA)) < *((long long *) (valueB)) ? 1L : 2L;
+					break;
+				}
+			case OPH_FLOAT:
+				{
+					if (!isnan(*((float *) (valueA)))) {
+						if (!isnan(*((float *) (valueB))))
+							*((float *) (result)) = *((float *) (valueA)) < *((float *) (valueB)) ? 1.0 : 2.0;
+						else
+							*((float *) (result)) = 1.0;
+					} else
+						*((float *) (result)) = 2.0;
+					break;
+				}
+			case OPH_DOUBLE:
+				{
+					if (!isnan(*((double *) (valueA)))) {
+						if (!isnan(*((double *) (valueB))))
+							*((double *) (result)) = *((double *) (valueA)) < *((double *) (valueB)) ? 1.0 : 2.0;
+						else
+							*((double *) (result)) = 1.0;
+					} else
+						*((double *) (result)) = 2.0;
 					break;
 				}
 			default:

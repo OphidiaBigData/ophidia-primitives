@@ -305,6 +305,16 @@ liboph_min_array_la_SOURCES = oph_min_array.c oph_min_array.h
 liboph_min_array_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
 liboph_min_array_la_LDFLAGS = -avoid-version -shared $(LIBS) -L. -loph_debug -loph_core
 
+lib_LTLIBRARIES += liboph_arg_max_array.la
+liboph_arg_max_array_la_SOURCES = oph_arg_max_array.c oph_arg_max_array.h
+liboph_arg_max_array_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_arg_max_array_la_LDFLAGS = -avoid-version -shared $(LIBS) -L. -loph_debug -loph_core
+
+lib_LTLIBRARIES += liboph_arg_min_array.la
+liboph_arg_min_array_la_SOURCES = oph_arg_min_array.c oph_arg_min_array.h
+liboph_arg_min_array_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_arg_min_array_la_LDFLAGS = -avoid-version -shared $(LIBS) -L. -loph_debug -loph_core
+
 lib_LTLIBRARIES += liboph_operator.la
 liboph_operator_la_SOURCES = oph_operator.c oph_operator.h
 liboph_operator_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
