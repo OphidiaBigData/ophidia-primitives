@@ -12503,7 +12503,7 @@ int core_oph_max_array_multi(char *valueA, char *valueB, char *result, oph_type 
 				{
 					if (*((int *) (valueA)) != (int) *missingvalue) {
 						if (*((int *) (valueB)) != (int) *missingvalue)
-							*((int *) (result)) = *((int *) (valueA)) >= *((int *) (valueB)) ? *((int *) (valueA)) : *((int *) (valueB));
+							*((int *) (result)) = *((int *) (valueA)) > *((int *) (valueB)) ? *((int *) (valueA)) : *((int *) (valueB));
 						else
 							*((int *) (result)) = *((int *) (valueA));
 					} else
@@ -12514,7 +12514,7 @@ int core_oph_max_array_multi(char *valueA, char *valueB, char *result, oph_type 
 				{
 					if (*((short *) (valueA)) != (short) *missingvalue) {
 						if (*((short *) (valueB)) != (short) *missingvalue)
-							*((short *) (result)) = *((short *) (valueA)) >= *((short *) (valueB)) ? *((short *) (valueA)) : *((short *) (valueB));
+							*((short *) (result)) = *((short *) (valueA)) > *((short *) (valueB)) ? *((short *) (valueA)) : *((short *) (valueB));
 						else
 							*((short *) (result)) = *((short *) (valueA));
 					} else
@@ -12525,7 +12525,7 @@ int core_oph_max_array_multi(char *valueA, char *valueB, char *result, oph_type 
 				{
 					if (*((char *) (valueA)) != (char) *missingvalue) {
 						if (*((char *) (valueB)) != (char) *missingvalue)
-							*((char *) (result)) = *((char *) (valueA)) >= *((char *) (valueB)) ? *((char *) (valueA)) : *((char *) (valueB));
+							*((char *) (result)) = *((char *) (valueA)) > *((char *) (valueB)) ? *((char *) (valueA)) : *((char *) (valueB));
 						else
 							*((char *) (result)) = *((char *) (valueA));
 					} else
@@ -12536,7 +12536,7 @@ int core_oph_max_array_multi(char *valueA, char *valueB, char *result, oph_type 
 				{
 					if (*((long long *) (valueA)) != (long long) *missingvalue) {
 						if (*((long long *) (valueB)) != (long long) *missingvalue)
-							*((long long *) (result)) = *((long long *) (valueA)) >= *((long long *) (valueB)) ? *((long long *) (valueA)) : *((long long *) (valueB));
+							*((long long *) (result)) = *((long long *) (valueA)) > *((long long *) (valueB)) ? *((long long *) (valueA)) : *((long long *) (valueB));
 						else
 							*((long long *) (result)) = *((long long *) (valueA));
 					} else
@@ -12547,7 +12547,7 @@ int core_oph_max_array_multi(char *valueA, char *valueB, char *result, oph_type 
 				{
 					if (!isnan(*((float *) (valueA))) && (*((float *) (valueA)) != (float) *missingvalue)) {
 						if (!isnan(*((float *) (valueB))) && (*((float *) (valueB)) != (float) *missingvalue))
-							*((float *) (result)) = *((float *) (valueA)) >= *((float *) (valueB)) ? *((float *) (valueA)) : *((float *) (valueB));
+							*((float *) (result)) = *((float *) (valueA)) > *((float *) (valueB)) ? *((float *) (valueA)) : *((float *) (valueB));
 						else
 							*((float *) (result)) = *((float *) (valueA));
 					} else
@@ -12558,7 +12558,7 @@ int core_oph_max_array_multi(char *valueA, char *valueB, char *result, oph_type 
 				{
 					if (!isnan(*((double *) (valueA)))) {
 						if (!isnan(*((double *) (valueB))) && (*((double *) (valueA)) != (double) *missingvalue))
-							*((double *) (result)) = *((double *) (valueA)) >= *((double *) (valueB)) ? *((double *) (valueA)) : *((double *) (valueB));
+							*((double *) (result)) = *((double *) (valueA)) > *((double *) (valueB)) ? *((double *) (valueA)) : *((double *) (valueB));
 						else
 							*((double *) (result)) = *((double *) (valueA));
 					} else
@@ -12573,29 +12573,29 @@ int core_oph_max_array_multi(char *valueA, char *valueB, char *result, oph_type 
 		switch (type) {
 			case OPH_INT:
 				{
-					*((int *) (result)) = *((int *) (valueA)) >= *((int *) (valueB)) ? *((int *) (valueA)) : *((int *) (valueB));
+					*((int *) (result)) = *((int *) (valueA)) > *((int *) (valueB)) ? *((int *) (valueA)) : *((int *) (valueB));
 					break;
 				}
 			case OPH_SHORT:
 				{
-					*((short *) (result)) = *((short *) (valueA)) >= *((short *) (valueB)) ? *((short *) (valueA)) : *((short *) (valueB));
+					*((short *) (result)) = *((short *) (valueA)) > *((short *) (valueB)) ? *((short *) (valueA)) : *((short *) (valueB));
 					break;
 				}
 			case OPH_BYTE:
 				{
-					*((int *) (result)) = *((char *) (valueA)) >= *((char *) (valueB)) ? *((char *) (valueA)) : *((char *) (valueB));
+					*((int *) (result)) = *((char *) (valueA)) > *((char *) (valueB)) ? *((char *) (valueA)) : *((char *) (valueB));
 					break;
 				}
 			case OPH_LONG:
 				{
-					*((long long *) (result)) = *((long long *) (valueA)) >= *((long long *) (valueB)) ? *((long long *) (valueA)) : *((long long *) (valueB));
+					*((long long *) (result)) = *((long long *) (valueA)) > *((long long *) (valueB)) ? *((long long *) (valueA)) : *((long long *) (valueB));
 					break;
 				}
 			case OPH_FLOAT:
 				{
 					if (!isnan(*((float *) (valueA)))) {
 						if (!isnan(*((float *) (valueB))))
-							*((float *) (result)) = *((float *) (valueA)) >= *((float *) (valueB)) ? *((float *) (valueA)) : *((float *) (valueB));
+							*((float *) (result)) = *((float *) (valueA)) > *((float *) (valueB)) ? *((float *) (valueA)) : *((float *) (valueB));
 						else
 							*((float *) (result)) = *((float *) (valueA));
 					} else
@@ -12606,7 +12606,7 @@ int core_oph_max_array_multi(char *valueA, char *valueB, char *result, oph_type 
 				{
 					if (!isnan(*((double *) (valueA)))) {
 						if (!isnan(*((double *) (valueB))))
-							*((double *) (result)) = *((double *) (valueA)) >= *((double *) (valueB)) ? *((double *) (valueA)) : *((double *) (valueB));
+							*((double *) (result)) = *((double *) (valueA)) > *((double *) (valueB)) ? *((double *) (valueA)) : *((double *) (valueB));
 						else
 							*((double *) (result)) = *((double *) (valueA));
 					} else
