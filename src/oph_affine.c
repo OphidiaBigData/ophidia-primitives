@@ -26,8 +26,8 @@ int msglevel = 1;
 my_bool oph_affine_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
 	int i = 0;
-	if (args->arg_count < 3 || args->arg_count > 6) {
-		strcpy(message, "ERROR: Wrong arguments! oph_affine(input_OPH_TYPE, output_OPH_TYPE, measure, [scalar, translation, id_measure])");
+	if (args->arg_count < 3 || args->arg_count > 7) {
+		strcpy(message, "ERROR: Wrong arguments! oph_affine(input_OPH_TYPE, output_OPH_TYPE, measure, [scalar, translation, missingvalue, id_measure])");
 		return 1;
 	}
 
@@ -55,7 +55,14 @@ my_bool oph_affine_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 					strcpy(message, "ERROR: Wrong arguments to oph_affine function");
 					return 1;
 				}
-				args->arg_type[5] = INT_RESULT;
+				args->arg_type[5] = REAL_RESULT;
+				if (args->arg_count > 6) {
+					if (args->arg_type[6] == STRING_RESULT) {
+						strcpy(message, "ERROR: Wrong arguments to oph_affine function");
+						return 1;
+					}
+					args->arg_type[6] = INT_RESULT;
+				}
 			}
 		}
 	}
@@ -89,14 +96,6 @@ char *oph_affine(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long
 {
 	oph_multistring *multim;
 	oph_multistring *output;
-
-	int id = 0;
-	double scalar = 1, translation = 0;
-	if (args->arg_count > 3) {
-		scalar = *((double *) args->args[3]);
-		if (args->arg_count > 4)
-			translation = *((double *) args->args[4]);
-	}
 
 	if (!initid->extension) {
 		if (core_set_oph_multistring((oph_multistring **) (&(initid->extension)), args->args[0], &(args->lengths[0]))) {
@@ -141,8 +140,19 @@ char *oph_affine(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long
 	output = (oph_multistring *) (initid->ptr);
 	output->numelem = multim->numelem;
 
-	if (args->arg_count > 5) {
-		id = *((long long *) args->args[5]);
+	int id = 0;
+	double scalar = 1, translation = 0, missingvalue = NAN;
+	if ((args->arg_count > 3) && args->args[3])
+		scalar = *((double *) args->args[3]);
+	if ((args->arg_count > 4) && args->args[4])
+		translation = *((double *) args->args[4]);
+	if ((args->arg_count > 5) && (args->args[5])) {
+		missingvalue = *((double *) args->args[5]);
+		multim->missingvalue = &missingvalue;
+	} else
+		multim->missingvalue = NULL;
+	if ((args->arg_count > 6) && args->args[6]) {
+		id = *((long long *) args->args[6]);
 		if ((id < 0) || (id > ((oph_multistring *) (initid->ptr))->num_measure)) {
 			pmesg(1, __FILE__, __LINE__, "Wrong measure identifier. Correct values are integers in [1, %d].\n", ((oph_multistring *) (initid->ptr))->num_measure);
 			*length = 0;
