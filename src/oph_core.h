@@ -303,6 +303,12 @@ int core_oph_max_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, cha
 // Evaluates the minimum values comparing each elements of two arrays. Return an array containing the minimum values
 int core_oph_min_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char *result);
 
+// Evaluates the indexes (1 or 2) of the maximum values comparing each elements of two arrays. Return an array containing the indexes
+int core_oph_arg_max_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char *result);
+
+// Evaluates the indexes (1 or 2) of the minimum values comparing each elements of two arrays. Return an array containing the indexes
+int core_oph_arg_min_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char *result);
+
 // Return the number of elements in byte_array which have distance from value <= distance
 int core_oph_find(oph_stringPtr byte_array, double value, double distance, long *count);
 
@@ -336,6 +342,8 @@ int core_oph_abs_array_multi(char *valueA, char *valueB, char *valueO, oph_type 
 int core_oph_arg_array_multi(char *valueA, char *valueB, char *valueO, oph_type type, double *missingvalue);
 int core_oph_max_array_multi(char *valueA, char *valueB, char *valueO, oph_type type, double *missingvalue);
 int core_oph_min_array_multi(char *valueA, char *valueB, char *valueO, oph_type type, double *missingvalue);
+int core_oph_arg_max_array_multi(char *valueA, char *valueB, char *valueO, oph_type type, double *missingvalue);
+int core_oph_arg_min_array_multi(char *valueA, char *valueB, char *valueO, oph_type type, double *missingvalue);
 
 /*------------------------------------------------------------------|
  |               Array functions (END)                              |

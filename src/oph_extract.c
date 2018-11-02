@@ -88,7 +88,6 @@ char *oph_extract(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned lon
 		initid->ptr = (char *) malloc(sizeof(oph_extract_param));
 		if (!initid->ptr) {
 			pmesg(1, __FILE__, __LINE__, "Error allocating oph_extract_param\n");
-			param->error = 1;
 			*length = 0;
 			*is_null = 0;
 			*error = 1;

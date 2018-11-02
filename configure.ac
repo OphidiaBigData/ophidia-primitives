@@ -128,7 +128,7 @@ if test "x$debug" = "xyes"; then
 	AC_MSG_WARN("Debug activated")
 	OPT="-g3 -O0"
 else
-	OPT="-O2"
+	OPT="-O3"
 fi
 
 AC_SUBST(OPT)

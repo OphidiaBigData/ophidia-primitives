@@ -1,8 +1,17 @@
 
 ## New features
 
+### Added:
+
+- New primitives oph_arg_max_array and oph_arg_min_array
+
+### Changed:
+
+- Makefile to speed up building phase
+
 ### Fixed:
 
+- Bug [#11](https://github.com/OphidiaBigData/ophidia-primitives/issues/11)
 - Bug [#10](https://github.com/OphidiaBigData/ophidia-primitives/issues/10)
 
 ## v1.4.0 - 2018-07-27

@@ -166,12 +166,12 @@ char *oph_normalize(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned l
 	}
 	output = (oph_multistring *) ((initid->ptr));
 
-	if (args->arg_count > 4)
+	if ((args->arg_count > 4) && args->args[4])
 		block_count = *((long long *) (args->args[4]));
 	if (!block_count)
 		block_count = multim->numelem;
 
-	double missingvalue;
+	double missingvalue = NAN;
 	if ((args->arg_count > 5) && args->args[5]) {
 		missingvalue = *((double *) (args->args[5]));
 		multim->missingvalue = &missingvalue;
