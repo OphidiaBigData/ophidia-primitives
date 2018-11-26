@@ -251,4 +251,5 @@ GRANT EXECUTE ON FUNCTION `mysql`.`oph_is_in_subset` TO ‘%’
 GRANT EXECUTE ON FUNCTION `mysql`.`oph_id_to_index2` TO ‘%’
 GRANT EXECUTE ON FUNCTION `mysql`.`oph_id2` TO ‘%’
 GRANT EXECUTE ON FUNCTION `mysql`.`oph_id` TO ‘%’
+FLUSH PRIVILEGES;
 
