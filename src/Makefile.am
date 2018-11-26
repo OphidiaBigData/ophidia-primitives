@@ -370,6 +370,11 @@ liboph_extend_la_SOURCES = oph_extend.c oph_extend.h
 liboph_extend_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
 liboph_extend_la_LDFLAGS = -avoid-version -shared $(LIBS) -L. -loph_debug -loph_core
 
+lib_LTLIBRARIES += liboph_choquet.la
+liboph_choquet_la_SOURCES = oph_choquet.c oph_choquet.h
+liboph_choquet_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_choquet_la_LDFLAGS = -avoid-version -shared $(LIBS) -L. -loph_debug -loph_core
+
 if MATHEVAL_SUPPORT
 lib_LTLIBRARIES += liboph_predicate.la
 liboph_predicate_la_SOURCES = oph_predicate.c oph_predicate.h oph_core_matheval.c oph_core_matheval.h
