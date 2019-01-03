@@ -7,6 +7,8 @@
 
 ### Changed:
 
+- Consider value 'INDEX' for expressions of predicate primitives
+- Improve core function of predicate primitives
 - Makefile to speed up building phase
 
 ### Fixed:
