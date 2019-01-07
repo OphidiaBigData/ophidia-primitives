@@ -1,18 +1,21 @@
 
-## New features
+## Next release
 
 ### Added:
 
-- New primitives oph_affine, oph_arg_max_array and oph_arg_min_array
+- New primitives oph_affine [#14](https://github.com/OphidiaBigData/ophidia-primitives/pull/14), oph_arg_max_array and oph_arg_min_array [#13](https://github.com/OphidiaBigData/ophidia-primitives/pull/13)
 
 ### Changed:
 
-- Consider value 'INDEX' for expressions of predicate primitives
-- Improve core function of predicate primitives
+- Predicate primitives to return also index of the value [#15](https://github.com/OphidiaBigData/ophidia-primitives/pull/15)
+- Improve core function of predicate primitives [#15](https://github.com/OphidiaBigData/ophidia-primitives/pull/15)
+- Management of missing values for some primitives [#13](https://github.com/OphidiaBigData/ophidia-primitives/pull/13)
+- Some core functions to enable optimization
 - Makefile to speed up building phase
 
 ### Fixed:
 
+- Primitive SQL import scripts to perform grants on stored procedures [#12](https://github.com/OphidiaBigData/ophidia-primitives/pull/12)
 - Bug [#11](https://github.com/OphidiaBigData/ophidia-primitives/issues/11)
 - Bug [#10](https://github.com/OphidiaBigData/ophidia-primitives/issues/10)
 
