@@ -3111,15 +3111,13 @@ int core_oph_max_abs_multi(oph_multistring * byte_array, oph_multistring * resul
 						int *d, absd, max;
 						for (i = 0; i < byte_array->numelem; i++, current += byte_array->blocksize) {
 							d = (int *) current;
-							if (!isnan(*d)) {
-								absd = abs(*d);
-								if (found) {
-									if (max < absd)
-										max = absd;
-								} else {
-									found = 1;
+							absd = abs(*d);
+							if (found) {
+								if (max < absd)
 									max = absd;
-								}
+							} else {
+								found = 1;
+								max = absd;
 							}
 						}
 						if (!found || core_oph_type_cast((void *) &max, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) {
@@ -3132,15 +3130,13 @@ int core_oph_max_abs_multi(oph_multistring * byte_array, oph_multistring * resul
 						short *d, absd, max;
 						for (i = 0; i < byte_array->numelem; i++, current += byte_array->blocksize) {
 							d = (short *) current;
-							if (!isnan(*d)) {
-								absd = abs(*d);
-								if (found) {
-									if (max < absd)
-										max = absd;
-								} else {
-									found = 1;
+							absd = abs(*d);
+							if (found) {
+								if (max < absd)
 									max = absd;
-								}
+							} else {
+								found = 1;
+								max = absd;
 							}
 						}
 						if (!found || core_oph_type_cast((void *) &max, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) {
@@ -3153,15 +3149,13 @@ int core_oph_max_abs_multi(oph_multistring * byte_array, oph_multistring * resul
 						char *d, absd, max;
 						for (i = 0; i < byte_array->numelem; i++, current += byte_array->blocksize) {
 							d = (char *) current;
-							if (!isnan(*d)) {
-								absd = abs(*d);
-								if (found) {
-									if (max < absd)
-										max = absd;
-								} else {
-									found = 1;
+							absd = abs(*d);
+							if (found) {
+								if (max < absd)
 									max = absd;
-								}
+							} else {
+								found = 1;
+								max = absd;
 							}
 						}
 						if (!found || core_oph_type_cast((void *) &max, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) {
@@ -3174,15 +3168,13 @@ int core_oph_max_abs_multi(oph_multistring * byte_array, oph_multistring * resul
 						long long *d, absd, max;
 						for (i = 0; i < byte_array->numelem; i++, current += byte_array->blocksize) {
 							d = (long long *) current;
-							if (!isnan(*d)) {
-								absd = labs(*d);
-								if (found) {
-									if (max < absd)
-										max = absd;
-								} else {
-									found = 1;
+							absd = labs(*d);
+							if (found) {
+								if (max < absd)
 									max = absd;
-								}
+							} else {
+								found = 1;
+								max = absd;
 							}
 						}
 						if (!found || core_oph_type_cast((void *) &max, out_string, byte_array->type[j], result->type[j], byte_array->missingvalue)) {
