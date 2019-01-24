@@ -1,6 +1,12 @@
 
 ## v1.5.0 - 2019-01-24
 
+### Fixed:
+
+- Primitive SQL import scripts to perform grants on stored procedures [#12](https://github.com/OphidiaBigData/ophidia-primitives/pull/12)
+- Bug [#11](https://github.com/OphidiaBigData/ophidia-primitives/issues/11)
+- Bug [#10](https://github.com/OphidiaBigData/ophidia-primitives/issues/10)
+
 ### Added:
 
 - New primitives oph_affine [#14](https://github.com/OphidiaBigData/ophidia-primitives/pull/14), oph_arg_max_array and oph_arg_min_array [#13](https://github.com/OphidiaBigData/ophidia-primitives/pull/13)
@@ -12,12 +18,6 @@
 - Management of missing values for some primitives [#13](https://github.com/OphidiaBigData/ophidia-primitives/pull/13)
 - Some core functions to enable optimization
 - Makefile to speed up building phase
-
-### Fixed:
-
-- Primitive SQL import scripts to perform grants on stored procedures [#12](https://github.com/OphidiaBigData/ophidia-primitives/pull/12)
-- Bug [#11](https://github.com/OphidiaBigData/ophidia-primitives/issues/11)
-- Bug [#10](https://github.com/OphidiaBigData/ophidia-primitives/issues/10)
 
 ## v1.4.0 - 2018-07-27
 
