@@ -1031,17 +1031,6 @@ int core_oph_dump(oph_stringPtr byte_array, char *result, int encoding)
 
 }
 
-int core_oph_convert(oph_stringPtr byte_array, void *result)
-{
-	if (!byte_array || !byte_array->content || !result) {
-		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
-		return 1;
-	}
-
-	memcpy(result, (void *) (byte_array->content), byte_array->elemsize);
-	return 0;
-}
-
 /*------------------------------------------------------------------|
  |               Single element functions (END)                     |
  |------------------------------------------------------------------*/

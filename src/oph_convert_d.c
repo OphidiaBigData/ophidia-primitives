@@ -107,15 +107,27 @@ double oph_convert_d(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *er
 
 	switch (measure->type) {
 		case OPH_DOUBLE:{
-				double tmp;
-				core_oph_convert(measure, (void *) (&tmp));
-				result = (double) tmp;
+				result = *((double *) measure->content);
 				break;
 			}
 		case OPH_FLOAT:{
-				float tmp;
-				core_oph_convert(measure, (void *) (&tmp));
-				result = (double) tmp;
+				result = *((float *) measure->content);
+				break;
+			}
+		case OPH_INT:{
+				result = *((int *) measure->content);
+				break;
+			}
+		case OPH_SHORT:{
+				result = *((short *) measure->content);
+				break;
+			}
+		case OPH_BYTE:{
+				result = *((char *) measure->content);
+				break;
+			}
+		case OPH_LONG:{
+				result = *((long long *) measure->content);
 				break;
 			}
 		default:
