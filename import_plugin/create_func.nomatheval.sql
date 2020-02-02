@@ -112,6 +112,7 @@ DROP FUNCTION IF EXISTS oph_padding;
 DROP FUNCTION IF EXISTS oph_replace;
 DROP FUNCTION IF EXISTS oph_normalize;
 DROP FUNCTION IF EXISTS oph_sequence;
+DROP FUNCTION IF EXISTS oph_zonal_stats;
 
 DELIMITER //
 CREATE PROCEDURE mysql.oph_drill_down(IN table_in VARCHAR(100), IN outer_size INT, IN inner_size INT, IN oph_type VARCHAR(30), IN table_out VARCHAR(100), IN compressed INT)
@@ -246,6 +247,7 @@ CREATE FUNCTION oph_padding RETURNS STRING SONAME 'liboph_padding.so';
 CREATE FUNCTION oph_replace RETURNS STRING SONAME 'liboph_replace.so';
 CREATE FUNCTION oph_normalize RETURNS STRING SONAME 'liboph_normalize.so';
 CREATE FUNCTION oph_sequence RETURNS STRING SONAME 'liboph_sequence.so';
+CREATE FUNCTION oph_zonal_stats RETURNS STRING SONAME 'liboph_zonal_stats.so';
 
 GRANT EXECUTE ON PROCEDURE `mysql`.`oph_subset` TO `%`;
 GRANT EXECUTE ON PROCEDURE `mysql`.`oph_drill_down` TO `%`;
