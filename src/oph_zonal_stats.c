@@ -276,11 +276,11 @@ int core_oph_zonal_stats_multi(oph_multistring * byte_array, oph_multistring * r
 					break;
 				}
 			case OPH_INT:{
-					char valid = 0;
+					char valid;
 					int mv = byte_array->missingvalue ? *byte_array->missingvalue : 0, tmp, target;
 					for (i = 0; i < byte_array->numelem; i++) {
 						tmp = mv;
-						cc = 0;
+						valid = cc = 0;
 
 						mmx = x - buffer;
 						if (mmx < 0)
@@ -325,11 +325,11 @@ int core_oph_zonal_stats_multi(oph_multistring * byte_array, oph_multistring * r
 					break;
 				}
 			case OPH_LONG:{
-					char valid = 0;
+					char valid;
 					long long mv = byte_array->missingvalue ? *byte_array->missingvalue : 0, tmp, target;
 					for (i = 0; i < byte_array->numelem; i++) {
 						tmp = mv;
-						cc = 0;
+						valid = cc = 0;
 
 						mmx = x - buffer;
 						if (mmx < 0)
@@ -374,12 +374,12 @@ int core_oph_zonal_stats_multi(oph_multistring * byte_array, oph_multistring * r
 					break;
 				}
 			case OPH_SHORT:{
-					char valid = 0;
+					char valid;
 					short mv = byte_array->missingvalue ? *byte_array->missingvalue : 0, tmp, target;
 					for (i = 0; i < byte_array->numelem; i++) {
 						tmp = mv;
 						tmp = mv;
-						cc = 0;
+						valid = cc = 0;
 
 						mmx = x - buffer;
 						if (mmx < 0)
@@ -424,12 +424,12 @@ int core_oph_zonal_stats_multi(oph_multistring * byte_array, oph_multistring * r
 					break;
 				}
 			case OPH_BYTE:{
-					char valid = 0;
+					char valid;
 					char mv = byte_array->missingvalue ? *byte_array->missingvalue : 0, tmp, target;
 					for (i = 0; i < byte_array->numelem; i++) {
 						tmp = mv;
 						tmp = mv;
-						cc = 0;
+						valid = cc = 0;
 
 						mmx = x - buffer;
 						if (mmx < 0)
