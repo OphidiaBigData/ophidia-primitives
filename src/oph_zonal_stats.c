@@ -20,7 +20,7 @@
 
 int msglevel = 1;
 
-void zs_oper_double(oph_oper operator, double *tmp, double target)
+void zs_oper_double(oph_oper operator, double *tmp, double target, int *cc)
 {
 
 	switch (operator) {
@@ -35,8 +35,10 @@ void zs_oper_double(oph_oper operator, double *tmp, double target)
 				*tmp = target;
 			break;
 
-		case OPH_SUM:
 		case OPH_AVG:
+			++*cc;
+
+		case OPH_SUM:
 			*tmp += target;
 			break;
 
@@ -44,7 +46,7 @@ void zs_oper_double(oph_oper operator, double *tmp, double target)
 	}
 }
 
-void zs_oper_float(oph_oper operator, float *tmp, float target)
+void zs_oper_float(oph_oper operator, float *tmp, float target, int *cc)
 {
 
 	switch (operator) {
@@ -59,8 +61,10 @@ void zs_oper_float(oph_oper operator, float *tmp, float target)
 				*tmp = target;
 			break;
 
-		case OPH_SUM:
 		case OPH_AVG:
+			++*cc;
+
+		case OPH_SUM:
 			*tmp += target;
 			break;
 
@@ -68,7 +72,32 @@ void zs_oper_float(oph_oper operator, float *tmp, float target)
 	}
 }
 
-void zs_oper_int(oph_oper operator, int *tmp, int target)
+void zs_oper_int(oph_oper operator, int *tmp, int target, int *cc)
+{
+
+	switch (operator) {
+
+		case OPH_MAX:
+			if (*tmp < target)
+				*tmp = target;
+			break;
+
+		case OPH_MIN:
+			if (*tmp > target)
+				*tmp = target;
+			break;
+		case OPH_AVG:
+			++*cc;
+
+		case OPH_SUM:
+			*tmp += target;
+			break;
+
+		default:;
+	}
+}
+
+void zs_oper_long(oph_oper operator, long long *tmp, long long target, int *cc)
 {
 
 	switch (operator) {
@@ -83,8 +112,10 @@ void zs_oper_int(oph_oper operator, int *tmp, int target)
 				*tmp = target;
 			break;
 
-		case OPH_SUM:
 		case OPH_AVG:
+			++*cc;
+
+		case OPH_SUM:
 			*tmp += target;
 			break;
 
@@ -92,7 +123,7 @@ void zs_oper_int(oph_oper operator, int *tmp, int target)
 	}
 }
 
-void zs_oper_long(oph_oper operator, long long *tmp, long long target)
+void zs_oper_short(oph_oper operator, short *tmp, short target, int *cc)
 {
 
 	switch (operator) {
@@ -107,8 +138,10 @@ void zs_oper_long(oph_oper operator, long long *tmp, long long target)
 				*tmp = target;
 			break;
 
-		case OPH_SUM:
 		case OPH_AVG:
+			++*cc;
+
+		case OPH_SUM:
 			*tmp += target;
 			break;
 
@@ -116,7 +149,7 @@ void zs_oper_long(oph_oper operator, long long *tmp, long long target)
 	}
 }
 
-void zs_oper_short(oph_oper operator, short *tmp, short target)
+void zs_oper_byte(oph_oper operator, char *tmp, char target, int *cc)
 {
 
 	switch (operator) {
@@ -131,8 +164,10 @@ void zs_oper_short(oph_oper operator, short *tmp, short target)
 				*tmp = target;
 			break;
 
-		case OPH_SUM:
 		case OPH_AVG:
+			++*cc;
+
+		case OPH_SUM:
 			*tmp += target;
 			break;
 
@@ -140,33 +175,9 @@ void zs_oper_short(oph_oper operator, short *tmp, short target)
 	}
 }
 
-void zs_oper_byte(oph_oper operator, char *tmp, char target)
+int core_oph_zonal_stats_multi(oph_multistring * byte_array, oph_multistring * result, int id, int buffer, oph_oper operator, int blocksize, char sampling)
 {
-
-	switch (operator) {
-
-		case OPH_MAX:
-			if (*tmp < target)
-				*tmp = target;
-			break;
-
-		case OPH_MIN:
-			if (*tmp > target)
-				*tmp = target;
-			break;
-
-		case OPH_SUM:
-		case OPH_AVG:
-			*tmp += target;
-			break;
-
-		default:;
-	}
-}
-
-int core_oph_zonal_stats_multi(oph_multistring * byte_array, oph_multistring * result, int id, int buffer, oph_oper operator, int blocksize)
-{
-	int i, j, js, je, cc, x, y, xi, yi, mx, my, mmx, mmy = byte_array->numelem / blocksize;	// Skip the third dimension
+	int i, j, js, je, cc, x, y, xi, yi, mx, my, mmx, mmy = byte_array->numelem / blocksize, buffer2 = buffer << 1;	// Skip the third dimension
 	char *in_string = byte_array->content, *out_string = result->content;
 
 	if (id <= 0) {
@@ -189,21 +200,26 @@ int core_oph_zonal_stats_multi(oph_multistring * byte_array, oph_multistring * r
 		switch (byte_array->type[j]) {
 			case OPH_DOUBLE:{
 					double mv = byte_array->missingvalue ? *byte_array->missingvalue : NAN, tmp, target;
-					for (i = 0; i < byte_array->numelem; i++) {
+					for (i = 0; i < result->numelem; i++) {
 						tmp = mv;
 						cc = 0;
+
+						if (sampling) {
+							x = buffer + (i * buffer2) % blocksize;
+							y = buffer + (i * buffer2 / blocksize) * buffer2;
+						}
 
 						mmx = x - buffer;
 						if (mmx < 0)
 							mmx = 0;
-						mx = x + buffer;
+						mx = x + (buffer ? buffer - 1 : 0);
 						if (mx >= blocksize)
 							mx = blocksize - 1;
 
 						yi = y - buffer;
 						if (yi < 0)
 							yi = 0;
-						my = y + buffer;
+						my = y + (buffer ? buffer - 1 : 0);
 						if (my >= mmy)
 							my = mmy - 1;
 
@@ -212,10 +228,11 @@ int core_oph_zonal_stats_multi(oph_multistring * byte_array, oph_multistring * r
 								target = *(double *) (in_string + (xi + yi * blocksize) * byte_array->blocksize);
 								if (!isnan(target) && (target != mv)) {
 									if (!isnan(tmp) && (tmp != mv))
-										zs_oper_double(operator, &tmp, target);
-									else
+										zs_oper_double(operator, &tmp, target, &cc);
+									else {
 										tmp = target;
-									cc++;
+										cc++;
+									}
 								}
 							}
 						}
@@ -223,31 +240,38 @@ int core_oph_zonal_stats_multi(oph_multistring * byte_array, oph_multistring * r
 							tmp /= cc;
 						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), byte_array->type[j], result->type[j], byte_array->missingvalue))
 							return -1;
-						x++;
-						if (x >= blocksize) {
-							x = 0;
-							y++;	// Skip the third dimension
+						if (!sampling) {
+							x++;
+							if (x >= blocksize) {
+								x = 0;
+								y++;	// Skip the third dimension
+							}
 						}
 					}
 					break;
 				}
 			case OPH_FLOAT:{
 					float mv = byte_array->missingvalue ? *byte_array->missingvalue : NAN, tmp, target;
-					for (i = 0; i < byte_array->numelem; i++) {
+					for (i = 0; i < result->numelem; i++) {
 						tmp = mv;
 						cc = 0;
+
+						if (sampling) {
+							x = buffer + (i * buffer2) % blocksize;
+							y = buffer + (i * buffer2 / blocksize) * buffer2;
+						}
 
 						mmx = x - buffer;
 						if (mmx < 0)
 							mmx = 0;
-						mx = x + buffer;
+						mx = x + (buffer ? buffer - 1 : 0);
 						if (mx >= blocksize)
 							mx = blocksize - 1;
 
 						yi = y - buffer;
 						if (yi < 0)
 							yi = 0;
-						my = y + buffer;
+						my = y + (buffer ? buffer - 1 : 0);
 						if (my >= mmy)
 							my = mmy - 1;
 
@@ -256,10 +280,11 @@ int core_oph_zonal_stats_multi(oph_multistring * byte_array, oph_multistring * r
 								target = *(float *) (in_string + (xi + yi * blocksize) * byte_array->blocksize);
 								if (!isnan(target) && (target != mv)) {
 									if (!isnan(tmp) && (tmp != mv))
-										zs_oper_float(operator, &tmp, target);
-									else
+										zs_oper_float(operator, &tmp, target, &cc);
+									else {
 										tmp = target;
-									cc++;
+										cc++;
+									}
 								}
 							}
 						}
@@ -267,32 +292,38 @@ int core_oph_zonal_stats_multi(oph_multistring * byte_array, oph_multistring * r
 							tmp /= cc;
 						if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), byte_array->type[j], result->type[j], byte_array->missingvalue))
 							return -1;
-						x++;
-						if (x >= blocksize) {
-							x = 0;
-							y++;	// Skip the third dimension
+						if (!sampling) {
+							x++;
+							if (x >= blocksize) {
+								x = 0;
+								y++;	// Skip the third dimension
+							}
 						}
 					}
 					break;
 				}
 			case OPH_INT:{
-					char valid;
 					int mv = byte_array->missingvalue ? *byte_array->missingvalue : 0, tmp, target;
-					for (i = 0; i < byte_array->numelem; i++) {
+					for (i = 0; i < result->numelem; i++) {
 						tmp = mv;
-						valid = cc = 0;
+						cc = 0;
+
+						if (sampling) {
+							x = buffer + (i * buffer2) % blocksize;
+							y = buffer + (i * buffer2 / blocksize) * buffer2;
+						}
 
 						mmx = x - buffer;
 						if (mmx < 0)
 							mmx = 0;
-						mx = x + buffer;
+						mx = x + (buffer ? buffer - 1 : 0);
 						if (mx >= blocksize)
 							mx = blocksize - 1;
 
 						yi = y - buffer;
 						if (yi < 0)
 							yi = 0;
-						my = y + buffer;
+						my = y + (buffer ? buffer - 1 : 0);
 						if (my >= mmy)
 							my = mmy - 1;
 
@@ -300,13 +331,12 @@ int core_oph_zonal_stats_multi(oph_multistring * byte_array, oph_multistring * r
 							for (xi = mmx; xi <= mx; xi++) {
 								target = *(int *) (in_string + (xi + yi * blocksize) * byte_array->blocksize);
 								if (!byte_array->missingvalue || (target != mv)) {
-									if (valid && (!byte_array->missingvalue || (tmp != mv)))
-										zs_oper_int(operator, &tmp, target);
+									if (cc && (!byte_array->missingvalue || (tmp != mv)))
+										zs_oper_int(operator, &tmp, target, &cc);
 									else {
 										tmp = target;
-										valid = 1;
+										cc++;
 									}
-									cc++;
 								}
 							}
 						}
@@ -316,32 +346,38 @@ int core_oph_zonal_stats_multi(oph_multistring * byte_array, oph_multistring * r
 								return -1;
 						} else if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), byte_array->type[j], result->type[j], byte_array->missingvalue))
 							return -1;
-						x++;
-						if (x >= blocksize) {
-							x = 0;
-							y++;	// Skip the third dimension
+						if (!sampling) {
+							x++;
+							if (x >= blocksize) {
+								x = 0;
+								y++;	// Skip the third dimension
+							}
 						}
 					}
 					break;
 				}
 			case OPH_LONG:{
-					char valid;
 					long long mv = byte_array->missingvalue ? *byte_array->missingvalue : 0, tmp, target;
-					for (i = 0; i < byte_array->numelem; i++) {
+					for (i = 0; i < result->numelem; i++) {
 						tmp = mv;
-						valid = cc = 0;
+						cc = 0;
+
+						if (sampling) {
+							x = buffer + (i * buffer2) % blocksize;
+							y = buffer + (i * buffer2 / blocksize) * buffer2;
+						}
 
 						mmx = x - buffer;
 						if (mmx < 0)
 							mmx = 0;
-						mx = x + buffer;
+						mx = x + (buffer ? buffer - 1 : 0);
 						if (mx >= blocksize)
 							mx = blocksize - 1;
 
 						yi = y - buffer;
 						if (yi < 0)
 							yi = 0;
-						my = y + buffer;
+						my = y + (buffer ? buffer - 1 : 0);
 						if (my >= mmy)
 							my = mmy - 1;
 
@@ -349,13 +385,12 @@ int core_oph_zonal_stats_multi(oph_multistring * byte_array, oph_multistring * r
 							for (xi = mmx; xi <= mx; xi++) {
 								target = *(long long *) (in_string + (xi + yi * blocksize) * byte_array->blocksize);
 								if (!byte_array->missingvalue || (target != mv)) {
-									if (valid && (!byte_array->missingvalue || (tmp != mv)))
-										zs_oper_long(operator, &tmp, target);
+									if (cc && (!byte_array->missingvalue || (tmp != mv)))
+										zs_oper_long(operator, &tmp, target, &cc);
 									else {
 										tmp = target;
-										valid = 1;
+										cc++;
 									}
-									cc++;
 								}
 							}
 						}
@@ -365,33 +400,40 @@ int core_oph_zonal_stats_multi(oph_multistring * byte_array, oph_multistring * r
 								return -1;
 						} else if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), byte_array->type[j], result->type[j], byte_array->missingvalue))
 							return -1;
-						x++;
-						if (x >= blocksize) {
-							x = 0;
-							y++;	// Skip the third dimension
+						if (!sampling) {
+							x++;
+							if (x >= blocksize) {
+								x = 0;
+								y++;	// Skip the third dimension
+							}
 						}
 					}
 					break;
 				}
 			case OPH_SHORT:{
-					char valid;
 					short mv = byte_array->missingvalue ? *byte_array->missingvalue : 0, tmp, target;
-					for (i = 0; i < byte_array->numelem; i++) {
+					for (i = 0; i < result->numelem; i++) {
+
 						tmp = mv;
 						tmp = mv;
-						valid = cc = 0;
+						cc = 0;
+
+						if (sampling) {
+							x = buffer + (i * buffer2) % blocksize;
+							y = buffer + (i * buffer2 / blocksize) * buffer2;
+						}
 
 						mmx = x - buffer;
 						if (mmx < 0)
 							mmx = 0;
-						mx = x + buffer;
+						mx = x + (buffer ? buffer - 1 : 0);
 						if (mx >= blocksize)
 							mx = blocksize - 1;
 
 						yi = y - buffer;
 						if (yi < 0)
 							yi = 0;
-						my = y + buffer;
+						my = y + (buffer ? buffer - 1 : 0);
 						if (my >= mmy)
 							my = mmy - 1;
 
@@ -399,13 +441,12 @@ int core_oph_zonal_stats_multi(oph_multistring * byte_array, oph_multistring * r
 							for (xi = mmx; xi <= mx; xi++) {
 								target = *(short *) (in_string + (xi + yi * blocksize) * byte_array->blocksize);
 								if (!byte_array->missingvalue || (target != mv)) {
-									if (valid && (!byte_array->missingvalue || (tmp != mv)))
-										zs_oper_short(operator, &tmp, target);
+									if (cc && (!byte_array->missingvalue || (tmp != mv)))
+										zs_oper_short(operator, &tmp, target, &cc);
 									else {
 										tmp = target;
-										valid = 1;
+										cc++;
 									}
-									cc++;
 								}
 							}
 						}
@@ -415,33 +456,39 @@ int core_oph_zonal_stats_multi(oph_multistring * byte_array, oph_multistring * r
 								return -1;
 						} else if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), byte_array->type[j], result->type[j], byte_array->missingvalue))
 							return -1;
-						x++;
-						if (x >= blocksize) {
-							x = 0;
-							y++;	// Skip the third dimension
+						if (!sampling) {
+							x++;
+							if (x >= blocksize) {
+								x = 0;
+								y++;	// Skip the third dimension
+							}
 						}
 					}
 					break;
 				}
 			case OPH_BYTE:{
-					char valid;
 					char mv = byte_array->missingvalue ? *byte_array->missingvalue : 0, tmp, target;
-					for (i = 0; i < byte_array->numelem; i++) {
+					for (i = 0; i < result->numelem; i++) {
 						tmp = mv;
 						tmp = mv;
-						valid = cc = 0;
+						cc = 0;
+
+						if (sampling) {
+							x = buffer + (i * buffer2) % blocksize;
+							y = buffer + (i * buffer2 / blocksize) * buffer2;
+						}
 
 						mmx = x - buffer;
 						if (mmx < 0)
 							mmx = 0;
-						mx = x + buffer;
+						mx = x + (buffer ? buffer - 1 : 0);
 						if (mx >= blocksize)
 							mx = blocksize - 1;
 
 						yi = y - buffer;
 						if (yi < 0)
 							yi = 0;
-						my = y + buffer;
+						my = y + (buffer ? buffer - 1 : 0);
 						if (my >= mmy)
 							my = mmy - 1;
 
@@ -449,13 +496,12 @@ int core_oph_zonal_stats_multi(oph_multistring * byte_array, oph_multistring * r
 							for (xi = mmx; xi <= mx; xi++) {
 								target = *(char *) (in_string + (xi + yi * blocksize) * byte_array->blocksize);
 								if (!byte_array->missingvalue || (target != mv)) {
-									if (valid && (!byte_array->missingvalue || (tmp != mv)))
-										zs_oper_byte(operator, &tmp, target);
+									if (cc && (!byte_array->missingvalue || (tmp != mv)))
+										zs_oper_byte(operator, &tmp, target, &cc);
 									else {
 										tmp = target;
-										valid = 1;
+										cc++;
 									}
-									cc++;
 								}
 							}
 						}
@@ -465,10 +511,12 @@ int core_oph_zonal_stats_multi(oph_multistring * byte_array, oph_multistring * r
 								return -1;
 						} else if (core_oph_type_cast((void *) (&tmp), out_string + (i * result->blocksize), byte_array->type[j], result->type[j], byte_array->missingvalue))
 							return -1;
-						x++;
-						if (x >= blocksize) {
-							x = 0;
-							y++;	// Skip the third dimension
+						if (!sampling) {
+							x++;
+							if (x >= blocksize) {
+								x = 0;
+								y++;	// Skip the third dimension
+							}
 						}
 					}
 					break;
@@ -490,8 +538,8 @@ int core_oph_zonal_stats_multi(oph_multistring * byte_array, oph_multistring * r
 my_bool oph_zonal_stats_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
 	int i = 0;
-	if (args->arg_count < 3 || args->arg_count > 8) {
-		strcpy(message, "ERROR: Wrong arguments! oph_zonal_stats(input_OPH_TYPE, output_OPH_TYPE, measure, [buffer], [operator], [missing value], [blocksize], [id_measure])");
+	if (args->arg_count < 3 || args->arg_count > 9) {
+		strcpy(message, "ERROR: Wrong arguments! oph_zonal_stats(input_OPH_TYPE, output_OPH_TYPE, measure, [buffer], [operator], [missing value], [blocksize], [sampling], [id_measure])");
 		return 1;
 	}
 
@@ -522,11 +570,17 @@ my_bool oph_zonal_stats_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 					}
 					args->arg_type[6] = INT_RESULT;
 					if (args->arg_count > 7) {
-						if (args->arg_type[7] == STRING_RESULT) {
+						if (args->arg_type[7] != STRING_RESULT) {
 							strcpy(message, "ERROR: Wrong arguments to oph_zonal_stats function");
 							return 1;
 						}
-						args->arg_type[7] = INT_RESULT;
+						if (args->arg_count > 8) {
+							if (args->arg_type[8] == STRING_RESULT) {
+								strcpy(message, "ERROR: Wrong arguments to oph_zonal_stats function");
+								return 1;
+							}
+							args->arg_type[8] = INT_RESULT;
+						}
 					}
 				}
 			}
@@ -609,6 +663,7 @@ char *oph_zonal_stats(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned
 	int buffer = 0, blocksize = 1;
 	double missingvalue = NAN;
 	oph_oper operator = DEFAULT_OPER;
+	char sampling = 1;
 	if ((args->arg_count > 3) && args->args[3]) {
 		buffer = *((long long *) args->args[3]);
 		if (buffer < 0) {
@@ -636,8 +691,8 @@ char *oph_zonal_stats(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned
 		multim->missingvalue = NULL;
 	if ((args->arg_count > 6) && args->args[6]) {
 		blocksize = *((long long *) args->args[6]);
-		if (blocksize < 1) {
-			pmesg(1, __FILE__, __LINE__, "Wrong block size.\n");
+		if ((blocksize < 1) || (multim->numelem % blocksize)) {
+			pmesg(1, __FILE__, __LINE__, "Wrong block size. Use a multiplier of %d\n", multim->numelem);
 			*length = 0;
 			*is_null = 0;
 			*error = 1;
@@ -645,7 +700,20 @@ char *oph_zonal_stats(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned
 		}
 	}
 	if ((args->arg_count > 7) && args->args[7]) {
-		id = *((long long *) args->args[7]);
+		if (!strncasecmp(args->args[7], "no", 2))
+			sampling = 0;
+		else if (strncasecmp(args->args[7], "yes", 3)) {
+			pmesg(1, __FILE__, __LINE__, "Wrong sampling flag. Correct values are integers are 'yes' and 'no'");
+			*length = 0;
+			*is_null = 0;
+			*error = 1;
+			return NULL;
+		}
+	}
+	if (!buffer)
+		sampling = 0;
+	if ((args->arg_count > 8) && args->args[8]) {
+		id = *((long long *) args->args[8]);
 		if ((id < 0) || (id > ((oph_multistring *) (initid->ptr))->num_measure)) {
 			pmesg(1, __FILE__, __LINE__, "Wrong measure identifier. Correct values are integers in [1, %d].\n", ((oph_multistring *) (initid->ptr))->num_measure);
 			*length = 0;
@@ -657,6 +725,16 @@ char *oph_zonal_stats(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned
 
 	output = (oph_multistring *) (initid->ptr);
 	output->numelem = multim->numelem;
+	if (sampling) {
+		if ((multim->numelem / blocksize) % (buffer << 1)) {
+			pmesg(1, __FILE__, __LINE__, "Wrong buffer size. Use a multiplier of %d\n", multim->numelem / blocksize);
+			*length = 0;
+			*is_null = 0;
+			*error = 1;
+			return NULL;
+		}
+		output->numelem /= 4 * buffer * buffer;
+	}
 
 	/* Allocate the right space for the result set */
 	if (!output->content) {
@@ -670,7 +748,7 @@ char *oph_zonal_stats(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned
 		}
 	}
 
-	if (core_oph_zonal_stats_multi(multim, output, id, buffer, operator, blocksize)) {
+	if (core_oph_zonal_stats_multi(multim, output, id, buffer, operator, blocksize, sampling)) {
 		pmesg(1, __FILE__, __LINE__, "Unable to compute result\n");
 		*length = 0;
 		*is_null = 1;
