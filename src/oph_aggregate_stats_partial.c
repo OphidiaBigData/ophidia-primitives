@@ -137,6 +137,10 @@ void oph_aggregate_stats_partial_deinit(UDF_INIT * initid)
 			free(dat->partials);
 			dat->partials = NULL;
 		}
+		if (dat->mask.length) {
+			free(dat->mask.length);
+			dat->mask.length = NULL;
+		}
 		if (dat->mask.content) {
 			free(dat->mask.content);
 			dat->mask.content = NULL;

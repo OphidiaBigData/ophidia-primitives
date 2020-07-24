@@ -129,15 +129,33 @@ int core_oph_multistring_cast(oph_multistring * input, oph_multistring * output,
 
 	in_tmp = input->content;
 	out_tmp = output->content;
-	for (j = 0; j < input->num_measure; j++) {
-		for (i = 0; i < output->numelem; i++) {
-			if (core_oph_type_cast((in_tmp) + (i * input->blocksize), (out_tmp) + (i * output->blocksize), input->type[j], output->type[j], missingvalue)) {
-				pmesg(1, __FILE__, __LINE__, "Unable to convert elements type\n");
-				return -1;
+	char fill = 0;
+	if (output->numelem > input->numelem)
+		fill = 1;
+
+	if (!fill) {
+		for (j = 0; j < input->num_measure; j++) {
+			for (i = 0; i < output->numelem; i++) {
+				if (core_oph_type_cast((in_tmp) + (i * input->blocksize), (out_tmp) + (i * output->blocksize), input->type[j], output->type[j], missingvalue)) {
+					pmesg(1, __FILE__, __LINE__, "Unable to convert elements type\n");
+					return -1;
+				}
 			}
+			in_tmp += input->elemsize[j];
+			out_tmp += output->elemsize[j];
 		}
-		in_tmp += input->elemsize[j];
-		out_tmp += output->elemsize[j];
+	} else {
+		for (j = 0; j < input->num_measure; j++) {
+			for (i = 0; i < input->numelem; i++) {
+				if (core_oph_type_cast((in_tmp) + (i * input->blocksize), (out_tmp) + (i * output->blocksize), input->type[j], output->type[j], missingvalue)) {
+					pmesg(1, __FILE__, __LINE__, "Unable to convert elements type\n");
+					return -1;
+				}
+			}
+			memset(out_tmp + (i * output->blocksize), 0, output->numelem - input->numelem);
+			in_tmp += input->elemsize[j];
+			out_tmp += output->elemsize[j];
+		}
 	}
 	return 0;
 }
