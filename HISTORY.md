@@ -1,4 +1,15 @@
 
+## v1.5.0 - 2020-07-27
+
+### Fixed:
+
+- Bug in core functions when data is copied from arrays with different lenght
+- Bug in primitives oph_gsl_quantile, oph_aggregate_stats and gsl_fit_linear_coeff
+
+### Changed:
+
+- Some convertion functions
+
 ## v1.5.0 - 2019-01-24
 
 ### Fixed:

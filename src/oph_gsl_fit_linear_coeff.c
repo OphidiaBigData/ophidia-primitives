@@ -264,7 +264,7 @@ char *oph_gsl_fit_linear_coeff(UDF_INIT * initid, UDF_ARGS * args, char *result,
 				*d = (double) l;
 		}
 		if (args->arg_count > 4) {
-			if (args->lengths[4] > OPH_GSL_FIT_LINEAR_COEFF_NUMBER + 1) {//+ 1 for I/O server to consider additional char for \0
+			if (args->lengths[4] > OPH_GSL_FIT_LINEAR_COEFF_NUMBER + 1) {	//+ 1 for I/O server to consider additional char for \0
 
 				param->error = 1;
 				pmesg(1, __FILE__, __LINE__, "Bad input mask\n");

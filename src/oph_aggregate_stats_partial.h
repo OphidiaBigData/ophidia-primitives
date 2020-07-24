@@ -44,7 +44,7 @@
 // xxxxxx1 : min
 // 1111111 : all
 // 101     : mean + std dev
-#define MASK_LEN     8 //for I/O server 7+1 an additional space for \0
+#define MASK_LEN     8		//for I/O server 7+1 an additional space for \0
 #define DEFAULT_MASK "1111111"
 
 typedef struct oph_agg_stats_partial_data {
