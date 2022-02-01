@@ -55,7 +55,7 @@ PKG_CHECK_MODULES(GSL,[gsl >= 1.8])
 AC_ARG_WITH(gsl_header_path,
        [  --with-gsl-header-path=PATH        Location of GSL includes directory],
        [
-        gsl_header_path="$withval"
+        gsl_header_path="-I$withval"
        ],
      [
     gsl_header_path="$GSL_CFLAGS"
@@ -63,15 +63,15 @@ AC_ARG_WITH(gsl_header_path,
 AC_ARG_WITH(gsl_lib_path,
        [  --with-gsl-lib-path=PATH       Location of GSL lib],
        [
-        gsl_lib_path="$withval"
+        gsl_lib_path="-L$withval"
        ],
      [
    gsl_lib_path="$GSL_LIBS"
      ])
-GSL_CFLAGS="$gsl_header_path"
-AC_SUBST(GSL_CFLAGS)
-GSL_LIBS="$gsl_lib_path"
-AC_SUBST(GSL_LIBS)
+GSL_INCLUDE="$gsl_header_path"
+AC_SUBST(GSL_INCLUDE)
+GSL_LIB="$gsl_lib_path"
+AC_SUBST(GSL_LIB)
 
 GSL_SUPPORT=
 AC_ARG_ENABLE(gsl_lib,
