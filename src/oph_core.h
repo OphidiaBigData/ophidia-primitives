@@ -121,7 +121,9 @@ typedef struct {
 	oph_multistring *measure;
 	oph_multistring *result;
 	void *extend;
+	int n_measure;
 	int (*core_oph_oper) (char *valueA, char *valueB, char *result, oph_type type, double *missingvalue);
+	int (*core_oph_oper2) (char **valueN, int n_measure, char *result, oph_type type, double *missingvalue);
 	int (*core_oph_oper_multi) (oph_multistring * byte_array, oph_multistring * res);
 	int (*core_oph_oper_multi_ext) (oph_multistring * byte_array, oph_multistring * res, void *extend);
 } oph_generic_param_multi;
@@ -330,6 +332,13 @@ int core_oph_exponential_moving_avg_multi(oph_multistring * byte_array, oph_mult
 
 // Compute a binary operation on the array
 int core_oph_oper_array_multi(oph_generic_param_multi * param);
+int core_oph_sum_array_multicube(char **valueN, int n, char *valueO, oph_type type, double *missingvalue);
+int core_oph_avg_array_multicube(char **valueN, int n, char *valueO, oph_type type, double *missingvalue);
+int core_oph_mul_array_multicube(char **valueN, int n, char *valueO, oph_type type, double *missingvalue);
+int core_oph_max_array_multicube(char **valueN, int n, char *valueO, oph_type type, double *missingvalue);
+int core_oph_min_array_multicube(char **valueN, int n, char *valueO, oph_type type, double *missingvalue);
+int core_oph_arg_max_array_multicube(char **valueN, int n, char *valueO, oph_type type, double *missingvalue);
+int core_oph_arg_min_array_multicube(char **valueN, int n, char *valueO, oph_type type, double *missingvalue);
 int core_oph_sum_array_multi(char *valueA, char *valueB, char *valueO, oph_type type, double *missingvalue);
 int core_oph_mul_array_multi(char *valueA, char *valueB, char *valueO, oph_type type, double *missingvalue);
 int core_oph_mask_array_multi(char *valueA, char *valueB, char *valueO, oph_type type, double *missingvalue);

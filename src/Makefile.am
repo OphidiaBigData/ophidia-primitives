@@ -265,6 +265,11 @@ liboph_value_to_bin_la_SOURCES = oph_value_to_bin.c oph_value_to_bin.h
 liboph_value_to_bin_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
 liboph_value_to_bin_la_LDFLAGS = -avoid-version -shared $(LIBS) -L. -loph_debug -loph_core
 
+lib_LTLIBRARIES += liboph_operation_array.la
+liboph_operation_array_la_SOURCES = oph_operation_array.c oph_operation_array.h
+liboph_operation_array_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_operation_array_la_LDFLAGS = -avoid-version -shared $(LIBS) -L. -loph_debug -loph_core
+
 lib_LTLIBRARIES += liboph_sum_array.la
 liboph_sum_array_la_SOURCES = oph_sum_array.c oph_sum_array.h
 liboph_sum_array_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
