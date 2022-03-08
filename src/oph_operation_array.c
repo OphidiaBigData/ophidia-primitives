@@ -61,7 +61,7 @@ void oph_operation_array_deinit(UDF_INIT * initid)
 
 char *oph_operation_array(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
 {
-	int i, j;
+	int i, j, n = args->arg_count - 2;
 
 	if (*error) {
 		*length = 0;
@@ -69,7 +69,7 @@ char *oph_operation_array(UDF_INIT * initid, UDF_ARGS * args, char *result, unsi
 		*error = 1;
 		return NULL;
 	}
-	for (i = 2; i < args->arg_count - 2; ++i) {
+	for (i = 2; i < n; ++i) {
 		if (*is_null || !args->lengths[i]) {
 			*length = 0;
 			*is_null = 1;
@@ -93,20 +93,27 @@ char *oph_operation_array(UDF_INIT * initid, UDF_ARGS * args, char *result, unsi
 		param->error = 0;
 		param->n_measure = args->arg_count - 4;
 		param->core_oph_oper = NULL;
-		if (!strcasecmp(args->args[args->arg_count - 2], "sum"))
+		if (!strcasecmp(args->args[n], "sum"))
 			param->core_oph_oper2 = core_oph_sum_array_multicube;
-		else if (!strcasecmp(args->args[args->arg_count - 2], "avg"))
+		else if (!strcasecmp(args->args[n], "avg"))
 			param->core_oph_oper2 = core_oph_avg_array_multicube;
-		else if (!strcasecmp(args->args[args->arg_count - 2], "mul"))
+		else if (!strcasecmp(args->args[n], "mul"))
 			param->core_oph_oper2 = core_oph_mul_array_multicube;
-		else if (!strcasecmp(args->args[args->arg_count - 2], "max"))
+		else if (!strcasecmp(args->args[n], "max"))
 			param->core_oph_oper2 = core_oph_max_array_multicube;
-		else if (!strcasecmp(args->args[args->arg_count - 2], "min"))
+		else if (!strcasecmp(args->args[n], "min"))
 			param->core_oph_oper2 = core_oph_min_array_multicube;
-		else if (!strcasecmp(args->args[args->arg_count - 2], "arg_max"))
+		else if (!strcasecmp(args->args[n], "arg_max"))
 			param->core_oph_oper2 = core_oph_arg_max_array_multicube;
-		else
+		else if (!strcasecmp(args->args[n], "arg_min"))
 			param->core_oph_oper2 = core_oph_arg_min_array_multicube;
+		else {
+			pmesg(1, __FILE__, __LINE__, "Unknown operation %s\n", args->args[n]);
+			*length = 0;
+			*is_null = 0;
+			*error = 1;
+			return NULL;
+		}
 
 		initid->ptr = (char *) param;
 	} else
