@@ -11209,7 +11209,7 @@ int core_oph_sum_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (*((int *) (valueN[i])) != (int) *missingvalue) {
 							sum += *((int *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11225,7 +11225,7 @@ int core_oph_sum_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (*((short *) (valueN[i])) != (short) *missingvalue) {
 							sum += *((short *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11241,7 +11241,7 @@ int core_oph_sum_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (*((char *) (valueN[i])) != (char) *missingvalue) {
 							sum += *((char *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11257,7 +11257,7 @@ int core_oph_sum_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (*((long long *) (valueN[i])) != (long long) *missingvalue) {
 							sum += *((long long *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11273,7 +11273,7 @@ int core_oph_sum_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (!isnan(*((float *) (valueN[i]))) && (*((float *) (valueN[i])) != (float) *missingvalue)) {
 							sum += *((float *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11289,7 +11289,7 @@ int core_oph_sum_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (!isnan(*((double *) (valueN[i]))) && (*((double *) (valueN[i])) != (double) *missingvalue)) {
 							sum += *((double *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11349,7 +11349,7 @@ int core_oph_sum_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (!isnan(*((float *) (valueN[i])))) {
 							sum += *((float *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11365,7 +11365,7 @@ int core_oph_sum_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (!isnan(*((double *) (valueN[i])))) {
 							sum += *((double *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11394,7 +11394,7 @@ int core_oph_avg_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (*((int *) (valueN[i])) != (int) *missingvalue) {
 							sum += *((int *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11410,7 +11410,7 @@ int core_oph_avg_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (*((short *) (valueN[i])) != (short) *missingvalue) {
 							sum += *((short *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11426,7 +11426,7 @@ int core_oph_avg_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (*((char *) (valueN[i])) != (char) *missingvalue) {
 							sum += *((char *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11442,7 +11442,7 @@ int core_oph_avg_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (*((long long *) (valueN[i])) != (long long) *missingvalue) {
 							sum += *((long long *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11458,7 +11458,7 @@ int core_oph_avg_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (!isnan(*((float *) (valueN[i]))) && (*((float *) (valueN[i])) != (float) *missingvalue)) {
 							sum += *((float *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11474,7 +11474,7 @@ int core_oph_avg_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (!isnan(*((double *) (valueN[i]))) && (*((double *) (valueN[i])) != (double) *missingvalue)) {
 							sum += *((double *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11534,7 +11534,7 @@ int core_oph_avg_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (!isnan(*((float *) (valueN[i])))) {
 							sum += *((float *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11550,7 +11550,7 @@ int core_oph_avg_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (!isnan(*((double *) (valueN[i])))) {
 							sum += *((double *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11579,7 +11579,7 @@ int core_oph_mul_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (*((int *) (valueN[i])) != (int) *missingvalue) {
 							mul *= *((int *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11595,7 +11595,7 @@ int core_oph_mul_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (*((short *) (valueN[i])) != (short) *missingvalue) {
 							mul *= *((short *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11611,7 +11611,7 @@ int core_oph_mul_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (*((char *) (valueN[i])) != (char) *missingvalue) {
 							mul *= *((char *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11627,7 +11627,7 @@ int core_oph_mul_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (*((long long *) (valueN[i])) != (long long) *missingvalue) {
 							mul *= *((long long *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11643,7 +11643,7 @@ int core_oph_mul_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (!isnan(*((float *) (valueN[i]))) && (*((float *) (valueN[i])) != (float) *missingvalue)) {
 							mul *= *((float *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11659,7 +11659,7 @@ int core_oph_mul_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (!isnan(*((double *) (valueN[i]))) && (*((double *) (valueN[i])) != (double) *missingvalue)) {
 							mul *= *((double *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11719,7 +11719,7 @@ int core_oph_mul_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (!isnan(*((float *) (valueN[i])))) {
 							mul *= *((float *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)
@@ -11735,7 +11735,7 @@ int core_oph_mul_array_multicube(char **valueN, int n_measure, char *result, oph
 					for (i = 0; i < n_measure; i++) {
 						if (!isnan(*((double *) (valueN[i])))) {
 							mul *= *((double *) (valueN[i]));
-							count += 1;
+							count++;
 						}
 					}
 					if (!count)

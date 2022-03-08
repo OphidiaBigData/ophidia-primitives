@@ -26,18 +26,18 @@ int msglevel = 1;
 my_bool oph_operation_array_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
 
-	if (args->arg_count < 6) {
+	if (args->arg_count < 5) {
 		strcpy(message, "ERROR: Wrong arguments! oph_operation_array(input_OPH_TYPE, output_OPH_TYPE, measure..., oph_operation, missingvalue)");
 		return 1;
 	}
 
-	if (args->args[args->arg_count - 1] && (args->arg_type[args->arg_count - 1] == STRING_RESULT)) {
+	int i = args->arg_count - 1;
+	if (args->args[i] && (args->arg_type[i] == STRING_RESULT)) {
 		strcpy(message, "ERROR: Wrong argument 'missingvalue' to oph_operation_array function");
 		return 1;
 	}
-	args->arg_type[args->arg_count - 1] = REAL_RESULT;
+	args->arg_type[i] = REAL_RESULT;
 
-	int i;
 	for (i = 0; i < args->arg_count - 1; i++) {
 		if (args->arg_type[i] != STRING_RESULT) {
 			strcpy(message, "ERROR: Wrong arguments to oph_operation_array function");
@@ -136,9 +136,10 @@ char *oph_operation_array(UDF_INIT * initid, UDF_ARGS * args, char *result, unsi
 			*error = 1;
 			return NULL;
 		}
+		n = param->n_measure - 1;
 		for (i = 0; i < param->n_measure; ++i) {
 			measure[i].length = args->lengths[2 + i];
-			if (!measure[i].blocksize || (measure[i].length % measure[i].blocksize) || (measure[i].islast != i)) {
+			if (!measure[i].blocksize || (measure[i].length % measure[i].blocksize) || ((i < n) && measure[i].islast) || ((i == n) && !measure[i].islast)) {
 				param->error = 1;
 				pmesg(1, __FILE__, __LINE__, "Wrong input type or data corrupted\n");
 				*length = 0;
