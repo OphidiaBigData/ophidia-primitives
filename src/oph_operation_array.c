@@ -93,19 +93,19 @@ char *oph_operation_array(UDF_INIT * initid, UDF_ARGS * args, char *result, unsi
 		param->error = 0;
 		param->n_measure = args->arg_count - 4;
 		param->core_oph_oper = NULL;
-		if (!strcasecmp(args->args[n], "sum"))
-			param->core_oph_oper2 = core_oph_sum_array_multicube;
-		else if (!strcasecmp(args->args[n], "avg"))
+		if (!strcasecmp(args->args[n], "oph_avg"))
 			param->core_oph_oper2 = core_oph_avg_array_multicube;
-		else if (!strcasecmp(args->args[n], "mul"))
+		else if (!strcasecmp(args->args[n], "oph_sum"))
+			param->core_oph_oper2 = core_oph_sum_array_multicube;
+		else if (!strcasecmp(args->args[n], "oph_mul"))
 			param->core_oph_oper2 = core_oph_mul_array_multicube;
-		else if (!strcasecmp(args->args[n], "max"))
+		else if (!strcasecmp(args->args[n], "oph_max"))
 			param->core_oph_oper2 = core_oph_max_array_multicube;
-		else if (!strcasecmp(args->args[n], "min"))
+		else if (!strcasecmp(args->args[n], "oph_min"))
 			param->core_oph_oper2 = core_oph_min_array_multicube;
-		else if (!strcasecmp(args->args[n], "arg_max"))
+		else if (!strcasecmp(args->args[n], "oph_arg_max"))
 			param->core_oph_oper2 = core_oph_arg_max_array_multicube;
-		else if (!strcasecmp(args->args[n], "arg_min"))
+		else if (!strcasecmp(args->args[n], "oph_arg_min"))
 			param->core_oph_oper2 = core_oph_arg_min_array_multicube;
 		else {
 			pmesg(1, __FILE__, __LINE__, "Unknown operation %s\n", args->args[n]);
