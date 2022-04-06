@@ -11165,6 +11165,1535 @@ int core_oph_oper_array_multi(oph_generic_param_multi * param)
 	return 0;
 }
 
+
+int core_oph_oper_array_multi2(oph_generic_param_multi * param)
+{
+	oph_multistring *measure = param->measure, *result = param->result;
+	char *valueN[param->n_measure];
+	size_t offset, offsetO;
+	int i, j, k;
+	offset = offsetO = 0;
+	for (i = 0; i < measure->num_measure; ++i) {
+		char temporary[measure->elemsize[i]];
+		for (j = 0; j < measure->numelem; ++j) {
+
+			for (k = 0; k < param->n_measure; ++k) {
+				valueN[k] = measure[k].content + offset + j * measure->blocksize;
+			}
+			if (param->core_oph_oper2(valueN, param->n_measure, temporary, measure->type[i], measure->missingvalue)) {
+				pmesg(1, __FILE__, __LINE__, "Error in compute array\n");
+				return 1;
+			}
+			if (core_oph_type_cast(temporary, result->content + offsetO + j * result->blocksize, measure->type[i], result->type[i], NULL)) {
+				pmesg(1, __FILE__, __LINE__, "Error in compute array\n");
+				return 1;
+			}
+		}
+		offset += measure->elemsize[i];
+		offsetO += result->elemsize[i];
+	}
+
+	return 0;
+}
+
+
+int core_oph_sum_array_multicube(char **valueN, int n_measure, char *result, oph_type type, double *missingvalue)
+{
+	int i, k;
+	if (missingvalue) {
+		switch (type) {
+			case OPH_INT:
+				{
+					int sum = 0;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((int *) (valueN[i])) != (int) *missingvalue) {
+							sum += *((int *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((int *) (result)) = (int) *missingvalue;
+					else
+						*((int *) (result)) = sum;
+					break;
+				}
+			case OPH_SHORT:
+				{
+					short sum = 0;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((short *) (valueN[i])) != (short) *missingvalue) {
+							sum += *((short *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((short *) (result)) = (short) *missingvalue;
+					else
+						*((short *) (result)) = sum;
+					break;
+				}
+			case OPH_BYTE:
+				{
+					char sum = 0;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((char *) (valueN[i])) != (char) *missingvalue) {
+							sum += *((char *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((char *) (result)) = (char) *missingvalue;
+					else
+						*((char *) (result)) = sum;
+					break;
+				}
+			case OPH_LONG:
+				{
+					long long sum = 0;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((long long *) (valueN[i])) != (long long) *missingvalue) {
+							sum += *((long long *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((long long *) (result)) = (long long) *missingvalue;
+					else
+						*((long long *) (result)) = sum;
+					break;
+				}
+			case OPH_FLOAT:
+				{
+					float sum = 0;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((float *) (valueN[i]))) && (*((float *) (valueN[i])) != (float) *missingvalue)) {
+							sum += *((float *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((float *) (result)) = missingvalue ? (float) *missingvalue : NAN;
+					else
+						*((float *) (result)) = sum;
+					break;
+				}
+			case OPH_DOUBLE:
+				{
+					double sum = 0;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((double *) (valueN[i]))) && (*((double *) (valueN[i])) != (double) *missingvalue)) {
+							sum += *((double *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((double *) (result)) = missingvalue ? (double) *missingvalue : NAN;
+					else
+						*((double *) (result)) = sum;
+
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	} else {
+		switch (type) {
+			case OPH_INT:
+				{
+					int sum = 0;
+					for (i = 0; i < n_measure; i++) {
+						sum += *((int *) (valueN[i]));
+					}
+					*((int *) (result)) = sum;
+					break;
+				}
+			case OPH_SHORT:
+				{
+					short sum = 0;
+					for (i = 0; i < n_measure; i++) {
+						sum += *((short *) (valueN[i]));
+					}
+					*((short *) (result)) = sum;
+					break;
+				}
+			case OPH_BYTE:
+				{
+					char sum = 0;
+					for (i = 0; i < n_measure; i++) {
+						sum += *((char *) (valueN[i]));
+					}
+					*((char *) (result)) = sum;
+					break;
+				}
+			case OPH_LONG:
+				{
+					long long sum = 0;
+					for (i = 0; i < n_measure; i++) {
+						sum += *((long long *) (valueN[i]));
+					}
+					*((long long *) (result)) = sum;
+
+					break;
+				}
+			case OPH_FLOAT:
+				{
+					float sum = 0;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((float *) (valueN[i])))) {
+							sum += *((float *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((float *) (result)) = NAN;
+					else
+						*((float *) (result)) = sum;
+					break;
+				}
+			case OPH_DOUBLE:
+				{
+					double sum = 0;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((double *) (valueN[i])))) {
+							sum += *((double *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((double *) (result)) = NAN;
+					else
+						*((double *) (result)) = sum;
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	}
+	return 0;
+}
+
+int core_oph_avg_array_multicube(char **valueN, int n_measure, char *result, oph_type type, double *missingvalue)
+{
+	int i, k;
+	if (missingvalue) {
+		switch (type) {
+			case OPH_INT:
+				{
+					int sum = 0;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((int *) (valueN[i])) != (int) *missingvalue) {
+							sum += *((int *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((int *) (result)) = (int) *missingvalue;
+					else
+						*((int *) (result)) = sum / count;
+					break;
+				}
+			case OPH_SHORT:
+				{
+					short sum = 0;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((short *) (valueN[i])) != (short) *missingvalue) {
+							sum += *((short *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((short *) (result)) = (short) *missingvalue;
+					else
+						*((short *) (result)) = sum / count;
+					break;
+				}
+			case OPH_BYTE:
+				{
+					char sum = 0;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((char *) (valueN[i])) != (char) *missingvalue) {
+							sum += *((char *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((char *) (result)) = (char) *missingvalue;
+					else
+						*((char *) (result)) = sum / count;
+					break;
+				}
+			case OPH_LONG:
+				{
+					long long sum = 0;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((long long *) (valueN[i])) != (long long) *missingvalue) {
+							sum += *((long long *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((long long *) (result)) = (long long) *missingvalue;
+					else
+						*((long long *) (result)) = sum / count;
+					break;
+				}
+			case OPH_FLOAT:
+				{
+					float sum = 0;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((float *) (valueN[i]))) && (*((float *) (valueN[i])) != (float) *missingvalue)) {
+							sum += *((float *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((float *) (result)) = missingvalue ? (float) *missingvalue : NAN;
+					else
+						*((float *) (result)) = sum / count;
+					break;
+				}
+			case OPH_DOUBLE:
+				{
+					double sum = 0;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((double *) (valueN[i]))) && (*((double *) (valueN[i])) != (double) *missingvalue)) {
+							sum += *((double *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((double *) (result)) = missingvalue ? (double) *missingvalue : NAN;
+					else
+						*((double *) (result)) = sum / count;
+
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	} else {
+		switch (type) {
+			case OPH_INT:
+				{
+					int sum = 0;
+					for (i = 0; i < n_measure; i++) {
+						sum += *((int *) (valueN[i]));
+					}
+					*((int *) (result)) = sum / n_measure;
+					break;
+				}
+			case OPH_SHORT:
+				{
+					short sum = 0;
+					for (i = 0; i < n_measure; i++) {
+						sum += *((short *) (valueN[i]));
+					}
+					*((short *) (result)) = sum / n_measure;
+					break;
+				}
+			case OPH_BYTE:
+				{
+					char sum = 0;
+					for (i = 0; i < n_measure; i++) {
+						sum += *((char *) (valueN[i]));
+					}
+					*((char *) (result)) = sum / n_measure;
+					break;
+				}
+			case OPH_LONG:
+				{
+					long long sum = 0;
+					for (i = 0; i < n_measure; i++) {
+						sum += *((long long *) (valueN[i]));
+					}
+					*((long long *) (result)) = sum / n_measure;
+
+					break;
+				}
+			case OPH_FLOAT:
+				{
+					float sum = 0;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((float *) (valueN[i])))) {
+							sum += *((float *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((float *) (result)) = NAN;
+					else
+						*((float *) (result)) = sum / count;
+					break;
+				}
+			case OPH_DOUBLE:
+				{
+					double sum = 0;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((double *) (valueN[i])))) {
+							sum += *((double *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((double *) (result)) = NAN;
+					else
+						*((double *) (result)) = sum / count;
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	}
+	return 0;
+}
+
+int core_oph_mul_array_multicube(char **valueN, int n_measure, char *result, oph_type type, double *missingvalue)
+{
+	int i, k;
+	if (missingvalue) {
+		switch (type) {
+			case OPH_INT:
+				{
+					int mul = 1;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((int *) (valueN[i])) != (int) *missingvalue) {
+							mul *= *((int *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((int *) (result)) = (int) *missingvalue;
+					else
+						*((int *) (result)) = mul;
+					break;
+				}
+			case OPH_SHORT:
+				{
+					short mul = 1;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((short *) (valueN[i])) != (short) *missingvalue) {
+							mul *= *((short *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((short *) (result)) = (short) *missingvalue;
+					else
+						*((short *) (result)) = mul;
+					break;
+				}
+			case OPH_BYTE:
+				{
+					char mul = 1;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((char *) (valueN[i])) != (char) *missingvalue) {
+							mul *= *((char *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((char *) (result)) = (char) *missingvalue;
+					else
+						*((char *) (result)) = mul;
+					break;
+				}
+			case OPH_LONG:
+				{
+					long long mul = 1;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((long long *) (valueN[i])) != (long long) *missingvalue) {
+							mul *= *((long long *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((long long *) (result)) = (long long) *missingvalue;
+					else
+						*((long long *) (result)) = mul;
+					break;
+				}
+			case OPH_FLOAT:
+				{
+					float mul = 1;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((float *) (valueN[i]))) && (*((float *) (valueN[i])) != (float) *missingvalue)) {
+							mul *= *((float *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((float *) (result)) = missingvalue ? (float) *missingvalue : NAN;
+					else
+						*((float *) (result)) = mul;
+					break;
+				}
+			case OPH_DOUBLE:
+				{
+					double mul = 1;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((double *) (valueN[i]))) && (*((double *) (valueN[i])) != (double) *missingvalue)) {
+							mul *= *((double *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((double *) (result)) = missingvalue ? (double) *missingvalue : NAN;
+					else
+						*((double *) (result)) = mul;
+
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	} else {
+		switch (type) {
+			case OPH_INT:
+				{
+					int mul = 1;
+					for (i = 0; i < n_measure; i++) {
+						mul *= *((int *) (valueN[i]));
+					}
+					*((int *) (result)) = mul;
+					break;
+				}
+			case OPH_SHORT:
+				{
+					short mul = 1;
+					for (i = 0; i < n_measure; i++) {
+						mul *= *((short *) (valueN[i]));
+					}
+					*((short *) (result)) = mul;
+					break;
+				}
+			case OPH_BYTE:
+				{
+					char mul = 1;
+					for (i = 0; i < n_measure; i++) {
+						mul *= *((char *) (valueN[i]));
+					}
+					*((char *) (result)) = mul;
+					break;
+				}
+			case OPH_LONG:
+				{
+					long long mul = 1;
+					for (i = 0; i < n_measure; i++) {
+						mul *= *((long long *) (valueN[i]));
+					}
+					*((long long *) (result)) = mul;
+
+					break;
+				}
+			case OPH_FLOAT:
+				{
+					float mul = 1;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((float *) (valueN[i])))) {
+							mul *= *((float *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((float *) (result)) = NAN;
+					else
+						*((float *) (result)) = mul;
+					break;
+				}
+			case OPH_DOUBLE:
+				{
+					double mul = 1;
+					int count = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((double *) (valueN[i])))) {
+							mul *= *((double *) (valueN[i]));
+							count++;
+						}
+					}
+					if (!count)
+						*((double *) (result)) = NAN;
+					else
+						*((double *) (result)) = mul;
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	}
+	return 0;
+}
+
+int core_oph_max_array_multicube(char **valueN, int n_measure, char *result, oph_type type, double *missingvalue)
+{
+	int i, k;
+	if (missingvalue) {
+		switch (type) {
+			case OPH_INT:
+				{
+					int max;
+					int check = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((int *) (valueN[i])) != (int) *missingvalue) {
+							max = *((int *) (valueN[i]));
+							check = 1;
+							break;
+						}
+					}
+					if (check) {
+						for (i = 0; i < n_measure; i++) {
+							if (*((int *) (valueN[i])) != (int) *missingvalue)
+								max = *((int *) (valueN[i])) > max ? *((int *) (valueN[i])) : max;
+						}
+						*((int *) (result)) = max;
+					} else
+						*((int *) (result)) = (int) *missingvalue;
+
+					break;
+				}
+			case OPH_SHORT:
+				{
+					short max;
+					int check = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((short *) (valueN[i])) != (short) *missingvalue) {
+							max = *((short *) (valueN[i]));
+							check = 1;
+							break;
+						}
+					}
+					if (check) {
+						for (i = 0; i < n_measure; i++) {
+							if (*((short *) (valueN[i])) != (short) *missingvalue)
+								max = *((short *) (valueN[i])) > max ? *((short *) (valueN[i])) : max;
+						}
+						*((short *) (result)) = max;
+					} else
+						*((short *) (result)) = (short) *missingvalue;
+					break;
+				}
+			case OPH_BYTE:
+				{
+					char max;
+					int check = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((char *) (valueN[i])) != (char) *missingvalue) {
+							max = *((char *) (valueN[i]));
+							check = 1;
+							break;
+						}
+					}
+					if (check) {
+						for (i = 0; i < n_measure; i++) {
+							if (*((char *) (valueN[i])) != (char) *missingvalue)
+								max = *((char *) (valueN[i])) > max ? *((char *) (valueN[i])) : max;
+						}
+						*((char *) (result)) = max;
+					} else
+						*((char *) (result)) = (char) *missingvalue;
+					break;
+				}
+			case OPH_LONG:
+				{
+					long long max;
+					int check = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((long long *) (valueN[i])) != (long long) *missingvalue) {
+							max = *((long long *) (valueN[i]));
+							check = 1;
+							break;
+						}
+					}
+					if (check) {
+						for (i = 0; i < n_measure; i++) {
+							if (*((long long *) (valueN[i])) != (long long) *missingvalue)
+								max = *((long long *) (valueN[i])) > max ? *((long long *) (valueN[i])) : max;
+						}
+						*((long long *) (result)) = max;
+					} else
+						*((long long *) (result)) = (long long) *missingvalue;
+					break;
+				}
+			case OPH_FLOAT:
+				{
+
+					float max;
+					int check = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((float *) (valueN[i]))) && (*((float *) (valueN[i])) != (float) *missingvalue)) {
+							max = *((float *) (valueN[i]));
+							check = 1;
+							break;
+						}
+					}
+					if (check) {
+						for (i = 0; i < n_measure; i++) {
+							if (!isnan(*((float *) (valueN[i]))) && (*((float *) (valueN[i])) != (float) *missingvalue))
+								max = *((float *) (valueN[i])) > max ? *((float *) (valueN[i])) : max;
+						}
+						*((float *) (result)) = max;
+					} else
+						*((float *) (result)) = (float) *missingvalue;
+					break;
+				}
+			case OPH_DOUBLE:
+				{
+					double max;
+					int check = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((double *) (valueN[i]))) && (*((double *) (valueN[i])) != (double) *missingvalue)) {
+							max = *((double *) (valueN[i]));
+							check = 1;
+							break;
+						}
+					}
+					if (check) {
+						for (i = 0; i < n_measure; i++) {
+							if (!isnan(*((double *) (valueN[i]))) && (*((double *) (valueN[i])) != (double) *missingvalue))
+								max = *((double *) (valueN[i])) > max ? *((double *) (valueN[i])) : max;
+						}
+						*((double *) (result)) = max;
+					} else
+						*((double *) (result)) = (double) *missingvalue;
+
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	} else {
+		switch (type) {
+			case OPH_INT:
+				{
+					int max = *((int *) (valueN[0]));
+					for (i = 0; i < n_measure; i++)
+						max = *((int *) (valueN[i])) > max ? *((int *) (valueN[i])) : max;
+					*((int *) (result)) = max;
+					break;
+				}
+			case OPH_SHORT:
+				{
+					short max = *((short *) (valueN[0]));
+					for (i = 0; i < n_measure; i++)
+						max = *((short *) (valueN[i])) > max ? *((short *) (valueN[i])) : max;
+					*((short *) (result)) = max;
+					break;
+				}
+			case OPH_BYTE:
+				{
+					char max = *((char *) (valueN[0]));
+					for (i = 0; i < n_measure; i++)
+						max = *((char *) (valueN[i])) > max ? *((char *) (valueN[i])) : max;
+					*((char *) (result)) = max;
+					break;
+				}
+			case OPH_LONG:
+				{
+					long long max = *((long long *) (valueN[0]));
+					for (i = 0; i < n_measure; i++)
+						max = *((long long *) (valueN[i])) > max ? *((long long *) (valueN[i])) : max;
+					*((long long *) (result)) = max;
+					break;
+				}
+			case OPH_FLOAT:
+				{
+					float max;
+					int check = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((float *) (valueN[i])))) {
+							max = *((float *) (valueN[i]));
+							check = 1;
+							break;
+						}
+					}
+					if (check) {
+						for (i = 0; i < n_measure; i++) {
+							if (!isnan(*((float *) (valueN[i]))))
+								max = *((float *) (valueN[i])) > max ? *((float *) (valueN[i])) : max;
+						}
+						*((float *) (result)) = max;
+					} else
+						*((float *) (result)) = NAN;
+					break;
+				}
+			case OPH_DOUBLE:
+				{
+					double max;
+					int check = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((double *) (valueN[i])))) {
+							max = *((double *) (valueN[i]));
+							check = 1;
+							break;
+						}
+					}
+					if (check) {
+						for (i = 0; i < n_measure; i++) {
+							if (!isnan(*((double *) (valueN[i]))))
+								max = *((double *) (valueN[i])) > max ? *((double *) (valueN[i])) : max;
+						}
+						*((double *) (result)) = max;
+					} else
+						*((double *) (result)) = NAN;
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	}
+	return 0;
+}
+
+int core_oph_min_array_multicube(char **valueN, int n_measure, char *result, oph_type type, double *missingvalue)
+{
+	int i, k;
+	if (missingvalue) {
+		switch (type) {
+			case OPH_INT:
+				{
+					int min;
+					int check = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((int *) (valueN[i])) != (int) *missingvalue) {
+							min = *((int *) (valueN[i]));
+							check = 1;
+							break;
+						}
+					}
+					if (check) {
+						for (i = 0; i < n_measure; i++) {
+							if (*((int *) (valueN[i])) != (int) *missingvalue)
+								min = *((int *) (valueN[i])) < min ? *((int *) (valueN[i])) : min;
+						}
+						*((int *) (result)) = min;
+					} else
+						*((int *) (result)) = (int) *missingvalue;
+
+					break;
+				}
+			case OPH_SHORT:
+				{
+					short min;
+					int check = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((short *) (valueN[i])) != (short) *missingvalue) {
+							min = *((short *) (valueN[i]));
+							check = 1;
+							break;
+						}
+					}
+					if (check) {
+						for (i = 0; i < n_measure; i++) {
+							if (*((short *) (valueN[i])) != (short) *missingvalue)
+								min = *((short *) (valueN[i])) < min ? *((short *) (valueN[i])) : min;
+						}
+						*((short *) (result)) = min;
+					} else
+						*((short *) (result)) = (short) *missingvalue;
+					break;
+				}
+			case OPH_BYTE:
+				{
+					char min;
+					int check = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((char *) (valueN[i])) != (char) *missingvalue) {
+							min = *((char *) (valueN[i]));
+							check = 1;
+							break;
+						}
+					}
+					if (check) {
+						for (i = 0; i < n_measure; i++) {
+							if (*((char *) (valueN[i])) != (char) *missingvalue)
+								min = *((char *) (valueN[i])) < min ? *((char *) (valueN[i])) : min;
+						}
+						*((char *) (result)) = min;
+					} else
+						*((char *) (result)) = (char) *missingvalue;
+					break;
+				}
+			case OPH_LONG:
+				{
+					long long min;
+					int check = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((long long *) (valueN[i])) != (long long) *missingvalue) {
+							min = *((long long *) (valueN[i]));
+							check = 1;
+							break;
+						}
+					}
+					if (check) {
+						for (i = 0; i < n_measure; i++) {
+							if (*((long long *) (valueN[i])) != (long long) *missingvalue)
+								min = *((long long *) (valueN[i])) < min ? *((long long *) (valueN[i])) : min;
+						}
+						*((long long *) (result)) = min;
+					} else
+						*((long long *) (result)) = (long long) *missingvalue;
+					break;
+				}
+			case OPH_FLOAT:
+				{
+
+					float min;
+					int check = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((float *) (valueN[i]))) && (*((float *) (valueN[i])) != (float) *missingvalue)) {
+							min = *((float *) (valueN[i]));
+							check = 1;
+							break;
+						}
+					}
+					if (check) {
+						for (i = 0; i < n_measure; i++) {
+							if (!isnan(*((float *) (valueN[i]))) && (*((float *) (valueN[i])) != (float) *missingvalue))
+								min = *((float *) (valueN[i])) < min ? *((float *) (valueN[i])) : min;
+						}
+						*((float *) (result)) = min;
+					} else
+						*((float *) (result)) = (float) *missingvalue;
+					break;
+				}
+			case OPH_DOUBLE:
+				{
+					double min;
+					int check = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((double *) (valueN[i]))) && (*((double *) (valueN[i])) != (double) *missingvalue)) {
+							min = *((double *) (valueN[i]));
+							check = 1;
+							break;
+						}
+					}
+					if (check) {
+						for (i = 0; i < n_measure; i++) {
+							if (!isnan(*((double *) (valueN[i]))) && (*((double *) (valueN[i])) != (double) *missingvalue))
+								min = *((double *) (valueN[i])) < min ? *((double *) (valueN[i])) : min;
+						}
+						*((double *) (result)) = min;
+					} else
+						*((double *) (result)) = (double) *missingvalue;
+
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	} else {
+		switch (type) {
+			case OPH_INT:
+				{
+					int min = *((int *) (valueN[0]));
+					for (i = 0; i < n_measure; i++)
+						min = *((int *) (valueN[i])) < min ? *((int *) (valueN[i])) : min;
+					*((int *) (result)) = min;
+					break;
+				}
+			case OPH_SHORT:
+				{
+					short min = *((short *) (valueN[0]));
+					for (i = 0; i < n_measure; i++)
+						min = *((short *) (valueN[i])) < min ? *((short *) (valueN[i])) : min;
+					*((short *) (result)) = min;
+					break;
+				}
+			case OPH_BYTE:
+				{
+					char min = *((char *) (valueN[0]));
+					for (i = 0; i < n_measure; i++)
+						min = *((char *) (valueN[i])) < min ? *((char *) (valueN[i])) : min;
+					*((char *) (result)) = min;
+					break;
+				}
+			case OPH_LONG:
+				{
+					long long min = *((long long *) (valueN[0]));
+					for (i = 0; i < n_measure; i++)
+						min = *((long long *) (valueN[i])) < min ? *((long long *) (valueN[i])) : min;
+					*((long long *) (result)) = min;
+					break;
+				}
+			case OPH_FLOAT:
+				{
+					float min;
+					int check = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((float *) (valueN[i])))) {
+							min = *((float *) (valueN[i]));
+							check = 1;
+							break;
+						}
+					}
+					if (check) {
+						for (i = 0; i < n_measure; i++) {
+							if (!isnan(*((float *) (valueN[i]))))
+								min = *((float *) (valueN[i])) < min ? *((float *) (valueN[i])) : min;
+						}
+						*((float *) (result)) = min;
+					} else
+						*((float *) (result)) = NAN;
+					break;
+				}
+			case OPH_DOUBLE:
+				{
+					double min;
+					int check = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((double *) (valueN[i])))) {
+							min = *((double *) (valueN[i]));
+							check = 1;
+							break;
+						}
+					}
+					if (check) {
+						for (i = 0; i < n_measure; i++) {
+							if (!isnan(*((double *) (valueN[i]))))
+								min = *((double *) (valueN[i])) < min ? *((double *) (valueN[i])) : min;
+						}
+						*((double *) (result)) = min;
+					} else
+						*((double *) (result)) = NAN;
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	}
+	return 0;
+}
+
+int core_oph_arg_max_array_multicube(char **valueN, int n_measure, char *result, oph_type type, double *missingvalue)
+{
+	int i, k;
+	if (missingvalue) {
+		switch (type) {
+			case OPH_INT:
+				{
+					int max;
+					int arg_max = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((int *) (valueN[i])) != (int) *missingvalue) {
+							max = *((int *) (valueN[i]));
+							arg_max = i + 1;
+							break;
+						}
+					}
+					if (arg_max) {
+						for (i = 0; i < n_measure; i++) {
+							if (*((int *) (valueN[i])) != (int) *missingvalue) {
+								arg_max = *((int *) (valueN[i])) > max ? i + 1 : arg_max;
+								max = *((int *) (valueN[i])) > max ? *((int *) (valueN[i])) : max;
+							}
+						}
+						*((int *) (result)) = arg_max;
+					} else
+						*((int *) (result)) = (int) *missingvalue;
+
+					break;
+				}
+			case OPH_SHORT:
+				{
+					short max;
+					int arg_max = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((short *) (valueN[i])) != (short) *missingvalue) {
+							max = *((short *) (valueN[i]));
+							arg_max = i + 1;
+							break;
+						}
+					}
+					if (arg_max) {
+						for (i = 0; i < n_measure; i++) {
+							if (*((short *) (valueN[i])) != (short) *missingvalue) {
+								arg_max = *((short *) (valueN[i])) > max ? i + 1 : arg_max;
+								max = *((short *) (valueN[i])) > max ? *((short *) (valueN[i])) : max;
+							}
+						}
+						*((short *) (result)) = (short) arg_max;
+					} else
+						*((short *) (result)) = (short) *missingvalue;
+
+					break;
+				}
+			case OPH_BYTE:
+				{
+					char max;
+					int arg_max = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((char *) (valueN[i])) != (char) *missingvalue) {
+							max = *((char *) (valueN[i]));
+							arg_max = i + 1;
+							break;
+						}
+					}
+					if (arg_max) {
+						for (i = 0; i < n_measure; i++) {
+							if (*((char *) (valueN[i])) != (char) *missingvalue) {
+								arg_max = *((char *) (valueN[i])) > max ? i + 1 : arg_max;
+								max = *((char *) (valueN[i])) > max ? *((char *) (valueN[i])) : max;
+							}
+						}
+						*((char *) (result)) = (char) arg_max;
+					} else
+						*((char *) (result)) = (char) *missingvalue;
+					break;
+				}
+			case OPH_LONG:
+				{
+					long long max;
+					int arg_max = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((long long *) (valueN[i])) != (long long) *missingvalue) {
+							max = *((long long *) (valueN[i]));
+							arg_max = i + 1;
+							break;
+						}
+					}
+					if (arg_max) {
+						for (i = 0; i < n_measure; i++) {
+							if (*((long long *) (valueN[i])) != (long long) *missingvalue) {
+								arg_max = *((long long *) (valueN[i])) > max ? i + 1 : arg_max;
+								max = *((long long *) (valueN[i])) > max ? *((long long *) (valueN[i])) : max;
+							}
+						}
+						*((long long *) (result)) = (long long) arg_max;
+					} else
+						*((long long *) (result)) = (long long) *missingvalue;
+					break;
+				}
+			case OPH_FLOAT:
+				{
+					float max;
+					int arg_max = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((float *) (valueN[i]))) && (*((float *) (valueN[i])) != (float) *missingvalue)) {
+							max = *((float *) (valueN[i]));
+							arg_max = i + 1;
+							break;
+						}
+					}
+					if (arg_max) {
+						for (i = 0; i < n_measure; i++) {
+							if (!isnan(*((float *) (valueN[i]))) && (*((float *) (valueN[i])) != (float) *missingvalue)) {
+								arg_max = *((float *) (valueN[i])) > max ? i + 1 : arg_max;
+								max = *((float *) (valueN[i])) > max ? *((float *) (valueN[i])) : max;
+							}
+						}
+						*((float *) (result)) = (float) arg_max;
+					} else
+						*((float *) (result)) = (float) *missingvalue;
+					break;
+				}
+			case OPH_DOUBLE:
+				{
+					double max;
+					int arg_max = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((double *) (valueN[i]))) && (*((double *) (valueN[i])) != (double) *missingvalue)) {
+							max = *((double *) (valueN[i]));
+							arg_max = i + 1;
+							break;
+						}
+					}
+					if (arg_max) {
+						for (i = 0; i < n_measure; i++) {
+							if (!isnan(*((double *) (valueN[i]))) && (*((double *) (valueN[i])) != (double) *missingvalue)) {
+								arg_max = *((double *) (valueN[i])) > max ? i + 1 : arg_max;
+								max = *((double *) (valueN[i])) > max ? *((double *) (valueN[i])) : max;
+							}
+						}
+						*((double *) (result)) = (double) arg_max;
+					} else
+						*((double *) (result)) = (double) *missingvalue;
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	} else {
+		switch (type) {
+			case OPH_INT:
+				{
+					int max = *((int *) (valueN[0]));
+					int arg_max = 0;
+					for (i = 0; i < n_measure; i++) {
+						arg_max = *((int *) (valueN[i])) > max ? i + 1 : arg_max;
+						max = *((int *) (valueN[i])) > max ? *((int *) (valueN[i])) : max;
+					}
+					*((int *) (result)) = arg_max;
+					break;
+				}
+			case OPH_SHORT:
+				{
+					short max = *((short *) (valueN[0]));
+					int arg_max = 0;
+					for (i = 0; i < n_measure; i++) {
+						arg_max = *((short *) (valueN[i])) > max ? i + 1 : arg_max;
+						max = *((short *) (valueN[i])) > max ? *((short *) (valueN[i])) : max;
+					}
+					*((short *) (result)) = (short) arg_max;
+					break;
+				}
+			case OPH_BYTE:
+				{
+					char max = *((char *) (valueN[0]));
+					int arg_max = 0;
+					for (i = 0; i < n_measure; i++) {
+						arg_max = *((char *) (valueN[i])) > max ? i + 1 : arg_max;
+						max = *((char *) (valueN[i])) > max ? *((char *) (valueN[i])) : max;
+					}
+					*((char *) (result)) = (char) arg_max;
+					break;
+				}
+			case OPH_LONG:
+				{
+					long long max = *((long long *) (valueN[0]));
+					int arg_max = 0;
+					for (i = 0; i < n_measure; i++) {
+						arg_max = *((long long *) (valueN[i])) > max ? i + 1 : arg_max;
+						max = *((long long *) (valueN[i])) > max ? *((long long *) (valueN[i])) : max;
+					}
+					*((long long *) (result)) = (long long) arg_max;
+					break;
+				}
+			case OPH_FLOAT:
+				{
+					float max;
+					int arg_max = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((float *) (valueN[i])))) {
+							max = *((float *) (valueN[i]));
+							arg_max = i + 1;
+							break;
+						}
+					}
+					if (arg_max) {
+						for (i = 0; i < n_measure; i++) {
+							if (!isnan(*((float *) (valueN[i])))) {
+								arg_max = *((float *) (valueN[i])) > max ? i + 1 : arg_max;
+								max = *((float *) (valueN[i])) > max ? *((float *) (valueN[i])) : max;
+							}
+						}
+						*((float *) (result)) = (float) arg_max;
+					} else
+						*((float *) (result)) = NAN;
+					break;
+				}
+			case OPH_DOUBLE:
+				{
+					double max;
+					int arg_max = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((double *) (valueN[i])))) {
+							max = *((double *) (valueN[i]));
+							arg_max = i + 1;
+							break;
+						}
+					}
+					if (arg_max) {
+						for (i = 0; i < n_measure; i++) {
+							if (!isnan(*((double *) (valueN[i])))) {
+								arg_max = *((double *) (valueN[i])) > max ? i + 1 : arg_max;
+								max = *((double *) (valueN[i])) > max ? *((double *) (valueN[i])) : max;
+							}
+						}
+						*((double *) (result)) = (double) arg_max;
+					} else
+						*((double *) (result)) = NAN;
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	}
+	return 0;
+}
+
+int core_oph_arg_min_array_multicube(char **valueN, int n_measure, char *result, oph_type type, double *missingvalue)
+{
+	int i, k;
+	if (missingvalue) {
+		switch (type) {
+			case OPH_INT:
+				{
+					int min;
+					int arg_min = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((int *) (valueN[i])) != (int) *missingvalue) {
+							min = *((int *) (valueN[i]));
+							arg_min = i + 1;
+							break;
+						}
+					}
+					if (arg_min) {
+						for (i = 0; i < n_measure; i++) {
+							if (*((int *) (valueN[i])) != (int) *missingvalue) {
+								arg_min = *((int *) (valueN[i])) < min ? i + 1 : arg_min;
+								min = *((int *) (valueN[i])) < min ? *((int *) (valueN[i])) : min;
+							}
+						}
+						*((int *) (result)) = arg_min;
+					} else
+						*((int *) (result)) = (int) *missingvalue;
+
+					break;
+				}
+			case OPH_SHORT:
+				{
+					short min;
+					int arg_min = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((short *) (valueN[i])) != (short) *missingvalue) {
+							min = *((short *) (valueN[i]));
+							arg_min = i + 1;
+							break;
+						}
+					}
+					if (arg_min) {
+						for (i = 0; i < n_measure; i++) {
+							if (*((short *) (valueN[i])) != (short) *missingvalue) {
+								arg_min = *((short *) (valueN[i])) < min ? i + 1 : arg_min;
+								min = *((short *) (valueN[i])) < min ? *((short *) (valueN[i])) : min;
+							}
+						}
+						*((short *) (result)) = (short) arg_min;
+					} else
+						*((short *) (result)) = (short) *missingvalue;
+
+					break;
+				}
+			case OPH_BYTE:
+				{
+					char min;
+					int arg_min = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((char *) (valueN[i])) != (char) *missingvalue) {
+							min = *((char *) (valueN[i]));
+							arg_min = i + 1;
+							break;
+						}
+					}
+					if (arg_min) {
+						for (i = 0; i < n_measure; i++) {
+							if (*((char *) (valueN[i])) != (char) *missingvalue) {
+								arg_min = *((char *) (valueN[i])) < min ? i + 1 : arg_min;
+								min = *((char *) (valueN[i])) < min ? *((char *) (valueN[i])) : min;
+							}
+						}
+						*((char *) (result)) = (char) arg_min;
+					} else
+						*((char *) (result)) = (char) *missingvalue;
+					break;
+				}
+			case OPH_LONG:
+				{
+					long long min;
+					int arg_min = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (*((long long *) (valueN[i])) != (long long) *missingvalue) {
+							min = *((long long *) (valueN[i]));
+							arg_min = i + 1;
+							break;
+						}
+					}
+					if (arg_min) {
+						for (i = 0; i < n_measure; i++) {
+							if (*((long long *) (valueN[i])) != (long long) *missingvalue) {
+								arg_min = *((long long *) (valueN[i])) < min ? i + 1 : arg_min;
+								min = *((long long *) (valueN[i])) < min ? *((long long *) (valueN[i])) : min;
+							}
+						}
+						*((long long *) (result)) = (long long) arg_min;
+					} else
+						*((long long *) (result)) = (long long) *missingvalue;
+					break;
+				}
+			case OPH_FLOAT:
+				{
+					float min;
+					int arg_min = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((float *) (valueN[i]))) && (*((float *) (valueN[i])) != (float) *missingvalue)) {
+							min = *((float *) (valueN[i]));
+							arg_min = i + 1;
+							break;
+						}
+					}
+					if (arg_min) {
+						for (i = 0; i < n_measure; i++) {
+							if (!isnan(*((float *) (valueN[i]))) && (*((float *) (valueN[i])) != (float) *missingvalue)) {
+								arg_min = *((float *) (valueN[i])) < min ? i + 1 : arg_min;
+								min = *((float *) (valueN[i])) < min ? *((float *) (valueN[i])) : min;
+							}
+						}
+						*((float *) (result)) = (float) arg_min;
+					} else
+						*((float *) (result)) = (float) *missingvalue;
+					break;
+				}
+			case OPH_DOUBLE:
+				{
+					double min;
+					int arg_min = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((double *) (valueN[i]))) && (*((double *) (valueN[i])) != (double) *missingvalue)) {
+							min = *((double *) (valueN[i]));
+							arg_min = i + 1;
+							break;
+						}
+					}
+					if (arg_min) {
+						for (i = 0; i < n_measure; i++) {
+							if (!isnan(*((double *) (valueN[i]))) && (*((double *) (valueN[i])) != (double) *missingvalue)) {
+								arg_min = *((double *) (valueN[i])) < min ? i + 1 : arg_min;
+								min = *((double *) (valueN[i])) < min ? *((double *) (valueN[i])) : min;
+							}
+						}
+						*((double *) (result)) = (double) arg_min;
+					} else
+						*((double *) (result)) = (double) *missingvalue;
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	} else {
+		switch (type) {
+			case OPH_INT:
+				{
+					int min = *((int *) (valueN[0]));
+					int arg_min = 0;
+					for (i = 0; i < n_measure; i++) {
+						arg_min = *((int *) (valueN[i])) < min ? i + 1 : arg_min;
+						min = *((int *) (valueN[i])) < min ? *((int *) (valueN[i])) : min;
+					}
+					*((int *) (result)) = arg_min;
+					break;
+				}
+			case OPH_SHORT:
+				{
+					short min = *((short *) (valueN[0]));
+					int arg_min = 0;
+					for (i = 0; i < n_measure; i++) {
+						arg_min = *((short *) (valueN[i])) < min ? i + 1 : arg_min;
+						min = *((short *) (valueN[i])) < min ? *((short *) (valueN[i])) : min;
+					}
+					*((short *) (result)) = (short) arg_min;
+					break;
+				}
+			case OPH_BYTE:
+				{
+					char min = *((char *) (valueN[0]));
+					int arg_min = 0;
+					for (i = 0; i < n_measure; i++) {
+						arg_min = *((char *) (valueN[i])) < min ? i + 1 : arg_min;
+						min = *((char *) (valueN[i])) < min ? *((char *) (valueN[i])) : min;
+					}
+					*((char *) (result)) = (char) arg_min;
+					break;
+				}
+			case OPH_LONG:
+				{
+					long long min = *((long long *) (valueN[0]));
+					int arg_min = 0;
+					for (i = 0; i < n_measure; i++) {
+						arg_min = *((long long *) (valueN[i])) < min ? i + 1 : arg_min;
+						min = *((long long *) (valueN[i])) < min ? *((long long *) (valueN[i])) : min;
+					}
+					*((long long *) (result)) = (long long) arg_min;
+					break;
+				}
+			case OPH_FLOAT:
+				{
+					float min;
+					int arg_min = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((float *) (valueN[i])))) {
+							min = *((float *) (valueN[i]));
+							arg_min = i + 1;
+							break;
+						}
+					}
+					if (arg_min) {
+						for (i = 0; i < n_measure; i++) {
+							if (!isnan(*((float *) (valueN[i])))) {
+								arg_min = *((float *) (valueN[i])) < min ? i + 1 : arg_min;
+								min = *((float *) (valueN[i])) < min ? *((float *) (valueN[i])) : min;
+							}
+						}
+						*((float *) (result)) = (float) arg_min;
+					} else
+						*((float *) (result)) = NAN;
+					break;
+				}
+			case OPH_DOUBLE:
+				{
+					double min;
+					int arg_min = 0;
+					for (i = 0; i < n_measure; i++) {
+						if (!isnan(*((double *) (valueN[i])))) {
+							min = *((double *) (valueN[i]));
+							arg_min = i + 1;
+							break;
+						}
+					}
+					if (arg_min) {
+						for (i = 0; i < n_measure; i++) {
+							if (!isnan(*((double *) (valueN[i])))) {
+								arg_min = *((double *) (valueN[i])) < min ? i + 1 : arg_min;
+								min = *((double *) (valueN[i])) < min ? *((double *) (valueN[i])) : min;
+							}
+						}
+						*((double *) (result)) = (double) arg_min;
+					} else
+						*((double *) (result)) = NAN;
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type not recognized\n");
+				return -1;
+		}
+	}
+	return 0;
+}
+
 int core_oph_sum_array_multi(char *valueA, char *valueB, char *result, oph_type type, double *missingvalue)
 {
 	if (missingvalue) {
@@ -12582,7 +14111,7 @@ int core_oph_max_array_multi(char *valueA, char *valueB, char *result, oph_type 
 				}
 			case OPH_BYTE:
 				{
-					*((int *) (result)) = *((char *) (valueA)) > *((char *) (valueB)) ? *((char *) (valueA)) : *((char *) (valueB));
+					*((char *) (result)) = *((char *) (valueA)) > *((char *) (valueB)) ? *((char *) (valueA)) : *((char *) (valueB));
 					break;
 				}
 			case OPH_LONG:
