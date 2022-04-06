@@ -68,6 +68,7 @@ DROP FUNCTION IF EXISTS oph_gsl_complex_to_polar;
 DROP FUNCTION IF EXISTS oph_gsl_complex_to_rect;
 DROP FUNCTION IF EXISTS oph_gsl_dwt;
 DROP FUNCTION IF EXISTS oph_gsl_fft;
+DROP FUNCTION IF EXISTS oph_filter;
 DROP FUNCTION IF EXISTS oph_gsl_idwt;
 DROP FUNCTION IF EXISTS oph_gsl_ifft;
 DROP FUNCTION IF EXISTS oph_gsl_quantile;
@@ -203,6 +204,7 @@ CREATE FUNCTION oph_gsl_complex_to_polar RETURNS STRING SONAME 'liboph_gsl_compl
 CREATE FUNCTION oph_gsl_complex_to_rect RETURNS STRING SONAME 'liboph_gsl_complex_to_rect.so';
 CREATE FUNCTION oph_gsl_dwt RETURNS STRING SONAME 'liboph_gsl_dwt.so';
 CREATE FUNCTION oph_gsl_fft RETURNS STRING SONAME 'liboph_gsl_fft.so';
+CREATE FUNCTION oph_filter RETURNS STRING SONAME 'liboph_filter.so';
 CREATE FUNCTION oph_gsl_idwt RETURNS STRING SONAME 'liboph_gsl_idwt.so';
 CREATE FUNCTION oph_gsl_ifft RETURNS STRING SONAME 'liboph_gsl_ifft.so';
 CREATE FUNCTION oph_gsl_quantile RETURNS STRING SONAME 'liboph_gsl_quantile.so';

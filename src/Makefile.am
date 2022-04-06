@@ -453,6 +453,12 @@ liboph_gsl_fft_la_SOURCES = oph_gsl_fft.c oph_gsl_fft.h oph_core_gsl.h
 liboph_gsl_fft_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
 liboph_gsl_fft_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LDFLAG) -L. -loph_debug -loph_core
 
+lib_LTLIBRARIES += liboph_filter.la
+liboph_filter_la_SOURCES = oph_filter.c oph_filter.h oph_core_gsl.h
+liboph_filter_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
+liboph_filter_la_LDFLAGS = -avoid-version -shared $(LIBS) $(GSL_LIBS) -L. -loph_debug -loph_core
+
+
 lib_LTLIBRARIES += liboph_gsl_dwt.la
 liboph_gsl_dwt_la_SOURCES = oph_gsl_dwt.c oph_gsl_dwt.h oph_core_gsl.h
 liboph_gsl_dwt_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
