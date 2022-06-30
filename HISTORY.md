@@ -1,4 +1,16 @@
 
+## Next release
+
+### Fixed:
+
+- Bug in debug printing function
+- Bugs in configuration script for code building
+
+### Added:
+
+- New primitive oph_operation_array [#17](https://github.com/OphidiaBigData/ophidia-primitives/pull/17)
+- New primitive oph_filter [#16](https://github.com/OphidiaBigData/ophidia-primitives/pull/16)
+
 ## v1.6.0 - 2021-03-05
 
 ### Fixed:
