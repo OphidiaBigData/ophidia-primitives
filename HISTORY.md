@@ -1,4 +1,10 @@
 
+## Next relase
+
+### Fixed:
+
+- Bug core_oph_sum_multi() related to missing value management for integers
+
 ## v1.7.0 - 2022-07-01
 
 ### Fixed:

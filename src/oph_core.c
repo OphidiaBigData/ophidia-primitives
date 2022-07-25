@@ -3846,6 +3846,7 @@ int core_oph_sum_multi(oph_multistring * byte_array, oph_multistring * result)
 						for (i = 0; i < byte_array->numelem; i++, current += byte_array->blocksize)
 							if (ms != *(int *) current) {
 								sum += *(int *) current;
+								nan = 0;
 							}
 						if (nan)
 							sum = ms;
@@ -3858,6 +3859,7 @@ int core_oph_sum_multi(oph_multistring * byte_array, oph_multistring * result)
 						for (i = 0; i < byte_array->numelem; i++, current += byte_array->blocksize)
 							if (ms != *(short *) current) {
 								sum += *(short *) current;
+								nan = 0;
 							}
 						if (nan)
 							sum = ms;
@@ -3870,6 +3872,7 @@ int core_oph_sum_multi(oph_multistring * byte_array, oph_multistring * result)
 						for (i = 0; i < byte_array->numelem; i++, current += byte_array->blocksize)
 							if (ms != *(char *) current) {
 								sum += *(char *) current;
+								nan = 0;
 							}
 						if (nan)
 							sum = ms;
@@ -3882,6 +3885,7 @@ int core_oph_sum_multi(oph_multistring * byte_array, oph_multistring * result)
 						for (i = 0; i < byte_array->numelem; i++, current += byte_array->blocksize)
 							if (ms != *(long long *) current) {
 								sum += *(long long *) current;
+								nan = 0;
 							}
 						if (nan)
 							sum = ms;
