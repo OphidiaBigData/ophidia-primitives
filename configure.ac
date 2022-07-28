@@ -17,7 +17,7 @@
 #
 
 AC_PREREQ([2.60])
-AC_INIT([ophidia-primitives], [1.7.0], [ophidia-info@cmcc.it])
+AC_INIT([ophidia-primitives], [1.7.1], [ophidia-info@cmcc.it])
 # AC_CONFIG_SRCDIR([src/mpiTest.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -75,11 +75,11 @@ AC_SUBST(GSL_LIB)
 
 GSL_SUPPORT=
 AC_ARG_ENABLE(gsl_lib,
-	   [  --disable-gsl-lib	
+	   [  --disable-gsl-lib
           Disable GSL. (Enabled by default)],
-	   [ gsl_lib="no" 
+	   [ gsl_lib="no"
           AC_MSG_WARN("GSL support disabled")],
-     [ gsl_lib="yes"  
+     [ gsl_lib="yes"
           AC_MSG_NOTICE("GSL support enabled")]
 	   )
 AM_CONDITIONAL([GSL_SUPPORT], [test "x$gsl_lib" = "xyes"])
