@@ -26,6 +26,9 @@
 
 /* MySQL headers  */
 #include <mysql.h>		// It contains UDF-related symbols and data structures
+#if MYSQL_VERSION_ID >= 80001 && MYSQL_VERSION_ID != 80002
+typedef bool my_bool;
+#endif
 
 typedef struct {
 	void *f[4];		// measure and expressions
