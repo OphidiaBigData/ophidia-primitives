@@ -1,4 +1,10 @@
 
+## v1.7.2 - 2022-12-22
+
+### Fixed:
+
+- Option to disable GSL-based primitives
+
 ## v1.7.1 - 2022-07-28
 
 ### Fixed:
