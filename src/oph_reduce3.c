@@ -214,7 +214,7 @@ char *oph_reduce3(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned lon
 	unsigned long lll, olll, k;
 
 	//Function pointer
-	int (*core_oph_oper)(oph_stringPtr byte_array, char *res);
+	int (*core_oph_oper) (oph_stringPtr byte_array, char *res);
 
 	if (args->arg_count > 5) {
 		block_size = *((long long *) (args->args[5]));

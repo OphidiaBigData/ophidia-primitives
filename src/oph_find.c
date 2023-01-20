@@ -58,7 +58,7 @@ my_bool oph_find_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_find_deinit(UDF_INIT * initid __attribute__((unused)))
+void oph_find_deinit(UDF_INIT * initid __attribute__ ((unused)))
 {
 }
 

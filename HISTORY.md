@@ -1,9 +1,13 @@
 
-## v1.7.2 - 2022-12-22
+## v1.7.2 - 2023-01-20
 
 ### Fixed:
 
 - Option to disable GSL-based primitives
+
+### Added:
+
+- Support for CentOS9 [#18](https://github.com/OphidiaBigData/ophidia-primitives/pull/18)
 
 ## v1.7.1 - 2022-07-28
 
