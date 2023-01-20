@@ -686,7 +686,7 @@ static const unsigned char core_d[] = {
 	66, 66, 66, 66, 66, 66
 };
 
-int _core_base64decode(const char *in, size_t inLen, char *out, size_t * outLen)
+int _core_base64decode(const char *in, size_t inLen, char *out, size_t *outLen)
 {
 	const char *end = in + inLen;
 	char iter = 0;

@@ -30,6 +30,9 @@
 
 /* MySQL headers  */
 #include <mysql.h>		// It contains UDF-related symbols and data structures
+#if MYSQL_VERSION_ID >= 80001 && MYSQL_VERSION_ID != 80002
+typedef bool my_bool;
+#endif
 
 /* GSL STATS headers  */
 #include <math.h>
@@ -62,7 +65,7 @@
 |       Functions' declarations (BEGIN)             |
 |------------------------------------------------------------------*/
 /* Compute requested statistics */
-int oph_gsl_stats_produce(void *in_data, const size_t data_len, oph_type data_type, const char *mask, char *out_data, const size_t out_len, size_t * out_data_len, oph_type out_data_type);
+int oph_gsl_stats_produce(void *in_data, const size_t data_len, oph_type data_type, const char *mask, char *out_data, const size_t out_len, size_t *out_data_len, oph_type out_data_type);
 
 /* These must be right or mysqld will not find the symbol! */
 my_bool oph_gsl_stats_init(UDF_INIT * initid, UDF_ARGS * args, char *message);
