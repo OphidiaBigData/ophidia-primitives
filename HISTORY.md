@@ -1,4 +1,10 @@
 
+## Next release
+
+### Fixed
+
+- Bug in setting GSL library using the corresponding configuration option
+
 ## v1.7.2 - 2023-01-20
 
 ### Fixed:

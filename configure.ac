@@ -75,7 +75,7 @@ if test "x${gsl_lib}" = "xyes"; then
 	AC_ARG_WITH(gsl_lib_path,
 		   [  --with-gsl-lib-path=PATH       Location of GSL lib],
 		   [
-		    gsl_lib_path="-L$withval"
+		    gsl_lib_path="-L$withval -lgsl -lgslcblas -lm"
 		   ],
 		 [
 	   gsl_lib_path="$GSL_LIBS"
