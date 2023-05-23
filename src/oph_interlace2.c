@@ -141,6 +141,7 @@ char *oph_interlace2(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lo
 	int num_measure = args->arg_count - 3;
 	size_t num_measure_total = 0;
 	unsigned long numelem = 0;
+	long long *list = NULL;
 	oph_multistring *measure;
 	if (!param->error && !param->measure) {
 		if (core_set_oph_multistring(&measure, args->args[0], &(args->lengths[0]))) {
@@ -152,7 +153,7 @@ char *oph_interlace2(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lo
 			return NULL;
 		}
 		size_t max = num_measure * sizeof(long long);
-		long long *list = (long long *) malloc(max);
+		list = (long long *) malloc(max);
 		if (args->args[2]) {
 			if (max > args->lengths[2])
 				max = args->lengths[2];
@@ -186,8 +187,10 @@ char *oph_interlace2(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lo
 		}
 
 		param->measure = measure;
-	} else
+	} else {
 		measure = param->measure;
+		list = (long long *) param->extend;
+	}
 
 	for (i = 0; i < num_measure; ++i)
 		measure[i].content = args->args[3 + i];
@@ -219,8 +222,11 @@ char *oph_interlace2(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lo
 					if (param->error)
 						break;
 				}
-				if (!param->error)
-					output->blocksize *= num_measure;	// Number of input measures
+				if (!param->error) {
+					for (i = j = 0; i < num_measure; ++i)
+						j += list[i];
+					output->blocksize *= j;
+				}
 			}
 			if (param->error) {
 				pmesg(1, __FILE__, __LINE__, "Output data type has a different number of fields from the set of input data types\n");

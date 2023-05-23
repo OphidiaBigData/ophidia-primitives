@@ -133,7 +133,6 @@ char *oph_interlace(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lon
 	}
 
 	size_t num_measure_total = 0;
-	unsigned long numelem = 0;
 	oph_multistring *measure;
 	if (!param->error && !param->measure) {
 		if (core_set_oph_multistring(&measure, args->args[0], &(args->lengths[0]))) {
@@ -165,7 +164,6 @@ char *oph_interlace(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lon
 				return NULL;
 			}
 		}
-		numelem += measure[i].numelem;
 
 		param->measure = measure;
 	} else
@@ -212,7 +210,7 @@ char *oph_interlace(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lon
 				return NULL;
 			}
 		}
-		output->numelem = numelem;
+		output->numelem = measure->numelem;
 		output->length = output->numelem * output->blocksize;
 		if (!output->length) {
 			*length = 0;
