@@ -23,7 +23,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_gsl_complex_get_imag_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_gsl_complex_get_imag_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	int i = 0;
 	/* oph_gsl_complex_get_imag(input_OPH_TYPE, output_OPH_TYPE, measure) */
@@ -43,7 +43,7 @@ my_bool oph_gsl_complex_get_imag_init(UDF_INIT * initid, UDF_ARGS * args, char *
 	return 0;
 }
 
-void oph_gsl_complex_get_imag_deinit(UDF_INIT * initid)
+void oph_gsl_complex_get_imag_deinit(UDF_INIT *initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
@@ -52,7 +52,7 @@ void oph_gsl_complex_get_imag_deinit(UDF_INIT * initid)
 	}
 }
 
-char *oph_gsl_complex_get_imag(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_gsl_complex_get_imag(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	if (*error) {
 		*length = 0;

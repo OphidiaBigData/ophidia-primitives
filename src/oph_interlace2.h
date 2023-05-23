@@ -16,41 +16,30 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "oph_size_array.h"
+/*/ Standard C headers */
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 
-int msglevel = 1;
+/* Core function header */
+#include "oph_core.h"
+
+/* MySQL headers  */
+#include <mysql.h>		// It contains UDF-related symbols and data structures
+#if MYSQL_VERSION_ID >= 80001 && MYSQL_VERSION_ID != 80002
+typedef bool my_bool;
+#endif
 
 /*------------------------------------------------------------------|
-|               Functions' implementation (BEGIN)                   |
+|		Functions' declarations (BEGIN)			    |
 |------------------------------------------------------------------*/
-my_bool oph_size_array_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
-{
-	if (args->arg_count != 3) {
-		strcpy(message, "ERROR! Wrong arguments! oph_size_array(input_OPH_TYPE, output_OPH_TYPE, measure)");
-		return 1;
-	}
 
-	int i;
-	for (i = 0; i < args->arg_count; i++) {
-		if (args->arg_type[i] != STRING_RESULT) {
-			strcpy(message, "ERROR: Wrong arguments to oph_size_array function");
-			return 1;
-		}
-	}
-
-	return 0;
-}
-
-void oph_size_array_deinit(UDF_INIT *initid __attribute__((unused)))
-{
-
-}
-
-long long oph_size_array(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
-{
-	return args->lengths[2];
-}
+/* These must be right or mysqld will not find the symbol! */
+my_bool oph_interlace2_init(UDF_INIT * initid, UDF_ARGS * args, char *message);
+void oph_interlace2_deinit(UDF_INIT * initid);
+char *oph_interlace2(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error);
 
 /*------------------------------------------------------------------|
-|               Functions' implementation (END)                     |
+|               Functions' declarations (END)                       |
 |------------------------------------------------------------------*/

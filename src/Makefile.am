@@ -215,6 +215,11 @@ liboph_interlace_la_SOURCES = oph_interlace.c oph_interlace.h
 liboph_interlace_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
 liboph_interlace_la_LDFLAGS = -avoid-version -shared $(LIBS) -lm -L. -loph_debug -loph_core
 
+lib_LTLIBRARIES += liboph_interlace2.la
+liboph_interlace2_la_SOURCES = oph_interlace2.c oph_interlace2.h
+liboph_interlace2_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_interlace2_la_LDFLAGS = -avoid-version -shared $(LIBS) -lm -L. -loph_debug -loph_core
+
 lib_LTLIBRARIES += liboph_math.la
 liboph_math_la_SOURCES = oph_math.c oph_math.h oph_core_math.c oph_core_math.h
 liboph_math_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)

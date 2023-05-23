@@ -20,7 +20,7 @@
 
 int msglevel = 1;
 
-int core_oph_interlace_multi(oph_generic_param_multi * param)
+int core_oph_interlace_multi(oph_generic_param_multi *param)
 {
 	int i, j, k, h;
 	oph_multistring *measure = param->measure, *result = param->result;
@@ -52,7 +52,7 @@ int core_oph_interlace_multi(oph_generic_param_multi * param)
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_interlace_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_interlace_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	if (args->arg_count < 3) {
 		strcpy(message, "ERROR: Wrong arguments! oph_interlace(input_OPH_TYPE, output_OPH_TYPE, measure, ...)");
@@ -72,7 +72,7 @@ my_bool oph_interlace_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_interlace_deinit(UDF_INIT * initid)
+void oph_interlace_deinit(UDF_INIT *initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
@@ -81,7 +81,7 @@ void oph_interlace_deinit(UDF_INIT * initid)
 	}
 }
 
-char *oph_interlace(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_interlace(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	int i;
 
@@ -133,6 +133,7 @@ char *oph_interlace(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned l
 	}
 
 	size_t num_measure_total = 0;
+	unsigned long numelem = 0;
 	oph_multistring *measure;
 	if (!param->error && !param->measure) {
 		if (core_set_oph_multistring(&measure, args->args[0], &(args->lengths[0]))) {
@@ -164,6 +165,7 @@ char *oph_interlace(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned l
 				return NULL;
 			}
 		}
+		numelem += measure[i].numelem;
 
 		param->measure = measure;
 	} else
@@ -210,7 +212,7 @@ char *oph_interlace(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned l
 				return NULL;
 			}
 		}
-		output->numelem = measure->numelem;
+		output->numelem = numelem;
 		output->length = output->numelem * output->blocksize;
 		if (!output->length) {
 			*length = 0;

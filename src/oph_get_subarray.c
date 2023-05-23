@@ -20,7 +20,7 @@
 
 int msglevel = 1;
 
-int core_oph_get_subarray_multi(oph_multistring * byte_array, oph_multistring * result, long long start)
+int core_oph_get_subarray_multi(oph_multistring *byte_array, oph_multistring *result, long long start)
 {
 	unsigned long start_ind;
 	start_ind = start * byte_array->blocksize;
@@ -33,7 +33,7 @@ int core_oph_get_subarray_multi(oph_multistring * byte_array, oph_multistring * 
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_get_subarray_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_get_subarray_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	int i = 0;
 	if (args->arg_count != 3 && args->arg_count != 4 && args->arg_count != 5) {
@@ -58,7 +58,7 @@ my_bool oph_get_subarray_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_get_subarray_deinit(UDF_INIT * initid)
+void oph_get_subarray_deinit(UDF_INIT *initid)
 {
 	//Free allocated space
 	oph_multistring *multimeasure;
@@ -78,7 +78,7 @@ void oph_get_subarray_deinit(UDF_INIT * initid)
 	}
 }
 
-char *oph_get_subarray(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_get_subarray(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	oph_multistring *multim;
 	oph_multistring *output;
