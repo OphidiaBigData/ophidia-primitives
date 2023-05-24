@@ -64,8 +64,10 @@ my_bool oph_interlace2_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	int i;
 	for (i = 0; i < args->arg_count; i++) {
 		if (args->arg_type[i] != STRING_RESULT) {
-			strcpy(message, "ERROR: Wrong arguments to oph_interlace2 function");
-			return 1;
+			if ((i != 2) || (args->args[2] != NULL)) {
+				strcpy(message, "ERROR: Wrong arguments to oph_interlace2 function");
+				return 1;
+			}
 		}
 	}
 
@@ -153,7 +155,7 @@ char *oph_interlace2(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lo
 			return NULL;
 		}
 		size_t max = num_measure * sizeof(long long);
-		list = (long long *) malloc(max);
+		list = (long long *) calloc(num_measure, sizeof(long long));
 		if (args->args[2]) {
 			if (max > args->lengths[2])
 				max = args->lengths[2];
