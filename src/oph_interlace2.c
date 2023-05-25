@@ -26,17 +26,18 @@ int core_oph_interlace2_multi(oph_generic_param_multi *param)
 	oph_multistring *measure = param->measure, *result = param->result;
 	char *ic, *oc = result->content, output_format = measure->num_measure == result->num_measure;
 	long long t, *list = (long long *) param->extend;
-	for (j = 0; j < measure->numelem; ++j)	// Loop on elements
+	int numelem = measure->numelem / list[0];
+	for (j = 0; j < numelem; ++j)	// Loop on elements
 	{
-		k = h = 0;
+		k = 0;
 		do		// Loop on input measures
 		{
 			measure = param->measure + k;
 			ic = measure->content;
-			for (t = 0; t < list[k]; ++t)	// Loop on items of the same measure
-				for (i = 0; i < measure->num_measure; ++i)	// Loop on data types
+			for (t = 0; t < list[k]; ++t)	// Loop on ensables
+				for (i = h = 0; i < measure->num_measure; ++i)	// Loop on data types
 				{
-					if (core_oph_type_cast(ic + j * measure->blocksize, oc, measure->type[i], result->type[output_format ? h % result->num_measure : h], NULL)) {
+					if (core_oph_type_cast(ic + j * measure->blocksize * list[k], oc, measure->type[i], result->type[output_format ? h % result->num_measure : h], NULL)) {
 						pmesg(1, __FILE__, __LINE__, "Error in compute array\n");
 						return 1;
 					}
@@ -185,7 +186,7 @@ char *oph_interlace2(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lo
 				*error = 1;
 				return NULL;
 			}
-			numelem += measure[i].numelem * list[i];
+			numelem += measure[i].numelem;
 		}
 
 		param->measure = measure;
@@ -224,11 +225,8 @@ char *oph_interlace2(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lo
 					if (param->error)
 						break;
 				}
-				if (!param->error) {
-					for (i = j = 0; i < num_measure; ++i)
-						j += list[i];
-					output->blocksize *= j;
-				}
+				if (!param->error)
+					output->blocksize *= num_measure;
 			}
 			if (param->error) {
 				pmesg(1, __FILE__, __LINE__, "Output data type has a different number of fields from the set of input data types\n");
@@ -239,7 +237,7 @@ char *oph_interlace2(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lo
 			}
 		}
 		output->numelem = numelem;
-		output->length = output->numelem * output->blocksize;
+		output->length = output->numelem * output->blocksize / num_measure;
 		if (!output->length) {
 			*length = 0;
 			*is_null = 1;
