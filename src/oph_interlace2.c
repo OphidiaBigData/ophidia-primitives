@@ -33,11 +33,11 @@ int core_oph_interlace2_multi(oph_generic_param_multi *param)
 		do		// Loop on input measures
 		{
 			measure = param->measure + k;
-			ic = measure->content;
+			ic = measure->content + j * measure->blocksize * list[k];
 			for (t = 0; t < list[k]; ++t)	// Loop on ensables
 				for (i = h = 0; i < measure->num_measure; ++i)	// Loop on data types
 				{
-					if (core_oph_type_cast(ic + j * measure->blocksize * list[k], oc, measure->type[i], result->type[output_format ? h % result->num_measure : h], NULL)) {
+					if (core_oph_type_cast(ic, oc, measure->type[i], result->type[output_format ? h % result->num_measure : h], NULL)) {
 						pmesg(1, __FILE__, __LINE__, "Error in compute array\n");
 						return 1;
 					}
