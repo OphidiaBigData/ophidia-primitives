@@ -151,7 +151,7 @@ int core_oph_predicate3(oph_stringPtr byte_array, char *result)
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_predicate3_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_predicate3_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	if ((args->arg_count < 6) || (args->arg_count > 7)) {
 		strcpy(message, "ERROR: Wrong arguments! oph_predicate3(input_OPH_TYPE, output_OPH_TYPE, measure, condition, output_expression1, output_expression2, [occurrence])");
@@ -173,7 +173,7 @@ my_bool oph_predicate3_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_predicate3_deinit(UDF_INIT * initid)
+void oph_predicate3_deinit(UDF_INIT *initid)
 {
 	int i;
 	//Free allocated space
@@ -192,7 +192,7 @@ void oph_predicate3_deinit(UDF_INIT * initid)
 	}
 }
 
-char *oph_predicate3(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_predicate3(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	oph_string measure;
 	char *buffer;

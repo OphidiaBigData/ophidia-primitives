@@ -23,7 +23,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_convert_l_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_convert_l_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	/* oph_convert_l(single_binary_(long, int)_value, OPH_TYPE) */
 	int i = 0;
@@ -42,7 +42,7 @@ my_bool oph_convert_l_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_convert_l_deinit(UDF_INIT * initid)
+void oph_convert_l_deinit(UDF_INIT *initid)
 {
 	if (initid->ptr) {
 		free(initid->ptr);
@@ -50,7 +50,7 @@ void oph_convert_l_deinit(UDF_INIT * initid)
 	}
 }
 
-long long oph_convert_l(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error)
+long long oph_convert_l(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
 {
 	oph_string *measure;
 

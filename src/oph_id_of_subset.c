@@ -20,7 +20,7 @@
 
 int msglevel = 1;
 
-int core_oph_id_of_subset_set_flags(oph_subset ** subset, long long *flags, unsigned long size, unsigned long *total, oph_id_of_subset_block * blocks, int number)
+int core_oph_id_of_subset_set_flags(oph_subset **subset, long long *flags, unsigned long size, unsigned long *total, oph_id_of_subset_block *blocks, int number)
 {
 	if (!subset || !flags || !size || !total || !blocks) {
 		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
@@ -46,7 +46,7 @@ int core_oph_id_of_subset_set_flags(oph_subset ** subset, long long *flags, unsi
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_id_of_subset_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_id_of_subset_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	int i;
 	if (args->arg_count < 2) {
@@ -93,7 +93,7 @@ my_bool oph_id_of_subset_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_id_of_subset_deinit(UDF_INIT * initid)
+void oph_id_of_subset_deinit(UDF_INIT *initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
@@ -112,7 +112,7 @@ void oph_id_of_subset_deinit(UDF_INIT * initid)
 	}
 }
 
-long long oph_id_of_subset(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error)
+long long oph_id_of_subset(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
 {
 	int i;
 	oph_id_of_subset_param *param;

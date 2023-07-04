@@ -23,7 +23,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_count_array_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_count_array_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	if ((args->arg_count < 3) || (args->arg_count > 5)) {
 		strcpy(message, "ERROR! Wrong arguments! oph_count_array(input_OPH_TYPE, output_OPH_TYPE, measure, [include_missing_values], [missingvalue])");
@@ -56,7 +56,7 @@ my_bool oph_count_array_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_count_array_deinit(UDF_INIT * initid __attribute__((unused)))
+void oph_count_array_deinit(UDF_INIT *initid __attribute__((unused)))
 {
 	if (initid->ptr) {
 		oph_multistring *multimeasure = (oph_multistring *) (initid->ptr);
@@ -66,7 +66,7 @@ void oph_count_array_deinit(UDF_INIT * initid __attribute__((unused)))
 	}
 }
 
-long long oph_count_array(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error)
+long long oph_count_array(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
 {
 	long long count = 0;
 

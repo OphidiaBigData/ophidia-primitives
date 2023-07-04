@@ -24,7 +24,7 @@
 
 int msglevel = 1;
 
-int core_oph_quantile_multi(oph_multistring * byte_array, oph_multistring * result)
+int core_oph_quantile_multi(oph_multistring *byte_array, oph_multistring *result)
 {
 #ifdef GSL_SUPPORTED
 	if (!byte_array || (byte_array->param < 0.0) || (byte_array->param > 1.0)) {
@@ -133,7 +133,7 @@ int core_oph_quantile_multi(oph_multistring * byte_array, oph_multistring * resu
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_reduce_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_reduce_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	int i = 0;
 	if ((args->arg_count < 3) || (args->arg_count > 7)) {
@@ -172,7 +172,7 @@ my_bool oph_reduce_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_reduce_deinit(UDF_INIT * initid)
+void oph_reduce_deinit(UDF_INIT *initid)
 {
 	oph_multistring *multimeasure;
 	//Free allocated space
@@ -198,7 +198,7 @@ void oph_reduce_deinit(UDF_INIT * initid)
 	}
 }
 
-char *oph_reduce(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_reduce(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	oph_multistring *multim;
 	oph_multistring *output;	//I can use a multistring to store information about the output types
