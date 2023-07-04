@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2018 CMCC Foundation
+    Copyright (C) 2012-2022 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -136,6 +136,10 @@ void oph_aggregate_stats_partial_deinit(UDF_INIT * initid)
 			}
 			free(dat->partials);
 			dat->partials = NULL;
+		}
+		if (dat->mask.length) {
+			free(dat->mask.length);
+			dat->mask.length = NULL;
 		}
 		if (dat->mask.content) {
 			free(dat->mask.content);

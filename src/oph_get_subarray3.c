@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2018 CMCC Foundation
+    Copyright (C) 2012-2022 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -153,7 +153,6 @@ char *oph_get_subarray3(UDF_INIT * initid, UDF_ARGS * args, char *result, unsign
 		initid->ptr = (char *) malloc(sizeof(oph_get_subarray3_param));
 		if (!initid->ptr) {
 			pmesg(1, __FILE__, __LINE__, "Error allocating oph_get_subarray3_param\n");
-			param->error = 1;
 			*length = 0;
 			*is_null = 0;
 			*error = 1;

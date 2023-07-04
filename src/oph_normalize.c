@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2018 CMCC Foundation
+    Copyright (C) 2012-2022 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -166,12 +166,12 @@ char *oph_normalize(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned l
 	}
 	output = (oph_multistring *) ((initid->ptr));
 
-	if (args->arg_count > 4)
+	if ((args->arg_count > 4) && args->args[4])
 		block_count = *((long long *) (args->args[4]));
 	if (!block_count)
 		block_count = multim->numelem;
 
-	double missingvalue;
+	double missingvalue = NAN;
 	if ((args->arg_count > 5) && args->args[5]) {
 		missingvalue = *((double *) (args->args[5]));
 		multim->missingvalue = &missingvalue;

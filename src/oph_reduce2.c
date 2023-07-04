@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2018 CMCC Foundation
+    Copyright (C) 2012-2022 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -205,7 +205,7 @@ char *oph_reduce2(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned lon
 	int i = 0, j;
 	unsigned long lll, olll, k;
 
-	int (*core_oph_oper) (oph_stringPtr byte_array, char *res);
+	int (*core_oph_oper)(oph_stringPtr byte_array, char *res);
 
 	if (args->arg_count > 5) {
 		block_size = *((long long *) (args->args[5]));

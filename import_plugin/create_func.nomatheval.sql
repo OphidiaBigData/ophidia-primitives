@@ -1,6 +1,6 @@
 --
 --    Ophidia Primitives
---    Copyright (C) 2012-2018 CMCC Foundation
+--    Copyright (C) 2012-2022 CMCC Foundation
 --
 --    This program is free software: you can redistribute it and/or modify
 --    it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ DROP FUNCTION IF EXISTS oph_size_array;
 DROP FUNCTION IF EXISTS oph_count_array;
 DROP FUNCTION IF EXISTS oph_sum_scalar;
 DROP FUNCTION IF EXISTS oph_mul_scalar;
+DROP FUNCTION IF EXISTS oph_operation_array;
 DROP FUNCTION IF EXISTS oph_sum_array;
 DROP FUNCTION IF EXISTS oph_sum_array_r;
 DROP FUNCTION IF EXISTS oph_find;
@@ -68,6 +69,7 @@ DROP FUNCTION IF EXISTS oph_gsl_complex_to_polar;
 DROP FUNCTION IF EXISTS oph_gsl_complex_to_rect;
 DROP FUNCTION IF EXISTS oph_gsl_dwt;
 DROP FUNCTION IF EXISTS oph_gsl_fft;
+DROP FUNCTION IF EXISTS oph_filter;
 DROP FUNCTION IF EXISTS oph_gsl_idwt;
 DROP FUNCTION IF EXISTS oph_gsl_ifft;
 DROP FUNCTION IF EXISTS oph_gsl_quantile;
@@ -76,6 +78,7 @@ DROP FUNCTION IF EXISTS oph_gsl_stats;
 DROP FUNCTION IF EXISTS oph_gsl_histogram;
 DROP FUNCTION IF EXISTS oph_sum_scalar2;
 DROP FUNCTION IF EXISTS oph_mul_scalar2;
+DROP FUNCTION IF EXISTS oph_affine;
 DROP FUNCTION IF EXISTS oph_cast;
 DROP FUNCTION IF EXISTS oph_compare;
 DROP FUNCTION IF EXISTS oph_extract;
@@ -89,6 +92,8 @@ DROP FUNCTION IF EXISTS oph_abs_array;
 DROP FUNCTION IF EXISTS oph_arg_array;
 DROP FUNCTION IF EXISTS oph_max_array;
 DROP FUNCTION IF EXISTS oph_min_array;
+DROP FUNCTION IF EXISTS oph_arg_max_array;
+DROP FUNCTION IF EXISTS oph_arg_min_array;
 DROP FUNCTION IF EXISTS oph_operator_array;
 DROP FUNCTION IF EXISTS oph_ccluster_kcluster;
 DROP FUNCTION IF EXISTS oph_aggregate_stats_partial;
@@ -169,6 +174,7 @@ CREATE FUNCTION oph_size_array RETURNS INTEGER SONAME 'liboph_size_array.so';
 CREATE FUNCTION oph_count_array RETURNS INTEGER SONAME 'liboph_count_array.so';
 CREATE FUNCTION oph_sum_scalar RETURNS STRING SONAME 'liboph_sum_scalar.so';
 CREATE FUNCTION oph_mul_scalar RETURNS STRING SONAME 'liboph_mul_scalar.so';
+CREATE FUNCTION oph_operation_array RETURNS STRING SONAME 'liboph_operation_array.so';
 CREATE FUNCTION oph_sum_array RETURNS STRING SONAME 'liboph_sum_array.so';
 CREATE FUNCTION oph_find RETURNS INTEGER SONAME 'liboph_find.so';
 CREATE FUNCTION oph_compress RETURNS STRING SONAME 'liboph_compress.so';
@@ -200,6 +206,7 @@ CREATE FUNCTION oph_gsl_complex_to_polar RETURNS STRING SONAME 'liboph_gsl_compl
 CREATE FUNCTION oph_gsl_complex_to_rect RETURNS STRING SONAME 'liboph_gsl_complex_to_rect.so';
 CREATE FUNCTION oph_gsl_dwt RETURNS STRING SONAME 'liboph_gsl_dwt.so';
 CREATE FUNCTION oph_gsl_fft RETURNS STRING SONAME 'liboph_gsl_fft.so';
+CREATE FUNCTION oph_filter RETURNS STRING SONAME 'liboph_filter.so';
 CREATE FUNCTION oph_gsl_idwt RETURNS STRING SONAME 'liboph_gsl_idwt.so';
 CREATE FUNCTION oph_gsl_ifft RETURNS STRING SONAME 'liboph_gsl_ifft.so';
 CREATE FUNCTION oph_gsl_quantile RETURNS STRING SONAME 'liboph_gsl_quantile.so';
@@ -208,6 +215,7 @@ CREATE FUNCTION oph_gsl_stats RETURNS STRING SONAME 'liboph_gsl_stats.so';
 CREATE FUNCTION oph_gsl_histogram RETURNS STRING SONAME 'liboph_gsl_histogram.so';
 CREATE FUNCTION oph_sum_scalar2 RETURNS STRING SONAME 'liboph_sum_scalar2.so';
 CREATE FUNCTION oph_mul_scalar2 RETURNS STRING SONAME 'liboph_mul_scalar2.so';
+CREATE FUNCTION oph_affine RETURNS STRING SONAME 'liboph_affine.so';
 CREATE FUNCTION oph_cast RETURNS STRING SONAME 'liboph_cast.so';
 CREATE FUNCTION oph_compare RETURNS INTEGER SONAME 'liboph_compare.so';
 CREATE FUNCTION oph_extract RETURNS STRING SONAME 'liboph_extract.so';
@@ -220,6 +228,8 @@ CREATE FUNCTION oph_abs_array RETURNS STRING SONAME 'liboph_abs_array.so';
 CREATE FUNCTION oph_arg_array RETURNS STRING SONAME 'liboph_arg_array.so';
 CREATE FUNCTION oph_max_array RETURNS STRING SONAME 'liboph_max_array.so';
 CREATE FUNCTION oph_min_array RETURNS STRING SONAME 'liboph_min_array.so';
+CREATE FUNCTION oph_arg_max_array RETURNS STRING SONAME 'liboph_arg_max_array.so';
+CREATE FUNCTION oph_arg_min_array RETURNS STRING SONAME 'liboph_arg_min_array.so';
 CREATE FUNCTION oph_operator_array RETURNS STRING SONAME 'liboph_operator_array.so';
 CREATE FUNCTION oph_ccluster_kcluster RETURNS STRING SONAME 'liboph_ccluster_kcluster.so';
 CREATE AGGREGATE FUNCTION oph_aggregate_stats_partial RETURNS STRING SONAME 'liboph_aggregate_stats_partial.so';
@@ -240,4 +250,12 @@ CREATE FUNCTION oph_padding RETURNS STRING SONAME 'liboph_padding.so';
 CREATE FUNCTION oph_replace RETURNS STRING SONAME 'liboph_replace.so';
 CREATE FUNCTION oph_normalize RETURNS STRING SONAME 'liboph_normalize.so';
 CREATE FUNCTION oph_sequence RETURNS STRING SONAME 'liboph_sequence.so';
+
+GRANT EXECUTE ON PROCEDURE `mysql`.`oph_subset` TO `%`;
+GRANT EXECUTE ON PROCEDURE `mysql`.`oph_drill_down` TO `%`;
+GRANT EXECUTE ON FUNCTION `mysql`.`oph_is_in_subset` TO `%`;
+GRANT EXECUTE ON FUNCTION `mysql`.`oph_id_to_index2` TO `%`;
+GRANT EXECUTE ON FUNCTION `mysql`.`oph_id2` TO `%`;
+GRANT EXECUTE ON FUNCTION `mysql`.`oph_id` TO `%`;
+FLUSH PRIVILEGES;
 

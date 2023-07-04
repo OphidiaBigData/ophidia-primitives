@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2018 CMCC Foundation
+    Copyright (C) 2012-2022 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,6 +31,9 @@
 
 /* MySQL headers  */
 #include <mysql.h>		// It contains UDF-related symbols and data structures
+#if MYSQL_VERSION_ID >= 80001 && MYSQL_VERSION_ID != 80002
+typedef bool my_bool;
+#endif
 
 /* stats mask */
 // 7-bit mask for different operators combinations
@@ -44,7 +47,7 @@
 // xxxxxx1 : min
 // 1111111 : all
 // 101     : mean + std dev
-#define MASK_LEN     7
+#define MASK_LEN     8		//for I/O server 7+1 an additional space for \0
 #define DEFAULT_MASK "1111111"
 
 typedef struct oph_agg_stats_final_data {

@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2018 CMCC Foundation
+    Copyright (C) 2012-2022 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -103,7 +103,7 @@ typedef struct oph_request *oph_requestPtr;
 
 typedef struct oph_request_multi {
 	oph_multistring *measure;	//Array of oph_string2 structures (in case of more than one measure passed as input)
-	int (*core_oph_oper) (oph_multistring * byte_array, oph_multistring * res);
+	int (*core_oph_oper)(oph_multistring * byte_array, oph_multistring * res);
 } oph_request_multi;
 typedef struct oph_request_multi *oph_request_multiPtr;
 
@@ -121,9 +121,11 @@ typedef struct {
 	oph_multistring *measure;
 	oph_multistring *result;
 	void *extend;
-	int (*core_oph_oper) (char *valueA, char *valueB, char *result, oph_type type, double *missingvalue);
-	int (*core_oph_oper_multi) (oph_multistring * byte_array, oph_multistring * res);
-	int (*core_oph_oper_multi_ext) (oph_multistring * byte_array, oph_multistring * res, void *extend);
+	int n_measure;
+	int (*core_oph_oper)(char *valueA, char *valueB, char *result, oph_type type, double *missingvalue);
+	int (*core_oph_oper2)(char **valueN, int n_measure, char *result, oph_type type, double *missingvalue);
+	int (*core_oph_oper_multi)(oph_multistring * byte_array, oph_multistring * res);
+	int (*core_oph_oper_multi_ext)(oph_multistring * byte_array, oph_multistring * res, void *extend);
 } oph_generic_param_multi;
 
 /*------------------------------------------------------------------|
@@ -191,9 +193,6 @@ void free_oph_generic_param_multi(oph_generic_param_multi * param);
 
 // Return the values stored in byte_array converted in string format; numbers are separeted by ", " chars
 int core_oph_dump(oph_stringPtr byte_array, char *result, int encoding);
-
-// Return the 'single value' stored in byte_array converted in numerical format (int, long, float, double)
-int core_oph_convert(oph_stringPtr byte_array, void *result);
 
 // Return (in byte array form) the sum of the scalar number with every element of byte_array. Cast scalar to byte_array elements type
 int core_oph_sum_scalar(oph_stringPtr byte_array, double scalar, char *result);
@@ -303,6 +302,12 @@ int core_oph_max_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, cha
 // Evaluates the minimum values comparing each elements of two arrays. Return an array containing the minimum values
 int core_oph_min_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char *result);
 
+// Evaluates the indexes (1 or 2) of the maximum values comparing each elements of two arrays. Return an array containing the indexes
+int core_oph_arg_max_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char *result);
+
+// Evaluates the indexes (1 or 2) of the minimum values comparing each elements of two arrays. Return an array containing the indexes
+int core_oph_arg_min_array(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char *result);
+
 // Return the number of elements in byte_array which have distance from value <= distance
 int core_oph_find(oph_stringPtr byte_array, double value, double distance, long *count);
 
@@ -327,6 +332,14 @@ int core_oph_exponential_moving_avg_multi(oph_multistring * byte_array, oph_mult
 
 // Compute a binary operation on the array
 int core_oph_oper_array_multi(oph_generic_param_multi * param);
+int core_oph_oper_array_multi2(oph_generic_param_multi * param);
+int core_oph_sum_array_multicube(char **valueN, int n, char *valueO, oph_type type, double *missingvalue);
+int core_oph_avg_array_multicube(char **valueN, int n, char *valueO, oph_type type, double *missingvalue);
+int core_oph_mul_array_multicube(char **valueN, int n, char *valueO, oph_type type, double *missingvalue);
+int core_oph_max_array_multicube(char **valueN, int n, char *valueO, oph_type type, double *missingvalue);
+int core_oph_min_array_multicube(char **valueN, int n, char *valueO, oph_type type, double *missingvalue);
+int core_oph_arg_max_array_multicube(char **valueN, int n, char *valueO, oph_type type, double *missingvalue);
+int core_oph_arg_min_array_multicube(char **valueN, int n, char *valueO, oph_type type, double *missingvalue);
 int core_oph_sum_array_multi(char *valueA, char *valueB, char *valueO, oph_type type, double *missingvalue);
 int core_oph_mul_array_multi(char *valueA, char *valueB, char *valueO, oph_type type, double *missingvalue);
 int core_oph_mask_array_multi(char *valueA, char *valueB, char *valueO, oph_type type, double *missingvalue);
@@ -336,6 +349,8 @@ int core_oph_abs_array_multi(char *valueA, char *valueB, char *valueO, oph_type 
 int core_oph_arg_array_multi(char *valueA, char *valueB, char *valueO, oph_type type, double *missingvalue);
 int core_oph_max_array_multi(char *valueA, char *valueB, char *valueO, oph_type type, double *missingvalue);
 int core_oph_min_array_multi(char *valueA, char *valueB, char *valueO, oph_type type, double *missingvalue);
+int core_oph_arg_max_array_multi(char *valueA, char *valueB, char *valueO, oph_type type, double *missingvalue);
+int core_oph_arg_min_array_multi(char *valueA, char *valueB, char *valueO, oph_type type, double *missingvalue);
 
 /*------------------------------------------------------------------|
  |               Array functions (END)                              |

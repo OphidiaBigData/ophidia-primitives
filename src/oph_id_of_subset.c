@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2018 CMCC Foundation
+    Copyright (C) 2012-2022 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -142,7 +142,6 @@ long long oph_id_of_subset(UDF_INIT * initid, UDF_ARGS * args, char *is_null, ch
 		initid->ptr = (char *) malloc(sizeof(oph_id_of_subset_param));
 		if (!initid->ptr) {
 			pmesg(1, __FILE__, __LINE__, "Error allocating oph_id_of_subset_param\n");
-			param->error = 1;
 			*is_null = 0;
 			*error = 1;
 			return 0;

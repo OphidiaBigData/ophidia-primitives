@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2018 CMCC Foundation
+    Copyright (C) 2012-2022 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -160,7 +160,7 @@ char *oph_gsl_quantile(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigne
 		int j = 0;
 		for (i = 3; i < args->arg_count; i++) {
 			if (args->arg_type[i] == DECIMAL_RESULT) {
-				((double *) quantiles->content)[j] = strtod(args->args[i], NULL);
+				((double *) quantiles->content)[j] = *((double *) args->args[i]);
 				j++;
 			} else if (!strcasecmp(args->args[i], "ORDER_FLAG_SET"))
 				quantiles->numelem = ORDER_FLAG_SET;

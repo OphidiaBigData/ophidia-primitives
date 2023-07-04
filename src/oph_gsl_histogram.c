@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2018 CMCC Foundation
+    Copyright (C) 2012-2022 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -140,7 +140,7 @@ char *oph_gsl_histogram(UDF_INIT * initid, UDF_ARGS * args, char *result, unsign
 		}
 
 		oph_gsl_histogram_extraspace *extra = (oph_gsl_histogram_extraspace *) initid->extension;
-		extra->hist = gsl_histogram_alloc((size_t) * ((long long *) args->args[3]));
+		extra->hist = gsl_histogram_alloc((size_t) *((long long *) args->args[3]));
 		if (!extra->hist) {
 			pmesg(1, __FILE__, __LINE__, "Error allocating histogram\n");
 			*length = 0;

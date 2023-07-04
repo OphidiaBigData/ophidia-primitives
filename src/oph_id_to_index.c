@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2018 CMCC Foundation
+    Copyright (C) 2012-2022 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ my_bool oph_id_to_index_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_id_to_index_deinit(UDF_INIT * initid __attribute__ ((unused)))
+void oph_id_to_index_deinit(UDF_INIT * initid __attribute__((unused)))
 {
 }
 

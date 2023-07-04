@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2018 CMCC Foundation
+    Copyright (C) 2012-2022 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@ int msglevel = 1;
 my_bool oph_mul_scalar_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
 	int i = 0;
-	if (args->arg_count < 3 || args->arg_count > 5) {
-		strcpy(message, "ERROR: Wrong arguments! oph_mul_scalar(input_OPH_TYPE, output_OPH_TYPE, measure, [scalar, id_measure])");
+	if (args->arg_count < 3 || args->arg_count > 6) {
+		strcpy(message, "ERROR: Wrong arguments! oph_mul_scalar(input_OPH_TYPE, output_OPH_TYPE, measure, [scalar, missingvalue, id_measure])");
 		return 1;
 	}
 
@@ -49,7 +49,14 @@ my_bool oph_mul_scalar_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 				strcpy(message, "ERROR: Wrong arguments to oph_mul_scalar function");
 				return 1;
 			}
-			args->arg_type[4] = INT_RESULT;
+			args->arg_type[4] = REAL_RESULT;
+			if (args->arg_count > 5) {
+				if (args->arg_type[5] == STRING_RESULT) {
+					strcpy(message, "ERROR: Wrong arguments to oph_mul_scalar function");
+					return 1;
+				}
+				args->arg_type[5] = INT_RESULT;
+			}
 		}
 	}
 
@@ -82,11 +89,6 @@ char *oph_mul_scalar(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned 
 {
 	oph_multistring *multim;
 	oph_multistring *output;
-
-	int id = 0;
-	double scalar = 1;
-	if (args->arg_count > 3)
-		scalar = *((double *) args->args[3]);
 
 	if (!initid->extension) {
 		if (core_set_oph_multistring((oph_multistring **) (&(initid->extension)), args->args[0], &(args->lengths[0]))) {
@@ -131,8 +133,17 @@ char *oph_mul_scalar(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned 
 	output = (oph_multistring *) (initid->ptr);
 	output->numelem = multim->numelem;
 
-	if (args->arg_count > 4) {
-		id = *((long long *) args->args[4]);
+	int id = 0;
+	double scalar = 1, missingvalue = NAN;
+	if ((args->arg_count > 3) && args->args[3])
+		scalar = *((double *) args->args[3]);
+	if ((args->arg_count > 4) && (args->args[4])) {
+		missingvalue = *((double *) args->args[4]);
+		multim->missingvalue = &missingvalue;
+	} else
+		multim->missingvalue = NULL;
+	if ((args->arg_count > 5) && args->args[5]) {
+		id = *((long long *) args->args[5]);
 		if ((id < 0) || (id > ((oph_multistring *) (initid->ptr))->num_measure)) {
 			pmesg(1, __FILE__, __LINE__, "Wrong measure identifier. Correct values are integers in [1, %d].\n", ((oph_multistring *) (initid->ptr))->num_measure);
 			*length = 0;

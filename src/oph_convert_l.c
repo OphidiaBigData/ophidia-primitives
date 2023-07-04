@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2018 CMCC Foundation
+    Copyright (C) 2012-2022 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -107,28 +107,28 @@ long long oph_convert_l(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char 
 	}
 
 	switch (measure->type) {
+		case OPH_DOUBLE:{
+				result = *((double *) measure->content);
+				break;
+			}
+		case OPH_FLOAT:{
+				result = *((float *) measure->content);
+				break;
+			}
 		case OPH_INT:{
-				int tmp;
-				core_oph_convert(measure, (void *) (&tmp));
-				result = (long long) tmp;
+				result = *((int *) measure->content);
 				break;
 			}
 		case OPH_SHORT:{
-				short tmp;
-				core_oph_convert(measure, (void *) (&tmp));
-				result = (long long) tmp;
+				result = *((short *) measure->content);
 				break;
 			}
 		case OPH_BYTE:{
-				char tmp;
-				core_oph_convert(measure, (void *) (&tmp));
-				result = (long long) tmp;
+				result = *((char *) measure->content);
 				break;
 			}
 		case OPH_LONG:{
-				long long tmp;
-				core_oph_convert(measure, (void *) (&tmp));
-				result = (long long) tmp;
+				result = *((long long *) measure->content);
 				break;
 			}
 		default:

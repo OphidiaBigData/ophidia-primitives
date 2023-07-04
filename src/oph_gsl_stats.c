@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2018 CMCC Foundation
+    Copyright (C) 2012-2022 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -243,7 +243,7 @@ char *oph_gsl_stats(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned l
 }
 
 /* Compute requested statistics */
-int oph_gsl_stats_produce(void *in_data, const size_t data_len, oph_type data_type, const char *mask, char *out_data, const size_t out_len, size_t * out_data_len, oph_type out_data_type)
+int oph_gsl_stats_produce(void *in_data, const size_t data_len, oph_type data_type, const char *mask, char *out_data, const size_t out_len, size_t *out_data_len, oph_type out_data_type)
 {
 
 	int i, j;

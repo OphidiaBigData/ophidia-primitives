@@ -1,15 +1,68 @@
 
-## New features
+## Next release
 
-### Changed:
+### Fixed
 
-- Consider value 'INDEX' for expressions of predicate primitives
-- Improve core function of predicate primitives
-- Makefile to speed up building phase
+- Bug in setting GSL library using the corresponding configuration option
+
+## v1.7.2 - 2023-01-20
 
 ### Fixed:
 
+- Option to disable GSL-based primitives
+
+### Added:
+
+- Support for CentOS9 [#18](https://github.com/OphidiaBigData/ophidia-primitives/pull/18)
+
+## v1.7.1 - 2022-07-28
+
+### Fixed:
+
+- Bug related to missing values for integers in core_oph_sum_multi()
+
+## v1.7.0 - 2022-07-01
+
+### Fixed:
+
+- Bug in debug printing function
+- Bugs in configuration script for code building
+
+### Added:
+
+- New primitive oph_operation_array [#17](https://github.com/OphidiaBigData/ophidia-primitives/pull/17)
+- New primitive oph_filter [#16](https://github.com/OphidiaBigData/ophidia-primitives/pull/16)
+
+## v1.6.0 - 2021-03-05
+
+### Fixed:
+
+- Bug in core functions when data is copied from arrays with different lenght
+- Bug in primitives oph_gsl_quantile, oph_aggregate_stats and gsl_fit_linear_coeff
+
+### Changed:
+
+- Some convertion functions
+
+## v1.5.0 - 2019-01-24
+
+### Fixed:
+
+- Primitive SQL import scripts to perform grants on stored procedures [#12](https://github.com/OphidiaBigData/ophidia-primitives/pull/12)
+- Bug [#11](https://github.com/OphidiaBigData/ophidia-primitives/issues/11)
 - Bug [#10](https://github.com/OphidiaBigData/ophidia-primitives/issues/10)
+
+### Added:
+
+- New primitives oph_affine [#14](https://github.com/OphidiaBigData/ophidia-primitives/pull/14), oph_arg_max_array and oph_arg_min_array [#13](https://github.com/OphidiaBigData/ophidia-primitives/pull/13)
+
+### Changed:
+
+- Predicate primitives to return also index of the value [#15](https://github.com/OphidiaBigData/ophidia-primitives/pull/15)
+- Improve core function of predicate primitives [#15](https://github.com/OphidiaBigData/ophidia-primitives/pull/15)
+- Management of missing values for some primitives [#13](https://github.com/OphidiaBigData/ophidia-primitives/pull/13)
+- Some core functions to enable optimization
+- Makefile to speed up building phase
 
 ## v1.4.0 - 2018-07-27
 
@@ -51,7 +104,7 @@
 - Bug in init of oph_moving_avg primitive
 - Possible memory leak in core library
 - Bug [#2](https://github.com/OphidiaBigData/ophidia-primitives/issues/2)
-- Bug in core STD. Dev. operation 
+- Bug in core STD. Dev. operation
 - Bug in oph_extend primitive
 - Bug in memory allocation for oph_extend
 
@@ -117,7 +170,7 @@
 ## v0.10.1 - 2016-06-27
 
 ### Fixed:
- 
+
 - Version number in files
 
 ## v0.10.0 - 2016-06-23

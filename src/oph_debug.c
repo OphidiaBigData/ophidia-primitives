@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2018 CMCC Foundation
+    Copyright (C) 2012-2022 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,7 +17,12 @@
 */
 
 #include "oph_debug.h"
+
+#include <string.h>
+#include <time.h>
 #include <stdio.h>
+
+#define CTIME_BUF 32
 
 extern int msglevel;		/* the higher, the more messages... */
 
@@ -33,25 +38,37 @@ void pmesg(int level, char *source, long int line_number, char *format, ...)
 	va_list args;
 	char log_type[10];
 
-	if (level > msglevel)
+	int new_msglevel = msglevel % 10;
+	if (level > new_msglevel)
 		return;
 
 	switch (level) {
-		case 1:
-			sprintf(log_type, "ERROR");
+		case LOG_ERROR:
+			sprintf(log_type, LOG_ERROR_MESSAGE);
 			break;
-		case 2:
-			sprintf(log_type, "WARNING");
+		case LOG_INFO:
+			sprintf(log_type, LOG_INFO_MESSAGE);
 			break;
-		case 3:
-			sprintf(log_type, "DEBUG");
+		case LOG_WARNING:
+			sprintf(log_type, LOG_WARNING_MESSAGE);
+			break;
+		case LOG_DEBUG:
+			sprintf(log_type, LOG_DEBUG_MESSAGE);
 			break;
 		default:
-			sprintf(log_type, "UNKNOWN");
+			sprintf(log_type, LOG_UNKNOWN_MESSAGE);
 			break;
 	}
 
-	fprintf(stderr, "[%s][%s][%ld] ", log_type, source, line_number);
+	if (msglevel > 10) {
+		time_t t1 = time(NULL);
+		char s[CTIME_BUF];
+		ctime_r(&t1, s);
+		s[strlen(s) - 1] = 0;	// remove \n
+		fprintf(stderr, "[%s][%s][%s][%ld]\t", s, log_type, source, line_number);
+	} else {
+		fprintf(stderr, "[%s][%s][%ld]\t", log_type, source, line_number);
+	}
 
 	va_start(args, format);
 	vfprintf(stderr, format, args);
