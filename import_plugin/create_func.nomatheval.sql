@@ -236,6 +236,7 @@ CREATE AGGREGATE FUNCTION oph_aggregate_stats_partial RETURNS STRING SONAME 'lib
 CREATE AGGREGATE FUNCTION oph_aggregate_stats_final RETURNS STRING SONAME 'liboph_aggregate_stats_final.so';
 CREATE FUNCTION oph_mask_array RETURNS STRING SONAME 'liboph_mask_array.so';
 CREATE FUNCTION oph_interlace RETURNS STRING SONAME 'liboph_interlace.so';
+CREATE FUNCTION oph_interlace2 RETURNS STRING SONAME 'liboph_interlace2.so';
 CREATE FUNCTION oph_append RETURNS STRING SONAME 'liboph_append.so';
 CREATE FUNCTION oph_quantize RETURNS STRING SONAME 'liboph_quantize.so';
 CREATE FUNCTION oph_gsl_spline RETURNS STRING SONAME 'liboph_gsl_spline.so';
