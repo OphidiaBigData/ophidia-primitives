@@ -23,7 +23,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_aggregate_operator_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_aggregate_operator_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	int i = 0;
 	if (args->arg_count < 3 || args->arg_count > 5) {
@@ -72,7 +72,7 @@ my_bool oph_aggregate_operator_init(UDF_INIT * initid, UDF_ARGS * args, char *me
 	return 0;
 }
 
-void oph_aggregate_operator_deinit(UDF_INIT * initid)
+void oph_aggregate_operator_deinit(UDF_INIT *initid)
 {
 	//Free allocated space 
 	if (initid->ptr) {
@@ -99,13 +99,13 @@ void oph_aggregate_operator_deinit(UDF_INIT * initid)
 	}
 }
 
-void oph_aggregate_operator_reset(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error)
+void oph_aggregate_operator_reset(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
 {
 	oph_aggregate_operator_clear(initid, is_null, error);
 	oph_aggregate_operator_add(initid, args, is_null, error);
 }
 
-void oph_aggregate_operator_clear(UDF_INIT * initid, char *is_null, char *error)
+void oph_aggregate_operator_clear(UDF_INIT *initid, char *is_null, char *error)
 {
 	if (initid->ptr) {
 		oph_agg_oper_data *dat = (oph_agg_oper_data *) initid->ptr;
@@ -120,7 +120,7 @@ void oph_aggregate_operator_clear(UDF_INIT * initid, char *is_null, char *error)
 	*error = 0;
 }
 
-void oph_aggregate_operator_add(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error)
+void oph_aggregate_operator_add(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
 {
 	if (*error || !args->args[2])
 		return;
@@ -272,7 +272,7 @@ void oph_aggregate_operator_add(UDF_INIT * initid, UDF_ARGS * args, char *is_nul
 	dat->first = 0;
 }
 
-char *oph_aggregate_operator(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_aggregate_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	int i;
 

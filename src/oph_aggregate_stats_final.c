@@ -23,7 +23,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_aggregate_stats_final_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_aggregate_stats_final_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	if (args->arg_count < 3 || args->arg_count > 4) {
 		strcpy(message, "ERROR: Wrong arguments! oph_aggregate_stats_final(input_OPH_TYPE, output_OPH_TYPE, measure, [MASK])");
@@ -77,7 +77,7 @@ my_bool oph_aggregate_stats_final_init(UDF_INIT * initid, UDF_ARGS * args, char 
 	return 0;
 }
 
-void oph_aggregate_stats_final_deinit(UDF_INIT * initid)
+void oph_aggregate_stats_final_deinit(UDF_INIT *initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
@@ -187,13 +187,13 @@ void oph_aggregate_stats_final_deinit(UDF_INIT * initid)
 	}
 }
 
-void oph_aggregate_stats_final_reset(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error)
+void oph_aggregate_stats_final_reset(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
 {
 	oph_aggregate_stats_final_clear(initid, is_null, error);
 	oph_aggregate_stats_final_add(initid, args, is_null, error);
 }
 
-void oph_aggregate_stats_final_clear(UDF_INIT * initid, char *is_null, char *error)
+void oph_aggregate_stats_final_clear(UDF_INIT *initid, char *is_null, char *error)
 {
 	if (initid->ptr) {
 		oph_agg_stats_final_data *dat = (oph_agg_stats_final_data *) initid->ptr;
@@ -203,7 +203,7 @@ void oph_aggregate_stats_final_clear(UDF_INIT * initid, char *is_null, char *err
 	*error = 0;
 }
 
-void oph_aggregate_stats_final_add(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error)
+void oph_aggregate_stats_final_add(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
 {
 	if (*error != 0)
 		return;
@@ -1038,7 +1038,7 @@ double internal_kurtosis_d(int n, double sum1, double sum2, double sum3, double 
 }
 
 
-char *oph_aggregate_stats_final(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_aggregate_stats_final(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	if (*error != 0) {
 		pmesg(1, __FILE__, __LINE__, "Error on adding elements\n");

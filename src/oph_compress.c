@@ -41,7 +41,7 @@ int core_oph_compress(const unsigned char *src, const unsigned long src_length, 
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_compress_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_compress_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	if (args->arg_count != 3) {
 		strcpy(message, "ERROR: Wrong arguments! oph_compress(input_OPH_TYPE, output_OPH_TYPE, measure)");
@@ -58,7 +58,7 @@ my_bool oph_compress_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_compress_deinit(UDF_INIT * initid)
+void oph_compress_deinit(UDF_INIT *initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
@@ -68,7 +68,7 @@ void oph_compress_deinit(UDF_INIT * initid)
 
 }
 
-char *oph_compress(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_compress(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 
 	unsigned long sizeof_var = 0;

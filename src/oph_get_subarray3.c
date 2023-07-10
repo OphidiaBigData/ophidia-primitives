@@ -20,7 +20,7 @@
 
 int msglevel = 1;
 
-int core_oph_get_subarray3_set_flags(oph_subset ** subset, char *flags, unsigned long size, unsigned long *total, oph_get_subarray3_block * blocks, int number)
+int core_oph_get_subarray3_set_flags(oph_subset **subset, char *flags, unsigned long size, unsigned long *total, oph_get_subarray3_block *blocks, int number)
 {
 	if (!subset || !flags || !size || !total || !blocks) {
 		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
@@ -43,7 +43,7 @@ int core_oph_get_subarray3_set_flags(oph_subset ** subset, char *flags, unsigned
 	return OPH_SUBSET_OK;
 }
 
-int core_oph_get_subarray3(oph_get_subarray3_param * param)
+int core_oph_get_subarray3(oph_get_subarray3_param *param)
 {
 	oph_string *measure = (oph_string *) param->measure;
 	unsigned long j, k = 0;
@@ -64,7 +64,7 @@ int core_oph_get_subarray3(oph_get_subarray3_param * param)
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_get_subarray3_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_get_subarray3_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	if (!args->arg_count || (args->arg_count % 3)) {
 		strcpy(message, "ERROR: Wrong arguments! oph_get_subarray3(input_OPH_TYPE, output_OPH_TYPE, measure, [subset_string1, blocksize1, size1], [subset_string2, blocksize2, size2], ...)");
@@ -101,7 +101,7 @@ my_bool oph_get_subarray3_init(UDF_INIT * initid, UDF_ARGS * args, char *message
 	return 0;
 }
 
-void oph_get_subarray3_deinit(UDF_INIT * initid)
+void oph_get_subarray3_deinit(UDF_INIT *initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
@@ -128,7 +128,7 @@ void oph_get_subarray3_deinit(UDF_INIT * initid)
 	}
 }
 
-char *oph_get_subarray3(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_get_subarray3(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	int res = 0, i;
 	oph_get_subarray3_param *param;

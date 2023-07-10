@@ -73,7 +73,7 @@ inline int oph_sequence_update(char type, char value, int index, int max, char *
 	return 0;
 }
 
-int core_oph_sequence_multi(oph_multistring * byte_array, oph_multistring * result, int id, char type, char padding, double filling)
+int core_oph_sequence_multi(oph_multistring *byte_array, oph_multistring *result, int id, char type, char padding, double filling)
 {
 	int i, j, js, je, k = 0;
 	char *in_string = byte_array->content, *out_string = result->content, *current_in_string, *current_out_string, flag;
@@ -234,7 +234,7 @@ int core_oph_sequence_multi(oph_multistring * byte_array, oph_multistring * resu
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_sequence_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_sequence_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	int i = 0;
 	if (args->arg_count < 3 || args->arg_count > 5) {
@@ -255,7 +255,7 @@ my_bool oph_sequence_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_sequence_deinit(UDF_INIT * initid)
+void oph_sequence_deinit(UDF_INIT *initid)
 {
 	//Free allocated space
 	oph_multistring *multimeasure;
@@ -275,7 +275,7 @@ void oph_sequence_deinit(UDF_INIT * initid)
 	}
 }
 
-char *oph_sequence(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_sequence(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	if (*error) {
 		*length = 0;

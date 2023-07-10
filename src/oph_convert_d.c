@@ -23,7 +23,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_convert_d_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_convert_d_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	int i = 0;
 	if (args->arg_count != 3) {
@@ -41,7 +41,7 @@ my_bool oph_convert_d_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_convert_d_deinit(UDF_INIT * initid)
+void oph_convert_d_deinit(UDF_INIT *initid)
 {
 	if (initid->ptr) {
 		free(initid->ptr);
@@ -49,7 +49,7 @@ void oph_convert_d_deinit(UDF_INIT * initid)
 	}
 }
 
-double oph_convert_d(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error)
+double oph_convert_d(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
 {
 	oph_string *measure;
 

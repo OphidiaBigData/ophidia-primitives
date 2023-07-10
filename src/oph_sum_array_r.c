@@ -23,7 +23,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_sum_array_r_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_sum_array_r_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	/* oph_sum_array_r(measureA, measureB, OPH_TYPEA, OPH_TYPEB) */
 	int i = 0;
@@ -75,7 +75,7 @@ my_bool oph_sum_array_r_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_sum_array_r_deinit(UDF_INIT * initid)
+void oph_sum_array_r_deinit(UDF_INIT *initid)
 {
 	int i;
 	((th_data *) (initid->extension))->exit_flag = 1;
@@ -175,7 +175,7 @@ void *sum_array_r(void *initid_r)
 	th_array_dim = NULL;
 }
 
-char *oph_sum_array_r(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_sum_array_r(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 
 	// Allocate space for the result_array; result_array[i] = measurea[i] + measureb[i]

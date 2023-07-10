@@ -23,7 +23,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_compare_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_compare_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	int i = 0;
 	if (args->arg_count != 4) {
@@ -43,11 +43,11 @@ my_bool oph_compare_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_compare_deinit(UDF_INIT * initid)
+void oph_compare_deinit(UDF_INIT *initid)
 {
 }
 
-long long oph_compare(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error)
+long long oph_compare(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
 {
 	if (*error || *is_null)
 		return -1;
