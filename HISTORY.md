@@ -5,6 +5,10 @@
 
 - Bug in setting GSL library using the corresponding configuration option
 
+### Added:
+
+- New primitve oph_interlace2 [#19](https://github.com/OphidiaBigData/ophidia-primitives/pull/19)
+
 ## v1.7.2 - 2023-01-20
 
 ### Fixed:
