@@ -23,7 +23,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_value_to_bin_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool oph_value_to_bin_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
 	if (args->arg_count != 3) {
 		strcpy(message, "ERROR: Wrong arguments! oph_value_to_bin(input_OPH_TYPE, output_OPH_TYPE, value)");
@@ -48,7 +48,7 @@ my_bool oph_value_to_bin_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 0;
 }
 
-void oph_value_to_bin_deinit(UDF_INIT *initid)
+void oph_value_to_bin_deinit(UDF_INIT * initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
@@ -57,7 +57,7 @@ void oph_value_to_bin_deinit(UDF_INIT *initid)
 	}
 }
 
-char *oph_value_to_bin(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_value_to_bin(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	if (*error) {
 		*length = 0;

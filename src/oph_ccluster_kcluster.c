@@ -23,7 +23,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_ccluster_kcluster_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool oph_ccluster_kcluster_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
 	if (args->arg_count < 4 || args->arg_count > 7) {
 		strcpy(message, "ERROR: Wrong arguments! oph_ccluster_kcluster(input_OPH_TYPE, output_OPH_TYPE, measure,k,[KMEANS|KMEDIANS],[CENTROIDS|LABELS|ALL],[npass])");
@@ -62,7 +62,7 @@ my_bool oph_ccluster_kcluster_init(UDF_INIT *initid, UDF_ARGS *args, char *messa
 	return 0;
 }
 
-void oph_ccluster_kcluster_deinit(UDF_INIT *initid)
+void oph_ccluster_kcluster_deinit(UDF_INIT * initid)
 {
 	//Free allocated space
 	oph_stringPtr output = (oph_stringPtr) initid->ptr;
@@ -135,7 +135,7 @@ void oph_ccluster_kcluster_deinit(UDF_INIT *initid)
 	}
 }
 
-char *oph_ccluster_kcluster(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_ccluster_kcluster(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	if (!initid->ptr) {
 		*error = 0;

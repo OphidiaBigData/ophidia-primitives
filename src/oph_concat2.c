@@ -20,7 +20,7 @@
 
 int msglevel = 1;
 
-int core_oph_concat2_multi(oph_generic_param_multi *param)
+int core_oph_concat2_multi(oph_generic_param_multi * param)
 {
 	int i, j, k = 0;
 	oph_multistring *measure, *result = param->result;
@@ -55,7 +55,7 @@ int core_oph_concat2_multi(oph_generic_param_multi *param)
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_concat2_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool oph_concat2_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
 	if (args->arg_count < 3) {
 		strcpy(message, "ERROR: Wrong arguments! oph_concat2(input_OPH_TYPE, output_OPH_TYPE, measure, ...)");
@@ -75,7 +75,7 @@ my_bool oph_concat2_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 0;
 }
 
-void oph_concat2_deinit(UDF_INIT *initid)
+void oph_concat2_deinit(UDF_INIT * initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
@@ -84,7 +84,7 @@ void oph_concat2_deinit(UDF_INIT *initid)
 	}
 }
 
-char *oph_concat2(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_concat2(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	int i;
 

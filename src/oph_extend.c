@@ -20,7 +20,7 @@
 
 int msglevel = 1;
 
-int core_oph_extend_multi(oph_multistring *byte_array, oph_multistring *result, int number, short mode)
+int core_oph_extend_multi(oph_multistring * byte_array, oph_multistring * result, int number, short mode)
 {
 	if (core_oph_multistring_cast(byte_array, result, byte_array->missingvalue))
 		return -1;
@@ -50,7 +50,7 @@ int core_oph_extend_multi(oph_multistring *byte_array, oph_multistring *result, 
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_extend_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool oph_extend_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
 	int i = 0;
 	if (args->arg_count < 3 || args->arg_count > 5) {
@@ -85,7 +85,7 @@ my_bool oph_extend_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 0;
 }
 
-void oph_extend_deinit(UDF_INIT *initid)
+void oph_extend_deinit(UDF_INIT * initid)
 {
 	//Free allocated space
 	oph_multistring *multimeasure;
@@ -105,7 +105,7 @@ void oph_extend_deinit(UDF_INIT *initid)
 	}
 }
 
-char *oph_extend(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_extend(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	oph_multistring *multim;
 	oph_multistring *output;

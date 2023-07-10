@@ -23,7 +23,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_gsl_histogram_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool oph_gsl_histogram_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
 	int i = 0;
 	/* oph_gsl_histogram(input_OPH_TYPE,output_OPH_TYPE,measure,nbin,[RANGES|FREQS|ALL],[ABS|PDF|CDF]) */
@@ -63,7 +63,7 @@ my_bool oph_gsl_histogram_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 0;
 }
 
-void oph_gsl_histogram_deinit(UDF_INIT *initid)
+void oph_gsl_histogram_deinit(UDF_INIT * initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
@@ -90,7 +90,7 @@ void oph_gsl_histogram_deinit(UDF_INIT *initid)
 	}
 }
 
-char *oph_gsl_histogram(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_gsl_histogram(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	gsl_set_error_handler_off();
 
@@ -140,7 +140,7 @@ char *oph_gsl_histogram(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned
 		}
 
 		oph_gsl_histogram_extraspace *extra = (oph_gsl_histogram_extraspace *) initid->extension;
-		extra->hist = gsl_histogram_alloc((size_t) *((long long *) args->args[3]));
+		extra->hist = gsl_histogram_alloc((size_t) * ((long long *) args->args[3]));
 		if (!extra->hist) {
 			pmesg(1, __FILE__, __LINE__, "Error allocating histogram\n");
 			*length = 0;

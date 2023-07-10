@@ -23,7 +23,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_find_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool oph_find_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
 	int i = 0;
 	if (args->arg_count < 4 || args->arg_count > 5) {
@@ -58,11 +58,11 @@ my_bool oph_find_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 0;
 }
 
-void oph_find_deinit(UDF_INIT *initid __attribute__((unused)))
+void oph_find_deinit(UDF_INIT * initid __attribute__ ((unused)))
 {
 }
 
-long long oph_find(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
+long long oph_find(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error)
 {
 	if (*error) {
 		*is_null = 0;

@@ -113,7 +113,7 @@ int core_oph_quantile(oph_stringPtr byte_array, char *result)
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_reduce2_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool oph_reduce2_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
 	if ((args->arg_count < 3) || (args->arg_count > 9)) {
 		strcpy(message, "ERROR: Wrong arguments! oph_reduce2(input_OPH_TYPE, output_OPH_TYPE, measure, [OPH_OPERATOR], [count], [block_size], [size], [order], [missingvalue])");
@@ -179,7 +179,7 @@ my_bool oph_reduce2_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 0;
 }
 
-void oph_reduce2_deinit(UDF_INIT *initid)
+void oph_reduce2_deinit(UDF_INIT * initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
@@ -195,7 +195,7 @@ void oph_reduce2_deinit(UDF_INIT *initid)
 	}
 }
 
-char *oph_reduce2(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_reduce2(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	oph_request inp_req;
 
@@ -205,7 +205,7 @@ char *oph_reduce2(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long 
 	int i = 0, j;
 	unsigned long lll, olll, k;
 
-	int (*core_oph_oper)(oph_stringPtr byte_array, char *res);
+	int (*core_oph_oper) (oph_stringPtr byte_array, char *res);
 
 	if (args->arg_count > 5) {
 		block_size = *((long long *) (args->args[5]));

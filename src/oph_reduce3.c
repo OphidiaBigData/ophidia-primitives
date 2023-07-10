@@ -127,7 +127,7 @@ long long get_index_of(long long row_index, long long *list, long long new_size,
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_reduce3_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool oph_reduce3_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
 	if ((args->arg_count < 3) || (args->arg_count > 9)) {
 		strcpy(message,
@@ -186,7 +186,7 @@ my_bool oph_reduce3_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 0;
 }
 
-void oph_reduce3_deinit(UDF_INIT *initid)
+void oph_reduce3_deinit(UDF_INIT * initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
@@ -202,7 +202,7 @@ void oph_reduce3_deinit(UDF_INIT *initid)
 	}
 }
 
-char *oph_reduce3(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_reduce3(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	oph_request inp_req;
 
@@ -214,7 +214,7 @@ char *oph_reduce3(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long 
 	unsigned long lll, olll, k;
 
 	//Function pointer
-	int (*core_oph_oper)(oph_stringPtr byte_array, char *res);
+	int (*core_oph_oper) (oph_stringPtr byte_array, char *res);
 
 	if (args->arg_count > 5) {
 		block_size = *((long long *) (args->args[5]));

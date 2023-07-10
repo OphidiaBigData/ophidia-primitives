@@ -104,7 +104,7 @@ int core_set_type(oph_stringPtr str, char *type, unsigned long *len)
 	return 0;
 }
 
-int core_oph_multistring_cast(oph_multistring *input, oph_multistring *output, double *missingvalue)
+int core_oph_multistring_cast(oph_multistring * input, oph_multistring * output, double *missingvalue)
 {
 	/*
 	   Assume that input and output multistrings have the same num_measure; 
@@ -160,7 +160,7 @@ int core_oph_multistring_cast(oph_multistring *input, oph_multistring *output, d
 	return 0;
 }
 
-int core_set_oph_multistring(oph_multistring **str, char *type, unsigned long *len)
+int core_set_oph_multistring(oph_multistring ** str, char *type, unsigned long *len)
 {
 
 	if (!type || !str || !len) {
@@ -280,7 +280,7 @@ int core_set_oph_multistring(oph_multistring **str, char *type, unsigned long *l
 	return 0;
 }
 
-void free_oph_multistring(oph_multistring *str)
+void free_oph_multistring(oph_multistring * str)
 {
 	int i = 0;
 	if (!str)
@@ -306,7 +306,7 @@ void free_oph_multistring(oph_multistring *str)
 	str = NULL;
 }
 
-void free_oph_generic_param_multi(oph_generic_param_multi *param)
+void free_oph_generic_param_multi(oph_generic_param_multi * param)
 {
 	if (!param)
 		return;
@@ -360,7 +360,7 @@ int core_set_oper(oph_requestPtr req, char *oper, unsigned long *len)
 	return 0;
 }
 
-int core_set_oper_multi(oph_request_multi *req, char *oper, unsigned long *len)
+int core_set_oper_multi(oph_request_multi * req, char *oper, unsigned long *len)
 {
 	oph_oper myoper = DEFAULT_OPER;
 	if (!req) {
@@ -686,7 +686,7 @@ static const unsigned char core_d[] = {
 	66, 66, 66, 66, 66, 66
 };
 
-int _core_base64decode(const char *in, size_t inLen, char *out, size_t *outLen)
+int _core_base64decode(const char *in, size_t inLen, char *out, size_t * outLen)
 {
 	const char *end = in + inLen;
 	char iter = 0;
@@ -1372,7 +1372,7 @@ int core_oph_count(oph_stringPtr byte_array, char *result)
 	return 0;
 }
 
-int core_oph_count_multi(oph_multistring *byte_array, oph_multistring *result)
+int core_oph_count_multi(oph_multistring * byte_array, oph_multistring * result)
 {
 	long long count;
 
@@ -1733,7 +1733,7 @@ int core_oph_arg_max(oph_stringPtr byte_array, char *result)
 	return 0;
 }
 
-int core_oph_arg_max_multi(oph_multistring *byte_array, oph_multistring *result)
+int core_oph_arg_max_multi(oph_multistring * byte_array, oph_multistring * result)
 {
 	if (!byte_array || !byte_array->content || !result || !result->content) {
 		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
@@ -2210,7 +2210,7 @@ int core_oph_arg_min(oph_stringPtr byte_array, char *result)
 	return 0;
 }
 
-int core_oph_arg_min_multi(oph_multistring *byte_array, oph_multistring *result)
+int core_oph_arg_min_multi(oph_multistring * byte_array, oph_multistring * result)
 {
 	if (!byte_array || !byte_array->content || !result || !result->content) {
 		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
@@ -2678,7 +2678,7 @@ int core_oph_max(oph_stringPtr byte_array, char *result)
 	return 0;
 }
 
-int core_oph_max_multi(oph_multistring *byte_array, oph_multistring *result)
+int core_oph_max_multi(oph_multistring * byte_array, oph_multistring * result)
 {
 	if (!byte_array || !byte_array->content || !result || !result->content) {
 		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
@@ -2921,7 +2921,7 @@ int core_oph_max_multi(oph_multistring *byte_array, oph_multistring *result)
 	return 0;
 }
 
-int core_oph_max_abs_multi(oph_multistring *byte_array, oph_multistring *result)
+int core_oph_max_abs_multi(oph_multistring * byte_array, oph_multistring * result)
 {
 	if (!byte_array || !byte_array->content || !result || !result->content) {
 		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
@@ -3415,7 +3415,7 @@ int core_oph_min(oph_stringPtr byte_array, char *result)
 	return 0;
 }
 
-int core_oph_min_multi(oph_multistring *byte_array, oph_multistring *result)
+int core_oph_min_multi(oph_multistring * byte_array, oph_multistring * result)
 {
 	if (!byte_array || !byte_array->content || !result || !result->content) {
 		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
@@ -3798,7 +3798,7 @@ int core_oph_sum(oph_stringPtr byte_array, char *result)
 	return 0;
 }
 
-int core_oph_sum_multi(oph_multistring *byte_array, oph_multistring *result)
+int core_oph_sum_multi(oph_multistring * byte_array, oph_multistring * result)
 {
 	if (!byte_array || !byte_array->content || !result || !result->content) {
 		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
@@ -4170,7 +4170,7 @@ int core_oph_avg(oph_stringPtr byte_array, char *result)
 	return 0;
 }
 
-int core_oph_avg_multi(oph_multistring *byte_array, oph_multistring *result)
+int core_oph_avg_multi(oph_multistring * byte_array, oph_multistring * result)
 {
 	if (!byte_array || !byte_array->content || !result || !result->content) {
 		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
@@ -4436,7 +4436,7 @@ int core_oph_std(oph_stringPtr byte_array, char *result)
 	return 0;
 }
 
-int core_oph_std_multi(oph_multistring *byte_array, oph_multistring *result)
+int core_oph_std_multi(oph_multistring * byte_array, oph_multistring * result)
 {
 	if (!byte_array || !byte_array->content || !result || !result->content) {
 		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
@@ -5010,7 +5010,7 @@ int core_oph_var(oph_stringPtr byte_array, char *result)
 	return 0;
 }
 
-int core_oph_var_multi(oph_multistring *byte_array, oph_multistring *result)
+int core_oph_var_multi(oph_multistring * byte_array, oph_multistring * result)
 {
 	if (!byte_array || !byte_array->content || !result || !result->content) {
 		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
@@ -5569,7 +5569,7 @@ int core_oph_cmoment(oph_stringPtr byte_array, char *result)
 	return 0;
 }
 
-int core_oph_cmoment_multi(oph_multistring *byte_array, oph_multistring *result)
+int core_oph_cmoment_multi(oph_multistring * byte_array, oph_multistring * result)
 {
 	if (!byte_array || !byte_array->content || !result || !result->content) {
 		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
@@ -6153,7 +6153,7 @@ int core_oph_acmoment(oph_stringPtr byte_array, char *result)
 	return 0;
 }
 
-int core_oph_acmoment_multi(oph_multistring *byte_array, oph_multistring *result)
+int core_oph_acmoment_multi(oph_multistring * byte_array, oph_multistring * result)
 {
 	if (!byte_array || !byte_array->content || !result || !result->content) {
 		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
@@ -6673,7 +6673,7 @@ int core_oph_rmoment(oph_stringPtr byte_array, char *result)
 	return 0;
 }
 
-int core_oph_rmoment_multi(oph_multistring *byte_array, oph_multistring *result)
+int core_oph_rmoment_multi(oph_multistring * byte_array, oph_multistring * result)
 {
 	if (!byte_array || !byte_array->content || !result || !result->content) {
 		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
@@ -7105,7 +7105,7 @@ int core_oph_armoment(oph_stringPtr byte_array, char *result)
 	return 0;
 }
 
-int core_oph_armoment_multi(oph_multistring *byte_array, oph_multistring *result)
+int core_oph_armoment_multi(oph_multistring * byte_array, oph_multistring * result)
 {
 	if (!byte_array || !byte_array->content || !result || !result->content) {
 		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
@@ -10223,7 +10223,7 @@ int core_oph_find(oph_stringPtr byte_array, double value, double distance, long 
 
 }
 
-int core_oph_shift(oph_generic_param *param, long long offset, double filling, int round)
+int core_oph_shift(oph_generic_param * param, long long offset, double filling, int round)
 {
 	oph_string *byte_array = (oph_string *) param->measure;
 	char *result = param->result;
@@ -10446,7 +10446,7 @@ int core_oph_shift(oph_generic_param *param, long long offset, double filling, i
 	return 0;
 }
 
-int core_oph_simple_moving_avg(oph_generic_param *param, long long k)
+int core_oph_simple_moving_avg(oph_generic_param * param, long long k)
 {
 	oph_stringPtr byte_array = param->measure;
 	char *result = param->result;
@@ -10641,7 +10641,7 @@ int core_oph_simple_moving_avg(oph_generic_param *param, long long k)
 	return 0;
 }
 
-int core_oph_simple_moving_avg_multi(oph_multistring *byte_array, oph_multistring *result, void *kk)
+int core_oph_simple_moving_avg_multi(oph_multistring * byte_array, oph_multistring * result, void *kk)
 {
 	if (!byte_array || !byte_array->content || !result || !result->content) {
 		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
@@ -10849,7 +10849,7 @@ int core_oph_simple_moving_avg_multi(oph_multistring *byte_array, oph_multistrin
 	return 0;
 }
 
-int core_oph_exponential_moving_avg(oph_generic_param *param, double a)
+int core_oph_exponential_moving_avg(oph_generic_param * param, double a)
 {
 	oph_stringPtr byte_array = param->measure;
 	char *result = param->result;
@@ -10988,7 +10988,7 @@ int core_oph_exponential_moving_avg(oph_generic_param *param, double a)
 	return 0;
 }
 
-int core_oph_exponential_moving_avg_multi(oph_multistring *byte_array, oph_multistring *result, void *aa)
+int core_oph_exponential_moving_avg_multi(oph_multistring * byte_array, oph_multistring * result, void *aa)
 {
 	if (!byte_array || !byte_array->content || !result || !result->content || !aa) {
 		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
@@ -11141,7 +11141,7 @@ int core_oph_exponential_moving_avg_multi(oph_multistring *byte_array, oph_multi
 	return 0;
 }
 
-int core_oph_oper_array_multi(oph_generic_param_multi *param)
+int core_oph_oper_array_multi(oph_generic_param_multi * param)
 {
 	oph_multistring *measure = param->measure, *result = param->result;
 	char *valueA, *valueB;
@@ -11170,7 +11170,7 @@ int core_oph_oper_array_multi(oph_generic_param_multi *param)
 }
 
 
-int core_oph_oper_array_multi2(oph_generic_param_multi *param)
+int core_oph_oper_array_multi2(oph_generic_param_multi * param)
 {
 	oph_multistring *measure = param->measure, *result = param->result;
 	char *valueN[param->n_measure];
@@ -14563,7 +14563,7 @@ int core_oph_arg_min_array_multi(char *valueA, char *valueB, char *result, oph_t
 	return 0;
 }
 
-int core_oph_affine_multi(oph_multistring *byte_array, double scalar, double translation, oph_multistring *result, int id)
+int core_oph_affine_multi(oph_multistring * byte_array, double scalar, double translation, oph_multistring * result, int id)
 {
 	if (!byte_array || !byte_array->content || !result || !result->content) {
 		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
@@ -14682,12 +14682,12 @@ int core_oph_affine_multi(oph_multistring *byte_array, double scalar, double tra
 	return 0;
 }
 
-int core_oph_sum_scalar_multi(oph_multistring *byte_array, double scalar, oph_multistring *result, int id)
+int core_oph_sum_scalar_multi(oph_multistring * byte_array, double scalar, oph_multistring * result, int id)
 {
 	return core_oph_affine_multi(byte_array, 1, scalar, result, id);
 }
 
-int core_oph_mul_scalar_multi(oph_multistring *byte_array, double scalar, oph_multistring *result, int id)
+int core_oph_mul_scalar_multi(oph_multistring * byte_array, double scalar, oph_multistring * result, int id)
 {
 	return core_oph_affine_multi(byte_array, scalar, 0, result, id);
 }

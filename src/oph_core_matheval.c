@@ -18,7 +18,7 @@
 
 #include "oph_core_matheval.h"
 
-int core_set_comp(oph_comp *op, char *type, unsigned long *len)
+int core_set_comp(oph_comp * op, char *type, unsigned long *len)
 {
 	if (!type) {
 		*op = DEFAULT_COMP;

@@ -851,7 +851,7 @@ int core_oph_predicate2(oph_stringPtr byte_array, char *result)
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_predicate2_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool oph_predicate2_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
 	if ((args->arg_count < 7) || (args->arg_count > 8)) {
 		strcpy(message,
@@ -874,7 +874,7 @@ my_bool oph_predicate2_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 0;
 }
 
-void oph_predicate2_deinit(UDF_INIT *initid)
+void oph_predicate2_deinit(UDF_INIT * initid)
 {
 	int i;
 	//Free allocated space
@@ -893,7 +893,7 @@ void oph_predicate2_deinit(UDF_INIT *initid)
 	}
 }
 
-char *oph_predicate2(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_predicate2(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	oph_string measure;
 	char *buffer;

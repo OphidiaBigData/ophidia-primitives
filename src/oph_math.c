@@ -23,7 +23,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_math_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool oph_math_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
 	/* oph_math(measure, OPH_MATH_OPERATOR, OPH_TYPE) */
 	int i = 0;
@@ -44,7 +44,7 @@ my_bool oph_math_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 0;
 }
 
-void oph_math_deinit(UDF_INIT *initid)
+void oph_math_deinit(UDF_INIT * initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
@@ -65,7 +65,7 @@ void oph_math_deinit(UDF_INIT *initid)
 	}
 }
 
-char *oph_math(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_math(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	oph_stringPtr measure, output;
 	oph_math_oper *operation;

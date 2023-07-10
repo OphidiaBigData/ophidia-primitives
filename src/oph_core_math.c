@@ -20,7 +20,7 @@
 
 #include <time.h>
 
-int core_set_math_oper(oph_math_oper *operation, char *oper, unsigned long *len)
+int core_set_math_oper(oph_math_oper * operation, char *oper, unsigned long *len)
 {
 	*operation = core_get_math_oper(oper, len);
 	if (*operation == INVALID_MATH_OPER) {
@@ -575,14 +575,14 @@ long long internal_abs_l(long long value)
 }
 
 
-int core_oph_math(oph_stringPtr byte_array, oph_math_oper *operation, oph_stringPtr output)
+int core_oph_math(oph_stringPtr byte_array, oph_math_oper * operation, oph_stringPtr output)
 {
 	char *result = output->content;
 	int i;
 	srand(time(NULL));
 	switch (byte_array->type) {
 		case OPH_DOUBLE:{
-				double (*fnptr_d)(double);
+				double (*fnptr_d) (double);
 				switch (*operation) {
 					case OPH_MATH_ABS:
 						fnptr_d = &fabs;
@@ -659,7 +659,7 @@ int core_oph_math(oph_stringPtr byte_array, oph_math_oper *operation, oph_string
 				break;
 			}
 		case OPH_FLOAT:{
-				float (*fnptr_f)(float);
+				float (*fnptr_f) (float);
 				switch (*operation) {
 					case OPH_MATH_ABS:
 						fnptr_f = &fabsf;
@@ -736,7 +736,7 @@ int core_oph_math(oph_stringPtr byte_array, oph_math_oper *operation, oph_string
 				break;
 			}
 		case OPH_INT:{
-				int (*fnptr_i)(int);
+				int (*fnptr_i) (int);
 				switch (*operation) {
 					case OPH_MATH_ABS:
 						fnptr_i = &abs;
@@ -813,7 +813,7 @@ int core_oph_math(oph_stringPtr byte_array, oph_math_oper *operation, oph_string
 				break;
 			}
 		case OPH_SHORT:{
-				short (*fnptr_s)(short);
+				short (*fnptr_s) (short);
 				switch (*operation) {
 					case OPH_MATH_ABS:
 						fnptr_s = &internal_abs_s;
@@ -890,7 +890,7 @@ int core_oph_math(oph_stringPtr byte_array, oph_math_oper *operation, oph_string
 				break;
 			}
 		case OPH_BYTE:{
-				char (*fnptr_b)(char);
+				char (*fnptr_b) (char);
 				switch (*operation) {
 					case OPH_MATH_ABS:
 						fnptr_b = &internal_abs_b;
@@ -967,7 +967,7 @@ int core_oph_math(oph_stringPtr byte_array, oph_math_oper *operation, oph_string
 				break;
 			}
 		case OPH_LONG:{
-				long long (*fnptr_l)(long long);
+				long long (*fnptr_l) (long long);
 				switch (*operation) {
 					case OPH_MATH_ABS:
 						fnptr_l = &internal_abs_l;

@@ -20,7 +20,7 @@
 
 int msglevel = 1;
 
-int core_oph_deaccumulate_multi(oph_multistring *byte_array, oph_multistring *result, int id)
+int core_oph_deaccumulate_multi(oph_multistring * byte_array, oph_multistring * result, int id)
 {
 	int i, j, js, je;
 	char *in_string = byte_array->content, *out_string = result->content;
@@ -121,7 +121,7 @@ int core_oph_deaccumulate_multi(oph_multistring *byte_array, oph_multistring *re
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_deaccumulate_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool oph_deaccumulate_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
 	int i = 0;
 	if (args->arg_count < 3 || args->arg_count > 4) {
@@ -149,7 +149,7 @@ my_bool oph_deaccumulate_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 0;
 }
 
-void oph_deaccumulate_deinit(UDF_INIT *initid)
+void oph_deaccumulate_deinit(UDF_INIT * initid)
 {
 	//Free allocated space
 	oph_multistring *multimeasure;
@@ -169,7 +169,7 @@ void oph_deaccumulate_deinit(UDF_INIT *initid)
 	}
 }
 
-char *oph_deaccumulate(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_deaccumulate(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	oph_multistring *multim;
 	oph_multistring *output;

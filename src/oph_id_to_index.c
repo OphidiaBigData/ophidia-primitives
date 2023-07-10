@@ -23,7 +23,7 @@ int msglevel = LOG_ERROR;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_id_to_index_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool oph_id_to_index_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 {
 	unsigned int i;
 	if (args->arg_count < 2) {
@@ -38,11 +38,11 @@ my_bool oph_id_to_index_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 0;
 }
 
-void oph_id_to_index_deinit(UDF_INIT *initid __attribute__((unused)))
+void oph_id_to_index_deinit(UDF_INIT * initid __attribute__ ((unused)))
 {
 }
 
-long long oph_id_to_index(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
+long long oph_id_to_index(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error)
 {
 	long long size, id = *((long long *) args->args[0]) - 1, index = id;
 	if (id < 0) {

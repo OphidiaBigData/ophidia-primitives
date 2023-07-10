@@ -34,7 +34,7 @@ typedef bool my_bool;
 typedef struct oph_agg_oper_data {
 	oph_request result;
 	//Function pointer
-	int (*core_oph_oper)(oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char *res);
+	int (*core_oph_oper) (oph_stringPtr byte_arraya, oph_stringPtr byte_arrayb, char *res);
 	char first;
 	int *count;
 
