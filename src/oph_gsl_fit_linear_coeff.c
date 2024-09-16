@@ -24,7 +24,7 @@ int msglevel = 1;
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
 
-int core_oph_gsl_fit_linear_coeff_multi(oph_multistring * byte_array, oph_multistring * result, oph_gsl_fit_linear_coeff_param * fit)
+int core_oph_gsl_fit_linear_coeff_multi(oph_multistring *byte_array, oph_multistring *result, oph_gsl_fit_linear_coeff_param *fit)
 {
 	int j, k;
 	double *pointer;
@@ -96,7 +96,7 @@ int core_oph_gsl_fit_linear_coeff_multi(oph_multistring * byte_array, oph_multis
 	return 0;
 }
 
-my_bool oph_gsl_fit_linear_coeff_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_gsl_fit_linear_coeff_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	int i = 0;
 	if ((args->arg_count < 3) || (args->arg_count > 5)) {
@@ -115,7 +115,7 @@ my_bool oph_gsl_fit_linear_coeff_init(UDF_INIT * initid, UDF_ARGS * args, char *
 	return 0;
 }
 
-void oph_gsl_fit_linear_coeff_deinit(UDF_INIT * initid)
+void oph_gsl_fit_linear_coeff_deinit(UDF_INIT *initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
@@ -140,7 +140,7 @@ void oph_gsl_fit_linear_coeff_deinit(UDF_INIT * initid)
 	}
 }
 
-char *oph_gsl_fit_linear_coeff(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_gsl_fit_linear_coeff(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	if (*error) {
 		*length = 0;

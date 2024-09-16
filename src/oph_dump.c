@@ -23,7 +23,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_dump_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_dump_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	int i = 0;
 	if ((args->arg_count < 3) || (args->arg_count > 4)) {
@@ -42,7 +42,7 @@ my_bool oph_dump_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_dump_deinit(UDF_INIT * initid)
+void oph_dump_deinit(UDF_INIT *initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
@@ -51,7 +51,7 @@ void oph_dump_deinit(UDF_INIT * initid)
 	}
 }
 
-char *oph_dump(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_dump(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	oph_string measure;
 

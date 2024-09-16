@@ -23,7 +23,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_aggregate_stats_partial_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_aggregate_stats_partial_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	if (args->arg_count < 3 || args->arg_count > 4) {
 		strcpy(message, "ERROR: Wrong arguments! oph_aggregate_stats_partial(input_OPH_TYPE, output_OPH_TYPE, measure, [MASK])");
@@ -77,7 +77,7 @@ my_bool oph_aggregate_stats_partial_init(UDF_INIT * initid, UDF_ARGS * args, cha
 	return 0;
 }
 
-void oph_aggregate_stats_partial_deinit(UDF_INIT * initid)
+void oph_aggregate_stats_partial_deinit(UDF_INIT *initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
@@ -154,13 +154,13 @@ void oph_aggregate_stats_partial_deinit(UDF_INIT * initid)
 	}
 }
 
-void oph_aggregate_stats_partial_reset(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error)
+void oph_aggregate_stats_partial_reset(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
 {
 	oph_aggregate_stats_partial_clear(initid, is_null, error);
 	oph_aggregate_stats_partial_add(initid, args, is_null, error);
 }
 
-void oph_aggregate_stats_partial_clear(UDF_INIT * initid, char *is_null, char *error)
+void oph_aggregate_stats_partial_clear(UDF_INIT *initid, char *is_null, char *error)
 {
 	if (initid->ptr) {
 		oph_agg_stats_partial_data *dat = (oph_agg_stats_partial_data *) initid->ptr;
@@ -170,7 +170,7 @@ void oph_aggregate_stats_partial_clear(UDF_INIT * initid, char *is_null, char *e
 	*error = 0;
 }
 
-void oph_aggregate_stats_partial_add(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error)
+void oph_aggregate_stats_partial_add(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
 {
 	if (*error != 0)
 		return;
@@ -609,7 +609,7 @@ void oph_aggregate_stats_partial_add(UDF_INIT * initid, UDF_ARGS * args, char *i
 	}
 }
 
-char *oph_aggregate_stats_partial(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_aggregate_stats_partial(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	if (*error != 0) {
 		pmesg(1, __FILE__, __LINE__, "Error on adding elements\n");

@@ -23,7 +23,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_shift_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_shift_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	/* oph_sum_scalar(measure, scalar, OPH_TYPE) */
 	int i = 0;
@@ -57,7 +57,7 @@ my_bool oph_shift_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_shift_deinit(UDF_INIT * initid)
+void oph_shift_deinit(UDF_INIT *initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
@@ -75,7 +75,7 @@ void oph_shift_deinit(UDF_INIT * initid)
 	}
 }
 
-char *oph_shift(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_shift(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	int res = 0;
 	long long offset = 0;

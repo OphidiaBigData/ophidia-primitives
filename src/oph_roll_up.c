@@ -20,7 +20,7 @@
 
 int msglevel = 1;
 
-int core_oph_roll_up(oph_roll_up_param * param)
+int core_oph_roll_up(oph_roll_up_param *param)
 {
 	if (param->rows < param->size) {
 		oph_string *measure = (oph_string *) param->measure;
@@ -44,7 +44,7 @@ int core_oph_roll_up(oph_roll_up_param * param)
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_roll_up_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_roll_up_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	if (args->arg_count != 4) {
 		strcpy(message, "ERROR: Wrong arguments! oph_roll_up(input_OPH_TYPE, output_OPH_TYPE, measure, size)");
@@ -69,7 +69,7 @@ my_bool oph_roll_up_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_roll_up_deinit(UDF_INIT * initid)
+void oph_roll_up_deinit(UDF_INIT *initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
@@ -87,17 +87,17 @@ void oph_roll_up_deinit(UDF_INIT * initid)
 	}
 }
 
-void oph_roll_up_operator_reset(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error)
+void oph_roll_up_operator_reset(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
 {
 	oph_roll_up_clear(initid, is_null, error);
 	oph_roll_up_add(initid, args, is_null, error);
 }
 
-void oph_roll_up_clear(UDF_INIT * initid, char *is_null, char *error)
+void oph_roll_up_clear(UDF_INIT *initid, char *is_null, char *error)
 {
 }
 
-void oph_roll_up_add(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *error)
+void oph_roll_up_add(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
 {
 	int res = 0;
 	oph_roll_up_param *param;
@@ -220,7 +220,7 @@ void oph_roll_up_add(UDF_INIT * initid, UDF_ARGS * args, char *is_null, char *er
 	*is_null = 0;
 }
 
-char *oph_roll_up(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_roll_up(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	oph_roll_up_param *param;
 
