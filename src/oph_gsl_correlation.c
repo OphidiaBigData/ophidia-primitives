@@ -56,7 +56,7 @@ int oph_gsl_correlation_produce(const void *data, const void *data2, const size_
 	return 0;
 }
 
-my_bool oph_gsl_correlation_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_gsl_correlation_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 
 	int i = 0;
@@ -79,7 +79,7 @@ my_bool oph_gsl_correlation_init(UDF_INIT * initid, UDF_ARGS * args, char *messa
 	return 0;
 }
 
-void oph_gsl_correlation_deinit(UDF_INIT * initid)
+void oph_gsl_correlation_deinit(UDF_INIT *initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
@@ -104,7 +104,7 @@ void oph_gsl_correlation_deinit(UDF_INIT * initid)
 	}
 }
 
-char *oph_gsl_correlation(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_gsl_correlation(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	if (*error) {
 		*length = 0;

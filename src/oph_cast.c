@@ -23,7 +23,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_cast_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_cast_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	if ((args->arg_count < 3) && (args->arg_count > 5)) {
 		strcpy(message, "ERROR: Wrong arguments! oph_cast(input_OPH_TYPE, output_OPH_TYPE, measure, [missingvalue], [output_missingvalue])");
@@ -50,7 +50,7 @@ my_bool oph_cast_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_cast_deinit(UDF_INIT * initid)
+void oph_cast_deinit(UDF_INIT *initid)
 {
 	//Free allocated space
 	oph_stringPtr output = (oph_stringPtr) initid->ptr;
@@ -81,7 +81,7 @@ void oph_cast_deinit(UDF_INIT * initid)
 	}
 }
 
-char *oph_cast(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_cast(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	if (!initid->ptr) {
 		*error = 0;

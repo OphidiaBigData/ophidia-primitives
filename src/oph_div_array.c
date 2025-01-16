@@ -23,7 +23,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_div_array_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_div_array_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	if ((args->arg_count < 4) || (args->arg_count > 5)) {
 		strcpy(message, "ERROR: Wrong arguments! oph_div_array(input_OPH_TYPE, output_OPH_TYPE, measure_a, measure_b, [missingvalue])");
@@ -49,7 +49,7 @@ my_bool oph_div_array_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_div_array_deinit(UDF_INIT * initid)
+void oph_div_array_deinit(UDF_INIT *initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
@@ -58,7 +58,7 @@ void oph_div_array_deinit(UDF_INIT * initid)
 	}
 }
 
-char *oph_div_array(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_div_array(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	int i;
 

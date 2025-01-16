@@ -25,7 +25,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_fdi_ffwi_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_fdi_ffwi_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	int i = 0;
 	if (args->arg_count < 3 || args->arg_count > 4) {
@@ -45,7 +45,7 @@ my_bool oph_fdi_ffwi_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_fdi_ffwi_deinit(UDF_INIT * initid)
+void oph_fdi_ffwi_deinit(UDF_INIT *initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
@@ -59,7 +59,7 @@ void oph_fdi_ffwi_deinit(UDF_INIT * initid)
 	}
 }
 
-char *oph_fdi_ffwi(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_fdi_ffwi(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	if (*error) {
 		*length = 0;

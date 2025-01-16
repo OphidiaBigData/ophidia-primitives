@@ -103,7 +103,7 @@ typedef struct oph_request *oph_requestPtr;
 
 typedef struct oph_request_multi {
 	oph_multistring *measure;	//Array of oph_string2 structures (in case of more than one measure passed as input)
-	int (*core_oph_oper) (oph_multistring * byte_array, oph_multistring * res);
+	int (*core_oph_oper)(oph_multistring * byte_array, oph_multistring * res);
 } oph_request_multi;
 typedef struct oph_request_multi *oph_request_multiPtr;
 
@@ -122,10 +122,10 @@ typedef struct {
 	oph_multistring *result;
 	void *extend;
 	int n_measure;
-	int (*core_oph_oper) (char *valueA, char *valueB, char *result, oph_type type, double *missingvalue);
-	int (*core_oph_oper2) (char **valueN, int n_measure, char *result, oph_type type, double *missingvalue);
-	int (*core_oph_oper_multi) (oph_multistring * byte_array, oph_multistring * res);
-	int (*core_oph_oper_multi_ext) (oph_multistring * byte_array, oph_multistring * res, void *extend);
+	int (*core_oph_oper)(char *valueA, char *valueB, char *result, oph_type type, double *missingvalue);
+	int (*core_oph_oper2)(char **valueN, int n_measure, char *result, oph_type type, double *missingvalue);
+	int (*core_oph_oper_multi)(oph_multistring * byte_array, oph_multistring * res);
+	int (*core_oph_oper_multi_ext)(oph_multistring * byte_array, oph_multistring * res, void *extend);
 } oph_generic_param_multi;
 
 /*------------------------------------------------------------------|

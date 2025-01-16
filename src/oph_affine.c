@@ -23,7 +23,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_affine_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_affine_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	int i = 0;
 	if (args->arg_count < 3 || args->arg_count > 7) {
@@ -72,7 +72,7 @@ my_bool oph_affine_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_affine_deinit(UDF_INIT * initid)
+void oph_affine_deinit(UDF_INIT *initid)
 {
 	//Free allocated space
 	oph_multistring *multimeasure;
@@ -92,7 +92,7 @@ void oph_affine_deinit(UDF_INIT * initid)
 	}
 }
 
-char *oph_affine(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_affine(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	oph_multistring *multim;
 	oph_multistring *output;

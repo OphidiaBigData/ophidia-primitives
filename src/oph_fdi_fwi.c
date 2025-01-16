@@ -16,7 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#define _XOPEN_SOURCE 700
+
 #include "oph_fdi_fwi.h"
+#include <time.h>
+#include <strings.h>
 
 #define OPH_FDI_FWI_NUM_MEASURE 4
 
@@ -25,7 +29,7 @@ int msglevel = 1;
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_fdi_fwi_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
+my_bool oph_fdi_fwi_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	int i = 0;
 	if (args->arg_count < 5 || args->arg_count > 9) {
@@ -61,7 +65,7 @@ my_bool oph_fdi_fwi_init(UDF_INIT * initid, UDF_ARGS * args, char *message)
 	return 0;
 }
 
-void oph_fdi_fwi_deinit(UDF_INIT * initid)
+void oph_fdi_fwi_deinit(UDF_INIT *initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
@@ -75,7 +79,7 @@ void oph_fdi_fwi_deinit(UDF_INIT * initid)
 	}
 }
 
-char *oph_fdi_fwi(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_fdi_fwi(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	if (*error) {
 		*length = 0;
