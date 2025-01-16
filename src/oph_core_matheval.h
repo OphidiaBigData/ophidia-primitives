@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2018 CMCC Foundation
+    Copyright (C) 2012-2023 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,15 +28,6 @@
 typedef enum { INVALID_COMP, OPH_GREATER_THAN_ZERO, OPH_LESS_THAN_ZERO, OPH_GREATER_OR_EQUAL_TO_ZERO, OPH_LESS_OR_EQUAL_TO_ZERO, OPH_EQUAL_TO_ZERO, OPH_NOT_EQUAL_TO_ZERO, OPH_NULL } oph_comp;
 
 #define DEFAULT_COMP OPH_NOT_EQUAL_TO_ZERO
-
-typedef struct {
-	void *f[4];		// measure and expressions
-	oph_comp op;		// comparison operator
-	unsigned long length;	// size in bytes
-	oph_type result_type;
-	size_t result_elemsize;
-} oph_predicate_param;
-
 
 // Set/Get the operator in enum oph_comp form
 int core_set_comp(oph_comp * op, char *oper, unsigned long *len);

@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2018 CMCC Foundation
+    Copyright (C) 2012-2023 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,6 +26,18 @@
 
 /* MySQL headers  */
 #include <mysql.h>		// It contains UDF-related symbols and data structures
+#if MYSQL_VERSION_ID >= 80001 && MYSQL_VERSION_ID != 80002
+typedef bool my_bool;
+#endif
+
+typedef struct {
+	void *f[4];		// measure and expressions
+	char is_index[3];	// is_index
+	oph_comp op;		// comparison operator
+	unsigned long length;	// size in bytes
+	oph_type result_type;
+	size_t result_elemsize;
+} oph_predicate_param;
 
 /*------------------------------------------------------------------|
 |		Functions' declarations (BEGIN)			    |
