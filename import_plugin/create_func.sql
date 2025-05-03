@@ -1,6 +1,6 @@
 --
 --    Ophidia Primitives
---    Copyright (C) 2012-2023 CMCC Foundation
+--    Copyright (C) 2012-2025 CMCC Foundation
 --
 --    This program is free software: you can redistribute it and/or modify
 --    it under the terms of the GNU General Public License as published by
@@ -100,6 +100,7 @@ DROP FUNCTION IF EXISTS oph_aggregate_stats_partial;
 DROP FUNCTION IF EXISTS oph_aggregate_stats_final;
 DROP FUNCTION IF EXISTS oph_mask_array;
 DROP FUNCTION IF EXISTS oph_interlace;
+DROP FUNCTION IF EXISTS oph_interlace2;
 DROP FUNCTION IF EXISTS oph_append;
 DROP FUNCTION IF EXISTS oph_quantize;
 DROP FUNCTION IF EXISTS oph_gsl_spline;

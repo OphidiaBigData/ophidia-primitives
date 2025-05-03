@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2023 CMCC Foundation
+    Copyright (C) 2012-2025 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -87,8 +87,20 @@ int core_oph_gsl_spline_multi(oph_multistring *byte_array, oph_multistring *resu
 		for (k = 0; k < result->numelem; ++k) {
 			if ((spline->new_x[k] < spline->old_x[0]) || (spline->new_x[k] > spline->old_x[byte_array->numelem - 1]))
 				tmp = NAN;
-			else
-				tmp = gsl_spline_eval(spline->spline, spline->new_x[k], spline->acc);
+			else switch (spline->order) {
+				case 0:
+					tmp = gsl_spline_eval(spline->spline, spline->new_x[k], spline->acc);
+					break;
+				case 1:
+					tmp = gsl_spline_eval_deriv(spline->spline, spline->new_x[k], spline->acc);
+					break;
+				case 2:
+					tmp = gsl_spline_eval_deriv2(spline->spline, spline->new_x[k], spline->acc);
+					break;
+				default:
+					pmesg(1, __FILE__, __LINE__, "Order not recognized\n");
+					return -1;
+			}
 			if (core_oph_type_cast(&tmp, out_pointer, OPH_DOUBLE, result->type[j], byte_array->missingvalue))
 				return -1;
 			out_pointer += result->blocksize;
@@ -102,15 +114,23 @@ int core_oph_gsl_spline_multi(oph_multistring *byte_array, oph_multistring *resu
 my_bool oph_gsl_spline_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
 	int i = 0;
-	if (args->arg_count != 5) {
-		strcpy(message, "ERROR: Wrong arguments! oph_gsl_spline(input_OPH_TYPE, output_OPH_TYPE, measure, old_dim, new_dim)");
+	if ((args->arg_count < 5) || (args->arg_count > 6)) {
+		strcpy(message, "ERROR: Wrong arguments! oph_gsl_spline(input_OPH_TYPE, output_OPH_TYPE, measure, old_dim, new_dim, [order])");
 		return 1;
 	}
 
 	for (i = 0; i < args->arg_count; i++) {
-		if (args->arg_type[i] != STRING_RESULT) {
-			strcpy(message, "ERROR: Wrong arguments to oph_gsl_spline function");
-			return 1;
+		if (i < 5) {
+			if (args->arg_type[i] != STRING_RESULT) {
+				strcpy(message, "ERROR: Wrong arguments to oph_gsl_spline function");
+				return 1;
+			}
+		} else {
+			if (args->arg_type[i] == STRING_RESULT) {
+				strcpy(message, "ERROR: Wrong argument 'order' to oph_gsl_spline function");
+				return 1;
+			}
+			args->arg_type[i] = REAL_RESULT;
 		}
 	}
 
@@ -316,6 +336,7 @@ char *oph_gsl_spline(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lo
 
 	spline->old_x = (double *) args->args[3];
 	spline->new_x = (double *) args->args[4];
+	spline->order = (args->arg_count > 5) && args->args[5] ? *((double *) args->args[5]) : 0;
 
 	if (!param->error && core_oph_gsl_spline_multi(param->measure, param->result, spline)) {
 		param->error = 1;
