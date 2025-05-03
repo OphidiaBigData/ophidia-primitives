@@ -87,20 +87,21 @@ int core_oph_gsl_spline_multi(oph_multistring *byte_array, oph_multistring *resu
 		for (k = 0; k < result->numelem; ++k) {
 			if ((spline->new_x[k] < spline->old_x[0]) || (spline->new_x[k] > spline->old_x[byte_array->numelem - 1]))
 				tmp = NAN;
-			else switch (spline->order) {
-				case 0:
-					tmp = gsl_spline_eval(spline->spline, spline->new_x[k], spline->acc);
-					break;
-				case 1:
-					tmp = gsl_spline_eval_deriv(spline->spline, spline->new_x[k], spline->acc);
-					break;
-				case 2:
-					tmp = gsl_spline_eval_deriv2(spline->spline, spline->new_x[k], spline->acc);
-					break;
-				default:
-					pmesg(1, __FILE__, __LINE__, "Order not recognized\n");
-					return -1;
-			}
+			else
+				switch (spline->order) {
+					case 0:
+						tmp = gsl_spline_eval(spline->spline, spline->new_x[k], spline->acc);
+						break;
+					case 1:
+						tmp = gsl_spline_eval_deriv(spline->spline, spline->new_x[k], spline->acc);
+						break;
+					case 2:
+						tmp = gsl_spline_eval_deriv2(spline->spline, spline->new_x[k], spline->acc);
+						break;
+					default:
+						pmesg(1, __FILE__, __LINE__, "Order not recognized\n");
+						return -1;
+				}
 			if (core_oph_type_cast(&tmp, out_pointer, OPH_DOUBLE, result->type[j], byte_array->missingvalue))
 				return -1;
 			out_pointer += result->blocksize;
