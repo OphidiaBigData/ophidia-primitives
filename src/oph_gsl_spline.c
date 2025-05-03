@@ -131,7 +131,7 @@ my_bool oph_gsl_spline_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 				strcpy(message, "ERROR: Wrong argument 'order' to oph_gsl_spline function");
 				return 1;
 			}
-			args->arg_type[i] = REAL_RESULT;
+			args->arg_type[i] = INT_RESULT;
 		}
 	}
 
@@ -337,7 +337,7 @@ char *oph_gsl_spline(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lo
 
 	spline->old_x = (double *) args->args[3];
 	spline->new_x = (double *) args->args[4];
-	spline->order = (args->arg_count > 5) && args->args[5] ? *((double *) args->args[5]) : 0;
+	spline->order = (args->arg_count > 5) && args->args[5] ? *((long long *) args->args[5]) : 0;
 
 	if (!param->error && core_oph_gsl_spline_multi(param->measure, param->result, spline)) {
 		param->error = 1;
