@@ -41,6 +41,7 @@ typedef struct {
 	double *old_x;
 	double *new_x;
 	double *tmp;
+	char order;
 } oph_gsl_spline_param;
 
 /*------------------------------------------------------------------|
