@@ -117,6 +117,7 @@ DROP FUNCTION IF EXISTS oph_normalize;
 DROP FUNCTION IF EXISTS oph_sequence;
 DROP FUNCTION IF EXISTS oph_predicate;
 DROP FUNCTION IF EXISTS oph_predicate2;
+DROP FUNCTION IF EXISTS oph_matheval;
 
 DELIMITER //
 CREATE PROCEDURE mysql.oph_drill_down(IN table_in VARCHAR(100), IN outer_size INT, IN inner_size INT, IN oph_type VARCHAR(30), IN table_out VARCHAR(100), IN compressed INT)
@@ -256,6 +257,7 @@ CREATE FUNCTION oph_normalize RETURNS STRING SONAME 'liboph_normalize.so';
 CREATE FUNCTION oph_sequence RETURNS STRING SONAME 'liboph_sequence.so';
 CREATE FUNCTION oph_predicate RETURNS STRING SONAME 'liboph_predicate.so';
 CREATE FUNCTION oph_predicate2 RETURNS STRING SONAME 'liboph_predicate2.so';
+CREATE FUNCTION oph_matheval RETURNS STRING SONAME 'liboph_matheval.so';
 
 GRANT EXECUTE ON PROCEDURE `mysql`.`oph_subset` TO `%`;
 GRANT EXECUTE ON PROCEDURE `mysql`.`oph_drill_down` TO `%`;

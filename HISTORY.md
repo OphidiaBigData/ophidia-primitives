@@ -1,6 +1,10 @@
 
 ## Next release
 
+### Added:
+
+- New primitve oph_matheval
+
 ### Changed
 
 - Interface of oph_gsl_spline
