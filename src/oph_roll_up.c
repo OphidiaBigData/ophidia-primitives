@@ -95,6 +95,12 @@ void oph_roll_up_operator_reset(UDF_INIT *initid, UDF_ARGS *args, char *is_null,
 
 void oph_roll_up_clear(UDF_INIT *initid, char *is_null, char *error)
 {
+	if (initid->ptr) {
+		oph_roll_up_param *param = (oph_roll_up_param *) initid->ptr;
+		param->rows = 0;
+	}
+	*is_null = 0;
+	*error = 0;
 }
 
 void oph_roll_up_add(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)

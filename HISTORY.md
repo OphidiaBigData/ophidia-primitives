@@ -1,6 +1,10 @@
 
 ## Next release
 
+### Fixed
+
+- Bug in oph_roll_up
+
 ### Added:
 
 - New primitve oph_matheval
