@@ -3,7 +3,7 @@
 
 ### Fixed
 
-- Bug in oph_roll_up
+- Bugs in oph_roll_up and oph_extend
 
 ### Added:
 
