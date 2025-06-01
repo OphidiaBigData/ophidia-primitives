@@ -160,6 +160,7 @@ void oph_gsl_spline_deinit(UDF_INIT *initid)
 					spline->tmp = NULL;
 				}
 			}
+			free(spline);
 			param->extend = NULL;
 		}
 		free_oph_generic_param_multi(param);

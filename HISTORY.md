@@ -3,7 +3,7 @@
 
 ### Fixed
 
-- Bugs in oph_roll_up and oph_extend
+- Bugs in oph_roll_up, oph_extend and oph_gsl_spline
 
 ### Added:
 
