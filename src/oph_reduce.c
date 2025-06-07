@@ -130,6 +130,11 @@ int core_oph_quantile_multi(oph_multistring *byte_array, oph_multistring *result
 #endif
 }
 
+int core_oph_median_multi(oph_multistring *byte_array, oph_multistring *result)
+{
+	return core_oph_quantile_multi(byte_array, result);
+}
+
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
@@ -231,6 +236,8 @@ char *oph_reduce(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *
 			myoper = core_get_oper(args->args[3], &(args->lengths[3]));
 			if (myoper == OPH_QUANTILE)
 				((oph_request_multi *) (initid->extension))->core_oph_oper = core_oph_quantile_multi;
+			if (myoper == OPH_MEDIAN)
+				((oph_request_multi *) (initid->extension))->core_oph_oper = core_oph_median_multi;
 		}
 
 		if (!((oph_request_multi *) (initid->extension))->core_oph_oper) {
@@ -254,7 +261,7 @@ char *oph_reduce(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *
 		return NULL;
 	}
 	multim->numelem = multim->length / multim->blocksize;
-	if (!multim->extend && (myoper == OPH_QUANTILE)) {
+	if (!multim->extend && ((myoper == OPH_QUANTILE) || (myoper == OPH_MEDIAN))) {
 		multim->extend = malloc(multim->length);
 		if (!multim->extend) {
 			pmesg(1, __FILE__, __LINE__, "Error allocating temporary string\n");
@@ -289,7 +296,9 @@ char *oph_reduce(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *
 	if (!block_count)
 		block_count = multim->numelem;
 
-	if (args->arg_count > 5) {
+	if (myoper == OPH_MEDIAN)
+		multim->param = 0.5;
+	else if (args->arg_count > 5) {
 		multim->param = *((double *) (args->args[5]));
 		if (multim->param < 0) {
 			pmesg(1, __FILE__, __LINE__, "Wrong parameter value 'order' %f\n", multim->param);

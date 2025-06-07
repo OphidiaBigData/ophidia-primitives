@@ -110,6 +110,11 @@ int core_oph_quantile(oph_stringPtr byte_array, char *result)
 #endif
 }
 
+int core_oph_median(oph_stringPtr byte_array, char *result)
+{
+	return core_oph_quantile(byte_array, result);
+}
+
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
@@ -358,6 +363,15 @@ char *oph_reduce2(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long 
 		case OPH_ARG_MIN:
 			core_oph_oper = core_oph_arg_min;
 			break;
+		case OPH_MAX_ABS:
+			core_oph_oper = core_oph_max_abs;
+			break;
+		case OPH_MIN_ABS:
+			core_oph_oper = core_oph_min_abs;
+			break;
+		case OPH_MEDIAN:
+			core_oph_oper = core_oph_median;
+			break;
 		default:
 			pmesg(1, __FILE__, __LINE__, "Unable to recognize operator\n");
 			*length = 0;
@@ -380,6 +394,7 @@ char *oph_reduce2(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long 
 		case OPH_RMOMENT:
 		case OPH_ARMOMENT:
 		case OPH_QUANTILE:
+		case OPH_MEDIAN:
 			if (inp_req.measure.type == OPH_BYTE || inp_req.measure.type == OPH_SHORT || inp_req.measure.type == OPH_INT) {
 				result_type = OPH_FLOAT;
 				result_size = core_sizeof(OPH_FLOAT);
@@ -440,7 +455,7 @@ char *oph_reduce2(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long 
 			}
 		} else
 			tmp->temp = NULL;
-		if (inp_req.oper == OPH_QUANTILE) {
+		if ((inp_req.oper == OPH_QUANTILE) || (inp_req.oper == OPH_MEDIAN)) {
 			tmp->temp2 = (char *) malloc(*inp_req.measure.length);
 			if (!tmp->temp2) {
 				pmesg(1, __FILE__, __LINE__, "Error allocating measures string\n");
@@ -460,7 +475,9 @@ char *oph_reduce2(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long 
 	curr_array.numelem = hierarchy_set;
 	curr_array.length = &lll;
 	*curr_array.length = (unsigned long) (hierarchy_set * curr_array.elemsize);
-	if (args->arg_count > 7) {
+	if (inp_req.oper == OPH_MEDIAN)
+		curr_array.param = 0.5;
+	else if (args->arg_count > 7) {
 		curr_array.param = *((double *) (args->args[7]));
 		if (curr_array.param < 0) {
 			pmesg(1, __FILE__, __LINE__, "Wrong parameter value 'order' %f\n", curr_array.param);
