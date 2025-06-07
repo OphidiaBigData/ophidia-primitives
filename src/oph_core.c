@@ -2931,6 +2931,220 @@ int core_oph_max_multi(oph_multistring *byte_array, oph_multistring *result)
 	return 0;
 }
 
+int core_oph_max_abs(oph_stringPtr byte_array, char *result)
+{
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
+	int i;
+	if (byte_array->missingvalue) {
+		switch (byte_array->type) {
+			case OPH_DOUBLE:{
+					double *d = (double *) byte_array->content, *max = 0;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (!isnan(*d) && (*byte_array->missingvalue != *d)) {
+							if (max) {
+								if (fabs(*d) > fabs(*max))
+									max = d;
+							} else
+								max = d;
+						}
+					}
+					memcpy(result, max ? max : byte_array->missingvalue, byte_array->elemsize);
+					break;
+				}
+			case OPH_FLOAT:{
+					float *d = (float *) byte_array->content, *max = 0, ms = (float) *byte_array->missingvalue;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (!isnan(*d) && (ms != *d)) {
+							if (max) {
+								if (fabs(*d) > fabs(*max))
+									max = d;
+							} else
+								max = d;
+						}
+					}
+					memcpy(result, max ? max : &ms, byte_array->elemsize);
+					break;
+				}
+			case OPH_INT:{
+					int *d = (int *) byte_array->content, *max = 0, ms = (int) *byte_array->missingvalue;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (ms != *d) {
+							if (max) {
+								if (abs(*d) > abs(*max))
+									max = d;
+							} else
+								max = d;
+						}
+					}
+					memcpy(result, max ? max : &ms, byte_array->elemsize);
+					break;
+				}
+			case OPH_SHORT:{
+					short *d = (short *) byte_array->content, *max = 0, ms = (short) *byte_array->missingvalue;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (ms != *d) {
+							if (max) {
+								if (abs(*d) > abs(*max))
+									max = d;
+							} else
+								max = d;
+						}
+					}
+					memcpy(result, max ? max : &ms, byte_array->elemsize);
+					break;
+				}
+			case OPH_BYTE:{
+					char *d = (char *) byte_array->content, *max = 0, ms = (char) *byte_array->missingvalue;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (ms != *d) {
+							if (max) {
+								if (abs(*d) > abs(*max))
+									max = d;
+							} else
+								max = d;
+						}
+					}
+					memcpy(result, max ? max : &ms, byte_array->elemsize);
+					break;
+				}
+			case OPH_LONG:{
+					long long *d = (long long *) byte_array->content, *max = 0, ms = (long long) *byte_array->missingvalue;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (ms != *d) {
+							if (max) {
+								if (labs(*d) > labs(*max))
+									max = d;
+							} else
+								max = d;
+						}
+					}
+					memcpy(result, max ? max : &ms, byte_array->elemsize);
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+				return -1;
+		}
+	} else {
+		switch (byte_array->type) {
+			case OPH_DOUBLE:{
+					double *d = (double *) byte_array->content, *max = 0;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (!isnan(*d)) {
+							if (max) {
+								if (fabs(*d) > fabs(*max))
+									max = d;
+							} else
+								max = d;
+						}
+					}
+					if (max)
+						memcpy(result, max, byte_array->elemsize);
+					else {
+						double value = NAN;
+						memcpy(result, &value, byte_array->elemsize);
+					}
+					break;
+				}
+			case OPH_FLOAT:{
+					float *d = (float *) byte_array->content, *max = 0;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (!isnan(*d)) {
+							if (max) {
+								if (fabs(*d) > fabs(*max))
+									max = d;
+							} else
+								max = d;
+						}
+					}
+					if (max)
+						memcpy(result, max, byte_array->elemsize);
+					else {
+						float value = NAN;
+						memcpy(result, &value, byte_array->elemsize);
+					}
+					break;
+				}
+			case OPH_INT:{
+					int *d = (int *) byte_array->content, *max = 0;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (max) {
+							if (abs(*d) > abs(*max))
+								max = d;
+						} else
+							max = d;
+					}
+					if (max)
+						memcpy(result, max, byte_array->elemsize);
+					else {
+						pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
+						return -1;
+					}
+					break;
+				}
+			case OPH_SHORT:{
+					short *d = (short *) byte_array->content, *max = 0;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (max) {
+							if (abs(*d) > abs(*max))
+								max = d;
+						} else
+							max = d;
+					}
+					if (max)
+						memcpy(result, max, byte_array->elemsize);
+					else {
+						pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
+						return -1;
+					}
+					break;
+				}
+			case OPH_BYTE:{
+					char *d = (char *) byte_array->content, *max = 0;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (max) {
+							if (abs(*d) > abs(*max))
+								max = d;
+						} else
+							max = d;
+					}
+					if (max)
+						memcpy(result, max, byte_array->elemsize);
+					else {
+						pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
+						return -1;
+					}
+					break;
+				}
+			case OPH_LONG:{
+					long long *d = (long long *) byte_array->content, *max = 0;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (max) {
+							if (labs(*d) > labs(*max))
+								max = d;
+						} else
+							max = d;
+					}
+					if (max)
+						memcpy(result, max, byte_array->elemsize);
+					else {
+						pmesg(1, __FILE__, __LINE__, "Error in evaluating max value\n");
+						return -1;
+					}
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+				return -1;
+		}
+	}
+	return 0;
+}
+
 int core_oph_max_abs_multi(oph_multistring *byte_array, oph_multistring *result)
 {
 	if (!byte_array || !byte_array->content || !result || !result->content) {
@@ -3664,6 +3878,220 @@ int core_oph_min_multi(oph_multistring *byte_array, oph_multistring *result)
 			}
 			in_string += byte_array->elemsize[j];
 			out_string += result->elemsize[j];
+		}
+	}
+	return 0;
+}
+
+int core_oph_min_abs(oph_stringPtr byte_array, char *result)
+{
+	if (!byte_array || !byte_array->content || !result) {
+		pmesg(1, __FILE__, __LINE__, "Null pointer\n");
+		return 1;
+	}
+
+	int i;
+	if (byte_array->missingvalue) {
+		switch (byte_array->type) {
+			case OPH_DOUBLE:{
+					double *d = (double *) byte_array->content, *min = 0;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (!isnan(*d) && (*byte_array->missingvalue != *d)) {
+							if (min) {
+								if (fabs(*d) < fabs(*min))
+									min = d;
+							} else
+								min = d;
+						}
+					}
+					memcpy(result, min ? min : byte_array->missingvalue, byte_array->elemsize);
+					break;
+				}
+			case OPH_FLOAT:{
+					float *d = (float *) byte_array->content, *min = 0, ms = (float) *byte_array->missingvalue;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (!isnan(*d) && (ms != *d)) {
+							if (min) {
+								if (fabs(*d) < fabs(*min))
+									min = d;
+							} else
+								min = d;
+						}
+					}
+					memcpy(result, min ? min : &ms, byte_array->elemsize);
+					break;
+				}
+			case OPH_INT:{
+					int *d = (int *) byte_array->content, *min = 0, ms = (int) *byte_array->missingvalue;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (ms != *d) {
+							if (min) {
+								if (abs(*d) > abs(*min))
+									min = d;
+							} else
+								min = d;
+						}
+					}
+					memcpy(result, min ? min : &ms, byte_array->elemsize);
+					break;
+				}
+			case OPH_SHORT:{
+					short *d = (short *) byte_array->content, *min = 0, ms = (short) *byte_array->missingvalue;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (ms != *d) {
+							if (min) {
+								if (abs(*d) < abs(*min))
+									min = d;
+							} else
+								min = d;
+						}
+					}
+					memcpy(result, min ? min : &ms, byte_array->elemsize);
+					break;
+				}
+			case OPH_BYTE:{
+					char *d = (char *) byte_array->content, *min = 0, ms = (char) *byte_array->missingvalue;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (ms != *d) {
+							if (min) {
+								if (abs(*d) < abs(*min))
+									min = d;
+							} else
+								min = d;
+						}
+					}
+					memcpy(result, min ? min : &ms, byte_array->elemsize);
+					break;
+				}
+			case OPH_LONG:{
+					long long *d = (long long *) byte_array->content, *min = 0, ms = (long long) *byte_array->missingvalue;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (ms != *d) {
+							if (min) {
+								if (labs(*d) < labs(*min))
+									min = d;
+							} else
+								min = d;
+						}
+					}
+					memcpy(result, min ? min : &ms, byte_array->elemsize);
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+				return -1;
+		}
+	} else {
+		switch (byte_array->type) {
+			case OPH_DOUBLE:{
+					double *d = (double *) byte_array->content, *min = 0;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (!isnan(*d)) {
+							if (min) {
+								if (fabs(*d) < fabs(*min))
+									min = d;
+							} else
+								min = d;
+						}
+					}
+					if (min)
+						memcpy(result, min, byte_array->elemsize);
+					else {
+						double value = NAN;
+						memcpy(result, &value, byte_array->elemsize);
+					}
+					break;
+				}
+			case OPH_FLOAT:{
+					float *d = (float *) byte_array->content, *min = 0;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (!isnan(*d)) {
+							if (min) {
+								if (fabs(*d) < fabs(*min))
+									min = d;
+							} else
+								min = d;
+						}
+					}
+					if (min)
+						memcpy(result, min, byte_array->elemsize);
+					else {
+						float value = NAN;
+						memcpy(result, &value, byte_array->elemsize);
+					}
+					break;
+				}
+			case OPH_INT:{
+					int *d = (int *) byte_array->content, *min = 0;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (min) {
+							if (abs(*d) < abs(*min))
+								min = d;
+						} else
+							min = d;
+					}
+					if (min)
+						memcpy(result, min, byte_array->elemsize);
+					else {
+						pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
+						return -1;
+					}
+					break;
+				}
+			case OPH_SHORT:{
+					short *d = (short *) byte_array->content, *min = 0;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (min) {
+							if (abs(*d) < abs(*min))
+								min = d;
+						} else
+							min = d;
+					}
+					if (min)
+						memcpy(result, min, byte_array->elemsize);
+					else {
+						pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
+						return -1;
+					}
+					break;
+				}
+			case OPH_BYTE:{
+					char *d = (char *) byte_array->content, *min = 0;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (min) {
+							if (abs(*d) < abs(*min))
+								min = d;
+						} else
+							min = d;
+					}
+					if (min)
+						memcpy(result, min, byte_array->elemsize);
+					else {
+						pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
+						return -1;
+					}
+					break;
+				}
+			case OPH_LONG:{
+					long long *d = (long long *) byte_array->content, *min = 0;
+					for (i = 0; i < byte_array->numelem; i++, d++) {
+						if (min) {
+							if (labs(*d) < labs(*min))
+								min = d;
+						} else
+							min = d;
+					}
+					if (min)
+						memcpy(result, min, byte_array->elemsize);
+					else {
+						pmesg(1, __FILE__, __LINE__, "Error in evaluating min value\n");
+						return -1;
+					}
+					break;
+				}
+			default:
+				pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
+				return -1;
 		}
 	}
 	return 0;
