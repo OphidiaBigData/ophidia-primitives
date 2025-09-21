@@ -13,6 +13,13 @@ In order to compile and run the Ophidia Primitives, make sure you have the follo
 3. GSL - GNU Scientific Library
 4. GNU libmatheval
 
+If you wants to use libmatheval extensions (e.g. oph_predicate3), install GNU library by source (https://ftp.gnu.org/gnu/libmatheval/libmatheval-1.1.11.tar.gz) after applying the patch as follows:
+
+```
+$ cd libmatheval-1.1.11
+$ patch -p0 < prefix/etc/libmatheval.patch
+```
+
 ### How to Install
 
 If you are building from git, you also need automake, autoconf and libtool. To prepare the code for building run:
