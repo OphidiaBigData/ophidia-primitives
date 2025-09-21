@@ -6320,6 +6320,27 @@ diff -ruN Makefile.am Makefile.am
  
  dist-hook:
  	for file in $(AUX_DIST); do \
+diff -ruN Makefile.in Makefile.in
+--- Makefile.in	2013-08-14 22:22:40.000000000 +0200
++++ Makefile.in	2025-09-21 14:00:44.091718253 +0200
+@@ -316,7 +316,7 @@
+ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 configure config.h.in	\
+ config.log config.status stamp-h.in $(AUX_DIST)
+ 
+-SUBDIRS = doc lib tests
++SUBDIRS = doc lib
+ pkgconfigdir = $(libdir)/pkgconfig
+ pkgconfig_DATA = libmatheval.pc
+ all: config.h
+@@ -863,7 +863,7 @@
+ .PHONY: beauty dist-hook
+ 
+ beauty:
+-	-for dir in lib tests; do cd $$dir; $(MAKE) $@; cd ..; done
++	-for dir in lib; do cd $$dir; $(MAKE) $@; cd ..; done
+ 
+ dist-hook:
+ 	for file in $(AUX_DIST); do \
 diff -ruN tests/matheval.c tests/matheval.c
 --- tests/matheval.c	2013-08-14 22:22:08.000000000 +0200
 +++ tests/matheval.c	2022-09-15 21:00:01.568439000 +0200
