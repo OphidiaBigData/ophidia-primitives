@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2022 CMCC Foundation
+    Copyright (C) 2012-2025 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -95,6 +95,12 @@ void oph_roll_up_operator_reset(UDF_INIT *initid, UDF_ARGS *args, char *is_null,
 
 void oph_roll_up_clear(UDF_INIT *initid, char *is_null, char *error)
 {
+	if (initid->ptr) {
+		oph_roll_up_param *param = (oph_roll_up_param *) initid->ptr;
+		param->rows = 0;
+	}
+	*is_null = 0;
+	*error = 0;
 }
 
 void oph_roll_up_add(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)

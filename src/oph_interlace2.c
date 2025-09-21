@@ -16,55 +16,59 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "oph_append.h"
+#include "oph_interlace2.h"
 
 int msglevel = 1;
 
-int core_oph_append_multi(oph_generic_param_multi *param)
+int core_oph_interlace2_multi(oph_generic_param_multi *param)
 {
 	int i, j, k, h;
 	oph_multistring *measure = param->measure, *result = param->result;
 	char *ic, *oc = result->content, output_format = measure->num_measure == result->num_measure;
-	k = 0;
-	do			// Loop on input measures
+	long long t, *list = (long long *) param->extend;
+	int numelem = measure->numelem / list[0];
+	for (j = 0; j < numelem; ++j)	// Loop on elements
 	{
-		measure = param->measure + k;
-		for (j = 0; j < measure->numelem; ++j)	// Loop on elements
+		k = 0;
+		do		// Loop on input measures
 		{
-			h = 0;
-			ic = measure->content;
-			for (i = 0; i < measure->num_measure; ++i)	// Loop on data types
-			{
-				if (core_oph_type_cast(ic + j * measure->blocksize, oc, measure->type[i], result->type[output_format ? h % result->num_measure : h], NULL)) {
-					pmesg(1, __FILE__, __LINE__, "Error in compute array\n");
-					return 1;
+			measure = param->measure + k;
+			ic = measure->content + j * measure->blocksize * list[k];
+			for (t = 0; t < list[k]; ++t)	// Loop on ensables
+				for (i = h = 0; i < measure->num_measure; ++i)	// Loop on data types
+				{
+					if (core_oph_type_cast(ic, oc, measure->type[i], result->type[output_format ? h % result->num_measure : h], NULL)) {
+						pmesg(1, __FILE__, __LINE__, "Error in compute array\n");
+						return 1;
+					}
+					ic += measure->elemsize[i];
+					oc += result->elemsize[output_format ? h % result->num_measure : h];
+					h++;
 				}
-				ic += measure->elemsize[i];
-				oc += result->elemsize[output_format ? h % result->num_measure : h];
-				h++;
-			}
+			k++;
 		}
-		k++;
+		while (!measure->islast);
 	}
-	while (!measure->islast);
 	return 0;
 }
 
 /*------------------------------------------------------------------|
 |               Functions' implementation (BEGIN)                   |
 |------------------------------------------------------------------*/
-my_bool oph_append_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
+my_bool oph_interlace2_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
-	if (args->arg_count < 3) {
-		strcpy(message, "ERROR: Wrong arguments! oph_append(input_OPH_TYPE, output_OPH_TYPE, measure, ...)");
+	if (args->arg_count < 4) {
+		strcpy(message, "ERROR: Wrong arguments! oph_interlace2(input_OPH_TYPE, output_OPH_TYPE, binary_count_list, measure, ...)");
 		return 1;
 	}
 
 	int i;
 	for (i = 0; i < args->arg_count; i++) {
 		if (args->arg_type[i] != STRING_RESULT) {
-			strcpy(message, "ERROR: Wrong arguments to oph_append function");
-			return 1;
+			if ((i != 2) || (args->args[2] != NULL)) {
+				strcpy(message, "ERROR: Wrong arguments to oph_interlace2 function");
+				return 1;
+			}
 		}
 	}
 
@@ -73,16 +77,19 @@ my_bool oph_append_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 	return 0;
 }
 
-void oph_append_deinit(UDF_INIT *initid)
+void oph_interlace2_deinit(UDF_INIT *initid)
 {
 	//Free allocated space
 	if (initid->ptr) {
-		free_oph_generic_param_multi((oph_generic_param_multi *) initid->ptr);
+		oph_generic_param_multi *param = (oph_generic_param_multi *) initid->ptr;
+		if (param->extend)
+			free(param->extend);
+		free_oph_generic_param_multi(param);
 		initid->ptr = NULL;
 	}
 }
 
-char *oph_append(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
+char *oph_interlace2(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *length, char *is_null, char *error)
 {
 	int i;
 
@@ -98,7 +105,7 @@ char *oph_append(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *
 		*error = 0;
 		return NULL;
 	}
-	for (i = 2; i < args->arg_count; ++i) {
+	for (i = 3; i < args->arg_count; ++i) {
 		if (!args->lengths[i]) {
 			*length = 0;
 			*is_null = 1;
@@ -121,6 +128,7 @@ char *oph_append(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *
 		param->result = NULL;
 		param->error = 0;
 		param->core_oph_oper = NULL;
+		param->extend = NULL;
 
 		initid->ptr = (char *) param;
 	} else
@@ -133,7 +141,10 @@ char *oph_append(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *
 		return NULL;
 	}
 
-	size_t num_measure_total = 0, numelem_total = 0;
+	int num_measure = args->arg_count - 3;
+	size_t num_measure_total = 0;
+	unsigned long numelem = 0;
+	long long *list = NULL;
 	oph_multistring *measure;
 	if (!param->error && !param->measure) {
 		if (core_set_oph_multistring(&measure, args->args[0], &(args->lengths[0]))) {
@@ -144,8 +155,19 @@ char *oph_append(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *
 			*error = 1;
 			return NULL;
 		}
-		for (i = 0; i < args->arg_count - 2; ++i) {
-			measure[i].length = args->lengths[2 + i];
+		size_t max = num_measure * sizeof(long long);
+		list = (long long *) calloc(num_measure, sizeof(long long));
+		if (args->args[2]) {
+			if (max > args->lengths[2])
+				max = args->lengths[2];
+			memcpy(list, args->args[2], max);
+		}
+		for (i = 0; i < num_measure; ++i)
+			if (list[i] <= 0)
+				list[i] = 1;
+		param->extend = list;
+		for (i = 0; i < num_measure; ++i) {
+			measure[i].length = args->lengths[3 + i];
 			if (measure[i].length % measure[i].blocksize) {
 				param->error = 1;
 				pmesg(1, __FILE__, __LINE__, "Wrong input type or data corrupted\n");
@@ -155,16 +177,26 @@ char *oph_append(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *
 				return NULL;
 			}
 			measure[i].numelem = measure[i].length / measure[i].blocksize;
-			numelem_total += measure[i].numelem;
 			num_measure_total += measure[i].num_measure;
+			if (measure->numelem * list[i] != measure[i].numelem * list[0]) {
+				param->error = 1;
+				pmesg(1, __FILE__, __LINE__, "Measures have different number of elements\n");
+				*length = 0;
+				*is_null = 0;
+				*error = 1;
+				return NULL;
+			}
+			numelem += measure[i].numelem;
 		}
 
 		param->measure = measure;
-	} else
+	} else {
 		measure = param->measure;
+		list = (long long *) param->extend;
+	}
 
-	for (i = 0; i < args->arg_count - 2; ++i)
-		measure[i].content = args->args[2 + i];
+	for (i = 0; i < num_measure; ++i)
+		measure[i].content = args->args[3 + i];
 
 	oph_multistring *output;
 	if (!param->error && !param->result) {
@@ -180,7 +212,7 @@ char *oph_append(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *
 			param->error = output->num_measure != measure->num_measure;	// Simple case when all the measures are the same data type
 			if (!param->error) {
 				int j;
-				for (i = 0; i < args->arg_count - 2; ++i) {
+				for (i = 0; i < num_measure; ++i) {
 					if (measure[i].num_measure != measure->num_measure) {
 						param->error = 1;
 						break;
@@ -193,6 +225,8 @@ char *oph_append(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *
 					if (param->error)
 						break;
 				}
+				if (!param->error)
+					output->blocksize *= num_measure;
 			}
 			if (param->error) {
 				pmesg(1, __FILE__, __LINE__, "Output data type has a different number of fields from the set of input data types\n");
@@ -202,18 +236,8 @@ char *oph_append(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *
 				return NULL;
 			}
 		}
-		for (i = 1; i < output->num_measure; ++i)
-			if (output->type[i] != output->type[0])
-				break;
-		if (i < output->num_measure) {
-			param->error = 1;
-			pmesg(1, __FILE__, __LINE__, "Fields of output data type cannot be different\n");
-			*length = 0;
-			*is_null = 0;
-			*error = 1;
-			return NULL;
-		}
-		output->length = numelem_total * output->elemsize[0];
+		output->numelem = numelem;
+		output->length = output->numelem * output->blocksize / num_measure;
 		if (!output->length) {
 			*length = 0;
 			*is_null = 1;
@@ -234,7 +258,7 @@ char *oph_append(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long *
 	} else
 		output = param->result;
 
-	if (!param->error && core_oph_append_multi(param)) {
+	if (!param->error && core_oph_interlace2_multi(param)) {
 		param->error = 1;
 		pmesg(1, __FILE__, __LINE__, "Unable to compute result\n");
 		*length = 0;

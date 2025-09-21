@@ -1,6 +1,6 @@
 #
 #    Ophidia Primitives
-#    Copyright (C) 2012-2022 CMCC Foundation
+#    Copyright (C) 2012-2025 CMCC Foundation
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -215,6 +215,11 @@ liboph_interlace_la_SOURCES = oph_interlace.c oph_interlace.h
 liboph_interlace_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
 liboph_interlace_la_LDFLAGS = -avoid-version -shared $(LIBS) -lm -L. -loph_debug -loph_core
 
+lib_LTLIBRARIES += liboph_interlace2.la
+liboph_interlace2_la_SOURCES = oph_interlace2.c oph_interlace2.h
+liboph_interlace2_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS)
+liboph_interlace2_la_LDFLAGS = -avoid-version -shared $(LIBS) -lm -L. -loph_debug -loph_core
+
 lib_LTLIBRARIES += liboph_math.la
 liboph_math_la_SOURCES = oph_math.c oph_math.h oph_core_math.c oph_core_math.h
 liboph_math_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(GSL_CFLAG)
@@ -405,6 +410,11 @@ lib_LTLIBRARIES += liboph_predicate3.la
 liboph_predicate3_la_SOURCES = oph_predicate3.c oph_predicate3.h oph_core_matheval.c oph_core_matheval.h
 liboph_predicate3_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(MATHEVAL_CFLAGS)
 liboph_predicate3_la_LDFLAGS = -avoid-version -shared $(LIBS) $(MATHEVAL_LIBS) -lpthread -L. -loph_debug -loph_core
+
+lib_LTLIBRARIES += liboph_matheval.la
+liboph_matheval_la_SOURCES = oph_matheval.c oph_matheval.h oph_core_matheval.c oph_core_matheval.h
+liboph_matheval_la_CFLAGS = $(MYSQL_CFLAGS) $(CFLAGS) $(MATHEVAL_CFLAGS)
+liboph_matheval_la_LDFLAGS = -avoid-version -shared $(LIBS) $(MATHEVAL_LIBS) -lpthread -L. -loph_debug -loph_core
 endif
 
 if GSL_SUPPORT

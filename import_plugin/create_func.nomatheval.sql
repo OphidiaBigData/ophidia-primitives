@@ -1,6 +1,6 @@
 --
 --    Ophidia Primitives
---    Copyright (C) 2012-2022 CMCC Foundation
+--    Copyright (C) 2012-2025 CMCC Foundation
 --
 --    This program is free software: you can redistribute it and/or modify
 --    it under the terms of the GNU General Public License as published by
@@ -100,6 +100,7 @@ DROP FUNCTION IF EXISTS oph_aggregate_stats_partial;
 DROP FUNCTION IF EXISTS oph_aggregate_stats_final;
 DROP FUNCTION IF EXISTS oph_mask_array;
 DROP FUNCTION IF EXISTS oph_interlace;
+DROP FUNCTION IF EXISTS oph_interlace2;
 DROP FUNCTION IF EXISTS oph_append;
 DROP FUNCTION IF EXISTS oph_quantize;
 DROP FUNCTION IF EXISTS oph_gsl_spline;
@@ -236,6 +237,7 @@ CREATE AGGREGATE FUNCTION oph_aggregate_stats_partial RETURNS STRING SONAME 'lib
 CREATE AGGREGATE FUNCTION oph_aggregate_stats_final RETURNS STRING SONAME 'liboph_aggregate_stats_final.so';
 CREATE FUNCTION oph_mask_array RETURNS STRING SONAME 'liboph_mask_array.so';
 CREATE FUNCTION oph_interlace RETURNS STRING SONAME 'liboph_interlace.so';
+CREATE FUNCTION oph_interlace2 RETURNS STRING SONAME 'liboph_interlace2.so';
 CREATE FUNCTION oph_append RETURNS STRING SONAME 'liboph_append.so';
 CREATE FUNCTION oph_quantize RETURNS STRING SONAME 'liboph_quantize.so';
 CREATE FUNCTION oph_gsl_spline RETURNS STRING SONAME 'liboph_gsl_spline.so';

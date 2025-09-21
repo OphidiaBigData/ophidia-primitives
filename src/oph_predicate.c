@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2022 CMCC Foundation
+    Copyright (C) 2012-2025 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -823,7 +823,7 @@ char *oph_predicate(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lon
 				return NULL;
 			}
 		} else {
-			param->is_index[0] = 1;
+			param->is_index[2] = 1;
 			free(buffer);
 		}
 

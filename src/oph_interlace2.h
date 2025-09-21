@@ -36,9 +36,9 @@ typedef bool my_bool;
 |------------------------------------------------------------------*/
 
 /* These must be right or mysqld will not find the symbol! */
-my_bool oph_concat2_init(UDF_INIT * initid, UDF_ARGS * args, char *message);
-void oph_concat2_deinit(UDF_INIT * initid);
-char *oph_concat2(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error);
+my_bool oph_interlace2_init(UDF_INIT * initid, UDF_ARGS * args, char *message);
+void oph_interlace2_deinit(UDF_INIT * initid);
+char *oph_interlace2(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error);
 
 /*------------------------------------------------------------------|
 |               Functions' declarations (END)                       |

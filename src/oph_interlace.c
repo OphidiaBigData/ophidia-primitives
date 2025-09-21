@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2022 CMCC Foundation
+    Copyright (C) 2012-2025 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,10 +31,10 @@ int core_oph_interlace_multi(oph_generic_param_multi *param)
 		do		// Loop on input measures
 		{
 			measure = param->measure + k;
-			ic = measure->content;
+			ic = measure->content + j * measure->blocksize;
 			for (i = 0; i < measure->num_measure; ++i)	// Loop on data types
 			{
-				if (core_oph_type_cast(ic + j * measure->blocksize, oc, measure->type[i], result->type[output_format ? h % result->num_measure : h], NULL)) {
+				if (core_oph_type_cast(ic, oc, measure->type[i], result->type[output_format ? h % result->num_measure : h], NULL)) {
 					pmesg(1, __FILE__, __LINE__, "Error in compute array\n");
 					return 1;
 				}

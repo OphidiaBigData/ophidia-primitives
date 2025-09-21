@@ -1,6 +1,6 @@
 /*
     Ophidia Primitives
-    Copyright (C) 2012-2022 CMCC Foundation
+    Copyright (C) 2012-2025 CMCC Foundation
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -192,6 +192,12 @@ void oph_aggregate_operator_add(UDF_INIT *initid, UDF_ARGS *args, char *is_null,
 			case OPH_AVG:
 				dat->core_oph_oper = NULL;
 				break;
+			case OPH_MAX_ABS:
+				dat->core_oph_oper = core_oph_max_abs_array;
+				break;
+			case OPH_MIN_ABS:
+				dat->core_oph_oper = core_oph_min_abs_array;
+				break;
 			default:
 				pmesg(1, __FILE__, __LINE__, "Unable to recognize operator\n");
 				*is_null = 0;
@@ -302,6 +308,8 @@ char *oph_aggregate_operator(UDF_INIT *initid, UDF_ARGS *args, char *result, uns
 		case OPH_MAX:
 		case OPH_MIN:
 		case OPH_SUM:
+		case OPH_MAX_ABS:
+		case OPH_MIN_ABS:
 			break;
 		case OPH_AVG:
 			{

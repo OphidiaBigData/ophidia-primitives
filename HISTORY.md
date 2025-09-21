@@ -3,7 +3,27 @@
 
 ### Fixed
 
+- Bugs in oph_roll_up, oph_extend and oph_gsl_spline
+
+### Added:
+
+- Operations 'oph_max_abs' and 'oph_min_abs' to oph_aggregate_operator
+- Operations 'oph_max_abs', 'oph_min_abs' and 'oph_median' to oph_reduce, oph_reduce2 and oph_reduce3
+- New primitve oph_matheval
+
+### Changed
+
+- Interface of oph_gsl_spline
+
+## v1.8.0 - 2023-07-31
+
+### Fixed
+
 - Bug in setting GSL library using the corresponding configuration option
+
+### Added:
+
+- New primitve oph_interlace2 [#19](https://github.com/OphidiaBigData/ophidia-primitives/pull/19)
 
 ## v1.7.2 - 2023-01-20
 
