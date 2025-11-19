@@ -22,9 +22,7 @@
 #include <string.h>
 #include <ctype.h>
 
-/* GSL Core function header */
-//#include "oph_core.h"
-#include "oph_core_gsl.h"
+#include "oph_core_matheval.h"
 
 /* MySQL headers  */
 #include <mysql.h>		// It contains UDF-related symbols and data structures
@@ -32,26 +30,22 @@
 typedef bool my_bool;
 #endif
 
-/* GSL STATS headers  */
-#include <gsl/gsl_spline.h>
-
 typedef struct {
-	gsl_interp_accel *acc;
-	gsl_spline *spline;
-	double *old_x;
-	double *new_x;
-	double *tmp;
-	char order;
-} oph_gsl_spline_param;
+	void *f[2];		// measure and expressions
+	char is_index;		// is_index
+	unsigned long length;	// size in bytes
+	oph_type result_type;
+	size_t result_elemsize;
+} oph_matheval_param;
 
 /*------------------------------------------------------------------|
 |		Functions' declarations (BEGIN)			    |
 |------------------------------------------------------------------*/
 
 /* These must be right or mysqld will not find the symbol! */
-my_bool oph_gsl_spline_init(UDF_INIT * initid, UDF_ARGS * args, char *message);
-void oph_gsl_spline_deinit(UDF_INIT * initid);
-char *oph_gsl_spline(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error);
+my_bool oph_matheval_init(UDF_INIT * initid, UDF_ARGS * args, char *message);
+void oph_matheval_deinit(UDF_INIT * initid);
+char *oph_matheval(UDF_INIT * initid, UDF_ARGS * args, char *result, unsigned long *length, char *is_null, char *error);
 
 /*------------------------------------------------------------------|
 |               Functions' declarations (END)                       |

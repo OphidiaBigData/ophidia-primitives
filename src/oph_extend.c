@@ -32,7 +32,7 @@ int core_oph_extend_multi(oph_multistring *byte_array, oph_multistring *result, 
 		unsigned long counter = byte_array->numelem * number - 1;
 		// I write the elements starting from the last one
 		for (j = byte_array->numelem - 1; j >= 0; j--) {
-			for (i = 0; i < number; ++i) {
+			for (i = number - 1; (i > 0) || !i && (j > 0); i--) {
 				memcpy(result->content + counter * result->blocksize, result->content + j * result->blocksize, result->blocksize);
 				counter--;
 			}
@@ -40,7 +40,7 @@ int core_oph_extend_multi(oph_multistring *byte_array, oph_multistring *result, 
 	} else {
 		//Append mode - default
 		unsigned long length = byte_array->numelem * result->blocksize;
-		for (i = 1; i < number; ++i)
+		for (i = number - 1; i > 0; i--)
 			memcpy(result->content + i * length, result->content, length);
 	}
 

@@ -823,7 +823,7 @@ char *oph_predicate(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned lon
 				return NULL;
 			}
 		} else {
-			param->is_index[0] = 1;
+			param->is_index[2] = 1;
 			free(buffer);
 		}
 
