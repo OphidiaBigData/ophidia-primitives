@@ -1,6 +1,6 @@
 --
 --    Ophidia Primitives
---    Copyright (C) 2012-2015 CMCC Foundation
+--    Copyright (C) 2012-2025 CMCC Foundation
 --
 --    This program is free software: you can redistribute it and/or modify
 --    it under the terms of the GNU General Public License as published by
@@ -117,6 +117,7 @@ DROP FUNCTION IF EXISTS oph_normalize;
 DROP FUNCTION IF EXISTS oph_sequence;
 DROP FUNCTION IF EXISTS oph_predicate;
 DROP FUNCTION IF EXISTS oph_predicate2;
+DROP FUNCTION IF EXISTS oph_matheval;
 DROP FUNCTION IF EXISTS oph_fdi_fwi;
 DROP FUNCTION IF EXISTS oph_fdi_ffwi;
 DROP FUNCTION IF EXISTS oph_fdi_ifi;
@@ -259,6 +260,7 @@ CREATE FUNCTION oph_normalize RETURNS STRING SONAME 'liboph_normalize.so';
 CREATE FUNCTION oph_sequence RETURNS STRING SONAME 'liboph_sequence.so';
 CREATE FUNCTION oph_predicate RETURNS STRING SONAME 'liboph_predicate.so';
 CREATE FUNCTION oph_predicate2 RETURNS STRING SONAME 'liboph_predicate2.so';
+CREATE FUNCTION oph_matheval RETURNS STRING SONAME 'liboph_matheval.so';
 CREATE FUNCTION oph_fdi_fwi RETURNS STRING SONAME 'liboph_fdi_fwi.so';
 CREATE FUNCTION oph_fdi_ffwi RETURNS STRING SONAME 'liboph_fdi_ffwi.so';
 CREATE FUNCTION oph_fdi_ifi RETURNS STRING SONAME 'liboph_fdi_ifi.so';
