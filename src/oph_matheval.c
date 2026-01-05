@@ -34,7 +34,9 @@ int core_oph_matheval(oph_stringPtr byte_array, char *result)
 				switch (byte_array->type) {
 					case OPH_DOUBLE:
 						for (i = 0; i < byte_array->numelem; ++i) {
-							temporary = evaluator_evaluate_x(_result->f[1], *((double *) (byte_array->content + i * byte_array->elemsize)));
+							temporary = *((double *) (byte_array->content + i * byte_array->elemsize));
+							if (!isnan(temporary) && (!byte_array->missingvalue || (temporary != _result->missingvalue)))
+								temporary = evaluator_evaluate_x(_result->f[1], temporary);
 							if (core_oph_type_cast
 							    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
 								pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
@@ -42,56 +44,91 @@ int core_oph_matheval(oph_stringPtr byte_array, char *result)
 							}
 						}
 						break;
-					case OPH_FLOAT:
-						for (i = 0; i < byte_array->numelem; ++i) {
-							temporary = evaluator_evaluate_x(_result->f[1], *((float *) (byte_array->content + i * byte_array->elemsize)));
-							if (core_oph_type_cast
-							    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
-								pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
-								return 1;
+					case OPH_FLOAT:{
+							float input, ms = byte_array->missingvalue ? (float) _result->missingvalue : 0;
+							for (i = 0; i < byte_array->numelem; ++i) {
+								input = *((float *) (byte_array->content + i * byte_array->elemsize));
+								if (!isnan(input) && (!byte_array->missingvalue || (input != ms)))
+									temporary = evaluator_evaluate_x(_result->f[1], input);
+								else
+									temporary = input;
+								if (core_oph_type_cast
+								    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type,
+								     byte_array->missingvalue)) {
+									pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+									return 1;
+								}
 							}
+							break;
 						}
-						break;
-					case OPH_INT:
-						for (i = 0; i < byte_array->numelem; ++i) {
-							temporary = evaluator_evaluate_x(_result->f[1], *((int *) (byte_array->content + i * byte_array->elemsize)));
-							if (core_oph_type_cast
-							    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
-								pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
-								return 1;
+					case OPH_INT:{
+							int input, ms = byte_array->missingvalue ? (int) _result->missingvalue : 0;
+							for (i = 0; i < byte_array->numelem; ++i) {
+								input = *((int *) (byte_array->content + i * byte_array->elemsize));
+								if (!byte_array->missingvalue || (input != ms))
+									temporary = evaluator_evaluate_x(_result->f[1], input);
+								else
+									temporary = input;
+								if (core_oph_type_cast
+								    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type,
+								     byte_array->missingvalue)) {
+									pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+									return 1;
+								}
 							}
+							break;
 						}
-						break;
-					case OPH_SHORT:
-						for (i = 0; i < byte_array->numelem; ++i) {
-							temporary = evaluator_evaluate_x(_result->f[1], *((short *) (byte_array->content + i * byte_array->elemsize)));
-							if (core_oph_type_cast
-							    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
-								pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
-								return 1;
+					case OPH_SHORT:{
+							short input, ms = byte_array->missingvalue ? (short) _result->missingvalue : 0;
+							for (i = 0; i < byte_array->numelem; ++i) {
+								input = *((short *) (byte_array->content + i * byte_array->elemsize));
+								if (!byte_array->missingvalue || (input != ms))
+									temporary = evaluator_evaluate_x(_result->f[1], input);
+								else
+									temporary = input;
+								if (core_oph_type_cast
+								    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type,
+								     byte_array->missingvalue)) {
+									pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+									return 1;
+								}
 							}
+							break;
 						}
-						break;
-					case OPH_BYTE:
-						for (i = 0; i < byte_array->numelem; ++i) {
-							temporary = evaluator_evaluate_x(_result->f[1], *((char *) (byte_array->content + i * byte_array->elemsize)));
-							if (core_oph_type_cast
-							    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
-								pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
-								return 1;
+					case OPH_BYTE:{
+							char input, ms = byte_array->missingvalue ? (char) _result->missingvalue : 0;
+							for (i = 0; i < byte_array->numelem; ++i) {
+								input = *((char *) (byte_array->content + i * byte_array->elemsize));
+								if (!byte_array->missingvalue || (input != ms))
+									temporary = evaluator_evaluate_x(_result->f[1], input);
+								else
+									temporary = input;
+								if (core_oph_type_cast
+								    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type,
+								     byte_array->missingvalue)) {
+									pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+									return 1;
+								}
 							}
+							break;
 						}
-						break;
-					case OPH_LONG:
-						for (i = 0; i < byte_array->numelem; ++i) {
-							temporary = evaluator_evaluate_x(_result->f[1], *((long long *) (byte_array->content + i * byte_array->elemsize)));
-							if (core_oph_type_cast
-							    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type, byte_array->missingvalue)) {
-								pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
-								return 1;
+					case OPH_LONG:{
+							long long input, ms = byte_array->missingvalue ? (long long) _result->missingvalue : 0;
+							for (i = 0; i < byte_array->numelem; ++i) {
+								input = *((long long *) (byte_array->content + i * byte_array->elemsize));
+								if (!byte_array->missingvalue || (input != ms))
+									temporary = evaluator_evaluate_x(_result->f[1], input);
+								else
+									temporary = input;
+								if (core_oph_type_cast
+								    (&temporary, (((char *) _result->f[0]) + i * _result->result_elemsize), OPH_DOUBLE, _result->result_type,
+								     byte_array->missingvalue)) {
+									pmesg(1, __FILE__, __LINE__, "Unable to find result\n");
+									return 1;
+								}
 							}
+							break;
 						}
-						break;
 					default:
 						pmesg(1, __FILE__, __LINE__, "Type non recognized\n");
 						return -1;
@@ -126,17 +163,24 @@ int core_oph_matheval(oph_stringPtr byte_array, char *result)
 |------------------------------------------------------------------*/
 my_bool oph_matheval_init(UDF_INIT *initid, UDF_ARGS *args, char *message)
 {
-	if ((args->arg_count < 3) || (args->arg_count > 4)) {
-		strcpy(message, "ERROR: Wrong arguments! oph_matheval(input_OPH_TYPE, output_OPH_TYPE, measure, expression)");
+	if ((args->arg_count < 3) || (args->arg_count > 5)) {
+		strcpy(message, "ERROR: Wrong arguments! oph_matheval(input_OPH_TYPE, output_OPH_TYPE, measure, expression, [missingvalue])");
 		return 1;
 	}
 
 	int i;
-	for (i = 0; i < args->arg_count; i++) {
+	for (i = 0; i < 4; i++) {
 		if (args->arg_type[i] != STRING_RESULT) {
 			strcpy(message, "ERROR: Wrong arguments to oph_matheval function");
 			return 1;
 		}
+	}
+	if (args->arg_count > 4) {
+		if (args->arg_type[4] == STRING_RESULT) {
+			strcpy(message, "ERROR: Wrong arguments to oph_matheval function");
+			return 1;
+		}
+		args->arg_type[4] = REAL_RESULT;
 	}
 
 	initid->ptr = NULL;
@@ -182,7 +226,6 @@ char *oph_matheval(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long
 
 	measure.content = args->args[2];
 	measure.length = &(args->lengths[2]);
-	measure.missingvalue = NULL;
 
 	core_set_elemsize(&(measure));
 
@@ -208,6 +251,9 @@ char *oph_matheval(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long
 		for (i = 0; i < 2; ++i)
 			param->f[i] = NULL;
 		param->is_index = 0;
+		param->missingvalue = NAN;
+		if ((args->arg_count > 4) && (args->args[4]))
+			param->missingvalue = *((double *) args->args[4]);
 
 		if (args->arg_count >= 3) {
 			buffer = (char *) malloc(1 + args->lengths[3]);
@@ -270,6 +316,8 @@ char *oph_matheval(UDF_INIT *initid, UDF_ARGS *args, char *result, unsigned long
 		}
 	} else
 		param = (oph_matheval_param *) initid->ptr;
+
+	measure.missingvalue = (args->arg_count > 4) && (args->args[4]) ? &param->missingvalue : NULL;
 
 	i = core_oph_matheval(&measure, initid->ptr);
 	if (i) {

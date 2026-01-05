@@ -36,6 +36,7 @@ typedef struct {
 	unsigned long length;	// size in bytes
 	oph_type result_type;
 	size_t result_elemsize;
+	double missingvalue;
 } oph_matheval_param;
 
 /*------------------------------------------------------------------|
